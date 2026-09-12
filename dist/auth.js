@@ -1,11 +1,11 @@
-import {SUPABASE_URL,SUPABASE_ANON_KEY} from './supabase-config.js';
+import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './supabase-config.js';
 
 const STORE='suomi-learning-v1';
 const SESSION='suomi-auth-session-v1';
 const $=id=>document.getElementById(id);
 let session=null,lastSnapshot='',timer=null;
 
-const configured=()=>/^https:\/\/.+\.supabase\.co$/.test(SUPABASE_URL)&&SUPABASE_ANON_KEY.length>20;
+const configured=()=>/^https:\/\/.+\.supabase\.co$/.test(SUPABASE_URL)&&SUPABASE_PUBLISHABLE_KEY.length>20;
 const normalizeUsername=v=>{
   const s=String(v||'').trim().toLowerCase();
   if(!/^[a-z0-9][a-z0-9._-]{2,31}$/.test(s)) throw new Error('Benutzername: 3–32 Zeichen, nur a–z, 0–9, Punkt, Unterstrich und Bindestrich.');
@@ -17,7 +17,7 @@ const checkPassword=v=>{
 };
 const hex=s=>Array.from(new TextEncoder().encode(s)).map(b=>b.toString(16).padStart(2,'0')).join('');
 const technicalEmail=u=>`u${hex(u)}@users.suomi.invalid`;
-const api=(path,options={})=>fetch(`${SUPABASE_URL}${path}`,{...options,headers:{apikey:SUPABASE_ANON_KEY,'Content-Type':'application/json',...(options.headers||{})}});
+const api=(path,options={})=>fetch(`${SUPABASE_URL}${path}`,{...options,headers:{apikey:SUPABASE_PUBLISHABLE_KEY,'Content-Type':'application/json',...(options.headers||{})}});
 const authHeaders=()=>session?.access_token?{Authorization:`Bearer ${session.access_token}`}:{};
 const status=(t,error=false)=>{const el=$('account-status');if(el){el.textContent=t;el.classList.toggle('error',error);}};
 const localLearning=()=>{try{return JSON.parse(localStorage.getItem(STORE))||null}catch{return null}};
