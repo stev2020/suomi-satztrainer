@@ -43,3 +43,9 @@ using (auth.uid() = user_id)
 with check (auth.uid() = user_id);
 
 create index if not exists profiles_username_idx on public.profiles(username);
+
+-- Supabase Data API opt-in: allow authenticated users to reach the table;
+-- RLS above still restricts every row to its owner.
+revoke all on table public.learning_state from anon;
+grant select, insert, update on table public.learning_state to authenticated;
+revoke all on table public.profiles from anon, authenticated;
