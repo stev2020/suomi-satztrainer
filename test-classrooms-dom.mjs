@@ -1,0 +1,49 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const {Window}=await import(process.env.HAPPY_DOM_MODULE||'happy-dom');
+const window=new Window({url:'http://localhost:4173',settings:{disableCSSFileLoading:true,disableJavaScriptFileLoading:true}});
+window.document.body.innerHTML='<header><button id="account-button">Konto</button></header>';
+let logged=false,teacher=true;
+const room={id:'11111111-1111-4111-a111-111111111111',name:'Testklasse',teacher:true,archived:false,code:'ABCD1234ABCD1234',member_count:1,members:[{id:'student',name:'learner',blocked:false}],assignments:[]};
+const calls=[];
+window.accountUser=()=>logged?{id:'test-user'}:null;
+window.confirm=()=>true;
+window.accountRequest=async(url,opts)=>{
+ const {action,payload}=JSON.parse(opts.body);calls.push(action);let result={};
+ if(action==='list')result=[{...room,teacher}];
+ if(action==='create'||action==='join')result={id:room.id};
+ if(action==='room')result={...room,teacher,code:teacher?room.code:null,members:teacher?room.members:[]};
+ if(action==='assign')room.assignments.push({id:'22222222-2222-4222-a222-222222222222',title:payload.title,items:payload.items,due_at:payload.due_at,released:false,submissions:[],messages:[],submitted_count:0});
+ if(action==='submit'){room.assignments[0].submissions.push({id:'submission',own:true,answers:payload.answers,author:teacher?'learner':null,reactions:{}});room.assignments[0].submitted_count=1;}
+ if(action==='release')room.assignments[0].released=true;
+ if(action==='message')room.assignments[0].messages.push({id:'message',author:'learner',own:true,body:payload.body,item_index:Number(payload.item_index)});
+ if(action==='delete_message')room.assignments[0].messages=[];
+ return {ok:true,json:async()=>JSON.parse(JSON.stringify(result))};
+};
+window.fetch=async()=>({ok:true,json:async()=>JSON.parse(fs.readFileSync(new URL('./dist/sentences.json',import.meta.url),'utf8'))});
+const source=fs.readFileSync(new URL('./dist/classrooms.js',import.meta.url),'utf8').replace(/^import .*\n/,'');
+window.eval(source);
+const $=s=>window.document.querySelector(s);
+const settle=async()=>{for(let i=0;i<15;i++)await new Promise(r=>setTimeout(r,0));assert(!$('[aria-busy]'),'request finished');const status=$('#classrooms-status');assert(!status.classList.contains('error'),status.textContent);};
+const click=async s=>{assert($(s),s);$(s).click();await settle();};
+const submit=async s=>{$(s).dispatchEvent(new window.Event('submit',{bubbles:true,cancelable:true}));await settle();};
+try{
+ await click('#classrooms-button');assert($('#classrooms-content').textContent.includes('Zum Beitreten und Speichern'));assert.deepEqual(calls,[]);
+ await click('#classrooms-close');logged=true;await click('#classrooms-button');
+ $('[data-cr-form=create] input').value='Testklasse';await submit('[data-cr-form=create]');
+ assert($('[data-cr=new_assignment]'));await click('[data-cr=new_assignment]');
+ $('[name=title]').value='Testaufgabe';
+ const check=$('[data-sentence]');check.checked=true;check.dispatchEvent(new window.Event('change',{bubbles:true}));
+ await submit('[data-cr-form=assign]');assert.equal(room.assignments[0].items.length,1);
+ await click('[data-cr=assignment]');assert($('[data-cr=release]'));
+ await click('#classrooms-close');teacher=false;await click('#classrooms-button');await click('[data-cr=open]');
+ assert(!$('[data-cr=new_assignment]'));await click('[data-cr=assignment]');assert(!$('[data-cr=release]'));
+ $('[data-answer]').value='<img src=x onerror=alert(1)> Hei!';
+ $('[data-answer]').dispatchEvent(new window.Event('input',{bubbles:true}));
+ await submit('[data-cr-form=submit]');assert($('#classrooms-content').textContent.includes('Deine Antworten sind gespeichert.'));assert.equal($('#classrooms-content').querySelectorAll('img').length,0);
+ $('[data-cr-form=message] textarea').value='Warum diese Form?';await submit('[data-cr-form=message]');assert($('.cr-message'));
+ await click('[data-cr=delete_message]');assert(!$('.cr-message'));
+ await click('#classrooms-close');teacher=true;await click('#classrooms-button');await click('[data-cr=open]');await click('[data-cr=assignment]');
+ await click('[data-cr=release]');assert($('[data-cr=react]'));await click('[data-cr=react]');
+ assert(calls.includes('react'));console.log('PASS DOM: guest gate, create, picker, teacher/student controls, submit, escaping, questions, moderation, release, reactions');
+}finally{await window.happyDOM.close();}

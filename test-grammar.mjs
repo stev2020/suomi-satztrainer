@@ -8,6 +8,8 @@ const elements=new Map();
 function element(id){if(!elements.has(id))elements.set(id,{innerHTML:'',textContent:'',value:'',style:{},dataset:{},classList:{toggle(){}},setAttribute(){},addEventListener(){},querySelector(){return element('audio-label');},insertAdjacentHTML(_,html){this.innerHTML+=html;},focus(){}});return elements.get(id);}
 const ctx=vm.createContext({GRAMMAR_TOPICS,topicNotes,console,URL,assert,payload,fixtureGrammar:grammar,localStorage:{getItem(){return null;},setItem(){}},document:{getElementById:element,querySelectorAll(){return [];},addEventListener(){}}});
 let app=fs.readFileSync(new URL('./dist/app.js',import.meta.url),'utf8').replace(/^import .*\n/,'');
+ctx.window={};
+ctx.document.body={dataset:{account:'authenticated'}};
 app=app.slice(0,app.indexOf("try{const response=await fetch('sentences.json')"));
 vm.runInContext(app,ctx);
 vm.runInContext(`data=payload.sentences;archived=payload.archived_sentences;grammar=fixtureGrammar;grammarAvailable=true;ready=true;activity='grammar';direction='de-fi';`,ctx);

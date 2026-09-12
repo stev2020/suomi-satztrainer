@@ -123,4 +123,7 @@ function bind(){
   renderAccount();
 }
 loadSession();bind();
+export const accountUser=()=>session?.user||null;
+export {request as accountRequest};
+import('./classrooms.js').catch(()=>{});
 if(session?.user&&configured())refreshSession().then(ok=>ok&&watch()).catch(()=>{});

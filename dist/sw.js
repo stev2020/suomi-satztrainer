@@ -1,5 +1,5 @@
-const CACHE='suomi-v19';
-const FILES=['./','./index.html','./style.css','./app.js','./auth.js','./supabase-config.js','./grammar-topics.mjs','./sentences.json','./grammar.json','./icon.svg','./manifest.webmanifest'];
+const CACHE='suomi-v20-classrooms';
+const FILES=['./','./index.html','./style.css','./app.js','./auth.js','./classrooms.js','./classrooms.css','./supabase-config.js','./grammar-topics.mjs','./sentences.json','./grammar.json','./icon.svg','./manifest.webmanifest'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting()));});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('suomi-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
 self.addEventListener('fetch',event=>{const u=new URL(event.request.url);if(event.request.method!=='GET'||u.origin!==self.location.origin)return;event.respondWith(fetch(event.request).then(response=>{if(response.ok&&response.type==='basic'&&!response.redirected){const copy=response.clone();event.waitUntil(caches.open(CACHE).then(c=>c.put(event.request,copy)));}return response;}).catch(()=>caches.match(event.request).then(r=>r||(event.request.mode==='navigate'?caches.match('./index.html'):Response.error()))));});
