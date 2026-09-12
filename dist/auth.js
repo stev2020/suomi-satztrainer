@@ -72,25 +72,26 @@ function renderAccount(){
   if($('account-button'))$('account-button').textContent=logged?'Konto ✓':'Anmelden';
   watch();
 }
-async function login(username,password){
+async function login(username,password,syncCloud=true){
   username=normalizeUsername(username);checkPassword(password);
   const r=await api('/auth/v1/token?grant_type=password',{method:'POST',body:JSON.stringify({email:technicalEmail(username),password})});
   if(!r.ok)throw new Error('Benutzername oder Passwort ist falsch.');
-  saveSession(await r.json());await pullAndMerge();
+  saveSession(await r.json());
+  if(syncCloud)await pullAndMerge();else await uploadLearning();
 }
 async function register(username,password){
   username=normalizeUsername(username);checkPassword(password);
   const r=await api('/functions/v1/register',{method:'POST',body:JSON.stringify({username,password})});
   const result=await r.json().catch(()=>({}));
   if(!r.ok)throw new Error(result.error||'Registrierung fehlgeschlagen.');
-  await login(username,password);return result.recoveryCode;
+  await login(username,password,false);return result.recoveryCode;
 }
 async function recover(username,recoveryCode,newPassword){
   username=normalizeUsername(username);checkPassword(newPassword);
   const r=await api('/functions/v1/recover',{method:'POST',body:JSON.stringify({username,recoveryCode:String(recoveryCode||'').trim().toUpperCase(),newPassword})});
   const result=await r.json().catch(()=>({}));
   if(!r.ok)throw new Error(result.error||'Wiederherstellung fehlgeschlagen.');
-  await login(username,newPassword);return result.recoveryCode;
+  await login(username,newPassword,false);return result.recoveryCode;
 }
 async function logout(){
   clearInterval(timer);
