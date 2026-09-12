@@ -1,4 +1,4 @@
-const CACHE='suomi-v18';
+const CACHE='suomi-v19';
 const FILES=['./','./index.html','./style.css','./app.js','./auth.js','./supabase-config.js','./grammar-topics.mjs','./sentences.json','./grammar.json','./icon.svg','./manifest.webmanifest'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting()));});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('suomi-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});

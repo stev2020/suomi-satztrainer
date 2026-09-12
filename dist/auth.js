@@ -21,13 +21,14 @@ const api=(path,options={})=>fetch(`${SUPABASE_URL}${path}`,{...options,headers:
 const authHeaders=()=>session?.access_token?{Authorization:`Bearer ${session.access_token}`}:{};
 const status=(t,error=false)=>{const el=$('account-status');if(el){el.textContent=t;el.classList.toggle('error',error);}};
 const localLearning=()=>{try{return JSON.parse(localStorage.getItem(STORE))||null}catch{return null}};
+const currentLearning=()=>window.suomiLearningState?.snapshot?.()||localLearning();
 function saveSession(v){session=v;if(v)localStorage.setItem(SESSION,JSON.stringify(v));else localStorage.removeItem(SESSION);renderAccount();}
 function loadSession(){try{const v=JSON.parse(localStorage.getItem(SESSION));if(v?.access_token&&v?.refresh_token)session=v}catch{}}
 
 async function refreshSession(){
   if(!session?.refresh_token)return false;
   const r=await api('/auth/v1/token?grant_type=refresh_token',{method:'POST',body:JSON.stringify({refresh_token:session.refresh_token})});
-  if(!r.ok){saveSession(null);return false}
+  if(!r.ok){localStorage.removeItem(STORE);saveSession(null);location.reload();return false}
   saveSession(await r.json());return true;
 }
 async function request(path,options={}){
@@ -45,7 +46,7 @@ function mergeLearning(local,cloud){
   out.prefs={...(cloud.prefs||{}),...(local.prefs||{})};
   return out;
 }
-async function uploadLearning(state=localLearning()){
+async function uploadLearning(state=currentLearning()){
   if(!session?.user||!state)return;
   const r=await request('/rest/v1/learning_state?on_conflict=user_id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({user_id:session.user.id,state,updated_at:new Date().toISOString()})});
   if(!r.ok)throw new Error('Der Lernstand konnte nicht synchronisiert werden.');
@@ -61,42 +62,48 @@ async function pullAndMerge(){
 }
 function watch(){
   clearInterval(timer);if(!session?.user)return;
-  lastSnapshot=JSON.stringify(localLearning());
-  timer=setInterval(()=>{const cur=JSON.stringify(localLearning());if(cur!==lastSnapshot)uploadLearning().catch(()=>{})},2500);
+  lastSnapshot=JSON.stringify(currentLearning());
+  timer=setInterval(()=>{const cur=JSON.stringify(currentLearning());if(cur!==lastSnapshot)uploadLearning().catch(()=>{})},2500);
 }
 function renderAccount(){
   const logged=!!session?.user;
   $('account-logged-out')?.toggleAttribute('hidden',logged);
   $('account-logged-in')?.toggleAttribute('hidden',!logged);
   if(logged&&$('account-name'))$('account-name').textContent=session.user.user_metadata?.username||'Nutzer';
+  document.body.dataset.account=logged?'authenticated':'guest';
   if($('account-button'))$('account-button').textContent=logged?'Konto ✓':'Anmelden';
+  if($('storage-note'))$('storage-note').textContent=logged?'Dein Lernstand wird mit deinem Konto synchronisiert.':'Ohne Konto wird dein Fortschritt nicht gespeichert.';
   watch();
 }
-async function login(username,password,syncCloud=true){
+async function login(username,password,syncCloud=true,seedState=null){
   username=normalizeUsername(username);checkPassword(password);
   const r=await api('/auth/v1/token?grant_type=password',{method:'POST',body:JSON.stringify({email:technicalEmail(username),password})});
   if(!r.ok)throw new Error('Benutzername oder Passwort ist falsch.');
+  if(syncCloud)localStorage.removeItem(STORE);
   saveSession(await r.json());
-  if(syncCloud)await pullAndMerge();else await uploadLearning();
+  if(seedState)localStorage.setItem(STORE,JSON.stringify(seedState));
+  if(syncCloud)await pullAndMerge();else await uploadLearning(seedState||localLearning());
 }
 async function register(username,password){
   username=normalizeUsername(username);checkPassword(password);
   const r=await api('/functions/v1/register',{method:'POST',body:JSON.stringify({username,password})});
   const result=await r.json().catch(()=>({}));
   if(!r.ok)throw new Error(result.error||'Registrierung fehlgeschlagen.');
-  await login(username,password,false);return result.recoveryCode;
+  const guestState=currentLearning();await login(username,password,false,guestState);return result.recoveryCode;
 }
 async function recover(username,recoveryCode,newPassword){
   username=normalizeUsername(username);checkPassword(newPassword);
   const r=await api('/functions/v1/recover',{method:'POST',body:JSON.stringify({username,recoveryCode:String(recoveryCode||'').trim().toUpperCase(),newPassword})});
   const result=await r.json().catch(()=>({}));
   if(!r.ok)throw new Error(result.error||'Wiederherstellung fehlgeschlagen.');
-  await login(username,newPassword,false);return result.recoveryCode;
+  await login(username,newPassword,true);return result.recoveryCode;
 }
 async function logout(){
   clearInterval(timer);
   if(session?.access_token)await api('/auth/v1/logout',{method:'POST',headers:authHeaders()}).catch(()=>{});
+  localStorage.removeItem(STORE);
   saveSession(null);
+  location.reload();
 }
 function addDialog(){
   document.body.insertAdjacentHTML('beforeend',`<dialog id="account-dialog" aria-labelledby="account-title"><div class="dialog-top"><h2 id="account-title">Dein Konto</h2><button id="close-account" class="quiet" aria-label="Schließen">✕</button></div><div id="account-unconfigured" hidden><p>Die Kontofunktion ist vorbereitet, aber die Serververbindung ist noch nicht aktiviert.</p></div><div id="account-logged-out"><div class="account-tabs"><button type="button" data-account-tab="login" class="selected">Anmelden</button><button type="button" data-account-tab="register">Registrieren</button><button type="button" data-account-tab="recover">Passwort vergessen</button></div><form id="login-form" class="account-form"><label>Benutzername<input id="login-name" autocomplete="username" required></label><label>Passwort<input id="login-password" type="password" autocomplete="current-password" required minlength="8"></label><button class="primary" type="submit">Anmelden</button></form><form id="register-form" class="account-form" hidden><label>Benutzername<input id="register-name" autocomplete="username" required></label><label>Passwort<input id="register-password" type="password" autocomplete="new-password" required minlength="8"></label><button class="primary" type="submit">Konto erstellen</button><p class="account-hint">Keine E-Mail nötig. Danach erhältst du einmalig einen Wiederherstellungscode.</p></form><form id="recover-form" class="account-form" hidden><label>Benutzername<input id="recover-name" autocomplete="username" required></label><label>Wiederherstellungscode<input id="recover-code" autocomplete="off" required></label><label>Neues Passwort<input id="recover-password" type="password" autocomplete="new-password" required minlength="8"></label><button class="primary" type="submit">Passwort neu setzen</button></form></div><div id="account-logged-in" hidden><p>Angemeldet als <strong id="account-name"></strong></p><p id="account-sync">Lernstand wird synchronisiert …</p><button id="sync-now" class="quiet" type="button">Jetzt synchronisieren</button><button id="logout" class="quiet" type="button">Abmelden</button></div><div id="recovery-result" class="recovery-result" hidden><h3>Wiederherstellungscode</h3><p>Speichere diesen Code sicher. Er wird nicht noch einmal angezeigt.</p><code id="recovery-code-result"></code><button id="copy-recovery" class="quiet" type="button">Code kopieren</button></div><p id="account-status" role="status"></p></dialog>`);
@@ -110,7 +117,7 @@ function bind(){
   $('login-form').onsubmit=async e=>{e.preventDefault();try{status('Anmeldung …');await login($('login-name').value,$('login-password').value)}catch(err){status(err.message,true)}};
   $('register-form').onsubmit=async e=>{e.preventDefault();try{status('Konto wird erstellt …');showRecovery(await register($('register-name').value,$('register-password').value));status('Konto erstellt und angemeldet.')}catch(err){status(err.message,true)}};
   $('recover-form').onsubmit=async e=>{e.preventDefault();try{status('Konto wird wiederhergestellt …');showRecovery(await recover($('recover-name').value,$('recover-code').value,$('recover-password').value));status('Passwort geändert. Der alte Wiederherstellungscode ist ungültig.')}catch(err){status(err.message,true)}};
-  $('logout').onclick=async()=>{await logout();status('Abgemeldet. Der lokale Lernstand bleibt erhalten.')};
+  $('logout').onclick=async()=>{await logout()};
   $('sync-now').onclick=async()=>{try{await pullAndMerge()}catch(err){status(err.message,true)}};
   $('copy-recovery').onclick=async()=>{try{await navigator.clipboard.writeText($('recovery-code-result').textContent);status('Code kopiert.')}catch{status('Bitte kopiere den Code manuell.',true)}};
   renderAccount();
