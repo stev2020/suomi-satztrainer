@@ -1,0 +1,14 @@
+{
+  "name": "suomi-satztrainer",
+  "version": "16.0.0",
+  "private": true,
+  "description": "Finnisch-deutscher Satztrainer mit Levels, Wiederholungen, Grammatik und Tatoeba-Audio.",
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node test-grammar.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
