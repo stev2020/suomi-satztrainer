@@ -1,0 +1,7 @@
+project_id = ""
+
+[functions.register]
+verify_jwt = false
+
+[functions.recover]
+verify_jwt = false
