@@ -1,0 +1,225 @@
+# tense<TAB>lemma<TAB>meaning<TAB>explicit surface forms
+past	jäätyä	gefrieren	jäätyi
+past	voidella	bestreichen/schmieren	voiteli
+present	juonia	intrigieren	juonii
+present	kannattaa	befürworten/unterstützen	kannatan
+past	löytyä	gefunden werden/auftauchen	löytyi
+past	menehtyä	sterben	menehtyi
+past	liukastua	ausrutschen	liukastui
+past	kastua	nass werden	kastuivat
+past	pestä	waschen	pesin|pesi
+past	repiä	zerreißen	repi
+past	jatkaa	fortsetzen	jatkoi|jatkoin
+past	hämmentyä	verwirrt werden	hämmentyi
+past	haukotella	gähnen	haukotteli
+present	hukkua	ertrinken	hukkuu
+past	seota	durcheinandergeraten/durchdrehen	sekosi
+present	käyttää	benutzen	käytän
+present	pilailla	scherzen	pilailee
+present	virnuilla	grinsen	virnuilee
+past	nauraa	lachen	nauroivat
+past	tuntea	fühlen/kennen	tunsitko
+ambiguous	ruokkia	füttern	ruokin
+past	ajatella	denken	ajattelin
+present	ajatella	denken	ajattelen
+present	toipua	sich erholen	toipuu
+past	toipua	sich erholen	toipui
+past	suostua	zustimmen/einwilligen	suostui
+past	syödä	essen	söitkö
+present	seisoa	stehen	seisoo
+past	hukata	verlieren/verlegen	hukkasi
+past	hävittää	verlieren/beseitigen	hävitti
+present	taistella	kämpfen	taistelee
+past	istuutua	sich hinsetzen	istuutui
+past	mennä	gehen	menimme
+past	kasvattaa	wachsen lassen/aufziehen	kasvatti
+past	teeskennellä	vortäuschen/so tun als ob	teeskenteli|teeskentelin
+present	tarttua	haften/anstecken	tarttuvat
+past	voittaa	gewinnen	voittivat
+past	vastustaa	sich widersetzen/ablehnen	vastusti
+past	suudella	küssen	suutelimme
+past	laskea	zählen/senken	laski
+present	änkyttää	stottern	änkyttää
+past	saada	bekommen	saitko
+present	levitä	sich ausbreiten	leviää
+past	riisua	ausziehen	riisui|riisuin
+past	vaivaantua	verlegen werden/sich bemühen	vaivaantui
+present	leikkiä	spielen	leikkii
+past	puhua	sprechen	puhuimme
+past	sulkea	schließen	sulki
+present	rukoilla	beten	rukoilee
+past	paeta	fliehen	pakeni
+present	luvata	versprechen	lupaatko
+present	herätä	aufwachen	herään
+past	ilahtua	sich freuen	ilahduin
+present	seurustella	eine Beziehung führen/sich unterhalten	seurustelemme
+past	kadota	verschwinden	katosi
+present	hävetä	sich schämen	häpeän
+past	ärsyyntyä	verärgert werden	ärsyyntyi
+present	liioitella	übertreiben	liioittelee
+past	tylsiintyä	sich langweilen/abstumpfen	tylsiintyi
+present	vuotaa	undicht sein/bluten	vuodat|vuotaa
+present	kaljuuntua	kahl werden	kaljuunnun
+past	jättää	verlassen/zurücklassen	jätti
+past	nukahtaa	einschlafen	nukahti|nukahdin
+past	rikastua	reich werden	rikastui
+present	vitsailla	Witze machen	vitsailee
+present	tarjota	anbieten	tarjoaa
+present	tahtoa	wollen	tahtoo|tahdon
+past	joutua	geraten/müssen	jouduimme
+past	tehdä	machen/tun	teit|teimme
+present	pystyä	fähig sein/schaffen	pystyt
+present	rakentaa	bauen	rakentavat
+past	naamioitua	sich verkleiden	naamioitui
+past	pyytää	bitten	pyysi|pyysimme|pyysin
+past	painaa	drücken	painoi
+past	taitella	falten	taitteli
+past	puraista	kurz beißen	puraisi|puraisin
+past	nipistää	kneifen	nipisti
+past	hävetä	sich schämen	häpesin
+past	hakea	holen/suchen/beantragen	haki
+present	kasvattaa	wachsen lassen/aufziehen	kasvatatko
+past	myydä	verkaufen	myi
+past	tavata	treffen	tapasimme|tapasi
+past	osallistua	teilnehmen	osallistuin
+past	juuttua	stecken bleiben	juuttui
+past	ampua	schießen	ampui
+past	toimia	funktionieren/handeln	toimiko
+past	selvitä	überleben/zurechtkommen	selvisikö|selvisi|selvisivät
+present	ansaita	verdienen	ansaitsen
+ambiguous	aliarvioida	unterschätzen	aliarvioimme
+present	matkia	nachahmen	matkivat
+ambiguous	miettiä	nachdenken/überlegen	mietin
+past	piileskellä	sich versteckt halten	piileskeli
+ambiguous	kapinoida	rebellieren	kapinoi
+past	selittää	erklären	selitti
+past	osoittaa	zeigen	osoitti
+past	esittää	darstellen/vorgeben	esitti
+past	yskäistä	kurz husten	yskäisi
+past	liittyä	sich anschließen	liittyi
+past	nojata	sich lehnen	nojasin
+past	pahentaa	verschlimmern	pahensi
+past	palaa	brennen	paloi
+past	rakastua	sich verlieben	rakastuin|rakastui
+past	nähdä	sehen	näitkö
+past	heittää	werfen	heitti
+present	tapailla	sich wiederholt treffen/daten	tapailee|tapailetko
+present	pahoitella	bedauern/sich entschuldigen	pahoittelemme
+past	käyttää	benutzen	käytti|käytin
+present	masentua	deprimiert werden	masennun
+present	kastella	gießen/befeuchten	kastelee
+present	tuhlata	verschwenden	tuhlaa|tuhlaat
+past	pudota	fallen	putosi
+past	kieltäytyä	ablehnen/sich weigern	kieltäytyi
+past	kumartaa	sich verbeugen	kumarsi
+past	sukeltaa	tauchen	sukelsi
+present	myöntää	zugeben	myönnän
+ambiguous	soida	klingen/läuten	soivat
+past	purskahtaa	plötzlich ausbrechen	purskahti|purskahtivat
+past	ostaa	kaufen	ostimme|ostitko
+past	nousta	steigen/aufstehen	nousi
+present	jauhaa	mahlen/kauen	jauhaa
+present	pureskella	kauen	pureskelee
+past	päästä	gelangen/entkommen	pääsin
+past	kaatua	umfallen	kaatui
+present	kärsiä	leiden	kärsii
+past	liiskata	zerquetschen	liiskasi
+past	istahtaa	sich kurz hinsetzen	istahti
+past	satuttaa	verletzen	satutin
+ambiguous	reagoida	reagieren	reagoi
+present	kellua	treiben/schwimmen	kelluu
+present	hakata	hämmern/schlagen	hakkaa
+past	parantua	heilen/gesund werden	parantui
+past	pantata	verpfänden	panttasin
+past	eksyä	sich verirren	eksyimme
+past	nielaista	herunterschlucken	nielaisin|nielaisi
+past	yskiä	husten	yski
+past	halata	umarmen	halasi|halasimme
+past	nyrjäyttää	verstauchen	nyrjäytin
+present	nousta	steigen/aufstehen	nousee
+past	silittää	bügeln/streicheln	silitti
+past	tappaa	töten	tapoitko|tapoin
+past	saavuttaa	erreichen	saavutitko
+past	sytyttää	anzünden/einschalten	sytytin
+present	toimia	funktionieren/arbeiten	toimii
+past	lyödä	schlagen	löi
+past	lopettaa	aufhören/beenden	lopetin
+past	haista	riechen/stinken	haisi
+present	haista	riechen/stinken	haisee
+past	kiittää	danken	kiitti
+past	totella	gehorchen	tottelimme
+past	haaveilla	träumen/schwärmen	haaveili
+past	ottaa	nehmen	otitko
+past	kiinnittää	befestigen/anlegen	kiinnitti
+past	oksentaa	erbrechen	oksensin
+past	koputtaa	klopfen	koputti
+present	harrastaa	als Hobby betreiben	harrastan|harrastaa
+past	vastata	antworten	vastasit
+past	hörpätä	einen Schluck trinken	hörppäsi
+past	haavoittua	verwundet werden	haavoittui
+past	levätä	ruhen	lepäsi
+past	tuijotella	starren	tuijotteli
+past	katsella	betrachten	katseli
+present	katsella	anschauen	katselen
+present	tienata	verdienen	tienaa
+past	pyydystää	fangen	pyydysti
+present	hyväksyä	akzeptieren	hyväksyn
+past	vaatia	fordern	vaati
+present	pilkkoa	zerkleinern/hacken	pilkkoo
+present	muotoilla	formulieren/gestalten	muotoilen
+past	siirtyä	sich verlagern/wechseln	siirtyi
+past	teroittaa	schärfen	teroitti
+past	hymyillä	lächeln	hymyili
+past	vuokrata	mieten/vermieten	vuokrasimme
+past	valitella	beklagen	valitteli
+past	vetää	ziehen	veti
+past	kuulla	hören	kuulimme
+present	odotella	warten	odottelen
+past	äänestää	abstimmen/wählen	äänesti
+past	särkeä	zerbrechen	särjit
+present	haistaa	mit dem Geruchssinn wahrnehmen	haistan
+past	luottaa	vertrauen	luotin
+past	hirnua	wiehern/wiehernd lachen	hirnui
+past	maalata	malen/streichen	maalasi
+present	ihailla	bewundern	ihailee
+past	sulattaa	schmelzen lassen	sulatti
+ambiguous	jumaloida	vergöttern	jumaloin
+past	janota	dürsten/verlangen	janosi
+past	irtisanoutua	kündigen	irtisanouduin
+past	pilata	verderben/ruinieren	pilasin
+past	suojella	beschützen	suojeli
+past	lahjoa	bestechen	lahjoi
+past	kutittaa	kitzeln	kutitti
+past	tuhota	zerstören	tuhosi
+past	pettyä	enttäuscht werden	petyin
+past	piilottaa	verstecken	piilotti
+past	kätkeä	verbergen	kätki
+past	hypätä	springen	hyppäsi
+present	pysyä	bleiben	pysyn
+present	sattua	wehtun/geschehen	sattuu
+present	koskea	betreffen/berühren/wehtun	koskee
+past	kutsua	rufen/nennen/einladen	kutsui
+present	pyörittää	betreiben/drehen	pyörittää
+present	pilkata	verspotten	pilkkaa
+past	kiivetä	klettern	kiipesin
+past	odottaa	warten	odotimme
+present	piristää	aufmuntern	piristää
+present	kutoa	weben/stricken	kutovat
+past	vallata	erobern/besetzen	valtasivat
+past	tuoda	bringen	toi
+past	tapahtua	geschehen	tapahtui
+past	palauttaa	zurückgeben/abgeben	palautitko
+past	pohtia	erwägen/nachdenken	pohti
+past	uhata	bedrohen	uhkasi
+past	kantaa	tragen	kantoi
+past	nostaa	heben	nosti
+past	pudottaa	fallen lassen	pudotti
+present	leikata	schneiden	leikkaan
+present	liueta	sich auflösen	liukenee
+past	matkustella	herumreisen	matkusteli
+past	kääntää	übersetzen/drehen	käänsin
+present	tuoksua	duften	tuoksuvat
+past	kastaa	eintauchen	kastoi
+past	kaataa	eingießen/umstoßen	kaatoi
+past	uhrata	opfern	uhrasi
+past	rikkoa	kaputtmachen	rikoit
