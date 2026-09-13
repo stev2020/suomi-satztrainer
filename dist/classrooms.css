@@ -16,6 +16,10 @@
 .cr-code{font-family:monospace;font-size:20px;overflow-wrap:anywhere}
 .cr-member{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:12px 0}
 .cr-message{border-left:4px solid var(--mint);padding:12px 18px;margin:15px 0;background:var(--paper)}
+.cr-assignment-source{border-top:1px solid #172c3820;margin-top:20px;padding-top:14px}
+.cr-assignment-source h4{margin:0}.cr-section-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.cr-section-heading p{margin:6px 0}.cr-custom-item{border:1px solid #172c3840;border-radius:10px;padding:12px 16px;margin:14px 0;min-width:0}
+.cr-custom-item legend{font-weight:700;padding:0 6px}
 #cr-sentence-picker{max-height:320px;overflow:auto;border-top:1px solid var(--ink);margin-bottom:16px}
 #classrooms-dialog .cr-pick{display:flex;gap:12px;border-bottom:1px solid #172c3820;padding:10px;font-weight:400;align-items:flex-start}
 .cr-pick small{display:block;color:var(--muted)}.cr-pick input{margin-top:6px;flex:none}

@@ -8,8 +8,10 @@ Ersteller sind Lehrkräfte ihres eigenen Raums, Beitretende sind Teilnehmer.
 
 1. Lehrkraft erstellt einen Raum und teilt den Code.
 2. Teilnehmer treten bei; Nutzername und Beiträge sind im Raum sichtbar.
-3. Lehrkraft stellt ein Paket mit 1–20 vorhandenen Sätzen zusammen
-   (Level und Textsuche, optionaler Abgabetermin).
+3. Lehrkraft stellt eine Aufgabe mit insgesamt 1–20 Sätzen zusammen. Vorhandene
+   Sätze lassen sich nach Level und Grammatikthema filtern. Zusätzlich kann die
+   Lehrkraft eigene deutsche Sätze mit der richtigen finnischen Lösung eingeben.
+   Ein Abgabetermin ist optional.
 4. Teilnehmer übersetzen alle Sätze und geben einmal verbindlich ab.
 5. Lehrkraft sieht Abgaben mit Namen und noch fehlende Teilnehmer.
 6. **Abgaben schließen & Vergleich freigeben** öffnet den Vergleich für die
@@ -90,4 +92,7 @@ JavaScript-Syntax und DOM-Abläufe bestanden. Visueller Desktop-/Handytest
 konnte in der Build-Umgebung nicht ausgeführt werden (Chromium startet nicht).
 
 Satzdaten einschließlich Herkunft und Lizenz bleiben in Aufgaben erhalten.
+Eigene Sätze werden als Bestandteil der Aufgabe gespeichert und als Inhalt der
+Lehrkraft gekennzeichnet. Schüler sehen zuerst den deutschen Satz; die richtige
+finnische Lösung erscheint nach ihrer Abgabe beziehungsweise nach der Freigabe.
 Audio wird weder kopiert noch zusätzlich gespeichert.

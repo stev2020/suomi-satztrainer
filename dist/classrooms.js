@@ -1,9 +1,10 @@
 import {accountUser,accountRequest} from './auth.js';
+import {GRAMMAR_TOPICS,topicNotes} from './grammar-topics.mjs';
 
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $=id=>document.getElementById(id);
 const date=v=>v?new Date(v).toLocaleString('de-DE'):'Ohne Abgabetermin';
-let room=null,selected=null,deck=null,busy=false,dirty=false;
+let room=null,selected=null,deck=null,grammar=null,customItems=[],busy=false,dirty=false;
 const replyDrafts=new Map();
 const drafts=new Map(); // Memory only; never localStorage or service-worker data.
 const css=document.createElement('link');css.rel='stylesheet';css.href='./classrooms.css';document.head.append(css);
@@ -29,7 +30,7 @@ function source(s,depth=0){
  const link=/^\d+$/.test(String(s.id))?`<a href="https://tatoeba.org/en/sentences/show/${Number(s.id)}" target="_blank" rel="noopener">#${Number(s.id)}</a>`:'';
  return `${link} ${esc(s.owner||'Tatoeba')} · ${esc(s.license||'siehe Originalquelle')}${s.origin?` · ${esc(s.origin)} (übertragene/indirekte Übersetzung)`:''}${s.source?`<br>Vorlage: ${source(s.source,depth+1)}`:''}`;
 }
-const sources=s=>`<details class="cr-sources"><summary>Quellen &amp; Lizenzen</summary><p>Finnisch: ${source(s)}</p><p>Deutsch: ${source(s.translations?.[0])}</p></details>`;
+const sources=s=>s.origin==='teacher_created'?'<details class="cr-sources"><summary>Herkunft</summary><p>Eigener Satz und richtige Übersetzung der Lehrkraft.</p></details>':`<details class="cr-sources"><summary>Quellen &amp; Lizenzen</summary><p>Finnisch: ${source(s)}</p><p>Deutsch: ${source(s.translations?.[0])}</p></details>`;
 async function home(){
  room=null;selected=null;dirty=false;
  if(!accountUser()){$('classrooms-content').innerHTML=`<p>Gemeinsam Finnisch lernen: Erstelle einen Raum oder tritt deiner Klasse per Code bei.</p><p>Zum Beitreten und Speichern brauchst du ein Konto.</p>${b('Anmelden / Registrieren','login')}`;return;}
@@ -42,25 +43,37 @@ function renderRoom(){
  const assignments=room.assignments;
  $('classrooms-content').innerHTML=`<div class="cr-toolbar">${b('← Meine Räume','home')}${b('Aktualisieren','refresh')}</div><div class="cr-hero"><span class="cr-badge">${room.teacher?'Dein Klassenraum · Lehrkraft':'Dein Klassenraum · Teilnehmer'}</span><h2>${esc(room.name)}</h2><p>1 Lehrkraft · ${room.member_count} Teilnehmer · ${assignments.length} Aufgabenpakete${room.archived?' · Archiviert':''}</p></div>${room.teacher?`<details class="cr-card"><summary>Einladung &amp; Mitglieder verwalten</summary><p>Einladungscode: <strong class="cr-code">${esc(room.code)}</strong></p><div class="cr-toolbar">${b('Code kopieren','copy')}${!room.archived?b('Code erneuern','rotate')+b('Raum archivieren','archive'):''}${b('Klassenraum löschen','delete_room','data-danger="true"')}</div><form id="cr-delete-confirm" data-cr-form="delete_room" class="cr-delete-warning" hidden><h3>Klassenraum endgültig löschen</h3><p>Alle Aufgaben, Abgaben, Fragen, Reaktionen und Mitgliedschaften dieses Raums werden unwiderruflich gelöscht. Nutzerkonten und persönliche Lernstände bleiben erhalten.</p><label>Zur Bestätigung den Raumnamen „${esc(room.name)}“ eingeben<input name="confirm_name" required maxlength="80" autocomplete="off"></label><div class="cr-toolbar"><button class="quiet cr-danger" type="submit">Endgültig löschen</button>${b('Abbrechen','cancel_delete')}</div></form><p class="cr-note">Entfernte Mitglieder können mit diesem Konto nicht erneut beitreten. Archivierte Räume bleiben lesbar.</p></details>`:`<p class="cr-note">Deine Abgaben sieht die Lehrkraft. Nach der Freigabe sieht die Klasse Antworten ohne Nutzernamen; dies ist keine Garantie gegen Wiedererkennung. Fragen erscheinen mit Nutzernamen.</p>${b('Raum verlassen','leave')}`}
  <details class="cr-card cr-roster" open><summary>Mitglieder · ${room.members.filter(m=>!m.blocked).length}</summary>${room.members.map(m=>`<div class="cr-member"><span>${esc(m.name)} · ${m.role==='teacher'?'Lehrkraft · Ersteller':'Teilnehmer'}${m.blocked?' · entfernt':''}</span>${room.teacher&&m.role!=='teacher'&&!m.blocked&&!room.archived?b('Entfernen','remove',`data-id="${m.id}"`):''}</div>`).join('')}</details>
- ${room.teacher&&!room.archived?`<p>${b('＋ Aufgabenpaket erstellen','new_assignment')}</p><div id="cr-composer"></div>`:''}<h3>Aufgaben &amp; Klassenfortschritt</h3><div class="cr-grid">${assignments.map(a=>{const own=a.submissions.some(s=>s.own);return `<article class="cr-card"><span class="cr-badge">${a.released?'Vergleich freigegeben':own?'Abgegeben':a.due_at&&new Date(a.due_at)<new Date()?'Frist abgelaufen':'Offen'}</span><h3>${esc(a.title)}</h3><p>${a.items.length} Sätze · ${esc(date(a.due_at))}</p><label>${a.submitted_count} / ${room.member_count} Teilnehmer haben abgegeben<progress max="${Math.max(room.member_count,1)}" value="${a.submitted_count}"></progress></label>${b('Aufgabe öffnen','assignment',`data-id="${a.id}"`)}</article>`;}).join('')||'<p>Noch keine Aufgaben. Die Lehrkraft kann das erste Satzpaket zusammenstellen.</p>'}</div>`;
+ ${room.teacher&&!room.archived?`<p>${b('Aufgabe erstellen','new_assignment')}</p><div id="cr-composer"></div>`:''}<h3>Aufgaben &amp; Klassenfortschritt</h3><div class="cr-grid">${assignments.map(a=>{const own=a.submissions.some(s=>s.own);return `<article class="cr-card"><span class="cr-badge">${a.released?'Vergleich freigegeben':own?'Abgegeben':a.due_at&&new Date(a.due_at)<new Date()?'Frist abgelaufen':'Offen'}</span><h3>${esc(a.title)}</h3><p>${a.items.length} Sätze · ${esc(date(a.due_at))}</p><label>${a.submitted_count} / ${room.member_count} Teilnehmer haben abgegeben<progress max="${Math.max(room.member_count,1)}" value="${a.submitted_count}"></progress></label>${b('Aufgabe öffnen','assignment',`data-id="${a.id}"`)}</article>`;}).join('')||'<p>Noch keine Aufgaben. Die Lehrkraft kann die erste Aufgabe zusammenstellen.</p>'}</div>`;
 }
 async function composer(){
- if(!deck){const r=await fetch('./sentences.json');if(!r.ok)throw new Error('Sätze konnten nicht geladen werden.');deck=(await r.json()).sentences;}
- $('cr-composer').innerHTML=`<form data-cr-form="assign" class="cr-card"><h3>Neues Satzpaket</h3><label>Titel<input name="title" required minlength="3" maxlength="100" placeholder="Unsere erste Übersetzungsrunde"></label><div class="cr-grid"><label>Level<select id="cr-level">${[1,2,3,4,5,6].map(n=>`<option>${n}</option>`).join('')}</select></label><label>Suche im Satz<input id="cr-search" placeholder="z. B. Kaffee"></label><label>Abgabetermin (optional)<input name="due" type="datetime-local"></label></div><p>Wähle 1–20 Sätze. Die Auswahl bleibt beim Filtern erhalten.</p><p id="cr-selection-count">0 Sätze ausgewählt</p><div id="cr-sentence-picker"></div><button class="primary">Aufgabenpaket veröffentlichen</button></form>`;
- selected=new Map();picker();
+ if(!deck||!grammar){
+   const [sentencesResponse,grammarResponse]=await Promise.all([fetch('./sentences.json'),fetch('./grammar.json')]);
+   if(!sentencesResponse.ok||!grammarResponse.ok)throw new Error('Sätze und Grammatikthemen konnten nicht geladen werden.');
+   deck=(await sentencesResponse.json()).sentences;grammar=(await grammarResponse.json()).sentences;
+ }
+ selected=new Map();customItems=[];
+ $('cr-composer').innerHTML=`<form data-cr-form="assign" class="cr-card"><h3>Neue Aufgabe</h3><label>Titel<input name="title" required minlength="3" maxlength="100" placeholder="Unsere erste Übersetzungsrunde"></label><label>Abgabetermin (optional)<input name="due" type="datetime-local"></label><section class="cr-assignment-source"><h4>Vorhandene Sätze auswählen</h4><div class="cr-grid"><label>Level<select id="cr-level">${[1,2,3,4,5,6].map(n=>`<option>${n}</option>`).join('')}</select></label><label>Grammatikthema<select id="cr-topic">${GRAMMAR_TOPICS.map(t=>`<option value="${t.id}">${esc(t.label)}</option>`).join('')}</select></label></div><p id="cr-topic-hint" class="cr-note"></p><div id="cr-sentence-picker"></div></section><section class="cr-assignment-source"><div class="cr-section-heading"><div><h4>Eigene Sätze erstellen</h4><p class="cr-note">Gib den deutschen Aufgabensatz und die richtige finnische Übersetzung ein.</p></div>${b('＋ Eigenen Satz hinzufügen','add_custom')}</div><div id="cr-custom-items"></div></section><p>Insgesamt sind 1–20 Sätze möglich. Die Auswahl bleibt beim Filtern erhalten.</p><p id="cr-selection-count">0 Sätze ausgewählt</p><button class="primary">Aufgabe veröffentlichen</button></form>`;
+ picker();renderCustomItems();updateSelectionCount();
 }
+const selectionSize=()=>selected.size+customItems.length;
+function updateSelectionCount(){if($('cr-selection-count'))$('cr-selection-count').textContent=`${selectionSize()} ${selectionSize()===1?'Satz':'Sätze'} ausgewählt`;}
 function picker(){
- const term=$('cr-search').value.toLowerCase(),level=Number($('cr-level').value);
- const matches=deck.filter(s=>s.level===level&&s.translations?.length&&`${s.text} ${s.translations[0].text}`.toLowerCase().includes(term));
+ const level=Number($('cr-level').value),topicId=$('cr-topic').value,topic=GRAMMAR_TOPICS.find(t=>t.id===topicId);
+ const matches=deck.filter(s=>s.level===level&&s.translations?.length&&topicNotes(s,grammar,topicId).length);
+ $('cr-topic-hint').textContent=topic?.hint||'';
  $('cr-sentence-picker').innerHTML=matches.slice(0,80).map(s=>`<label class="cr-pick"><input type="checkbox" data-sentence="${s.id}" ${selected.has(s.id)?'checked':''}><span>${esc(s.translations[0].text)}<small lang="fi">${esc(s.text)}</small></span></label>`).join('')||'<p>Keine passenden Sätze.</p>';
- if(matches.length>80)$('cr-sentence-picker').insertAdjacentHTML('beforeend','<p>Die ersten 80 Treffer. Grenze die Suche bei Bedarf ein.</p>');
+ if(matches.length>80)$('cr-sentence-picker').insertAdjacentHTML('beforeend','<p>Die ersten 80 Treffer. Wähle bei Bedarf ein anderes Level oder Thema.</p>');
+}
+function renderCustomItems(){
+ const host=$('cr-custom-items');if(!host)return;
+ host.innerHTML=customItems.map((item,i)=>`<fieldset class="cr-custom-item"><legend>Eigener Satz ${i+1}</legend><label>Deutscher Satz<textarea data-custom-index="${i}" data-custom-field="de" required maxlength="500" rows="2" lang="de" placeholder="Welchen Satz sollen die Schüler übersetzen?">${esc(item.de)}</textarea></label><label>Richtige finnische Übersetzung<textarea data-custom-index="${i}" data-custom-field="fi" required maxlength="500" rows="2" lang="fi" placeholder="Die richtige Lösung auf Finnisch">${esc(item.fi)}</textarea></label>${b('Satz entfernen','remove_custom',`data-index="${i}"`)}</fieldset>`).join('')||'<p class="cr-note">Noch keine eigenen Sätze hinzugefügt.</p>';
 }
 function assignment(id){
  const a=room.assignments.find(x=>x.id===id);if(!a)throw new Error('Aufgabe nicht mehr verfügbar.');
  selected=id;dirty=false;
  const own=a.submissions.find(s=>s.own),closed=room.archived||a.released||(a.due_at&&new Date(a.due_at)<new Date());
  const canSubmit=!room.teacher&&!own&&!closed,answers=drafts.get(id)||[];
- $('classrooms-content').innerHTML=`<div class="cr-toolbar">${b('← Zum Klassenraum','back')}${b('Aktualisieren','refresh_assignment')}</div><h2>${esc(a.title)}</h2><p>${esc(date(a.due_at))} · ${a.submitted_count}/${room.member_count} Abgaben</p><p class="cr-note">Deutsch → Finnisch. Andere Formulierungen können ebenfalls richtig sein. Keine automatische Benotung; Satzvorlagen sind Übungsmaterial, kein geschützter Prüfungstest.</p>${room.teacher&&!a.released&&!room.archived?`<p>${b('Abgaben schließen & Vergleich freigeben','release')}</p><p class="cr-note">Danach sind keine weiteren Abgaben möglich. Die Klasse sieht die Antworten ohne Nutzernamen.</p>`:''}${canSubmit?'<form data-cr-form="submit">':''}${a.items.map((s,i)=>`<article class="cr-card"><h3>${i+1}. ${esc(s.translations[0].text)}</h3>${canSubmit?`<label for="cr-answer-${i}">Deine finnische Übersetzung</label><textarea id="cr-answer-${i}" name="answer-${i}" data-answer="${i}" required maxlength="2000" rows="2" lang="fi">${esc(answers[i]||'')}</textarea>`:own?`<p lang="fi">Deine Antwort: ${esc(own.answers[i])}</p>`:''}${room.teacher||own||a.released?`<p lang="fi"><strong>Finnische Vorlage:</strong> ${esc(s.text)}</p>`:''}${sources(s)}</article>`).join('')}${canSubmit?'<p class="cr-note">Abgabe ist verbindlich. Entwürfe bleiben nur in dieser geöffneten Seite erhalten und gehen beim Neuladen verloren.</p><button class="primary">Alle Antworten verbindlich abgeben</button></form>':`<p>${own?'Deine Antworten sind gespeichert.':room.teacher?'Hier siehst du die eingereichten Antworten.':'Abgabe ist geschlossen.'}</p>`}
+ $('classrooms-content').innerHTML=`<div class="cr-toolbar">${b('← Zum Klassenraum','back')}${b('Aktualisieren','refresh_assignment')}</div><h2>${esc(a.title)}</h2><p>${esc(date(a.due_at))} · ${a.submitted_count}/${room.member_count} Abgaben</p><p class="cr-note">Deutsch → Finnisch. Andere Formulierungen können ebenfalls richtig sein. Keine automatische Benotung; Satzvorlagen sind Übungsmaterial, kein geschützter Prüfungstest.</p>${room.teacher&&!a.released&&!room.archived?`<p>${b('Abgaben schließen & Vergleich freigeben','release')}</p><p class="cr-note">Danach sind keine weiteren Abgaben möglich. Die Klasse sieht die Antworten ohne Nutzernamen.</p>`:''}${canSubmit?'<form data-cr-form="submit">':''}${a.items.map((s,i)=>`<article class="cr-card"><h3>${i+1}. ${esc(s.translations[0].text)}</h3>${canSubmit?`<label for="cr-answer-${i}">Deine finnische Übersetzung</label><textarea id="cr-answer-${i}" name="answer-${i}" data-answer="${i}" required maxlength="2000" rows="2" lang="fi">${esc(answers[i]||'')}</textarea>`:own?`<p lang="fi">Deine Antwort: ${esc(own.answers[i])}</p>`:''}${room.teacher||own||a.released?`<p lang="fi"><strong>${s.origin==='teacher_created'?'Richtige Lösung':'Finnische Vorlage'}:</strong> ${esc(s.text)}</p>`:''}${sources(s)}</article>`).join('')}${canSubmit?'<p class="cr-note">Abgabe ist verbindlich. Entwürfe bleiben nur in dieser geöffneten Seite erhalten und gehen beim Neuladen verloren.</p><button class="primary">Alle Antworten verbindlich abgeben</button></form>':`<p>${own?'Deine Antworten sind gespeichert.':room.teacher?'Hier siehst du die eingereichten Antworten.':'Abgabe ist geschlossen.'}</p>`}
  ${room.teacher||a.released?`<h3>${room.teacher?'Abgabenübersicht':'Gemeinsamer Lösungsvergleich'}</h3>${room.teacher?`<p>Noch ohne Abgabe: ${room.members.filter(m=>m.role!=='teacher'&&!m.blocked&&!a.submissions.some(s=>s.author===m.name)).map(m=>esc(m.name)).join(', ')||'niemand'}</p>`:''}${a.submissions.map((s,i)=>`<article class="cr-card"><h4>${room.teacher?esc(s.author):s.own?'Deine Lösung':`Lösung ${i+1}`}</h4>${s.answers.map((v,j)=>`<p><strong>${j+1}.</strong> <span lang="fi">${esc(v)}</span></p>`).join('')}${a.released&&!room.archived?`<div class="cr-toolbar">${Object.entries({helpful:'Hilfreich',interesting:'Interessant',encouraging:'Gut gemacht'}).map(([k,label])=>b(`${label} · ${s.reactions[k]||0}`,'react',`data-id="${s.id}" data-kind="${k}"`)).join('')}</div>`:''}</article>`).join('')||'<p>Noch keine Abgaben.</p>'}`:'<p>Der gemeinsame Lösungsvergleich wird von der Lehrkraft freigegeben.</p>'}
  <h3>Fragen &amp; Austausch zu den Sätzen</h3><p class="cr-note">Für alle im Raum sichtbar, mit Nutzernamen. Keine persönlichen Daten posten. Die Lehrkraft kann Beiträge entfernen.</p>${discussion(a)}${!room.archived?`<form data-cr-form="message" class="cr-card"><h4>Neue Diskussion starten</h4><label>Zu welchem Satz?<select name="item_index">${a.items.map((s,i)=>`<option value="${i}">${i+1}. ${esc(s.translations[0].text)}</option>`).join('')}</select></label><label>Frage oder Diskussionsbeitrag<textarea name="body" required maxlength="1500" rows="3"></textarea></label><button class="primary">Beitrag senden</button></form>`:''}`;
 }
@@ -90,11 +103,11 @@ $('classrooms-content').addEventListener('input',e=>{
  dirty=true;
  if(e.target.matches('[data-answer]')){const v=drafts.get(selected)||[];v[Number(e.target.dataset.answer)]=e.target.value;drafts.set(selected,v);}
  if(e.target.matches('[data-reply-id]'))replyDrafts.set(e.target.dataset.replyId,e.target.value);
- if(e.target.id==='cr-search')picker();
+ if(e.target.matches('[data-custom-field]'))customItems[Number(e.target.dataset.customIndex)][e.target.dataset.customField]=e.target.value;
 });
 $('classrooms-content').addEventListener('change',e=>{
- if(e.target.id==='cr-level')picker();
- if(e.target.matches('[data-sentence]')){const id=Number(e.target.dataset.sentence);if(e.target.checked){if(selected.size>=20){e.target.checked=false;status('Maximal 20 Sätze pro Paket.',true);return;}selected.set(id,deck.find(s=>s.id===id));}else selected.delete(id);$('cr-selection-count').textContent=`${selected.size} Sätze ausgewählt`;}
+ if(e.target.id==='cr-level'||e.target.id==='cr-topic')picker();
+ if(e.target.matches('[data-sentence]')){const id=Number(e.target.dataset.sentence);if(e.target.checked){if(selectionSize()>=20){e.target.checked=false;status('Maximal 20 Sätze pro Aufgabe.',true);return;}selected.set(id,deck.find(s=>s.id===id));}else selected.delete(id);updateSelectionCount();}
 });
 $('classrooms-content').addEventListener('click',e=>{
  const el=e.target.closest('[data-cr]');if(!el)return;
@@ -107,6 +120,14 @@ $('classrooms-content').addEventListener('click',e=>{
    if(action==='assignment')return assignment(el.dataset.id);
    if(action==='refresh_assignment')return refreshAssignment();
    if(action==='new_assignment')return composer();
+   if(action==='add_custom'){
+     if(selectionSize()>=20)throw new Error('Maximal 20 Sätze pro Aufgabe.');
+     customItems.push({de:'',fi:''});renderCustomItems();updateSelectionCount();
+     $('cr-custom-items').lastElementChild?.querySelector('textarea')?.focus();return;
+   }
+   if(action==='remove_custom'){
+     customItems.splice(Number(el.dataset.index),1);renderCustomItems();updateSelectionCount();return;
+   }
    if(action==='reply'){
      const a=room.assignments.find(x=>x.id===selected),m=a.messages.find(x=>x.id===el.dataset.id);
      if(!m||room.archived)throw new Error('Auf diesen Beitrag kann gerade nicht geantwortet werden.');
@@ -130,8 +151,16 @@ $('classrooms-content').addEventListener('submit',e=>{
  run(async()=>{
    let payload=Object.fromEntries(data);
    if(action==='assign'){
-     if(!selected?.size)throw new Error('Bitte mindestens einen Satz auswählen.');
-     payload={title:data.get('title'),items:[...selected.values()],due_at:data.get('due')?new Date(data.get('due')).toISOString():null};
+     if(!selectionSize())throw new Error('Bitte mindestens einen Satz auswählen oder erstellen.');
+     if(selectionSize()>20)throw new Error('Maximal 20 Sätze pro Aufgabe.');
+     const teacher=accountUser()?.username||accountUser()?.user_metadata?.username||'Lehrkraft';
+     const own=customItems.map((item,i)=>{
+       const de=item.de.trim(),fi=item.fi.trim();
+       if(!de||!fi)throw new Error(`Bitte deutschen Satz und finnische Lösung für eigenen Satz ${i+1} eingeben.`);
+       const uid=globalThis.crypto?.randomUUID?.()||`${Date.now()}-${i}`;
+       return {id:`teacher-${uid}`,lang:'fin',text:fi,owner:teacher,origin:'teacher_created',translations:[{id:`teacher-de-${uid}`,lang:'deu',text:de,owner:teacher,origin:'teacher_created'}],audios:[]};
+     });
+     payload={title:data.get('title'),items:[...selected.values(),...own],due_at:data.get('due')?new Date(data.get('due')).toISOString():null};
    }
    if(action==='submit'){
      const a=room.assignments.find(x=>x.id===selected);

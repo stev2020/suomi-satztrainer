@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import {GRAMMAR_TOPICS,topicNotes} from './dist/grammar-topics.mjs';
 const {Window}=await import(process.env.HAPPY_DOM_MODULE||'happy-dom');
 const window=new Window({url:'http://localhost:4173',settings:{disableCSSFileLoading:true,disableJavaScriptFileLoading:true}});
 window.document.body.innerHTML='<header><button id="account-button">Konto</button></header>';
@@ -8,7 +9,8 @@ const room={id:'11111111-1111-4111-a111-111111111111',name:'Testklasse',teacher:
 const calls=[];
 room.members.unshift({id:'owner',name:'teacher',role:'teacher',blocked:false});room.members[1].role='student';
 let messageNumber=0;
-window.accountUser=()=>logged?{id:'test-user'}:null;
+window.accountUser=()=>logged?{id:'test-user',user_metadata:{username:teacher?'teacher':'learner'}}:null;
+window.GRAMMAR_TOPICS=GRAMMAR_TOPICS;window.topicNotes=topicNotes;
 window.confirm=()=>true;
 window.accountRequest=async(url,opts)=>{
  const {action,payload}=JSON.parse(opts.body);calls.push(action);let result={};
@@ -23,8 +25,8 @@ window.accountRequest=async(url,opts)=>{
  if(action==='delete_room'){assert.equal(payload.confirm_name,room.name);assert.equal(payload.room_id,room.id);deleted=true;result={deleted:true};}
  return {ok:true,json:async()=>JSON.parse(JSON.stringify(result))};
 };
-window.fetch=async()=>({ok:true,json:async()=>JSON.parse(fs.readFileSync(new URL('./dist/sentences.json',import.meta.url),'utf8'))});
-const source=fs.readFileSync(new URL('./dist/classrooms.js',import.meta.url),'utf8').replace(/^import .*\n/,'');
+window.fetch=async url=>({ok:true,json:async()=>JSON.parse(fs.readFileSync(new URL(String(url).includes('grammar.json')?'./dist/grammar.json':'./dist/sentences.json',import.meta.url),'utf8'))});
+const source=fs.readFileSync(new URL('./dist/classrooms.js',import.meta.url),'utf8').replace(/^import .*\n/gm,'');
 window.eval(source);
 const $=s=>window.document.querySelector(s);
 const settle=async()=>{for(let i=0;i<15;i++)await new Promise(r=>setTimeout(r,0));assert(!$('[aria-busy]'),'request finished');const status=$('#classrooms-status');assert(!status.classList.contains('error'),status.textContent);};
@@ -35,18 +37,29 @@ try{
  await click('#classrooms-close');logged=true;await click('#classrooms-button');
  $('[data-cr-form=create] input').value='Testklasse';await submit('[data-cr-form=create]');
  assert($('.cr-roster').textContent.includes('teacher · Lehrkraft · Ersteller'));assert.equal($('.cr-roster').querySelectorAll('[data-cr=remove]').length,1);
- assert($('[data-cr=new_assignment]'));await click('[data-cr=new_assignment]');
+ assert.equal($('[data-cr=new_assignment]').textContent,'Aufgabe erstellen');await click('[data-cr=new_assignment]');
+ assert($('#cr-topic'));assert(!$('#cr-search'));assert($('#cr-topic-hint').textContent.length>0);
  $('[name=title]').value='Testaufgabe';
  const check=$('[data-sentence]');check.checked=true;check.dispatchEvent(new window.Event('change',{bubbles:true}));
- await submit('[data-cr-form=assign]');assert.equal(room.assignments[0].items.length,1);
+ await click('[data-cr=add_custom]');
+ const de=$('[data-custom-field=de]'),fi=$('[data-custom-field=fi]');
+ de.value='Heute lernen wir zusammen.';de.dispatchEvent(new window.Event('input',{bubbles:true}));
+ fi.value='Tänään opiskelemme yhdessä.';fi.dispatchEvent(new window.Event('input',{bubbles:true}));
+ assert.equal($('#cr-selection-count').textContent,'2 Sätze ausgewählt');
+ assert.equal($('[data-cr-form=assign] button.primary').textContent,'Aufgabe veröffentlichen');
+ await submit('[data-cr-form=assign]');assert.equal(room.assignments[0].items.length,2);
+ assert.equal(room.assignments[0].items[1].origin,'teacher_created');assert.equal(room.assignments[0].items[1].translations[0].text,'Heute lernen wir zusammen.');
  await click('[data-cr=assignment]');assert($('[data-cr=release]'));
  assert(!$('#classrooms-content').textContent.includes('Noch ohne Abgabe: teacher'));
  await click('#classrooms-close');teacher=false;await click('#classrooms-button');await click('[data-cr=open]');
  assert($('.cr-roster').textContent.includes('Lehrkraft · Ersteller'));assert.equal($('.cr-roster').querySelectorAll('[data-cr=remove]').length,0);
  assert(!$('[data-cr=new_assignment]'));assert(!$('[data-cr=delete_room]'));await click('[data-cr=assignment]');assert(!$('[data-cr=release]'));
- $('[data-answer]').value='<img src=x onerror=alert(1)> Hei!';
- $('[data-answer]').dispatchEvent(new window.Event('input',{bubbles:true}));
+ assert($('#classrooms-content').textContent.includes('Heute lernen wir zusammen.'));assert(!$('#classrooms-content').textContent.includes('Tänään opiskelemme yhdessä.'));
+ const answers=window.document.querySelectorAll('[data-answer]');assert.equal(answers.length,2);
+ answers[0].value='<img src=x onerror=alert(1)> Hei!';answers[0].dispatchEvent(new window.Event('input',{bubbles:true}));
+ answers[1].value='Tänään opiskelemme yhdessä.';answers[1].dispatchEvent(new window.Event('input',{bubbles:true}));
  await submit('[data-cr-form=submit]');assert($('#classrooms-content').textContent.includes('Deine Antworten sind gespeichert.'));assert.equal($('#classrooms-content').querySelectorAll('img').length,0);
+ assert($('#classrooms-content').textContent.includes('Richtige Lösung: Tänään opiskelemme yhdessä.'));assert($('#classrooms-content').textContent.includes('Eigener Satz und richtige Übersetzung der Lehrkraft.'));
  $('[data-cr-form=message] textarea').value='Warum diese Form?';await submit('[data-cr-form=message]');assert($('.cr-message'));
  await click('[data-cr=reply]');$('.cr-reply-form textarea').value='Direkte Antwort';await submit('.cr-reply-form');
  assert.equal($('.cr-discussions').children.length,1);assert.equal($('.cr-replies').querySelectorAll('.cr-message').length,1);
@@ -57,7 +70,7 @@ try{
  await click('[data-cr=reply][data-id=message-1]');$('.cr-reply-form textarea').value='Erklärung der Lehrkraft';await submit('.cr-reply-form');
  assert($('#cr-message-message-4').textContent.includes('Lehrkraft'));assert.equal($('.cr-discussions').children.length,1);
  $('[data-cr-form=message] textarea').value='Neue Diskussion';await submit('[data-cr-form=message]');assert.equal($('.cr-discussions').children.length,2);
- console.log('PASS DOM: creator roster for both roles, nested replies, teacher response, separate discussion, escaping and removed-parent preservation');
+ console.log('PASS DOM: grammar filter, mixed built-in/custom task, hidden then revealed solution, creator roster and threaded discussion');
  await click('[data-cr=release]');assert($('[data-cr=react]'));await click('[data-cr=react]');
  assert(calls.includes('react'));console.log('PASS DOM: guest gate, create, picker, teacher/student controls, submit, escaping, questions, moderation, release, reactions');
  await click('[data-cr=back]');await click('[data-cr=delete_room]');assert(!$('#cr-delete-confirm').hidden);
