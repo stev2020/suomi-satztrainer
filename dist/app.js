@@ -19,6 +19,8 @@ const isTranslation=()=>['translate','grammar'].includes(activity);
 const matchesTopic=s=>topicNotes(s,grammar,grammarTopic).length>0;
 const writingSessions={};
 const WRITING_RATINGS={right:'Richtig',almost:'Fast richtig',again:'Noch üben'};
+const ACTIVITY_LABELS={translate:'Übersetzen',listen:'Hörmodus',dictation:'Diktat',writing:'Schreibtest',grammar:'Grammatik'};
+const DIRECTION_LABELS={'fi-de':'Finnisch → Deutsch','de-fi':'Deutsch → Finnisch',random:'Zufällig'};
 const isWritingEligible=s=>['fi-de','de-fi','listen','dictation'].some(kind=>Number(memory.reviews[`${s.id}:${kind}`]?.repetitions)>=3);
 const writingPool=()=>[...data,...archived].filter(s=>s.level===level&&isWritingEligible(s));
 const day=()=>new Date().toLocaleDateString('sv-SE');
@@ -41,8 +43,13 @@ function renderStats(){
  $('audio-total').textContent=`${data.filter(s=>s.audios.length).length} mit Originalaufnahme`;
  $('levels').innerHTML=levels.map(n=>{const all=(activity==='writing'?[...data,...archived]:data).filter(s=>s.level===n&&(['translate','grammar','writing'].includes(activity)||s.audios.length)&&(activity!=='grammar'||matchesTopic(s))),seen=all.filter(s=>activity==='writing'?isWritingEligible(s):studyDirections().some(dir=>review(s,dir))).length;return `<button class="level ${n===level?'active':''}" data-level="${n}" aria-pressed="${n===level}"><span class="level-number">${String(n).padStart(2,'0')}</span><span><b>Level ${n}</b><small>${activity==='writing'?`${seen} Sätze bereit`:`${seen} von ${all.length} geübt`}</small></span></button>`;}).join('');
  $('new-count').textContent=base().filter(s=>eligibleDirections(s,'new').length).length;
- $('due-count').textContent=base(true).filter(s=>eligibleDirections(s,'review').length).length;
+ const dueCount=base(true).filter(s=>eligibleDirections(s,'review').length).length;
+ $('due-count').textContent=dueCount;
+ $('home-review-count').textContent=dueCount;
  $('fav-count').textContent=base(true).filter(s=>memory.favorites.includes(s.id)).length;
+ const detail=activity==='grammar'?GRAMMAR_TOPICS.find(t=>t.id===grammarTopic)?.label:activity==='writing'?'Deutsch → Finnisch':isTranslation()?DIRECTION_LABELS[direction]:'Mit Originalaufnahme';
+ $('practice-summary').textContent=`Level ${level} · ${ACTIVITY_LABELS[activity]}`;
+ $('home-session-meta').textContent=`Level ${level} · ${ACTIVITY_LABELS[activity]}${detail?` · ${detail}`:''}`;
  document.querySelectorAll('[data-mode]').forEach(b=>{b.classList.toggle('selected',b.dataset.mode===mode);b.setAttribute('aria-pressed',b.dataset.mode===mode);});
  if(activity==='writing'){const session=writingSessions[level],total=session?.items.length||0,count=session?.answers.length||0;$('session-title').textContent=`Level ${level} · Schreibtest · Deutsch → Finnisch`;$('session-progress').textContent=total?`${count} / ${total}`:'Noch keine Sätze bereit';$('progress-bar').style.width=total?`${count/total*100}%`:'0%';return;}
  $('session-title').textContent=`Level ${level} · ${activity==='grammar'?GRAMMAR_TOPICS.find(t=>t.id===grammarTopic).label:mode==='new'?'Neue Sätze · Audio zuerst':mode==='review'?'Wiederholen':'Deine Favoriten'}`;
@@ -235,11 +242,22 @@ $('import-backup').onchange=async e=>{if(!accountActive()){$('backup-status').te
 $('cancel-import').onclick=()=>{clearImport();$('backup-status').textContent='Import abgebrochen.';};
 $('apply-backup').onclick=()=>{if(!accountActive()){$('backup-status').textContent='Bitte melde dich an, um eine Sicherung zu übernehmen.';return;}if(!pendingBackup||!ready)return;const candidate=mergeLearning(memory,pendingBackup);if(!levels.includes(candidate.prefs.level))candidate.prefs.level=levels[0]||1;try{commitLearning(candidate);}catch{$('backup-status').textContent='Dein Browser konnte die Sicherung nicht speichern. Der bisherige Lernstand bleibt erhalten.';return;}({level,direction,audioOnly,activity,speed,grammarTopic}=candidate.prefs);clearImport();mode='new';start();renderReportList();$('backup-status').textContent='Lernstand zusammengeführt. Deine Einstellungen sind übernommen und eine neue Lerneinheit ist bereit.';};
 
+function showView(name,openSettings=false){
+ for(const view of ['home','practice','progress'])$(`${view}-view`).hidden=view!==name;
+ document.querySelectorAll('.bottom-nav [data-view]').forEach(b=>{const selected=b.dataset.view===name;b.classList.toggle('selected',selected);if(selected)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
+ if(name!=='practice')stopAudio();
+ if(name==='practice')$('practice-settings').open=openSettings;
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+$('continue-practice').onclick=()=>showView('practice');
+$('home-review').onclick=()=>{mode='review';start();showView('practice');};
+$('home-choose').onclick=()=>{showView('practice',true);$('practice-settings').querySelector('summary')?.focus();};
+document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>showView(b.dataset.view));
 document.querySelectorAll('[data-activity]').forEach(b=>b.onclick=()=>{if(activity!==b.dataset.activity){activity=b.dataset.activity;start();}});
 document.querySelectorAll('[data-direction]').forEach(b=>b.onclick=()=>{if(direction!==b.dataset.direction){direction=b.dataset.direction;start();}});
 $('grammar-topic').onchange=e=>{grammarTopic=e.target.value;start();};
 $('audio-only').checked=audioOnly;
-$('levels').onclick=e=>{const b=e.target.closest('[data-level]');if(b){level=Number(b.dataset.level);start();}};
+$('levels').onclick=e=>{const b=e.target.closest('[data-level]');if(b){level=Number(b.dataset.level);start();showView('practice');}};
 $('audio-only').onchange=e=>{audioOnly=e.target.checked;start();};document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;start();});
 $('about').onclick=()=>$('about-dialog').showModal();$('close-about').onclick=()=>$('about-dialog').close();$('about-dialog').onclick=e=>{if(e.target===$('about-dialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}};
 document.addEventListener('keydown',e=>{if(document.querySelector('dialog[open]')||!ready||activity==='writing'||$('about-dialog').open||$('report-dialog').open||$('manage-dialog').open||e.ctrlKey||e.metaKey||e.altKey||e.repeat||['INPUT','SELECT','TEXTAREA'].includes(e.target.tagName))return;if(e.code==='Space'&&e.target.tagName!=='BUTTON'&&!revealed&&queue.length&&isTranslation()){e.preventDefault();$('reveal').click();}else if(revealed&&['1','2','3'].includes(e.key)){e.preventDefault();grade({1:'again',2:'hard',3:'easy'}[e.key]);}});
