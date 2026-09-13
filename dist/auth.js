@@ -20,6 +20,11 @@ const technicalEmail=u=>`u${hex(u)}@users.suomi.invalid`;
 const api=(path,options={})=>fetch(`${SUPABASE_URL}${path}`,{...options,headers:{apikey:SUPABASE_PUBLISHABLE_KEY,'Content-Type':'application/json',...(options.headers||{})}});
 const authHeaders=()=>session?.access_token?{Authorization:`Bearer ${session.access_token}`}:{};
 const status=(t,error=false)=>{const el=$('account-status');if(el){el.textContent=t;el.classList.toggle('error',error);}};
+const syncState=(t,error=false)=>{
+  const detail=$('account-sync');if(detail){detail.textContent=t;detail.classList.toggle('error',error);}
+  const home=$('storage-note');if(home){home.textContent=`Konto verbunden · ${t}`;home.classList.toggle('error',error);}
+};
+const stableJSON=value=>JSON.stringify(value,(_,item)=>item&&typeof item==='object'&&!Array.isArray(item)?Object.keys(item).sort().reduce((out,key)=>(out[key]=item[key],out),{}):item);
 const localLearning=()=>{try{return JSON.parse(localStorage.getItem(STORE))||null}catch{return null}};
 const currentLearning=()=>window.suomiLearningState?.snapshot?.()||localLearning();
 function saveSession(v){session=v;if(v)localStorage.setItem(SESSION,JSON.stringify(v));else localStorage.removeItem(SESSION);renderAccount();}
@@ -48,22 +53,28 @@ function mergeLearning(local,cloud){
 }
 async function uploadLearning(state=currentLearning()){
   if(!session?.user||!state)return;
+  syncState('Synchronisierung läuft …');
   const r=await request('/rest/v1/learning_state?on_conflict=user_id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({user_id:session.user.id,state,updated_at:new Date().toISOString()})});
   if(!r.ok)throw new Error('Der Lernstand konnte nicht synchronisiert werden.');
   lastSnapshot=JSON.stringify(state);
-  if($('account-sync'))$('account-sync').textContent=`Synchronisiert · ${new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})}`;
+  syncState(`Synchronisiert · ${new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})}`);
 }
 async function pullAndMerge(){
   if(!session?.user)return;
+  syncState('Synchronisierung wird geprüft …');
   const r=await request('/rest/v1/learning_state?select=state,updated_at&limit=1');
   if(!r.ok)throw new Error('Der Online-Lernstand konnte nicht geladen werden.');
-  const rows=await r.json(),merged=mergeLearning(localLearning(),rows[0]?.state||null);
-  if(merged){localStorage.setItem(STORE,JSON.stringify(merged));await uploadLearning(merged);location.reload();}
+  const rows=await r.json(),local=localLearning(),merged=mergeLearning(local,rows[0]?.state||null);
+  if(!merged){syncState(`Synchronisiert · ${new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})}`);return;}
+  const changed=stableJSON(merged)!==stableJSON(local);
+  localStorage.setItem(STORE,JSON.stringify(merged));
+  await uploadLearning(merged);
+  if(changed)location.reload();
 }
 function watch(){
   clearInterval(timer);if(!session?.user)return;
   lastSnapshot=JSON.stringify(currentLearning());
-  timer=setInterval(()=>{const cur=JSON.stringify(currentLearning());if(cur!==lastSnapshot)uploadLearning().catch(()=>{})},2500);
+  timer=setInterval(()=>{const cur=JSON.stringify(currentLearning());if(cur!==lastSnapshot)uploadLearning().catch(()=>syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true))},2500);
 }
 function renderAccount(){
   const logged=!!session?.user;
@@ -72,7 +83,7 @@ function renderAccount(){
   if(logged&&$('account-name'))$('account-name').textContent=session.user.user_metadata?.username||'Nutzer';
   document.body.dataset.account=logged?'authenticated':'guest';
   if($('account-button'))$('account-button').textContent=logged?'Konto ✓':'Anmelden';
-  if($('storage-note'))$('storage-note').textContent=logged?'Dein Lernstand wird mit deinem Konto synchronisiert.':'Ohne Konto wird dein Fortschritt nicht gespeichert.';
+  if(logged)syncState('Synchronisierung wird geprüft …');else if($('storage-note')){$('storage-note').textContent='Ohne Konto wird dein Fortschritt nicht gespeichert.';$('storage-note').classList.remove('error');}
   watch();
 }
 async function login(username,password,syncCloud=true,seedState=null){
@@ -106,7 +117,7 @@ async function logout(){
   location.reload();
 }
 function addDialog(){
-  document.body.insertAdjacentHTML('beforeend',`<dialog id="account-dialog" aria-labelledby="account-title"><div class="dialog-top"><h2 id="account-title">Dein Konto</h2><button id="close-account" class="quiet" aria-label="Schließen">✕</button></div><div id="account-unconfigured" hidden><p>Die Kontofunktion ist vorbereitet, aber die Serververbindung ist noch nicht aktiviert.</p></div><div id="account-logged-out"><div class="account-tabs"><button type="button" data-account-tab="login" class="selected">Anmelden</button><button type="button" data-account-tab="register">Registrieren</button><button type="button" data-account-tab="recover">Passwort vergessen</button></div><form id="login-form" class="account-form"><label>Benutzername<input id="login-name" autocomplete="username" required></label><label>Passwort<input id="login-password" type="password" autocomplete="current-password" required minlength="8"></label><button class="primary" type="submit">Anmelden</button></form><form id="register-form" class="account-form" hidden><label>Benutzername<input id="register-name" autocomplete="username" required></label><label>Passwort<input id="register-password" type="password" autocomplete="new-password" required minlength="8"></label><button class="primary" type="submit">Konto erstellen</button><p class="account-hint">Keine E-Mail nötig. Danach erhältst du einmalig einen Wiederherstellungscode.</p></form><form id="recover-form" class="account-form" hidden><label>Benutzername<input id="recover-name" autocomplete="username" required></label><label>Wiederherstellungscode<input id="recover-code" autocomplete="off" required></label><label>Neues Passwort<input id="recover-password" type="password" autocomplete="new-password" required minlength="8"></label><button class="primary" type="submit">Passwort neu setzen</button></form></div><div id="account-logged-in" hidden><p>Angemeldet als <strong id="account-name"></strong></p><p id="account-sync">Lernstand wird synchronisiert …</p><button id="sync-now" class="quiet" type="button">Jetzt synchronisieren</button><button id="logout" class="quiet" type="button">Abmelden</button></div><div id="recovery-result" class="recovery-result" hidden><h3>Wiederherstellungscode</h3><p>Speichere diesen Code sicher. Er wird nicht noch einmal angezeigt.</p><code id="recovery-code-result"></code><button id="copy-recovery" class="quiet" type="button">Code kopieren</button></div><p id="account-status" role="status"></p></dialog>`);
+  document.body.insertAdjacentHTML('beforeend',`<dialog id="account-dialog" aria-labelledby="account-title"><div class="dialog-top"><h2 id="account-title">Dein Konto</h2><button id="close-account" class="quiet" aria-label="Schließen">✕</button></div><div id="account-unconfigured" hidden><p>Die Kontofunktion ist vorbereitet, aber die Serververbindung ist noch nicht aktiviert.</p></div><div id="account-logged-out"><div class="account-tabs"><button type="button" data-account-tab="login" class="selected">Anmelden</button><button type="button" data-account-tab="register">Registrieren</button><button type="button" data-account-tab="recover">Passwort vergessen</button></div><form id="login-form" class="account-form"><label>Benutzername<input id="login-name" autocomplete="username" required></label><label>Passwort<input id="login-password" type="password" autocomplete="current-password" required minlength="8"></label><button class="primary" type="submit">Anmelden</button></form><form id="register-form" class="account-form" hidden><label>Benutzername<input id="register-name" autocomplete="username" required></label><label>Passwort<input id="register-password" type="password" autocomplete="new-password" required minlength="8"></label><button class="primary" type="submit">Konto erstellen</button><p class="account-hint">Keine E-Mail nötig. Danach erhältst du einmalig einen Wiederherstellungscode.</p></form><form id="recover-form" class="account-form" hidden><label>Benutzername<input id="recover-name" autocomplete="username" required></label><label>Wiederherstellungscode<input id="recover-code" autocomplete="off" required></label><label>Neues Passwort<input id="recover-password" type="password" autocomplete="new-password" required minlength="8"></label><button class="primary" type="submit">Passwort neu setzen</button></form></div><div id="account-logged-in" hidden><p>Angemeldet als <strong id="account-name"></strong></p><p id="account-sync">Synchronisierung wird geprüft …</p><button id="sync-now" class="quiet" type="button">Jetzt synchronisieren</button><button id="logout" class="quiet" type="button">Abmelden</button></div><div id="recovery-result" class="recovery-result" hidden><h3>Wiederherstellungscode</h3><p>Speichere diesen Code sicher. Er wird nicht noch einmal angezeigt.</p><code id="recovery-code-result"></code><button id="copy-recovery" class="quiet" type="button">Code kopieren</button></div><p id="account-status" role="status"></p></dialog>`);
 }
 function showRecovery(code){$('recovery-code-result').textContent=code;$('recovery-result').hidden=false}
 function bind(){
@@ -118,7 +129,7 @@ function bind(){
   $('register-form').onsubmit=async e=>{e.preventDefault();try{status('Konto wird erstellt …');showRecovery(await register($('register-name').value,$('register-password').value));status('Konto erstellt und angemeldet.')}catch(err){status(err.message,true)}};
   $('recover-form').onsubmit=async e=>{e.preventDefault();try{status('Konto wird wiederhergestellt …');showRecovery(await recover($('recover-name').value,$('recover-code').value,$('recover-password').value));status('Passwort geändert. Der alte Wiederherstellungscode ist ungültig.')}catch(err){status(err.message,true)}};
   $('logout').onclick=async()=>{await logout()};
-  $('sync-now').onclick=async()=>{try{await pullAndMerge()}catch(err){status(err.message,true)}};
+  $('sync-now').onclick=async()=>{try{status('');await pullAndMerge()}catch(err){syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true);status(err.message,true)}};
   $('copy-recovery').onclick=async()=>{try{await navigator.clipboard.writeText($('recovery-code-result').textContent);status('Code kopiert.')}catch{status('Bitte kopiere den Code manuell.',true)}};
   renderAccount();
 }
@@ -126,4 +137,4 @@ loadSession();bind();
 export const accountUser=()=>session?.user||null;
 export {request as accountRequest};
 import('./classrooms.js').catch(()=>{});
-if(session?.user&&configured())refreshSession().then(ok=>ok&&watch()).catch(()=>{});
+if(session?.user&&configured())refreshSession().then(async ok=>{if(!ok)return;try{await pullAndMerge();watch();}catch(err){syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true);status(err.message,true);}}).catch(()=>{syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true);});
