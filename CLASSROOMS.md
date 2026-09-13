@@ -33,6 +33,10 @@ enthalten. Das ist kein manipulationssicheres Prüfungssystem.
 - Teilnehmer können eigene Beiträge löschen und den Raum verlassen.
   Bisherige Beiträge/Abgaben bleiben beim Verlassen erhalten.
 - Archivierung schließt Beitritt und Änderungen; Lesen bleibt möglich.
+- Ersteller können unter „Einladung & Mitglieder verwalten“ einen Raum
+  endgültig löschen, auch im Archiv. Dafür muss der exakte Raumname eingegeben
+  werden. Aufgaben, Abgaben, Fragen, Reaktionen und Mitgliedschaften werden
+  unwiderruflich gelöscht; Konten und persönliche Lernstände bleiben erhalten.
 - Limits: 10 eigene Räume, 30 Mitgliedschaften, 100 Teilnehmer pro Raum,
   100 Aufgabenpakete pro Raum, 300 Diskussionsbeiträge pro Aufgabe,
   30 Schreib-/Beitrittsaktionen pro Minute und Konto.

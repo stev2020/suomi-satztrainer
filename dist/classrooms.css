@@ -20,5 +20,7 @@
 #classrooms-dialog .cr-pick{display:flex;gap:12px;border-bottom:1px solid #172c3820;padding:10px;font-weight:400;align-items:flex-start}
 .cr-pick small{display:block;color:var(--muted)}.cr-pick input{margin-top:6px;flex:none}
 #classrooms-status.error{color:#9d2433}#classrooms-status:empty{display:none}
+.cr-delete-warning{border:2px solid #9d2433;border-radius:10px;padding:16px;margin:16px 0;background:#fff5f5}
+#classrooms-dialog .cr-danger,#classrooms-dialog [data-danger]{color:#9d2433;border-color:#9d2433}
 header{flex-wrap:wrap}
 @media(max-width:640px){.cr-grid{grid-template-columns:1fr}#classrooms-dialog{padding:16px}.cr-card{padding:14px}.cr-hero h2{font-size:25px}.cr-toolbar button{flex:1}}
