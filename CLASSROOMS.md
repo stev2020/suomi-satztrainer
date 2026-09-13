@@ -24,6 +24,16 @@ enthalten. Das ist kein manipulationssicheres Prüfungssystem.
 
 ## Privatsphäre und Moderation
 
+- Die Mitgliederliste zeigt die Lehrkraft mit „Ersteller“ und die Teilnehmer.
+  Alle Raummitglieder können die aktive Liste sehen; entfernte Mitglieder
+  erscheinen nur für die Lehrkraft. Die Abgabequote zählt weiterhin nur Schüler.
+- Unter jedem Diskussionsbeitrag gibt es „Antworten“. Antworten und weitere
+  Unterantworten bleiben ihrem Elternbeitrag und demselben Satz zugeordnet.
+  „Neue Diskussion starten“ beginnt einen unabhängigen Diskussionsbaum.
+- Beim Entfernen eines Beitrags wird dessen Text durch einen Platzhalter ersetzt;
+  Antworten bleiben erhalten. Alte Beiträge ohne Verknüpfung bleiben eigenständige
+  Diskussionen; frühere Zusammenhänge werden nicht nachträglich geraten.
+
 - Der persönliche `learning_state` bleibt unverändert und privat.
 - Die Lehrkraft sieht Namen und Abgaben. Andere Teilnehmer sehen fremde
   Abgaben erst nach Freigabe und ohne Nutzernamen. Formulierungen können
