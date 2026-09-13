@@ -5,8 +5,10 @@ import {GRAMMAR_TOPICS,topicNotes} from './dist/grammar-topics.mjs';
 const payload=JSON.parse(fs.readFileSync(new URL('./dist/sentences.json',import.meta.url)));
 const grammar=JSON.parse(fs.readFileSync(new URL('./dist/grammar.json',import.meta.url))).sentences;
 const elements=new Map();
+class AudioStub{constructor(){this.paused=true;this.readyState=4;AudioStub.instances.push(this)}load(){}pause(){this.paused=true}play(){this.paused=false;return Promise.resolve()}removeAttribute(name){if(name==='src')this.src=''}}
+AudioStub.instances=[];
 function element(id){if(!elements.has(id))elements.set(id,{innerHTML:'',textContent:'',value:'',style:{},dataset:{},classList:{toggle(){}},setAttribute(){},addEventListener(){},querySelector(){return element('audio-label');},insertAdjacentHTML(_,html){this.innerHTML+=html;},focus(){}});return elements.get(id);}
-const ctx=vm.createContext({GRAMMAR_TOPICS,topicNotes,console,URL,assert,payload,fixtureGrammar:grammar,localStorage:{getItem(){return null;},setItem(){}},document:{getElementById:element,querySelectorAll(){return [];},addEventListener(){}}});
+const ctx=vm.createContext({GRAMMAR_TOPICS,topicNotes,console,URL,Audio:AudioStub,assert,payload,fixtureGrammar:grammar,localStorage:{getItem(){return null;},setItem(){}},document:{getElementById:element,querySelectorAll(){return [];},addEventListener(){}}});
 let app=fs.readFileSync(new URL('./dist/app.js',import.meta.url),'utf8').replace(/^import .*\n/,'');
 ctx.window={};
 ctx.document.body={dataset:{account:'authenticated'}};
@@ -35,6 +37,7 @@ direction='random';start();const repeated=queue[0];revealed=true;grade('again');
 audioOnly=true;start();assert(queue.every(s=>s.audios.length));
 grammar={};start();assert.equal(queue.length,0);assert($('card').innerHTML.includes('Keine passenden'));
 grammar=fixtureGrammar;activity='translate';audioOnly=false;mode='new';start();assert(!$('direction-group').hidden);assert($('grammar-controls').hidden);
+assert(audioCache.size<=AUDIO_CACHE_LIMIT);const preparedURL=queue[0].audios[0].download_url;assert.strictEqual(prepareAudio(preparedURL),prepareAudio(preparedURL));
 activity='listen';start();assert(queue.every(s=>s.audios.length));assert($('direction-group').hidden);
 activity='dictation';start();assert(queue.every(s=>s.audios.length));assert(questionMarkup(queue[0],'').includes('Was hörst du'));
 activity='writing';start();assert($('practice-toolbar').hidden);
