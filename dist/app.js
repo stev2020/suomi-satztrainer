@@ -49,6 +49,7 @@ function renderStats(){
  $('fav-count').textContent=base(true).filter(s=>memory.favorites.includes(s.id)).length;
  const detail=activity==='grammar'?GRAMMAR_TOPICS.find(t=>t.id===grammarTopic)?.label:activity==='writing'?'Deutsch → Finnisch':isTranslation()?DIRECTION_LABELS[direction]:'Mit Originalaufnahme';
  $('practice-summary').textContent=`Level ${level} · ${ACTIVITY_LABELS[activity]}`;
+ $('settings-level').textContent=`Level ${level}`;
  $('home-session-meta').textContent=`Level ${level} · ${ACTIVITY_LABELS[activity]}${detail?` · ${detail}`:''}`;
  document.querySelectorAll('[data-mode]').forEach(b=>{b.classList.toggle('selected',b.dataset.mode===mode);b.setAttribute('aria-pressed',b.dataset.mode===mode);});
  if(activity==='writing'){const session=writingSessions[level],total=session?.items.length||0,count=session?.answers.length||0;$('session-title').textContent=`Level ${level} · Schreibtest · Deutsch → Finnisch`;$('session-progress').textContent=total?`${count} / ${total}`:'Noch keine Sätze bereit';$('progress-bar').style.width=total?`${count/total*100}%`:'0%';return;}
