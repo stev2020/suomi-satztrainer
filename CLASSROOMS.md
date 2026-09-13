@@ -12,6 +12,9 @@ Ersteller sind Lehrkräfte ihres eigenen Raums, Beitretende sind Teilnehmer.
    Sätze lassen sich nach Level und Grammatikthema filtern. Zusätzlich kann die
    Lehrkraft eigene deutsche Sätze mit der richtigen finnischen Lösung eingeben.
    Ein Abgabetermin ist optional.
+   Der Reiter „Eigene Sätze“ öffnet diese Eingabe direkt. Im Reiter „Vorhandene
+   Sätze“ können ergänzend einzelne eigene Sätze hinzugefügt werden. Erst
+   „Satz hinzufügen“ übernimmt ein Satzpaar sichtbar in die aktuelle Aufgabe.
 4. Teilnehmer übersetzen alle Sätze und geben einmal verbindlich ab.
 5. Lehrkraft sieht Abgaben mit Namen und noch fehlende Teilnehmer.
 6. **Abgaben schließen & Vergleich freigeben** öffnet den Vergleich für die

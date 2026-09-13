@@ -51,12 +51,24 @@ async function composer(){
    if(!sentencesResponse.ok||!grammarResponse.ok)throw new Error('Sätze und Grammatikthemen konnten nicht geladen werden.');
    deck=(await sentencesResponse.json()).sentences;grammar=(await grammarResponse.json()).sentences;
  }
- selected=new Map();customItems=[];
- $('cr-composer').innerHTML=`<form data-cr-form="assign" class="cr-card"><h3>Neue Aufgabe</h3><label>Titel<input name="title" required minlength="3" maxlength="100" placeholder="Unsere erste Übersetzungsrunde"></label><label>Abgabetermin (optional)<input name="due" type="datetime-local"></label><section class="cr-assignment-source"><h4>Vorhandene Sätze auswählen</h4><div class="cr-grid"><label>Level<select id="cr-level">${[1,2,3,4,5,6].map(n=>`<option>${n}</option>`).join('')}</select></label><label>Grammatikthema<select id="cr-topic">${GRAMMAR_TOPICS.map(t=>`<option value="${t.id}">${esc(t.label)}</option>`).join('')}</select></label></div><p id="cr-topic-hint" class="cr-note"></p><div id="cr-sentence-picker"></div></section><section class="cr-assignment-source"><div class="cr-section-heading"><div><h4>Eigene Sätze erstellen</h4><p class="cr-note">Gib den deutschen Aufgabensatz und die richtige finnische Übersetzung ein.</p></div>${b('＋ Eigenen Satz hinzufügen','add_custom')}</div><div id="cr-custom-items"></div></section><p>Insgesamt sind 1–20 Sätze möglich. Die Auswahl bleibt beim Filtern erhalten.</p><p id="cr-selection-count">0 Sätze ausgewählt</p><button class="primary">Aufgabe veröffentlichen</button></form>`;
- picker();renderCustomItems();updateSelectionCount();
+ selected=new Map();customItems=[{de:'',fi:'',added:false}];
+ const customSection=title=>`<section class="cr-assignment-source"><div class="cr-section-heading"><div><h4>${title}</h4><p class="cr-note">Diese Sätze gelten nur für diese Aufgabe und erscheinen später nicht als gespeicherte Auswahl.</p></div>${b('＋ Weiteren Satz eingeben','add_custom')}</div><div data-custom-host></div></section>`;
+ $('cr-composer').innerHTML=`<form data-cr-form="assign" class="cr-card"><h3>Neue Aufgabe</h3><div class="cr-tabs" role="tablist" aria-label="Art der Sätze"><button type="button" role="tab" aria-selected="true" data-cr="tab_custom">Eigene Sätze</button><button type="button" role="tab" aria-selected="false" data-cr="tab_existing">Vorhandene Sätze</button></div><label>Titel<input name="title" required minlength="3" maxlength="100" placeholder="Unsere erste Übersetzungsrunde"></label><label>Abgabetermin (optional)<input name="due" type="datetime-local"></label><div id="cr-tab-custom" role="tabpanel">${customSection('Eigene Sätze erstellen')}</div><div id="cr-tab-existing" role="tabpanel" hidden><section class="cr-assignment-source"><h4>Vorhandene Sätze auswählen</h4><div class="cr-grid"><label>Level<select id="cr-level">${[1,2,3,4,5,6].map(n=>`<option>${n}</option>`).join('')}</select></label><label>Grammatikthema<select id="cr-topic"></select></label></div><p id="cr-topic-hint" class="cr-note"></p><div id="cr-sentence-picker"></div></section>${customSection('Eigene Sätze ergänzen')}</div><p>Insgesamt sind 1–20 hinzugefügte oder ausgewählte Sätze möglich.</p><p id="cr-selection-count">0 Sätze ausgewählt</p><button class="primary">Aufgabe veröffentlichen</button></form>`;
+ renderTopicOptions();picker();renderCustomItems();updateSelectionCount();
 }
-const selectionSize=()=>selected.size+customItems.length;
+const addedCustomItems=()=>customItems.filter(item=>item.added);
+const selectionSize=()=>selected.size+addedCustomItems().length;
 function updateSelectionCount(){if($('cr-selection-count'))$('cr-selection-count').textContent=`${selectionSize()} ${selectionSize()===1?'Satz':'Sätze'} ausgewählt`;}
+function setComposerTab(name){
+ renderCustomItems();
+ const custom=name==='custom';$('cr-tab-custom').hidden=!custom;$('cr-tab-existing').hidden=custom;
+ document.querySelectorAll('.cr-tabs [role=tab]').forEach(tab=>tab.setAttribute('aria-selected',String(tab.dataset.cr===(custom?'tab_custom':'tab_existing'))));
+}
+function renderTopicOptions(){
+ const select=$('cr-topic'),level=Number($('cr-level').value),current=select.value;
+ select.innerHTML=GRAMMAR_TOPICS.map(t=>{const count=deck.filter(s=>s.level===level&&s.translations?.length&&topicNotes(s,grammar,t.id).length).length;return `<option value="${t.id}">${esc(t.label)} (${count})</option>`;}).join('');
+ if(GRAMMAR_TOPICS.some(t=>t.id===current))select.value=current;
+}
 function picker(){
  const level=Number($('cr-level').value),topicId=$('cr-topic').value,topic=GRAMMAR_TOPICS.find(t=>t.id===topicId);
  const matches=deck.filter(s=>s.level===level&&s.translations?.length&&topicNotes(s,grammar,topicId).length);
@@ -65,8 +77,8 @@ function picker(){
  if(matches.length>80)$('cr-sentence-picker').insertAdjacentHTML('beforeend','<p>Die ersten 80 Treffer. Wähle bei Bedarf ein anderes Level oder Thema.</p>');
 }
 function renderCustomItems(){
- const host=$('cr-custom-items');if(!host)return;
- host.innerHTML=customItems.map((item,i)=>`<fieldset class="cr-custom-item"><legend>Eigener Satz ${i+1}</legend><label>Deutscher Satz<textarea data-custom-index="${i}" data-custom-field="de" required maxlength="500" rows="2" lang="de" placeholder="Welchen Satz sollen die Schüler übersetzen?">${esc(item.de)}</textarea></label><label>Richtige finnische Übersetzung<textarea data-custom-index="${i}" data-custom-field="fi" required maxlength="500" rows="2" lang="fi" placeholder="Die richtige Lösung auf Finnisch">${esc(item.fi)}</textarea></label>${b('Satz entfernen','remove_custom',`data-index="${i}"`)}</fieldset>`).join('')||'<p class="cr-note">Noch keine eigenen Sätze hinzugefügt.</p>';
+ const html=customItems.map((item,i)=>`<fieldset class="cr-custom-item ${item.added?'cr-custom-added':''}"><legend>Eigener Satz ${i+1}</legend><label>Deutscher Satz<textarea data-custom-index="${i}" data-custom-field="de" ${item.added?'required':''} maxlength="500" rows="2" lang="de" placeholder="Welchen Satz sollen die Schüler übersetzen?">${esc(item.de)}</textarea></label><label>Richtige finnische Übersetzung<textarea data-custom-index="${i}" data-custom-field="fi" ${item.added?'required':''} maxlength="500" rows="2" lang="fi" placeholder="Die richtige Lösung auf Finnisch">${esc(item.fi)}</textarea></label><div class="cr-toolbar">${item.added?'<span class="cr-added" role="status">✓ Hinzugefügt</span>':b('Satz hinzufügen','confirm_custom',`data-index="${i}"`)}${b('Satz entfernen','remove_custom',`data-index="${i}"`)}</div></fieldset>`).join('')||'<p class="cr-note">Noch keine eigenen Sätze eingegeben.</p>';
+ document.querySelectorAll('[data-custom-host]').forEach(host=>host.innerHTML=html);
 }
 function assignment(id){
  const a=room.assignments.find(x=>x.id===id);if(!a)throw new Error('Aufgabe nicht mehr verfügbar.');
@@ -106,7 +118,8 @@ $('classrooms-content').addEventListener('input',e=>{
  if(e.target.matches('[data-custom-field]'))customItems[Number(e.target.dataset.customIndex)][e.target.dataset.customField]=e.target.value;
 });
 $('classrooms-content').addEventListener('change',e=>{
- if(e.target.id==='cr-level'||e.target.id==='cr-topic')picker();
+ if(e.target.id==='cr-level'){renderTopicOptions();picker();}
+ if(e.target.id==='cr-topic')picker();
  if(e.target.matches('[data-sentence]')){const id=Number(e.target.dataset.sentence);if(e.target.checked){if(selectionSize()>=20){e.target.checked=false;status('Maximal 20 Sätze pro Aufgabe.',true);return;}selected.set(id,deck.find(s=>s.id===id));}else selected.delete(id);updateSelectionCount();}
 });
 $('classrooms-content').addEventListener('click',e=>{
@@ -120,10 +133,19 @@ $('classrooms-content').addEventListener('click',e=>{
    if(action==='assignment')return assignment(el.dataset.id);
    if(action==='refresh_assignment')return refreshAssignment();
    if(action==='new_assignment')return composer();
+   if(action==='tab_custom')return setComposerTab('custom');
+   if(action==='tab_existing')return setComposerTab('existing');
    if(action==='add_custom'){
      if(selectionSize()>=20)throw new Error('Maximal 20 Sätze pro Aufgabe.');
-     customItems.push({de:'',fi:''});renderCustomItems();updateSelectionCount();
-     $('cr-custom-items').lastElementChild?.querySelector('textarea')?.focus();return;
+     if(customItems.length>=20)throw new Error('Bitte zuerst einen nicht benötigten Satz entfernen.');
+     customItems.push({de:'',fi:'',added:false});renderCustomItems();updateSelectionCount();
+     const panel=el.closest('[role=tabpanel]');panel?.querySelector('[data-custom-host]')?.lastElementChild?.querySelector('textarea')?.focus();return;
+   }
+   if(action==='confirm_custom'){
+     const item=customItems[Number(el.dataset.index)];if(!item)throw new Error('Satz nicht gefunden.');
+     if(!item.de.trim()||!item.fi.trim())throw new Error('Bitte zuerst den deutschen Satz und die richtige finnische Übersetzung eingeben.');
+     if(selectionSize()>=20)throw new Error('Maximal 20 Sätze pro Aufgabe.');
+     item.added=true;renderCustomItems();updateSelectionCount();return;
    }
    if(action==='remove_custom'){
      customItems.splice(Number(el.dataset.index),1);renderCustomItems();updateSelectionCount();return;
@@ -154,7 +176,7 @@ $('classrooms-content').addEventListener('submit',e=>{
      if(!selectionSize())throw new Error('Bitte mindestens einen Satz auswählen oder erstellen.');
      if(selectionSize()>20)throw new Error('Maximal 20 Sätze pro Aufgabe.');
      const teacher=accountUser()?.username||accountUser()?.user_metadata?.username||'Lehrkraft';
-     const own=customItems.map((item,i)=>{
+     const own=addedCustomItems().map((item,i)=>{
        const de=item.de.trim(),fi=item.fi.trim();
        if(!de||!fi)throw new Error(`Bitte deutschen Satz und finnische Lösung für eigenen Satz ${i+1} eingeben.`);
        const uid=globalThis.crypto?.randomUUID?.()||`${Date.now()}-${i}`;
