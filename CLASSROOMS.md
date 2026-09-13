@@ -99,3 +99,31 @@ Eigene Sätze werden als Bestandteil der Aufgabe gespeichert und als Inhalt der
 Lehrkraft gekennzeichnet. Schüler sehen zuerst den deutschen Satz; die richtige
 finnische Lösung erscheint nach ihrer Abgabe beziehungsweise nach der Freigabe.
 Audio wird weder kopiert noch zusätzlich gespeichert.
+
+## Klassenstream
+
+Der Klassenraum zeigt den gemeinsamen Feed links und „Heute & demnächst“, Mitglieder sowie den gemeinsamen Abgabestand rechts. Unter 850 px stehen diese Bereiche untereinander. Die vorhandenen Farben und Schriften bleiben erhalten.
+
+- Mitglieder können Fragen und Beiträge mit Text und anklickbaren HTTP(S)-Links veröffentlichen. Ankündigungen und angeheftete Beiträge verwaltet die Lehrkraft.
+- Alle Mitglieder können antworten. Eine Frage können nur ihr Verfasser und die Lehrkraft als beantwortet markieren oder wieder öffnen.
+- Neue Aufgaben erscheinen mit ihrem ursprünglichen Erstellungszeitpunkt automatisch im Feed. Persönliche Lernfortschritte oder namentliche Abschlussmeldungen werden nicht erzeugt.
+- Verfasser und Lehrkraft können Beiträge entfernen. Antworten bleiben dabei erhalten. Archivierte Klassenräume bleiben lesbar.
+- „Aktualisieren“ lädt den aktuellen Stand. Der Feed lädt 30 Beiträge pro Seite nach; Filter beziehen sich auf die geladenen Beiträge und die Aufgaben des Raums.
+- Pro Beitrag sind bis zu drei Anhänge mit jeweils 10 MB möglich: PNG/JPG/WebP, PDF, TXT/CSV, ZIP sowie DOCX/XLSX/PPTX. Bilder lassen sich im Feed ansehen, Dateien herunterladen.
+- Entwürfe und Downloads bleiben im Arbeitsspeicher. Nach einem fehlgeschlagenen Upload kann erneut gesendet werden; bestätigte Uploads werden wiederverwendet. Wiederholte Veröffentlichungsanfragen mit derselben ID erzeugen keinen doppelten Beitrag.
+
+### Datenbank und Dateizugriff
+
+Migration: `supabase/migrations/20260913184155_classroom_stream.sql`.
+
+Der private Bucket `classroom-stream` erlaubt ausschließlich reservierte Uploadpfade. Mitgliedschaft und Sperrstatus werden bei jedem Abruf geprüft; es gibt keine öffentlichen oder signierten Downloadlinks. Veröffentlichte Dateien können nicht überschrieben werden. Neue Tabellen sind im privaten Schema mit RLS und ohne direkten Browserzugriff; die bestehenden autorisierten RPCs werden erweitert.
+
+Grenzen: 2.000 Hauptbeiträge pro Raum, 100 Antworten pro Beitrag, 1 GB reservierte Dateigröße pro Raum und 30 offene Dateireservierungen pro Konto. Abgebrochene Entwürfe können vor Verlassen der Seite über „Entfernen“ bereinigt werden. Verwaiste Storage-Objekte nach Neuladen, Kontolöschung oder Raumlöschung müssen administrativ über die Storage-API bereinigt werden; ihre Zugriffserlaubnis entfällt sofort. Die Migration löscht keine vorhandenen Klasseninhalte.
+
+### Prüfung dieser Erweiterung
+
+- `node test-classroom-stream.mjs` (benötigt `happy-dom`, alternativ `HAPPY_DOM_MODULE`): Feed, Links und Escaping, Fragen/Antworten, Statusrechte, Filter, Entwürfe, Uploadfehler mit Wiederholung, Anhänge und Archivansicht.
+- `node test-classrooms-dom.mjs`: bestehende Aufgaben, eigene Sätze, Abgaben, Satzdiskussionen und Raumverwaltung.
+- `supabase/tests/classroom_stream.sql`: Transaktion mit Rollback; Mitgliedschaft, Rechte, Idempotenz, Uploadreservierung, Storage-RLS, Sperren und Archivierung.
+- Die neue Datenbankmigration und beide DOM-Suiten wurden erfolgreich geprüft. Die visuelle Browserprüfung war in der Ausführungsumgebung wegen gesperrter lokaler Vorschau nicht möglich.
+- Der vorhandene allgemeine Grammatiktest scheitert bereits mit dem unveränderten Stand an seinem veralteten DOM-Mock (`document.querySelector` fehlt); dieser Test wurde nicht inhaltlich verändert.

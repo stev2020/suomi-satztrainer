@@ -35,18 +35,30 @@ function source(s,depth=0){
 }
 const sources=s=>s.origin==='teacher_created'?'<details class="cr-sources"><summary>Herkunft</summary><p>Eigener Satz und richtige Übersetzung der Lehrkraft.</p></details>':`<details class="cr-sources"><summary>Quellen &amp; Lizenzen</summary><p>Finnisch: ${source(s)}</p><p>Deutsch: ${source(s.translations?.[0])}</p></details>`;
 async function home(){
- room=null;selected=null;dirty=false;
+ room=null;selected=null;dirty=false;streamFilter='all';
  if(!accountUser()){$('classrooms-content').innerHTML=`<p>Gemeinsam Finnisch lernen: Erstelle einen Raum oder tritt deiner Klasse per Code bei.</p><p>Zum Beitreten und Speichern brauchst du ein Konto.</p>${b('Anmelden / Registrieren','login')}`;return;}
  const rooms=await api('list');
  $('classrooms-content').innerHTML=`<p>Ein Raum für eure Sätze, Fragen und gemeinsamen Fortschritte.</p><div class="cr-grid"><form data-cr-form="create" class="cr-card"><h3>Klassenraum erstellen</h3><label>Raumname<input name="name" required minlength="3" maxlength="80" placeholder="Finnisch am Mittwoch"></label><p class="cr-note">Du übernimmst die Lehrkraft-Rolle und verwaltest Aufgaben und Mitglieder.</p><button class="primary">Raum erstellen</button></form><form data-cr-form="join" class="cr-card"><h3>Mit Code beitreten</h3><label>Einladungscode<input name="code" required maxlength="40" autocomplete="off" placeholder="Code der Lehrkraft"></label><p class="cr-note">Im Raum sind dein Nutzername und deine Beiträge sichtbar. Die Lehrkraft sieht deine Abgaben. Dein privater Lernstand bleibt privat.</p><button class="primary">Klasse beitreten</button></form></div><h3>Meine Klassenräume</h3><div class="cr-grid">${rooms.length?rooms.map(r=>`<article class="cr-card"><span class="cr-badge">${r.teacher?'Lehrkraft':'Teilnehmer'}${r.archived?' · Archiv':''}</span><h3>${esc(r.name)}</h3>${b('Raum öffnen','open',`data-id="${r.id}"`)}</article>`).join(''):'<p>Noch keine Klassenräume. Erstelle einen Raum oder gib einen Einladungscode ein.</p>'}</div>`;
 }
-async function open(id){room=await api('room',{room_id:id});renderRoom();}
+async function open(id){
+ const next=await api('room',{room_id:id});
+ const feed=await api('stream_list',{room_id:id});
+ room=next;stream=feed;selected=null;renderRoom();
+}
 function renderRoom(){
  dirty=false;
  const assignments=room.assignments;
- $('classrooms-content').innerHTML=`<div class="cr-toolbar">${b('← Meine Räume','home')}${b('Aktualisieren','refresh')}</div><div class="cr-hero"><span class="cr-badge">${room.teacher?'Dein Klassenraum · Lehrkraft':'Dein Klassenraum · Teilnehmer'}</span><h2>${esc(room.name)}</h2><p>1 Lehrkraft · ${room.member_count} Teilnehmer · ${assignments.length} Aufgabenpakete${room.archived?' · Archiviert':''}</p></div>${room.teacher?`<details class="cr-card"><summary>Einladung &amp; Mitglieder verwalten</summary><p>Einladungscode: <strong class="cr-code">${esc(room.code)}</strong></p><div class="cr-toolbar">${b('Code kopieren','copy')}${!room.archived?b('Code erneuern','rotate')+b('Raum archivieren','archive'):''}${b('Klassenraum löschen','delete_room','data-danger="true"')}</div><form id="cr-delete-confirm" data-cr-form="delete_room" class="cr-delete-warning" hidden><h3>Klassenraum endgültig löschen</h3><p>Alle Aufgaben, Abgaben, Fragen, Reaktionen und Mitgliedschaften dieses Raums werden unwiderruflich gelöscht. Nutzerkonten und persönliche Lernstände bleiben erhalten.</p><label>Zur Bestätigung den Raumnamen „${esc(room.name)}“ eingeben<input name="confirm_name" required maxlength="80" autocomplete="off"></label><div class="cr-toolbar"><button class="quiet cr-danger" type="submit">Endgültig löschen</button>${b('Abbrechen','cancel_delete')}</div></form><p class="cr-note">Entfernte Mitglieder können mit diesem Konto nicht erneut beitreten. Archivierte Räume bleiben lesbar.</p></details>`:`<p class="cr-note">Deine Abgaben sieht die Lehrkraft. Nach der Freigabe sieht die Klasse Antworten ohne Nutzernamen; dies ist keine Garantie gegen Wiedererkennung. Fragen erscheinen mit Nutzernamen.</p>${b('Raum verlassen','leave')}`}
- <details class="cr-card cr-roster" open><summary>Mitglieder · ${room.members.filter(m=>!m.blocked).length}</summary>${room.members.map(m=>`<div class="cr-member"><span>${esc(m.name)} · ${m.role==='teacher'?'Lehrkraft · Ersteller':'Teilnehmer'}${m.blocked?' · entfernt':''}</span>${room.teacher&&m.role!=='teacher'&&!m.blocked&&!room.archived?b('Entfernen','remove',`data-id="${m.id}"`):''}</div>`).join('')}</details>
- ${room.teacher&&!room.archived?`<p>${b('Aufgabe erstellen','new_assignment')}</p><div id="cr-composer"></div>`:''}<h3>Aufgaben &amp; Klassenfortschritt</h3><div class="cr-grid">${assignments.map(a=>{const own=a.submissions.some(s=>s.own);return `<article class="cr-card"><span class="cr-badge">${a.released?'Vergleich freigegeben':own?'Abgegeben':a.due_at&&new Date(a.due_at)<new Date()?'Frist abgelaufen':'Offen'}</span><h3>${esc(a.title)}</h3><p>${a.items.length} Sätze · ${esc(date(a.due_at))}</p><label>${a.submitted_count} / ${room.member_count} Teilnehmer haben abgegeben<progress max="${Math.max(room.member_count,1)}" value="${a.submitted_count}"></progress></label>${b('Aufgabe öffnen','assignment',`data-id="${a.id}"`)}</article>`;}).join('')||'<p>Noch keine Aufgaben. Die Lehrkraft kann die erste Aufgabe zusammenstellen.</p>'}</div>`;
+ $('classrooms-content').innerHTML=`<div class="cr-toolbar">${b('← Meine Räume','home')}${b('Aktualisieren','refresh')}</div>
+ <div class="cr-hero cr-stream-hero"><div><span class="cr-badge">GEMEINSAM FINNISCH LERNEN${room.archived?' · ARCHIV':''}</span><h2>${esc(room.name)}</h2><p>1 Lehrkraft · ${room.member_count} Teilnehmer</p></div>${room.teacher&&!room.archived?b('Aufgabe erstellen','new_assignment'):''}</div>
+ <div class="cr-stream-layout"><div class="cr-stream-main"><div id="cr-composer"></div>
+ <div class="cr-section-heading"><div><div class="eyebrow">IM AUSTAUSCH BLEIBEN</div><h3>Unser Klassenstream</h3></div><span class="cr-note">${stream.open_questions||0} offene Fragen</span></div>
+ ${room.archived?'<p class="cr-note">Dieser Raum ist archiviert. Ihr könnt alle bisherigen Beiträge lesen.</p>':streamComposer()}
+ <div class="cr-toolbar cr-feed-filters" role="group" aria-label="Klassenstream filtern">${Object.entries({all:'Alles',assignment:'Aufgaben',question:'Fragen',announcement:'Ankündigungen'}).map(([id,label])=>`<button type="button" class="quiet" data-cr="stream_filter" data-filter="${id}" aria-pressed="${streamFilter===id}">${label}</button>`).join('')}</div>
+ <div id="cr-stream-feed"></div>${stream.has_more?b('Weitere Beiträge laden','stream_more'):''}</div>
+ <aside class="cr-stream-sidebar" aria-label="Klassenübersicht"><section class="cr-card cr-today"><div class="eyebrow">IM BLICK</div><h3>Heute &amp; demnächst</h3>${upcomingAssignments()}<p class="cr-note">${stream.open_questions||0} Fragen warten auf eine Antwort.</p></section>
+ <section class="cr-card"><h3>Unsere Klasse</h3><details class="cr-card cr-roster" open><summary>Mitglieder · ${room.members.filter(m=>!m.blocked).length}</summary>${room.members.map(m=>`<div class="cr-member"><span>${esc(m.name)} · ${m.role==='teacher'?'Lehrkraft · Ersteller':'Teilnehmer'}${m.blocked?' · entfernt':''}</span>${room.teacher&&m.role!=='teacher'&&!m.blocked&&!room.archived?b('Entfernen','remove',`data-id="${m.id}"`):''}</div>`).join('')}</details> ${room.teacher?`<details class="cr-card"><summary>Einladung &amp; Mitglieder verwalten</summary><p>Einladungscode: <strong class="cr-code">${esc(room.code)}</strong></p><div class="cr-toolbar">${b('Code kopieren','copy')}${!room.archived?b('Code erneuern','rotate')+b('Raum archivieren','archive'):''}${b('Klassenraum löschen','delete_room','data-danger="true"')}</div><form id="cr-delete-confirm" data-cr-form="delete_room" class="cr-delete-warning" hidden><h3>Klassenraum endgültig löschen</h3><p>Alle Aufgaben, Abgaben, Fragen, Reaktionen und Mitgliedschaften dieses Raums werden unwiderruflich gelöscht. Nutzerkonten und persönliche Lernstände bleiben erhalten.</p><label>Zur Bestätigung den Raumnamen „${esc(room.name)}“ eingeben<input name="confirm_name" required maxlength="80" autocomplete="off"></label><div class="cr-toolbar"><button class="quiet cr-danger" type="submit">Endgültig löschen</button>${b('Abbrechen','cancel_delete')}</div></form><p class="cr-note">Entfernte Mitglieder können mit diesem Konto nicht erneut beitreten. Archivierte Räume bleiben lesbar.</p></details>`:`<p class="cr-note">Deine Abgaben sieht die Lehrkraft. Nach der Freigabe sieht die Klasse Antworten ohne Nutzernamen; dies ist keine Garantie gegen Wiedererkennung. Fragen erscheinen mit Nutzernamen.</p>${b('Raum verlassen','leave')}`}</section>
+ <section class="cr-card"><h3>Klassenfortschritt</h3><p class="cr-note">Gemeinsamer Abgabestand der Aufgaben. Persönliche Lernstände bleiben privat.</p>${assignments.slice(0,5).map(a=>`<div class="cr-progress-item"><strong>${esc(a.title)}</strong><label>${a.submitted_count} / ${room.member_count} Abgaben<progress max="${Math.max(room.member_count,1)}" value="${a.submitted_count}"></progress></label></div>`).join('')||'<p>Noch keine Aufgaben.</p>'}</section></aside></div>`;
+ renderFeed();restoreStreamDraft();
 }
 async function composer(){
  if(!deck||!grammar){
@@ -56,6 +68,7 @@ async function composer(){
  }
  selected=new Map();customItems=[{de:'',fi:'',added:false}];
  const customSection=title=>`<section class="cr-assignment-source"><div class="cr-section-heading"><div><h4>${title}</h4><p class="cr-note">Diese Sätze gelten nur für diese Aufgabe und erscheinen später nicht als gespeicherte Auswahl.</p></div>${b('＋ Weiteren Satz eingeben','add_custom')}</div><div data-custom-host></div></section>`;
+ $('cr-composer').scrollIntoView?.({block:'start',behavior:'smooth'});
  $('cr-composer').innerHTML=`<form data-cr-form="assign" class="cr-card"><h3>Neue Aufgabe</h3><div class="cr-tabs" role="tablist" aria-label="Art der Sätze"><button type="button" role="tab" aria-selected="true" data-cr="tab_custom">Eigene Sätze</button><button type="button" role="tab" aria-selected="false" data-cr="tab_existing">Vorhandene Sätze</button></div><label>Titel<input name="title" required minlength="3" maxlength="100" placeholder="Unsere erste Übersetzungsrunde"></label><label>Abgabetermin (optional)<input name="due" type="datetime-local"></label><div id="cr-tab-custom" role="tabpanel">${customSection('Eigene Sätze erstellen')}</div><div id="cr-tab-existing" role="tabpanel" hidden><section class="cr-assignment-source"><h4>Vorhandene Sätze auswählen</h4><div class="cr-grid"><label>Level<select id="cr-level">${[1,2,3,4,5,6].map(n=>`<option>${n}</option>`).join('')}</select></label><label>Grammatikthema<select id="cr-topic"></select></label></div><p id="cr-topic-hint" class="cr-note"></p><div id="cr-sentence-picker"></div></section>${customSection('Eigene Sätze ergänzen')}</div><p>Insgesamt sind 1–20 hinzugefügte oder ausgewählte Sätze möglich.</p><p id="cr-selection-count">0 Sätze ausgewählt</p><button class="primary">Aufgabe veröffentlichen</button></form>`;
  renderTopicOptions();picker();renderCustomItems();updateSelectionCount();
 }
@@ -135,11 +148,14 @@ button.onclick=openClassrooms;
 $('classrooms-close').onclick=closeClassrooms;
 $('classrooms-content').addEventListener('input',e=>{
  dirty=true;
+ if(e.target.closest('[data-cr-form=stream_post]'))saveStreamDraft();
+ if(e.target.matches('[data-stream-reply]'))replyDrafts.set('stream-'+e.target.dataset.streamReply,e.target.value);
  if(e.target.matches('[data-answer]')){const v=drafts.get(selected)||[];v[Number(e.target.dataset.answer)]=e.target.value;drafts.set(selected,v);}
  if(e.target.matches('[data-reply-id]'))replyDrafts.set(e.target.dataset.replyId,e.target.value);
  if(e.target.matches('[data-custom-field]'))customItems[Number(e.target.dataset.customIndex)][e.target.dataset.customField]=e.target.value;
 });
 $('classrooms-content').addEventListener('change',e=>{
+ if(e.target.closest('[data-cr-form=stream_post]'))saveStreamDraft();
  if(e.target.id==='cr-level'){renderTopicOptions();picker();}
  if(e.target.id==='cr-topic')picker();
  if(e.target.matches('[data-sentence]')){const id=Number(e.target.dataset.sentence);if(e.target.checked){if(selectionSize()>=20){e.target.checked=false;status('Maximal 20 Sätze pro Aufgabe.',true);return;}selected.set(id,deck.find(s=>s.id===id));}else selected.delete(id);updateSelectionCount();}
@@ -149,6 +165,7 @@ $('classrooms-content').addEventListener('click',e=>{
  const action=el.dataset.cr;
  run(async()=>{
    if(['home','back','refresh','refresh_assignment','assignment'].includes(action)&&!canNavigate())return;
+   if(action.startsWith('stream_'))return streamAction(action,el);
    if(action==='login'){$('account-button').click();return;}
    if(action==='home')return home();if(action==='open')return open(el.dataset.id);
    if(action==='back'||action==='refresh')return open(room.id);
@@ -185,7 +202,7 @@ $('classrooms-content').addEventListener('click',e=>{
    if(action==='copy'){await navigator.clipboard.writeText(room.code);el.textContent='Kopiert ✓';return;}
    if(['rotate','archive','remove','leave','release','delete_message'].includes(action)&&!confirm({rotate:'Bisherigen Einladungscode ungültig machen?',archive:'Raum archivieren? Er bleibt lesbar, neue Beiträge und Beitritte werden geschlossen.',remove:'Dieses Mitglied entfernen und erneuten Beitritt sperren?',leave:'Raum verlassen? Deine bisherigen Beiträge und Abgaben bleiben im Raum.',release:'Alle Abgaben schließen und Antworten für die Klasse freigeben?',delete_message:'Den Inhalt dieses Beitrags entfernen? Antworten darauf bleiben erhalten.'}[action]))return;
    await api(action,{room_id:room.id,assignment_id:typeof selected==='string'?selected:null,user_id:el.dataset.id,submission_id:el.dataset.id,message_id:el.dataset.id,kind:el.dataset.kind});
-   if(action==='leave')return home();
+   if(action==='leave'){streamDrafts.delete(room.id);return home();}
    if(['release','react','delete_message'].includes(action))return refreshAssignment();
    return open(room.id);
  });
@@ -193,6 +210,7 @@ $('classrooms-content').addEventListener('click',e=>{
 $('classrooms-content').addEventListener('submit',e=>{
  const form=e.target;e.preventDefault();const data=new FormData(form),action=form.dataset.crForm;
  run(async()=>{
+   if(action==='stream_post'||action==='stream_reply')return sendStream(form,data,action);
    let payload=Object.fromEntries(data);
    if(action==='assign'){
      if(!selectionSize())throw new Error('Bitte mindestens einen Satz auswählen oder erstellen.');
@@ -215,7 +233,7 @@ $('classrooms-content').addEventListener('submit',e=>{
    if(action==='delete_room'&&data.get('confirm_name')!==room.name)throw new Error('Bitte den Raumnamen exakt eingeben.');
    if(room)payload.room_id=room.id;
    const value=await api(action,payload);dirty=false;
-   if(action==='delete_room'){for(const a of room.assignments)drafts.delete(a.id);await home();$('classrooms-content').insertAdjacentHTML('afterbegin','<p role="status">Klassenraum und zugehörige Inhalte wurden endgültig gelöscht.</p>');return;}
+   if(action==='delete_room'){streamDrafts.delete(room.id);for(const a of room.assignments)drafts.delete(a.id);await home();$('classrooms-content').insertAdjacentHTML('afterbegin','<p role="status">Klassenraum und zugehörige Inhalte wurden endgültig gelöscht.</p>');return;}
    if(action==='create'||action==='join')return open(value.id);
    if(action==='submit'){drafts.delete(selected);return refreshAssignment();}
    if(action==='message'){
@@ -228,3 +246,112 @@ $('classrooms-content').addEventListener('submit',e=>{
  });
 });
 window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='';}});
+
+// Feed drafts and downloaded attachments stay in memory only.
+let stream={posts:[],has_more:false},streamFilter='all';
+const streamDrafts=new Map(),attachmentURLs=new Set();
+const fileTypes={png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',webp:'image/webp',pdf:'application/pdf',txt:'text/plain',csv:'text/csv',zip:'application/zip',docx:'application/vnd.openxmlformats-officedocument.wordprocessingml.document',xlsx:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',pptx:'application/vnd.openxmlformats-officedocument.presentationml.presentation'};
+const streamPosts=()=>Array.isArray(stream.posts)?stream.posts:[];
+const fileSize=n=>n<1048576?`${Math.ceil(n/1024)} KB`:`${(n/1048576).toFixed(1)} MB`;
+function richText(value){return String(value??'').split(/(https?:\/\/[^\s<>]+)/g).map(part=>/^https?:\/\//.test(part)?`<a href="${esc(part)}" target="_blank" rel="noopener noreferrer">${esc(part)}</a>`:esc(part)).join('');}
+function streamComposer(){return `<form data-cr-form="stream_post" class="cr-card cr-stream-compose"><h4>Was möchtest du mit der Klasse teilen?</h4><label>Beitragsart<select name="kind"><option value="question">Frage stellen</option><option value="post">Beitrag teilen</option>${room.teacher?'<option value="announcement">Ankündigung</option>':''}</select></label><label class="cr-compose-label">Dein Text<textarea name="body" required maxlength="3000" rows="3" placeholder="Eine Frage, ein Gedanke oder etwas Hilfreiches …"></textarea></label><div class="cr-toolbar"><label class="cr-file-picker">＋ Bilder &amp; Dateien<input type="file" name="files" multiple accept=".png,.jpg,.jpeg,.webp,.pdf,.txt,.csv,.zip,.docx,.xlsx,.pptx"></label><button class="primary">Veröffentlichen →</button></div><p class="cr-note">Bis zu 3 Dateien, je 10 MB · nur für diese Klasse sichtbar</p><div id="cr-draft-files" aria-live="polite"></div></form>`;}
+function saveStreamDraft(){
+ const form=document.querySelector('[data-cr-form=stream_post]');if(!form||!room)return;
+ const draft=streamDrafts.get(room.id)||{files:[],id:crypto.randomUUID()};draft.body=form.elements.body.value;draft.kind=form.elements.kind.value;
+ const input=form.elements.files;
+ if(input.files?.length){
+  const picked=[...input.files];
+  const invalid=picked.find(f=>!fileTypes[f.name.split('.').pop().toLowerCase()]||f.size<1||f.size>10485760||f.name.length>180);
+  if(invalid)status('Bitte PNG, JPG, WebP, PDF, Text, CSV, ZIP oder Office-Dateien mit höchstens 10 MB auswählen.',true);
+  else if(draft.files.length+picked.length>3)status('Maximal drei Anhänge pro Beitrag.',true);
+  else draft.files.push(...picked.map(file=>({file,mime:fileTypes[file.name.split('.').pop().toLowerCase()]})));
+  input.value='';
+ }
+ streamDrafts.set(room.id,draft);renderDraftFiles(draft);
+}
+function renderDraftFiles(draft){if($('cr-draft-files'))$('cr-draft-files').innerHTML=draft.files.map((f,i)=>`<div class="cr-attachment"><span>${esc(f.file.name)} · ${fileSize(f.file.size)}${f.uploaded?' · Hochgeladen ✓':''}</span>${b('Entfernen','stream_remove_file',`data-index="${i}"`)}</div>`).join('');}
+function restoreStreamDraft(){
+ const draft=streamDrafts.get(room.id),form=document.querySelector('[data-cr-form=stream_post]');if(!draft||!form)return;
+ form.elements.body.value=draft.body||'';form.elements.kind.value=draft.kind||'question';renderDraftFiles(draft);
+ dirty=!!(draft.body||draft.files.length);
+}
+function upcomingAssignments(){
+ const items=room.assignments.filter(a=>!a.released&&(!a.due_at||new Date(a.due_at)>=new Date())).sort((a,b)=>(a.due_at||'9999').localeCompare(b.due_at||'9999')).slice(0,4);
+ return items.map(a=>`<div class="cr-upcoming"><strong>${esc(a.title)}</strong><p class="cr-note">${esc(date(a.due_at))}</p>${b('Zur Aufgabe →','assignment',`data-id="${a.id}"`)}</div>`).join('')||'<p>Im Moment steht keine Aufgabe an.</p>';
+}
+function renderFeed(){
+ for(const url of attachmentURLs)URL.revokeObjectURL(url);attachmentURLs.clear();
+ const entries=[...streamPosts(),...room.assignments.map(a=>({...a,kind:'assignment',created_at:stream.assignment_dates?.[a.id]}))]
+ .filter(p=>streamFilter==='all'||p.kind===streamFilter).sort((a,b)=>Number(!!b.pinned)-Number(!!a.pinned)||(Date.parse(b.created_at)||0)-(Date.parse(a.created_at)||0)||String(b.id).localeCompare(String(a.id)));
+ $('cr-stream-feed').innerHTML=entries.map(p=>{
+  if(p.kind==='assignment')return `<article class="cr-card cr-feed-card cr-feed-assignment"><span class="cr-feed-type">NEUE AUFGABE</span>${p.created_at?`<time>${esc(date(p.created_at))}</time>`:''}<h3>${esc(p.title)}</h3><p>${p.items.length} Sätze · ${esc(date(p.due_at))}</p><div class="cr-toolbar">${b('Aufgabe öffnen →','assignment',`data-id="${p.id}"`)}<span class="cr-state">${p.released?'Vergleich freigegeben':p.submissions.some(s=>s.own)?'Abgegeben':p.due_at&&new Date(p.due_at)<new Date()?'Frist abgelaufen':'Offen'}</span></div></article>`;
+  const writable=!room.archived&&!p.deleted;
+  return `<article class="cr-card cr-feed-card cr-feed-${p.kind}" id="cr-post-${p.id}"><div class="cr-feed-meta"><span class="cr-feed-type">${p.pinned?'ANGEHEFTET · ':''}${{question:'FRAGE',post:'BEITRAG',announcement:'ANKÜNDIGUNG'}[p.kind]||'BEITRAG'}</span>${p.kind==='question'&&!p.deleted?`<span class="cr-state ${p.resolved?'cr-resolved':''}">${p.resolved?'✓ Beantwortet':'Offen'}</span>`:''}</div><div class="cr-author"><strong>${esc(p.author)}</strong>${p.teacher?' · Lehrkraft':''} <time datetime="${esc(p.created_at)}">${esc(date(p.created_at))}</time></div><p class="cr-post-body">${p.deleted?'Beitrag entfernt.':richText(p.body)}</p>
+ ${!p.deleted?(p.files||[]).map(f=>`<div class="cr-attachment" data-attachment="${f.id}"><div><strong>${esc(f.name)}</strong><small>${fileSize(f.size)}</small></div>${f.mime.startsWith('image/')?b('Bild ansehen','stream_preview',`data-id="${f.id}"`):''}${b('Herunterladen','stream_download',`data-id="${f.id}"`)}</div>`).join(''):''}
+ <div class="cr-toolbar">${writable?b('Antworten','stream_reply',`data-id="${p.id}"`):''}${writable&&p.kind==='question'&&(room.teacher||p.own)?b(p.resolved?'Wieder öffnen':'Als beantwortet markieren','stream_resolve',`data-id="${p.id}" data-value="${!p.resolved}"`):''}${writable&&room.teacher?b(p.pinned?'Lösen':'Anpinnen','stream_pin',`data-id="${p.id}" data-value="${!p.pinned}"`):''}${writable&&(room.teacher||p.own)?b('Entfernen','stream_delete',`data-id="${p.id}"`):''}</div>
+ ${(p.replies||[]).length?`<details class="cr-feed-replies"><summary>${p.replies.length} ${p.replies.length===1?'Antwort':'Antworten'}</summary>${p.replies.map(m=>`<article class="cr-message"><div class="cr-author"><strong>${esc(m.author)}</strong>${m.teacher?' · Lehrkraft':''}<time>${esc(date(m.created_at))}</time></div><p>${m.deleted?'Beitrag entfernt.':richText(m.body)}</p>${!room.archived&&!m.deleted&&(room.teacher||m.own)?b('Entfernen','stream_delete',`data-id="${m.id}"`):''}</article>`).join('')}</details>`:''}<div id="cr-stream-reply-${p.id}"></div></article>`;
+ }).join('')||'<div class="cr-card"><h3>Hier beginnt euer Austausch.</h3><p>Noch keine Beiträge in dieser Ansicht. Stellt eine Frage oder teilt etwas mit der Klasse.</p></div>';
+}
+async function reloadStream(){stream=await api('stream_list',{room_id:room.id});renderRoom();}
+async function streamAction(action,el){
+ const id=el.dataset.id;
+ if(action==='stream_filter'){
+  streamFilter=el.dataset.filter;document.querySelectorAll('[data-cr=stream_filter]').forEach(x=>x.setAttribute('aria-pressed',String(x===el)));renderFeed();return;
+ }
+ if(action==='stream_more'){
+  const next=await api('stream_list',{room_id:room.id,offset:streamPosts().length});
+  stream={...next,posts:[...new Map([...streamPosts(),...next.posts].map(p=>[p.id,p])).values()]};renderFeed();if(!stream.has_more)el.remove();return;
+ }
+ if(action==='stream_reply'){
+  const slot=$('cr-stream-reply-'+id);
+  if(!slot.querySelector('form'))slot.innerHTML=`<form data-cr-form="stream_reply" class="cr-reply-form"><input type="hidden" name="post_id" value="${id}"><input type="hidden" name="request_id" value="${crypto.randomUUID()}"><label>Deine Antwort<textarea name="body" data-stream-reply="${id}" required maxlength="3000" rows="3">${esc(replyDrafts.get('stream-'+id)||'')}</textarea></label><div class="cr-toolbar"><button class="primary">Antwort senden</button>${b('Abbrechen','stream_cancel_reply',`data-id="${id}"`)}</div></form>`;
+  slot.querySelector('textarea').focus();return;
+ }
+ if(action==='stream_cancel_reply'){$('cr-stream-reply-'+id).innerHTML='';return;}
+ if(action==='stream_remove_file'){
+  const draft=streamDrafts.get(room.id),i=Number(el.dataset.index),f=draft.files[i];
+  if(f.id){
+   if(f.uploaded){const res=await accountRequest('/storage/v1/object/classroom-stream',{method:'DELETE',body:JSON.stringify({prefixes:[f.id]})});if(!res.ok)throw new Error('Anhang konnte nicht entfernt werden. Bitte erneut versuchen.');}
+   await api('stream_discard',{room_id:room.id,file_id:f.id});
+  }
+  draft.files.splice(i,1);renderDraftFiles(draft);return;
+ }
+ if(action==='stream_download'||action==='stream_preview'){
+  const file=streamPosts().flatMap(p=>p.files||[]).find(f=>f.id===id);if(!file)throw new Error('Anhang nicht gefunden.');
+  const response=await accountRequest('/storage/v1/object/authenticated/classroom-stream/'+encodeURIComponent(id));
+  if(!response.ok)throw new Error('Die Datei konnte nicht geladen werden. Bitte aktualisieren und erneut versuchen.');
+  const raw=await response.blob(),blob=new Blob([raw],{type:action==='stream_preview'?file.mime:'application/octet-stream'}),url=URL.createObjectURL(blob);attachmentURLs.add(url);
+  if(action==='stream_preview'){
+   const host=el.closest('[data-attachment]');host.querySelector('img')?.remove();
+   const img=document.createElement('img');img.src=url;img.alt=file.name;img.className='cr-image-preview';host.append(img);el.remove();
+  }else{const a=document.createElement('a');a.href=url;a.download=file.name;document.body.append(a);a.click();a.remove();}
+  return;
+ }
+ if(action==='stream_delete'&&!confirm('Beitrag entfernen? Antworten bleiben erhalten.'))return;
+ if(!['stream_resolve','stream_pin','stream_delete'].includes(action))return;
+ await api(action,{room_id:room.id,post_id:id,resolved:el.dataset.value==='true',pinned:el.dataset.value==='true'});await reloadStream();
+}
+async function sendStream(form,data,action){
+ if(action==='stream_reply'){
+  await api(action,{room_id:room.id,post_id:data.get('post_id'),request_id:data.get('request_id'),body:String(data.get('body')||'').trim()});
+  replyDrafts.delete('stream-'+data.get('post_id'));await reloadStream();
+  const post=$('cr-post-'+data.get('post_id'));if(post){const replies=post.querySelector('details');if(replies)replies.open=true;post.scrollIntoView?.({block:'nearest'});}return;
+ }
+ saveStreamDraft();const draft=streamDrafts.get(room.id);
+ if(!draft.body?.trim())throw new Error('Bitte einen Text zu deinem Beitrag eingeben.');
+ for(const f of draft.files){
+  if(!f.id){const reserved=await api('stream_reserve',{room_id:room.id,name:f.file.name,mime:f.mime,size:f.file.size});f.id=reserved.id;}
+  if(!f.uploaded){
+   status('Anhang wird hochgeladen: '+f.file.name);
+   const response=await accountRequest('/storage/v1/object/classroom-stream/'+encodeURIComponent(f.id),{method:'POST',headers:{'Content-Type':f.mime,'x-upsert':'false'},body:f.file});
+   if(!response.ok){
+    // A previous upload may have succeeded while its response was lost.
+    const existing=await accountRequest('/storage/v1/object/authenticated/classroom-stream/'+encodeURIComponent(f.id));
+    if(!existing.ok||(await existing.blob()).size!==f.file.size)throw new Error('Upload fehlgeschlagen. Dein Entwurf bleibt erhalten; bitte erneut versuchen.');
+   }
+   f.uploaded=true;renderDraftFiles(draft);
+  }
+ }
+ const value=await api('stream_post',{room_id:room.id,request_id:draft.id,kind:draft.kind,body:draft.body.trim(),file_ids:draft.files.map(f=>f.id)});
+ streamDrafts.delete(room.id);dirty=false;streamFilter='all';await reloadStream();$('cr-post-'+value.id)?.scrollIntoView?.({block:'nearest'});
+}
