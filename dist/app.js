@@ -19,10 +19,17 @@ const isTranslation=()=>['translate','grammar'].includes(activity);
 const matchesTopic=s=>topicNotes(s,grammar,grammarTopic).length>0;
 const writingSessions={};
 const WRITING_RATINGS={right:'Richtig',almost:'Fast richtig',again:'Noch üben'};
+const MIN_WRITING_SENTENCES=10;
 const ACTIVITY_LABELS={translate:'Übersetzen',listen:'Hörmodus',dictation:'Diktat',writing:'Schreibtest',grammar:'Grammatik'};
 const DIRECTION_LABELS={'fi-de':'Finnisch → Deutsch','de-fi':'Deutsch → Finnisch',random:'Zufällig'};
 const isWritingEligible=s=>['fi-de','de-fi','listen','dictation'].some(kind=>Number(memory.reviews[`${s.id}:${kind}`]?.repetitions)>=3);
 const writingPool=()=>[...data,...archived].filter(s=>s.level===level&&isWritingEligible(s));
+function syncWritingAvailability(){
+ const button=document.querySelector('[data-activity="writing"]'),count=ready?writingPool().length:0,available=ready&&count>=MIN_WRITING_SENTENCES;
+ button.disabled=!available;button.setAttribute('aria-disabled',String(!available));button.textContent=available?'Schreibtest':`Schreibtest (${count}/${MIN_WRITING_SENTENCES})`;
+ button.title=available?'Schreibtest starten':`Noch ${MIN_WRITING_SENTENCES-count} ${MIN_WRITING_SENTENCES-count===1?'Satz':'Sätze'} üben, dann ist der Schreibtest spielbar.`;
+ return available;
+}
 const day=()=>new Date().toLocaleDateString('sv-SE');
 const cardDirection=s=>direction==='random'?(s.practiceDirection||'fi-de'):direction;
 const key=(s,dir=cardDirection(s))=>`${s.id}:${isTranslation()?dir:activity}`;
@@ -47,6 +54,7 @@ function prepareAudio(url){
 function preloadQueueAudio(){const urls=queue.slice(0,3).map(s=>s.audios?.[0]?.download_url).filter(Boolean);for(const url of new Set(urls))prepareAudio(url);}
 function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function renderStats(){
+ syncWritingAvailability();
  $('today-count').textContent=memory.daily[day()]||0;
  $('total').textContent=`${data.length} finnische Sätze`;
  $('audio-total').textContent=`${data.filter(s=>s.audios.length).length} mit Originalaufnahme`;
@@ -67,7 +75,7 @@ function renderStats(){
  $('progress-bar').style.width=initialCount?`${completed/(completed+queue.length)*100}%`:'0%';
 }
 function prioritizeAudio(pool){return [...shuffle(pool.filter(s=>s.audios.length&&!s.translations[0].origin)),...shuffle(pool.filter(s=>s.audios.length&&!!s.translations[0].origin)),...shuffle(pool.filter(s=>!s.audios.length))];}
-function start(){if(!ready)return;stopAudio();draft='';syncControls();if(activity==='writing'){queue=[];revealed=false;startWritingSession();persist();render();return;}const pool=filtered();queue=(mode==='new'&&activity!=='grammar'?prioritizeAudio(pool):shuffle(pool)).slice(0,10).map(s=>{const choices=activity==='grammar'?studyDirections():eligibleDirections(s);return {...s,practiceDirection:choices[Math.floor(Math.random()*choices.length)]};});initialCount=queue.length;completed=0;revealed=false;persist();render();}
+function start(){if(!ready)return;stopAudio();draft='';if(activity==='writing'&&!syncWritingAvailability())activity='translate';syncControls();if(activity==='writing'){queue=[];revealed=false;startWritingSession();persist();render();return;}const pool=filtered();queue=(mode==='new'&&activity!=='grammar'?prioritizeAudio(pool):shuffle(pool)).slice(0,10).map(s=>{const choices=activity==='grammar'?studyDirections():eligibleDirections(s);return {...s,practiceDirection:choices[Math.floor(Math.random()*choices.length)]};});initialCount=queue.length;completed=0;revealed=false;persist();render();}
 function source(s){
  const original=()=>`<a href="https://tatoeba.org/en/sentences/show/${s.id}" target="_blank" rel="noopener">#${s.id} · ${escape(s.owner||'Tatoeba')}</a> · ${escape(s.license)}`;
  if(s.origin==='english_bridge')return `Für diese App mit KI aus dem Englischen übersetzt.<br>Englische Vorlage: ${source(s.source)}<br><span lang="en">${escape(s.source.text)}</span>`;
@@ -263,7 +271,7 @@ $('continue-practice').onclick=()=>showView('practice');
 $('home-review').onclick=()=>{mode='review';start();showView('practice');};
 $('home-choose').onclick=()=>{showView('practice',true);$('practice-settings').querySelector('summary')?.focus();};
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>showView(b.dataset.view));
-document.querySelectorAll('[data-activity]').forEach(b=>b.onclick=()=>{if(activity!==b.dataset.activity){activity=b.dataset.activity;start();}});
+document.querySelectorAll('[data-activity]').forEach(b=>b.onclick=()=>{if(b.dataset.activity==='writing'&&!syncWritingAvailability())return;if(activity!==b.dataset.activity){activity=b.dataset.activity;start();}});
 document.querySelectorAll('[data-direction]').forEach(b=>b.onclick=()=>{if(direction!==b.dataset.direction){direction=b.dataset.direction;start();}});
 $('grammar-topic').onchange=e=>{grammarTopic=e.target.value;start();};
 $('audio-only').checked=audioOnly;
