@@ -9,7 +9,7 @@ for(const v of VERBS) {
  assert.equal(v.forms.length,6);
  for(const f of v.forms)assert.match(f,/^[a-zäöå]+$/u);
  for(let p=0;p<6;p++){
-  assert.ok(answerMatches(v.forms[p],v,p));
+  assert.equal(answerMatches(v.forms[p],v,p),p!==2 && p!==5);
   assert.ok(answerMatches('  '+PRONOUNS[p].toUpperCase()+'   '+v.forms[p].toUpperCase()+'  ',v,p));
   assert.ok(!answerMatches(PRONOUNS[(p+1)%6]+' '+v.forms[p],v,p));
  }
@@ -25,6 +25,11 @@ for(const [id,forms] of Object.entries({
  vanheta:['vanhenen','vanhenet','vanhenee','vanhenemme','vanhenette','vanhenevat']
 })) assert.deepEqual(VERBS.find(v=>v.id===id).forms,forms);
 
+const tarkoittaa=VERBS.find(v=>v.id==='tarkoittaa');
+assert.equal(answerMatches('tarkoittaa',tarkoittaa,2),false);
+assert.equal(answerMatches('hän tarkoittaa',tarkoittaa,2),true);
+assert.equal(answerMatches('tarkoittavat',tarkoittaa,5),false);
+assert.equal(answerMatches('he tarkoittavat',tarkoittaa,5),true);
 const tulla=VERBS.find(v=>v.id==='tulla'),nahda=VERBS.find(v=>v.id==='nähdä');
 assert.ok(!answerMatches('tuleen',tulla,1));
 assert.ok(!answerMatches('naen',nahda,0));

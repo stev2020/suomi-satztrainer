@@ -43,7 +43,7 @@ export function markAnswered(progress,key,correct,now = Date.now()) {
 export function answerMatches(answer,verb,person) {
   const normalize = s => String(s).normalize('NFC').toLocaleLowerCase('fi').trim().replace(/\s+/g,' ');
   const value = normalize(answer),expected = normalize(verb.forms[person]);
-  return value === expected || value === PRONOUNS[person]+' '+expected;
+  return value === PRONOUNS[person]+' '+expected || ((person!==2 && person!==5) && value === expected);
 }
 export function createVerbSession(count) {
   return {count:count===5?5:10,answers:[],current:null,draft:'',checked:false,correct:false,retries:[],history:[]};

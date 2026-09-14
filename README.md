@@ -178,8 +178,9 @@ Einzelformen wurden unter anderem mit den Wörterbucheinträgen
 [vanheta](https://kieli.net/sana/vanheta) abgeglichen.
 
 Fünf oder zehn Aufgaben pro Runde, ohne Audio und unabhängig vom Satzlevel.
-Die Antwortprüfung akzeptiert die Verbform allein oder mit dem angezeigten
-Personalpronomen (NFC, Großschreibung und Leerraum normalisiert).
+Bei hän und he verlangt die Antwortprüfung das Personalpronomen zusammen mit
+der Verbform. Bei minä, sinä, me und te ist es optional (NFC, Großschreibung
+und Leerraum normalisiert).
 Nach jedem Prüfen sind alle sechs Formen sichtbar; die abgefragte ist markiert.
 Runden bleiben beim Wechsel der Ansicht/Übung im Arbeitsspeicher erhalten.
 
