@@ -140,6 +140,6 @@ Der Ersteller kann in **Unsere Klasse → Mitglieder** aktive Teilnehmer mit **Z
 
 Lehrkräfte zählen nicht zu den erwarteten Teilnehmerabgaben. Bereits abgegebene Antworten bleiben bei Rollenwechseln erhalten. Entfernte Mitglieder verlieren sofort sämtliche Raumrechte; archivierte Räume erlauben keine Rollenänderung.
 
-Aktivierung: zuerst `supabase/migrations/20260914063059_classroom_teacher_roles.sql` anwenden, danach das Frontend veröffentlichen. Die Migration ist noch nicht auf dem Live-Projekt angewendet.
+Aktivierung: zuerst `supabase/migrations/20260914063059_classroom_teacher_roles.sql` anwenden, danach das Frontend veröffentlichen. Die Migration wurde am 14.09.2026 nach Nutzerfreigabe auf dem Live-Projekt angewendet. Der transaktionale Integrationstest für Lehrkraftrollen wurde dort erfolgreich ausgeführt; sämtliche Testdaten wurden zurückgerollt.
 
 Regression: `node test-classroom-db.mjs` mit `@electric-sql/pglite` (oder `PGLITE_MODULE` auf dessen Moduldatei setzen) prüft die echten Migrationen und SQL-Berechtigungen in einer lokalen PostgreSQL-Instanz; lediglich die Supabase-Systemschemas Auth/Storage sind nachgebildet. Die Oberflächentests `test-classrooms-dom.mjs` und `test-classroom-stream.mjs` benötigen `happy-dom` oder `HAPPY_DOM_MODULE`.
