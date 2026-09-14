@@ -13,7 +13,7 @@ begin
  select x.v into s from classroom_test_ids x where k='student';
  select x.v into o from classroom_test_ids x where k='outsider';
  perform set_config('request.jwt.claim.sub',t::text,true);
- v:=public.classroom_api('create','{"name":"Testklasse"}');rid:=(v->>'id')::uuid;
+ v:=public.classroom_api('create',('{"name":"Testklasse"}'::jsonb || jsonb_build_object('display_name',auth.uid()::text)));rid:=(v->>'id')::uuid;
  v:=public.classroom_api('room',jsonb_build_object('room_id',rid));code:=v->>'code';
  assert v->>'teacher'='true','creator is teacher';
  perform public.classroom_api('assign',jsonb_build_object('room_id',rid,'title','Testaufgabe','items','[{"id":1,"text":"Hei.","translations":[{"text":"Hallo."}]}]'::jsonb));
@@ -25,9 +25,9 @@ begin
  begin
    perform * from classroom_private.rooms;raise exception 'FAIL direct table access';
  exception when insufficient_privilege then null;end;
- v:=public.classroom_api('join','{"code":"invalid"}');assert v?'error','invalid code rejected';
+ v:=public.classroom_api('join','{"code":"invalid","display_name":"Test"}');assert v?'error','invalid code rejected';
  perform set_config('request.jwt.claim.sub',s::text,true);
- perform public.classroom_api('join',jsonb_build_object('code',code));
+ perform public.classroom_api('join',jsonb_build_object('code',code,'display_name',auth.uid()::text));
  v:=public.classroom_api('room',jsonb_build_object('room_id',rid));
  assert v->>'teacher'='false' and v->>'code' is null,'student cannot see invitation code';
  begin
@@ -39,7 +39,7 @@ begin
  exception when unique_violation then null;end;
  perform public.classroom_api('message',jsonb_build_object('room_id',rid,'assignment_id',aid,'item_index',0,'body','Warum diese Form?'));
  perform set_config('request.jwt.claim.sub',o::text,true);
- perform public.classroom_api('join',jsonb_build_object('code',code));
+ perform public.classroom_api('join',jsonb_build_object('code',code,'display_name',auth.uid()::text));
  v:=public.classroom_api('room',jsonb_build_object('room_id',rid));
  assert jsonb_array_length(v->'assignments'->0->'submissions')=0,'other submissions hidden before release';
  assert jsonb_array_length(v->'assignments'->0->'messages')=1,'members can read questions';
@@ -66,11 +66,11 @@ begin
  begin
    perform public.classroom_api('room',jsonb_build_object('room_id',rid));raise exception 'FAIL blocked read';
  exception when insufficient_privilege then null;end;
- v:=public.classroom_api('join',jsonb_build_object('code',code));assert v?'error','blocked cannot rejoin';
+ v:=public.classroom_api('join',jsonb_build_object('code',code,'display_name',auth.uid()::text));assert v?'error','blocked cannot rejoin';
  perform set_config('request.jwt.claim.sub',t::text,true);
  perform public.classroom_api('rotate',jsonb_build_object('room_id',rid));
  perform set_config('request.jwt.claim.sub',o::text,true);
- v:=public.classroom_api('join',jsonb_build_object('code',code));assert v?'error','old code invalid';
+ v:=public.classroom_api('join',jsonb_build_object('code',code,'display_name',auth.uid()::text));assert v?'error','old code invalid';
  perform set_config('request.jwt.claim.sub',t::text,true);
  perform public.classroom_api('archive',jsonb_build_object('room_id',rid));
  v:=public.classroom_api('room',jsonb_build_object('room_id',rid));assert v->>'archived'='true','archive readable';

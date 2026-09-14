@@ -7,7 +7,7 @@ window.document.body.innerHTML='<header><button id="account-button">Konto</butto
 let logged=false,teacher=true,owner=true,deleted=false;
 const room={id:'11111111-1111-4111-a111-111111111111',name:'Testklasse',teacher:true,owner:true,teacher_count:1,archived:false,code:'ABCD1234ABCD1234',member_count:1,members:[{id:'student',name:'learner',blocked:false}],assignments:[]};
 const calls=[];
-room.members.unshift({id:'owner',name:'teacher',role:'teacher',owner:true,blocked:false});room.members[1].role='student';
+room.members.unshift({id:'owner',name:'teacher',role:'teacher',owner:true,own:true,blocked:false});room.members[1].role='student';
 let messageNumber=0;
 window.accountUser=()=>logged?{id:'test-user',user_metadata:{username:teacher?'teacher':'learner'}}:null;
 window.GRAMMAR_TOPICS=GRAMMAR_TOPICS;window.topicNotes=topicNotes;
@@ -15,11 +15,12 @@ window.confirm=()=>true;
 window.accountRequest=async(url,opts)=>{
  const {action,payload}=JSON.parse(opts.body);calls.push(action);let result={};
  if(action==='list')result=deleted?[]:[{...room,teacher}];
- if(action==='create'||action==='join')result={id:room.id};
+ if(action==='create'||action==='join'){assert(payload.display_name);result={id:room.id};}
  if(action==='room')result={...room,teacher,owner:teacher&&owner,code:teacher?room.code:null,members:room.members};
+ if(action==='rename'){assert.equal(payload.room_id,room.id);room.members.find(m=>m.own).name=payload.display_name;}
  if(action==='set_role'){assert(teacher&&owner);assert.equal(payload.room_id,room.id);room.members.find(m=>m.id===payload.user_id).role=payload.role;}
  if(action==='assign')room.assignments.push({id:'22222222-2222-4222-a222-222222222222',title:payload.title,items:payload.items,due_at:payload.due_at,released:false,submissions:[],messages:[],submitted_count:0});
- if(action==='submit'){room.assignments[0].submissions.push({id:'submission',own:true,answers:payload.answers,author:teacher?'learner':null,reactions:{}});room.assignments[0].submitted_count=1;}
+ if(action==='submit'){room.assignments[0].submissions.push({id:'submission',own:true,answers:payload.answers,author_id:'student',author:teacher?'learner':null,reactions:{}});room.assignments[0].submitted_count=1;}
  if(action==='release')room.assignments[0].released=true;
  if(action==='message')room.assignments[0].messages.push({id:'message-'+(++messageNumber),author:teacher?'teacher':'learner',teacher,own:true,body:payload.body,item_index:Number(payload.item_index),parent_id:payload.parent_id||null,deleted:false});
  if(action==='delete_message'){const m=room.assignments[0].messages.find(m=>m.id===payload.message_id);m.body='[Beitrag entfernt]';m.deleted=true;}
@@ -36,8 +37,12 @@ const submit=async s=>{$(s).dispatchEvent(new window.Event('submit',{bubbles:tru
 try{
  await click('#classrooms-button');assert($('#classrooms-content').textContent.includes('Zum Beitreten und Speichern'));assert.deepEqual(calls,[]);
  await click('#classrooms-close');logged=true;await click('#classrooms-button');
- $('[data-cr-form=create] input').value='Testklasse';await submit('[data-cr-form=create]');
+ $('[data-cr-form=create] input').value='Testklasse';$('[data-cr-form=create] [name=display_name]').value='teacher';await submit('[data-cr-form=create]');
  assert($('.cr-roster').textContent.includes('teacher · Lehrkraft · Ersteller'));assert.equal($('.cr-roster').querySelectorAll('[data-cr=remove]').length,1);
+ assert($('.cr-own-member summary').textContent.includes('Name ändern'));
+ $('.cr-own-member summary').click();$('[data-cr-form=rename] input').value='Anna <Müller>';await submit('[data-cr-form=rename]');
+ assert($('.cr-own-member summary').textContent.includes('Anna <Müller>'));assert(!$('.cr-own-member summary müller'));
+ $('.cr-own-member summary').click();$('[data-cr-form=rename] input').value='teacher';await submit('[data-cr-form=rename]');
  assert.equal($('[data-cr=new_assignment]').textContent,'Aufgabe erstellen');await click('[data-cr=new_assignment]');
  assert.equal($('[data-cr=tab_custom]').getAttribute('aria-selected'),'true');assert(!$('#cr-tab-custom').hidden);assert($('#cr-tab-existing').hidden);
  assert($('#cr-tab-custom').textContent.includes('nur für diese Aufgabe'));await click('[data-cr=tab_existing]');

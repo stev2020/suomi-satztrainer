@@ -143,3 +143,11 @@ Lehrkräfte zählen nicht zu den erwarteten Teilnehmerabgaben. Bereits abgegeben
 Aktivierung: zuerst `supabase/migrations/20260914063059_classroom_teacher_roles.sql` anwenden, danach das Frontend veröffentlichen. Die Migration wurde am 14.09.2026 nach Nutzerfreigabe auf dem Live-Projekt angewendet. Der transaktionale Integrationstest für Lehrkraftrollen wurde dort erfolgreich ausgeführt; sämtliche Testdaten wurden zurückgerollt.
 
 Regression: `node test-classroom-db.mjs` mit `@electric-sql/pglite` (oder `PGLITE_MODULE` auf dessen Moduldatei setzen) prüft die echten Migrationen und SQL-Berechtigungen in einer lokalen PostgreSQL-Instanz; lediglich die Supabase-Systemschemas Auth/Storage sind nachgebildet. Die Oberflächentests `test-classrooms-dom.mjs` und `test-classroom-stream.mjs` benötigen `happy-dom` oder `HAPPY_DOM_MODULE`.
+
+## Namen pro Klassenraum
+
+Beim Erstellen und Beitreten ist `display_name` Pflicht (1–80 Zeichen, äußere Leerzeichen werden entfernt). Der eigene Eintrag in der Mitgliederliste öffnet ein Formular zum Ändern über `rename`. Die Änderung gilt auch in archivierten Räumen und ausschließlich für `auth.uid()` im angegebenen Raum.
+
+Die private Tabelle `display_names` speichert Namen getrennt von `profiles.username`. Bestehende Namen werden bei der Migration übernommen. Stream, Antworten, Aufgabenfragen und benannte Abgaben verwenden den aktuellen Raumnamen. Namen bleiben nach dem Verlassen für alte Beiträge erhalten und werden beim Löschen des Raums mit entfernt. Abgaben werden über Benutzer-IDs statt über möglicherweise identische Namen zugeordnet; anonymisierte Vergleiche bleiben anonymisiert.
+
+Rollout: Migration `classroom_display_names` vor dem Frontend aktivieren. Tests: `test-classroom-db.mjs` (mit PGlite) und `test-classrooms-dom.mjs` (mit Happy DOM).

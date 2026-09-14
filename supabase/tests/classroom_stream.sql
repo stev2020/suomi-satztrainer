@@ -10,11 +10,11 @@ declare t uuid;s uuid;peer uuid;o uuid;rid uuid;otherroom uuid;pid uuid;fid uuid
 begin
  select id into t from stream_test_users where k='teacher';select id into s from stream_test_users where k='student';select id into peer from stream_test_users where k='peer';select id into o from stream_test_users where k='outsider';
  perform set_config('request.jwt.claim.sub',t::text,true);
- j:=public.classroom_api('create','{"name":"Stream test"}');rid:=(j->>'id')::uuid;
+ j:=public.classroom_api('create',('{"name":"Stream test"}'::jsonb || jsonb_build_object('display_name',auth.uid()::text)));rid:=(j->>'id')::uuid;
  j:=public.classroom_api('room',jsonb_build_object('room_id',rid));code:=j->>'code';
- j:=public.classroom_api('create','{"name":"Other stream"}');otherroom:=(j->>'id')::uuid;
+ j:=public.classroom_api('create',('{"name":"Other stream"}'::jsonb || jsonb_build_object('display_name',auth.uid()::text)));otherroom:=(j->>'id')::uuid;
  perform set_config('request.jwt.claim.sub',s::text,true);
- perform public.classroom_api('join',jsonb_build_object('code',code));
+ perform public.classroom_api('join',jsonb_build_object('code',code,'display_name',auth.uid()::text));
  j:=public.classroom_api('stream_post',jsonb_build_object('room_id',rid,'request_id',request_id,'kind','question','body','Wie sagt man Hallo?'));pid:=(j->>'id')::uuid;
  perform public.classroom_api('stream_post',jsonb_build_object('room_id',rid,'request_id',request_id,'kind','question','body','Wie sagt man Hallo?'));
  j:=public.classroom_api('stream_list',jsonb_build_object('room_id',rid));
@@ -31,7 +31,7 @@ begin
   perform public.classroom_api('stream_post',jsonb_build_object('room_id',rid,'kind','post','body','missing upload','file_ids',jsonb_build_array(fid)));raise exception 'TEST missing file accepted';
  exception when raise_exception then if sqlerrm like 'TEST%' then raise;end if;end;
  perform set_config('request.jwt.claim.sub',peer::text,true);
- perform public.classroom_api('join',jsonb_build_object('code',code));
+ perform public.classroom_api('join',jsonb_build_object('code',code,'display_name',auth.uid()::text));
  assert not classroom_private.stream_file_access(fid::text,false),'peer cannot read unpublished file';
  assert not classroom_private.stream_file_access(fid::text,true),'peer cannot overwrite reservation';
  perform public.classroom_api('stream_reply',jsonb_build_object('room_id',rid,'post_id',pid,'body','Hei!'));

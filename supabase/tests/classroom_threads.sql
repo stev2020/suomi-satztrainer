@@ -10,7 +10,7 @@ declare t uuid;s uuid;o uuid;rid uuid;aid uuid;otheraid uuid;rootid uuid;replyid
 begin
  select id into t from thread_test_users where k='teacher';select id into s from thread_test_users where k='student';select id into o from thread_test_users where k='outsider';
  perform set_config('request.jwt.claim.sub',t::text,true);
- j:=public.classroom_api('create','{"name":"Thread test"}');rid:=(j->>'id')::uuid;
+ j:=public.classroom_api('create',('{"name":"Thread test"}'::jsonb || jsonb_build_object('display_name',auth.uid()::text)));rid:=(j->>'id')::uuid;
  j:=public.classroom_api('room',jsonb_build_object('room_id',rid));code:=j->>'code';
  assert jsonb_array_length(j->'members')=1 and j->'members'->0->>'role'='teacher','creator listed';
  assert (j->>'member_count')::integer=0,'creator not counted as missing student';
@@ -19,7 +19,7 @@ begin
  perform public.classroom_api('assign',jsonb_build_object('room_id',rid,'title','Other','items','[{"text":"Hei","translations":[{"text":"Hallo"}]}]'::jsonb));
  j:=public.classroom_api('room',jsonb_build_object('room_id',rid));select (x->>'id')::uuid into otheraid from jsonb_array_elements(j->'assignments') x where x->>'title'='Other';
  perform set_config('request.jwt.claim.sub',s::text,true);
- perform public.classroom_api('join',jsonb_build_object('code',code));
+ perform public.classroom_api('join',jsonb_build_object('code',code,'display_name',auth.uid()::text));
  j:=public.classroom_api('room',jsonb_build_object('room_id',rid));assert jsonb_array_length(j->'members')=2,'student sees teacher and student';assert j->'members'->0->>'id' is null,'no account ids for student';
  perform public.classroom_api('message',jsonb_build_object('room_id',rid,'assignment_id',aid,'item_index',0,'body','root'));
  j:=public.classroom_api('room',jsonb_build_object('room_id',rid));select x into m from jsonb_array_elements(j->'assignments') x where x->>'id'=aid::text;rootid:=(m->'messages'->0->>'id')::uuid;

@@ -14,12 +14,12 @@ begin
  select i.v into s from role_test_ids i where k='student';
  select i.v into x from role_test_ids i where k='outsider';
  perform set_config('request.jwt.claim.sub',o::text,true);
- v:=public.classroom_api('create','{"name":"Role test"}'); rid:=(v->>'id')::uuid;
+ v:=public.classroom_api('create',('{"name":"Role test"}'::jsonb || jsonb_build_object('display_name',auth.uid()::text))); rid:=(v->>'id')::uuid;
  v:=public.classroom_api('room',jsonb_build_object('room_id',rid)); code:=v->>'code';
  assert v->>'owner'='true' and v->>'teacher'='true','owner retains teacher rights';
- v:=public.classroom_api('create','{"name":"Other room"}'); other_room:=(v->>'id')::uuid;
+ v:=public.classroom_api('create',('{"name":"Other room"}'::jsonb || jsonb_build_object('display_name',auth.uid()::text))); other_room:=(v->>'id')::uuid;
  perform set_config('request.jwt.claim.sub',t::text,true);
- perform public.classroom_api('join',jsonb_build_object('code',code));
+ perform public.classroom_api('join',jsonb_build_object('code',code,'display_name',auth.uid()::text));
  begin
  perform public.classroom_api('set_role',jsonb_build_object('room_id',rid,'user_id',t,'role','teacher')); raise exception 'FAIL self promotion';
  exception when insufficient_privilege then null; end;
@@ -27,7 +27,7 @@ begin
  perform public.classroom_api('assign',jsonb_build_object('room_id',rid,'title','Forbidden','items','[{"text":"Hei","translations":[{"text":"Hallo"}]}]'::jsonb)); raise exception 'FAIL student assignment';
  exception when insufficient_privilege then null; end;
  perform set_config('request.jwt.claim.sub',s::text,true);
- perform public.classroom_api('join',jsonb_build_object('code',code));
+ perform public.classroom_api('join',jsonb_build_object('code',code,'display_name',auth.uid()::text));
  perform set_config('request.jwt.claim.sub',o::text,true);
  perform public.classroom_api('set_role',jsonb_build_object('room_id',rid,'user_id',t,'role','teacher'));
  begin
@@ -74,7 +74,7 @@ begin
  perform set_config('request.jwt.claim.sub',t::text,true);
  perform public.classroom_api('release',jsonb_build_object('room_id',rid,'assignment_id',aid));
  perform public.classroom_api('leave',jsonb_build_object('room_id',rid));
- perform public.classroom_api('join',jsonb_build_object('code',code));
+ perform public.classroom_api('join',jsonb_build_object('code',code,'display_name',auth.uid()::text));
  v:=public.classroom_api('room',jsonb_build_object('room_id',rid)); assert v->>'teacher'='false','rejoin does not restore teacher';
  perform set_config('request.jwt.claim.sub',o::text,true);
  perform public.classroom_api('set_role',jsonb_build_object('room_id',rid,'user_id',t,'role','teacher'));
