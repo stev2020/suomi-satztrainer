@@ -11,7 +11,7 @@ const css=document.createElement('link');css.rel='stylesheet';css.href='./classr
 const button=document.createElement('button');button.id='classrooms-button';button.className='quiet';button.textContent='Klassenräume';
 $('account-button').before(button);
 const main=document.querySelector('main')||document.body.appendChild(document.createElement('main'));
-const classroomAnchor=main.querySelector('.bottom-nav')||main.querySelector('footer');
+const classroomAnchor=main.querySelector('.page-tools')||main.querySelector('.bottom-nav')||main.querySelector('footer');
 const classroomMarkup=`<section id="classrooms-view" class="app-view classrooms-view" aria-labelledby="classrooms-title" hidden><div class="view-heading"><button type="button" id="classrooms-close" class="back-link" aria-label="Zurück zur vorherigen Seite">← Zurück</button><div><div class="eyebrow">GEMEINSAM LERNEN</div><h1 id="classrooms-title">Klassenräume</h1></div></div><p id="classrooms-status" role="status" aria-live="polite"></p><div id="classrooms-content"></div></section>`;
 if(classroomAnchor)classroomAnchor.insertAdjacentHTML('beforebegin',classroomMarkup);else main.insertAdjacentHTML('beforeend',classroomMarkup);
 const status=(s,error=false)=>{$('classrooms-status').textContent=s;$('classrooms-status').classList.toggle('error',error);};
