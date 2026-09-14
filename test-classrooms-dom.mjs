@@ -38,6 +38,10 @@ try{
  await click('#classrooms-button');assert($('#classrooms-content').textContent.includes('Zum Beitreten und Speichern'));assert.deepEqual(calls,[]);
  await click('#classrooms-close');logged=true;await click('#classrooms-button');
  $('[data-cr-form=create] input').value='Testklasse';$('[data-cr-form=create] [name=display_name]').value='teacher';await submit('[data-cr-form=create]');
+ assert.equal($('#classrooms-title').textContent,'Testklasse');assert(!$('#classrooms-refresh').hidden);
+ assert.equal($('.cr-hero'),null);assert(!$('#classrooms-content').textContent.includes('Unser Klassenstream'));assert(!$('#classrooms-content').textContent.includes('IM AUSTAUSCH BLEIBEN'));
+ assert.equal($('.cr-stream-sidebar [data-cr=new_assignment]').textContent,'Aufgabe erstellen');
+ assert.equal($('#classrooms-content').querySelectorAll('.cr-sidebar-disclosure').length,2);assert([...$('#classrooms-content').querySelectorAll('.cr-sidebar-disclosure')].every(details=>!details.open));
  assert($('.cr-roster').textContent.includes('teacher · Lehrkraft · Ersteller'));assert.equal($('.cr-roster').querySelectorAll('[data-cr=remove]').length,1);
  assert($('.cr-own-member summary').textContent.includes('Name ändern'));
  $('.cr-own-member summary').click();$('[data-cr-form=rename] input').value='Anna <Müller>';await submit('[data-cr-form=rename]');
@@ -89,12 +93,12 @@ try{
  window.confirm=()=>true;await click('[data-cr=set_role]');assert.equal(room.members[1].role,'teacher');
  assert.equal($('[data-cr=set_role]').textContent,'Lehrkraftrolle entziehen');
  assert($('.cr-roster').textContent.includes('learner · Lehrkraft'));assert(!$('.cr-roster').textContent.includes('learner · Lehrkraft · Ersteller'));
- owner=false;await click('[data-cr=refresh]');assert($('[data-cr=new_assignment]'));assert(!$('[data-cr=set_role]'));assert(!$('[data-cr=delete_room]'));assert(!$('[data-cr=remove]'));assert($('[data-cr=leave]'));
- owner=true;await click('[data-cr=refresh]');await click('[data-cr=set_role]');assert.equal(room.members[1].role,'student');
+ owner=false;await click('#classrooms-refresh');assert($('[data-cr=new_assignment]'));assert(!$('[data-cr=set_role]'));assert(!$('[data-cr=delete_room]'));assert(!$('[data-cr=remove]'));assert($('[data-cr=leave]'));
+ owner=true;await click('#classrooms-refresh');await click('[data-cr=set_role]');assert.equal(room.members[1].role,'student');
  console.log('PASS DOM: role promotion, demotion, cancel and delegated teacher controls');
  await click('[data-cr=delete_room]');assert(!$('#cr-delete-confirm').hidden);
  await click('[data-cr=cancel_delete]');assert($('#cr-delete-confirm').hidden);assert(!calls.includes('delete_room'));
- room.archived=true;await click('[data-cr=refresh]');assert(!$('[data-cr=set_role]'));assert($('[data-cr=delete_room]'));await click('[data-cr=delete_room]');
+ room.archived=true;await click('#classrooms-refresh');assert(!$('[data-cr=set_role]'));assert($('[data-cr=delete_room]'));await click('[data-cr=delete_room]');
  $('[name=confirm_name]').value='wrong';
  $('[data-cr-form=delete_room]').dispatchEvent(new window.Event('submit',{bubbles:true,cancelable:true}));
  for(let i=0;i<15;i++)await new Promise(r=>setTimeout(r,0));
