@@ -24,7 +24,7 @@ async function context(options={}){
    }
    return route.fulfill({json:[]});
   }
-  if(request.resourceType()==='media')audioRequests++;
+  if(request.resourceType()==='media'){const active=await request.frame().evaluate(()=>window.suomiLearningState?.snapshot().prefs.activity).catch(()=>null);if(active==='verbs')audioRequests++;}
   return route.abort();
  });
  return c;

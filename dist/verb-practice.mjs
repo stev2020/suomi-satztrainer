@@ -19,9 +19,9 @@ export function mergeVerbProgress(a = {},b = {}) {
     if (!old) { out[key] = {...value}; continue; }
     // Asked and answered timestamps are independent: opening a question on
     // another device must not erase a newer answer or its repetition date.
-    const answer = value.lastAnsweredAt > old.lastAnsweredAt ? value :
-      value.lastAnsweredAt < old.lastAnsweredAt ? old :
-      value.updatedAt > old.updatedAt ? value : old;
+    const compare = ['lastAnsweredAt','attempts','errors','streak','due','updatedAt']
+      .map(field => value[field]-old[field]).find(delta => delta!==0) || 0;
+    const answer = compare > 0 ? value : old;
     out[key] = {...answer,seen:Math.max(old.seen,value.seen),
       attempts:Math.max(old.attempts,value.attempts),errors:Math.max(old.errors,value.errors),
       lastAskedAt:Math.max(old.lastAskedAt,value.lastAskedAt),updatedAt:Math.max(old.updatedAt,value.updatedAt)};
