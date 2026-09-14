@@ -5,7 +5,7 @@ const window=new Window({url:'http://localhost:4173',settings:{disableCSSFileLoa
 window.document.body.innerHTML='<header><button id="account-button">Konto</button></header><main></main>';
 let teacher=false,failUpload=false;
 const id='11111111-1111-4111-a111-111111111111';
-const room={id,name:'Finnisch am Mittwoch',teacher:false,archived:false,member_count:2,members:[{name:'lehrkraft',role:'teacher'},{name:'anna',role:'student'},{name:'mika',role:'student'}],assignments:[{id:'task',title:'Unsere erste Aufgabe',items:[{text:'Hei',translations:[{text:'Hallo'}]}],due_at:null,released:false,submissions:[],submitted_count:0,messages:[]}]};
+const room={id,name:'Finnisch am Mittwoch',teacher:false,owner:false,teacher_count:1,archived:false,member_count:2,members:[{name:'lehrkraft',role:'teacher',owner:true},{name:'anna',role:'student'},{name:'mika',role:'student'}],assignments:[{id:'task',title:'Unsere erste Aufgabe',items:[{text:'Hei',translations:[{text:'Hallo'}]}],due_at:null,released:false,submissions:[],submitted_count:0,messages:[]}]};
 let posts=[],counter=0,files=new Map();
 window.accountUser=()=>({id:'user',user_metadata:{username:'anna'}});
 window.confirm=()=>true;
@@ -18,7 +18,7 @@ window.accountRequest=async(path,options={})=>{
  }
  const {action,payload}=JSON.parse(options.body);let result={};
  if(action==='list')result=[{...room,teacher}];
- if(action==='room')result={...room,teacher};
+ if(action==='room')result={...room,teacher,owner:teacher};
  if(action==='stream_list')result={posts,has_more:false,open_questions:posts.filter(p=>p.kind==='question'&&!p.resolved&&!p.deleted).length,assignment_dates:{task:'2026-09-13T08:00:00Z'}};
  if(action==='stream_post'){
   const p={id:payload.request_id,kind:payload.kind,body:payload.body,author:'anna',own:true,teacher,resolved:false,created_at:'2026-09-13T12:00:00Z',files:payload.file_ids.map(id=>({id,name:'Hallo.txt',mime:'text/plain',size:5})),replies:[]};posts.unshift(p);result={id:p.id};

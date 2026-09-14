@@ -4,10 +4,10 @@ import {GRAMMAR_TOPICS,topicNotes} from './dist/grammar-topics.mjs';
 const {Window}=await import(process.env.HAPPY_DOM_MODULE||'happy-dom');
 const window=new Window({url:'http://localhost:4173',settings:{disableCSSFileLoading:true,disableJavaScriptFileLoading:true}});
 window.document.body.innerHTML='<header><button id="account-button">Konto</button></header>';
-let logged=false,teacher=true,deleted=false;
-const room={id:'11111111-1111-4111-a111-111111111111',name:'Testklasse',teacher:true,archived:false,code:'ABCD1234ABCD1234',member_count:1,members:[{id:'student',name:'learner',blocked:false}],assignments:[]};
+let logged=false,teacher=true,owner=true,deleted=false;
+const room={id:'11111111-1111-4111-a111-111111111111',name:'Testklasse',teacher:true,owner:true,teacher_count:1,archived:false,code:'ABCD1234ABCD1234',member_count:1,members:[{id:'student',name:'learner',blocked:false}],assignments:[]};
 const calls=[];
-room.members.unshift({id:'owner',name:'teacher',role:'teacher',blocked:false});room.members[1].role='student';
+room.members.unshift({id:'owner',name:'teacher',role:'teacher',owner:true,blocked:false});room.members[1].role='student';
 let messageNumber=0;
 window.accountUser=()=>logged?{id:'test-user',user_metadata:{username:teacher?'teacher':'learner'}}:null;
 window.GRAMMAR_TOPICS=GRAMMAR_TOPICS;window.topicNotes=topicNotes;
@@ -16,7 +16,8 @@ window.accountRequest=async(url,opts)=>{
  const {action,payload}=JSON.parse(opts.body);calls.push(action);let result={};
  if(action==='list')result=deleted?[]:[{...room,teacher}];
  if(action==='create'||action==='join')result={id:room.id};
- if(action==='room')result={...room,teacher,code:teacher?room.code:null,members:room.members};
+ if(action==='room')result={...room,teacher,owner:teacher&&owner,code:teacher?room.code:null,members:room.members};
+ if(action==='set_role'){assert(teacher&&owner);assert.equal(payload.room_id,room.id);room.members.find(m=>m.id===payload.user_id).role=payload.role;}
  if(action==='assign')room.assignments.push({id:'22222222-2222-4222-a222-222222222222',title:payload.title,items:payload.items,due_at:payload.due_at,released:false,submissions:[],messages:[],submitted_count:0});
  if(action==='submit'){room.assignments[0].submissions.push({id:'submission',own:true,answers:payload.answers,author:teacher?'learner':null,reactions:{}});room.assignments[0].submitted_count=1;}
  if(action==='release')room.assignments[0].released=true;
@@ -77,9 +78,18 @@ try{
  console.log('PASS DOM: task tabs, per-level grammar counts, confirmed custom sentence, mixed task, hidden then revealed solution and threaded discussion');
  await click('[data-cr=release]');assert($('[data-cr=react]'));await click('[data-cr=react]');
  assert(calls.includes('react'));console.log('PASS DOM: guest gate, create, picker, teacher/student controls, submit, escaping, questions, moderation, release, reactions');
- await click('[data-cr=back]');await click('[data-cr=delete_room]');assert(!$('#cr-delete-confirm').hidden);
+ await click('[data-cr=back]');
+ assert.equal($('[data-cr=set_role]').textContent,'Zur Lehrkraft machen');
+ window.confirm=()=>false;const before=calls.length;await click('[data-cr=set_role]');assert(!calls.slice(before).includes('set_role'));
+ window.confirm=()=>true;await click('[data-cr=set_role]');assert.equal(room.members[1].role,'teacher');
+ assert.equal($('[data-cr=set_role]').textContent,'Lehrkraftrolle entziehen');
+ assert($('.cr-roster').textContent.includes('learner · Lehrkraft'));assert(!$('.cr-roster').textContent.includes('learner · Lehrkraft · Ersteller'));
+ owner=false;await click('[data-cr=refresh]');assert($('[data-cr=new_assignment]'));assert(!$('[data-cr=set_role]'));assert(!$('[data-cr=delete_room]'));assert(!$('[data-cr=remove]'));assert($('[data-cr=leave]'));
+ owner=true;await click('[data-cr=refresh]');await click('[data-cr=set_role]');assert.equal(room.members[1].role,'student');
+ console.log('PASS DOM: role promotion, demotion, cancel and delegated teacher controls');
+ await click('[data-cr=delete_room]');assert(!$('#cr-delete-confirm').hidden);
  await click('[data-cr=cancel_delete]');assert($('#cr-delete-confirm').hidden);assert(!calls.includes('delete_room'));
- room.archived=true;await click('[data-cr=refresh]');assert($('[data-cr=delete_room]'));await click('[data-cr=delete_room]');
+ room.archived=true;await click('[data-cr=refresh]');assert(!$('[data-cr=set_role]'));assert($('[data-cr=delete_room]'));await click('[data-cr=delete_room]');
  $('[name=confirm_name]').value='wrong';
  $('[data-cr-form=delete_room]').dispatchEvent(new window.Event('submit',{bubbles:true,cancelable:true}));
  for(let i=0;i<15;i++)await new Promise(r=>setTimeout(r,0));
