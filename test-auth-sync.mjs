@@ -2,13 +2,14 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
+import {mergeVerbProgress} from './dist/verb-practice.mjs';
 
 const source=fs.readFileSync(new URL('./dist/auth.js',import.meta.url),'utf8');
 const start=source.indexOf('function mergeLearning(');
 const end=source.indexOf('\nasync function cloudLearning',start);
 assert(start>=0&&end>start,'mergeLearning implementation found');
 
-const context={};
+const context={mergeVerbProgress};
 vm.createContext(context);
 vm.runInContext(`${source.slice(start,end)}\nthis.mergeLearning=mergeLearning;`,context);
 
@@ -20,7 +21,7 @@ const merged=context.mergeLearning(local,cloud);
 assert.equal(merged.reviews['1:fi-de'].updatedAt,200,'newer phone review wins over stale laptop review');
 assert.equal(merged.reviews['2:fi-de'].updatedAt,300,'newer laptop review is retained');
 
-const mergeBeforeWrite=source.indexOf('const merged=mergeLearning(state,await cloudLearning())');
+const mergeBeforeWrite=source.indexOf('const cloud=await cloudLearning()');
 const cloudWrite=source.indexOf("request('/rest/v1/learning_state?on_conflict=user_id'",mergeBeforeWrite);
 assert(mergeBeforeWrite>=0&&cloudWrite>mergeBeforeWrite,'cloud state is read and merged before every write');
 assert(source.includes('const CLOUD_POLL_MS=60000'),'unchanged devices poll no more than once per minute');
