@@ -91,3 +91,13 @@ header{flex-wrap:wrap}
 .cr-stream-compose>summary:focus-visible{outline:3px solid var(--purple);outline-offset:6px;border-radius:3px}
 .cr-stream-compose:not([open]) .cr-compose-open,.cr-stream-compose[open] .cr-compose-closed{display:none}
 .cr-stream-compose>form{border-top:1px solid #172c3830;padding-top:12px;margin-top:16px}
+
+.cr-room-actions{align-items:start;margin-top:20px}
+.cr-room-action>summary{display:list-item;list-style:disclosure-closed;cursor:pointer;min-height:44px;padding:2px 0}
+.cr-room-action[open]>summary{list-style-type:disclosure-open}
+.cr-room-action>summary>span{display:inline-block;vertical-align:middle;max-width:calc(100% - 24px)}
+.cr-room-action>summary strong{font-size:17px}
+.cr-room-action>summary small{display:block;font-size:12px;color:var(--muted);margin-top:4px}
+.cr-room-action>summary:focus-visible{outline:3px solid var(--purple);outline-offset:6px;border-radius:3px}
+.cr-room-action:not([open]) .cr-room-action-open,.cr-room-action[open] .cr-room-action-closed{display:none}
+.cr-room-action>form{border-top:1px solid #172c3830;margin-top:14px;padding-top:8px}
