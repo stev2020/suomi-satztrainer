@@ -69,7 +69,7 @@ function renderStats(){
  $('settings-level').textContent=`Level ${level}`;
  $('home-session-meta').textContent=`Level ${level} · ${ACTIVITY_LABELS[activity]}${detail?` · ${detail}`:''}`;
  document.querySelectorAll('[data-mode]').forEach(b=>{b.classList.toggle('selected',b.dataset.mode===mode);b.setAttribute('aria-pressed',b.dataset.mode===mode);});
- if(activity==='writing'){const session=writingSessions[level],total=session?.items.length||0,count=session?.answers.length||0;$('session-title').textContent=`Level ${level} · Schreibtest · Deutsch → Finnisch`;$('session-progress').textContent=total?`${count} / ${total}`:'Noch keine Sätze bereit';$('progress-bar').style.width=total?`${count/total*100}%`:'0%';return;}
+ if(activity==='writing'){const session=writingSessions[level],total=session?.items.length||0,count=session?.answers.length||0;$('session-title').textContent=`Level ${level} · Schreibtest · Deutsch → Finnisch`;$('session-progress').textContent=total?`${count} / ${total}`:(writingPool().length>=MIN_WRITING_SENTENCES?'Satzanzahl wählen':'Noch keine Sätze bereit');$('progress-bar').style.width=total?`${count/total*100}%`:'0%';return;}
  $('session-title').textContent=`Level ${level} · ${activity==='grammar'?GRAMMAR_TOPICS.find(t=>t.id===grammarTopic).label:mode==='new'?'Neue Sätze · Audio zuerst':mode==='review'?'Wiederholen':'Deine Favoriten'}`;
  $('session-progress').textContent=initialCount?`${completed} / ${completed+queue.length}`:'Keine Karten ausgewählt';
  $('progress-bar').style.width=initialCount?`${completed/(completed+queue.length)*100}%`:'0%';
