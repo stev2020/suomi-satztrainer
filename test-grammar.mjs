@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
+import {VERBS} from './dist/verbs-data.mjs';
+import * as VerbPractice from './dist/verb-practice.mjs';
 import {GRAMMAR_TOPICS,topicNotes} from './dist/grammar-topics.mjs';
 const payload=JSON.parse(fs.readFileSync(new URL('./dist/sentences.json',import.meta.url)));
 const grammar=JSON.parse(fs.readFileSync(new URL('./dist/grammar.json',import.meta.url))).sentences;
@@ -8,8 +10,8 @@ const elements=new Map();
 class AudioStub{constructor(){this.paused=true;this.readyState=4;AudioStub.instances.push(this)}load(){}pause(){this.paused=true}play(){this.paused=false;return Promise.resolve()}removeAttribute(name){if(name==='src')this.src=''}}
 AudioStub.instances=[];
 function element(id){if(!elements.has(id))elements.set(id,{innerHTML:'',textContent:'',value:'',style:{},dataset:{},classList:{toggle(){}},setAttribute(){},addEventListener(){},querySelector(){return element('audio-label');},insertAdjacentHTML(_,html){this.innerHTML+=html;},focus(){}});return elements.get(id);}
-const ctx=vm.createContext({GRAMMAR_TOPICS,topicNotes,console,URL,Audio:AudioStub,assert,payload,fixtureGrammar:grammar,localStorage:{getItem(){return null;},setItem(){}},document:{getElementById:element,querySelectorAll(){return [];},addEventListener(){}}});
-let app=fs.readFileSync(new URL('./dist/app.js',import.meta.url),'utf8').replace(/^import .*\n/,'');
+const ctx=vm.createContext({GRAMMAR_TOPICS,topicNotes,VERBS,...VerbPractice,console,URL,Audio:AudioStub,assert,payload,fixtureGrammar:grammar,localStorage:{getItem(){return null;},setItem(){}},document:{getElementById:element,querySelector(){return element('selected-element');},querySelectorAll(){return [];},addEventListener(){}}});
+let app=fs.readFileSync(new URL('./dist/app.js',import.meta.url),'utf8').replace(/^import .*\n/gm,'');
 ctx.window={};
 ctx.document.body={dataset:{account:'authenticated'}};
 app=app.slice(0,app.indexOf("try{const response=await fetch('sentences.json')"));
