@@ -165,3 +165,44 @@ Die Übungsart „Grammatik“ filtert aktive Sätze nach Level und zehn Themen 
 Pro Runde werden bis zu zehn passende Sätze zufällig gewählt, einschließlich bereits geübter Sätze. Beide Lernrichtungen und Zufall sind verfügbar. Eingaben bleiben optional. Erst nach dem Aufdecken erscheinen die passenden Hinweise, direkt aufgeklappt. Bewertungen verwenden die bestehenden richtungsbezogenen Lernstände. Thema und Übungsart werden in Einstellungen und Sicherungen gespeichert; ältere Sicherungen bleiben importierbar. Das Themenmodul gehört zum Offline-Cache.
 
 Prüfung: `node test-grammar.mjs` (Themen/Levels, Lösungsschutz, Bewertungen, Audiofilter, Sicherungen und Wechsel der Übungsarten).
+
+## Verbformen im Präsens
+
+Die Übung enthält 200 gebräuchliche Verben mit deutscher Bedeutung und jeweils
+sechs ausgeschriebenen, bejahenden Präsensformen der Standardsprache
+(`dist/verbs-data.mjs`). Die Auswahl ergänzt den bisherigen Paradigmenbestand
+um alltägliche Verben; sie ist keine behauptete exakte Korpus-Rangliste.
+Einzelformen wurden unter anderem mit den Wörterbucheinträgen
+[häiritä](https://kieli.net/sana/h%C3%A4irit%C3%A4),
+[purra](https://kieli.net/sana/purra) und
+[vanheta](https://kieli.net/sana/vanheta) abgeglichen.
+
+Fünf oder zehn Aufgaben pro Runde, ohne Audio und unabhängig vom Satzlevel.
+Die Antwortprüfung akzeptiert die Verbform allein oder mit dem angezeigten
+Personalpronomen (NFC, Großschreibung und Leerraum normalisiert).
+Nach jedem Prüfen sind alle sechs Formen sichtbar; die abgefragte ist markiert.
+Runden bleiben beim Wechsel der Ansicht/Übung im Arbeitsspeicher erhalten.
+
+`verbProgress` speichert jede Kombination als `lemma:personIndex` (0–5).
+Auch eine angezeigte, noch nicht beantwortete Form gilt als gesehen, bleibt aber
+fällig. Mindestens zwei von fünf Positionen werden für neue Formen reserviert,
+solange ungesehene Formen vorhanden sind. Falsche Antworten kommen nach
+mindestens zwei anderen Aufgaben wieder; kurze Runden werden nicht verlängert.
+Wiederholungen, die nicht mehr hineinpassen, bleiben für spätere Runden fällig.
+Bei mehrfachen Fehlern werden auch andere Personalformen dieses Verbs gewählt.
+Richtige Antworten erhöhen die Abstände auf 1, 3, 9, 27 und maximal 60 Tage.
+Zwei richtige Antworten in Folge gelten in der Übersicht als sicher.
+
+Kontospeicherung, Sicherungsexport/-import und Cloud-Merge berücksichtigen den
+zusätzlichen Lernstand. Ältere Sicherungen bleiben kompatibel. Cloud-Merges
+erhalten die Vereinigungsmenge gesehener Kombinationen und die neuesten
+Antwort-/Wiederholungsdaten pro Kombination; gleichzeitig auf zwei Geräten
+erfasste Zähler werden per Maximum zusammengeführt, nicht addiert.
+Eine reine Anzeige auf einem anderen Gerät überschreibt keine Antwort.
+Während der Verbübung werden Cloud-Änderungen ohne Neuladen übernommen,
+damit die aktuelle Eingabe erhalten bleibt. Gäste speichern nichts dauerhaft.
+Die Module und Styles sind Teil des Offline-Caches.
+
+Prüfen: `node test-verbforms.mjs`, `node test-auth-sync.mjs`.
+Browserprüfung: `node test-verbforms-browser.mjs` mit Playwright 1.55.0 und Chromium.
+Die GitHub-Action „Verify verb practice“ führt diese Prüfungen aus.

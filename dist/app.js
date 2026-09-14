@@ -1,3 +1,5 @@
+import {VERBS} from './verbs-data.mjs';
+import {PRONOUNS,validateVerbProgress,mergeVerbProgress,markAsked,markAnswered,answerMatches,createVerbSession,chooseCombination,verbSummary} from './verb-practice.mjs';
 import {GRAMMAR_TOPICS,topicNotes} from './grammar-topics.mjs';
 const $=id=>document.getElementById(id);
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -8,19 +10,19 @@ const hasStoredSession=()=>{try{const s=JSON.parse(localStorage.getItem(SESSION)
 const accountActive=()=>document.body.dataset.account==='authenticated'||hasStoredSession();
 if(!hasStoredSession())try{localStorage.removeItem(STORE);}catch{}
 const REPORT_CATEGORIES={translation:'Übersetzung',grammar:'Grammatikhilfe',audio:'Aufnahme',level:'Level',other:'Sonstiges'};
-let memory={reviews:{},favorites:[],daily:{},prefs:{},reports:{},writingRatings:{}};
-try{const saved=hasStoredSession()?JSON.parse(localStorage.getItem(STORE)):null;if(saved&&typeof saved==='object'){for(const k of ['reviews','daily','prefs'])if(saved[k]&&typeof saved[k]==='object'&&!Array.isArray(saved[k]))memory[k]=saved[k];if(Array.isArray(saved.favorites))memory.favorites=saved.favorites.filter(Number.isInteger);if(saved.writingRatings)try{memory.writingRatings=validateWritingRatings(saved.writingRatings);}catch{}if(saved.reports)try{memory.reports=validateReports(saved.reports);}catch{}}}catch{}
+let memory={reviews:{},favorites:[],daily:{},prefs:{},reports:{},writingRatings:{},verbProgress:{}};
+try{const saved=hasStoredSession()?JSON.parse(localStorage.getItem(STORE)):null;if(saved&&typeof saved==='object'){for(const k of ['reviews','daily','prefs'])if(saved[k]&&typeof saved[k]==='object'&&!Array.isArray(saved[k]))memory[k]=saved[k];if(Array.isArray(saved.favorites))memory.favorites=saved.favorites.filter(Number.isInteger);if(saved.verbProgress)try{memory.verbProgress=validateVerbProgress(saved.verbProgress);}catch{}if(saved.writingRatings)try{memory.writingRatings=validateWritingRatings(saved.writingRatings);}catch{}if(saved.reports)try{memory.reports=validateReports(saved.reports);}catch{}}}catch{}
 let grammar={},grammarAvailable=false;
 let levels=[1,2,3,4,5,6];
 let data=[],archived=[],level=levels.includes(memory.prefs.level)?memory.prefs.level:1,direction=['de-fi','random'].includes(memory.prefs.direction)?memory.prefs.direction:'fi-de',audioOnly=memory.prefs.audioOnly===true,mode='new',queue=[],initialCount=0,completed=0,revealed=false,player=null,ready=false;
-let activity=['listen','dictation','writing','grammar'].includes(memory.prefs.activity)?memory.prefs.activity:'translate',speed=[0.5,0.75,1].includes(memory.prefs.speed)?memory.prefs.speed:1,draft='';
+let activity=['listen','dictation','writing','grammar','verbs'].includes(memory.prefs.activity)?memory.prefs.activity:'translate',speed=[0.5,0.75,1].includes(memory.prefs.speed)?memory.prefs.speed:1,draft='';
 let grammarTopic=GRAMMAR_TOPICS.some(t=>t.id===memory.prefs.grammarTopic)?memory.prefs.grammarTopic:'negation';
 const isTranslation=()=>['translate','grammar'].includes(activity);
 const matchesTopic=s=>topicNotes(s,grammar,grammarTopic).length>0;
 const writingSessions={};
 const WRITING_RATINGS={right:'Richtig',almost:'Fast richtig',again:'Noch üben'};
 const MIN_WRITING_SENTENCES=5;
-const ACTIVITY_LABELS={translate:'Übersetzen',listen:'Hörmodus',dictation:'Diktat',writing:'Schreibtest',grammar:'Grammatik'};
+const ACTIVITY_LABELS={translate:'Übersetzen',listen:'Hörmodus',dictation:'Diktat',writing:'Schreibtest',grammar:'Grammatik',verbs:'Verbformen'};
 const DIRECTION_LABELS={'fi-de':'Finnisch → Deutsch','de-fi':'Deutsch → Finnisch',random:'Zufällig'};
 const isWritingEligible=s=>['fi-de','de-fi','listen','dictation'].some(kind=>Number(memory.reviews[`${s.id}:${kind}`]?.repetitions)>=2);
 const writingPool=()=>[...data,...archived].filter(s=>s.level===level&&isWritingEligible(s));
@@ -55,27 +57,38 @@ function preloadQueueAudio(){const urls=queue.slice(0,3).map(s=>s.audios?.[0]?.d
 function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function renderStats(){
  syncWritingAvailability();
+ const verbStats=verbSummary(VERBS,memory.verbProgress);
+ $('verb-progress-summary').textContent=`${verbStats.seen} von ${verbStats.total} Formen gesehen · ${verbStats.secure} sicher · ${verbStats.due} zum Wiederholen`;
  $('today-count').textContent=memory.daily[day()]||0;
  $('total').textContent=`${data.length} finnische Sätze`;
  $('audio-total').textContent=`${data.filter(s=>s.audios.length).length} mit Originalaufnahme`;
- $('levels').innerHTML=levels.map(n=>{const all=(activity==='writing'?[...data,...archived]:data).filter(s=>s.level===n&&(['translate','grammar','writing'].includes(activity)||s.audios.length)&&(activity!=='grammar'||matchesTopic(s))),seen=all.filter(s=>activity==='writing'?isWritingEligible(s):studyDirections().some(dir=>review(s,dir))).length;return `<button class="level ${n===level?'active':''}" data-level="${n}" aria-pressed="${n===level}"><span class="level-number">${String(n).padStart(2,'0')}</span><span><b>Level ${n}</b><small>${activity==='writing'?`${seen} Sätze bereit`:`${seen} von ${all.length} geübt`}</small></span></button>`;}).join('');
+ $('levels').innerHTML=levels.map(n=>{const all=(activity==='writing'?[...data,...archived]:data).filter(s=>s.level===n&&(['translate','grammar','writing','verbs'].includes(activity)||s.audios.length)&&(activity!=='grammar'||matchesTopic(s))),seen=all.filter(s=>activity==='writing'?isWritingEligible(s):activity==='verbs'?['fi-de','de-fi'].some(dir=>memory.reviews[s.id+':'+dir]):studyDirections().some(dir=>review(s,dir))).length;return `<button class="level ${n===level?'active':''}" data-level="${n}" aria-pressed="${n===level}"><span class="level-number">${String(n).padStart(2,'0')}</span><span><b>Level ${n}</b><small>${activity==='writing'?`${seen} Sätze bereit`:`${seen} von ${all.length} geübt`}</small></span></button>`;}).join('');
  $('new-count').textContent=base().filter(s=>eligibleDirections(s,'new').length).length;
  const dueCount=base(true).filter(s=>eligibleDirections(s,'review').length).length;
  $('due-count').textContent=dueCount;
- $('home-review-count').textContent=dueCount;
+ $('home-review-count').textContent=activity==='verbs'?verbStats.due:dueCount;
+ $('home-review-unit').textContent=activity==='verbs'?'Verbformen sind fällig':'Sätze sind fällig';
  $('fav-count').textContent=base(true).filter(s=>memory.favorites.includes(s.id)).length;
  const detail=activity==='grammar'?GRAMMAR_TOPICS.find(t=>t.id===grammarTopic)?.label:activity==='writing'?'Deutsch → Finnisch':isTranslation()?DIRECTION_LABELS[direction]:'Mit Originalaufnahme';
  $('practice-summary').textContent=`Level ${level} · ${ACTIVITY_LABELS[activity]}`;
  $('settings-level').textContent=`Level ${level}`;
  $('home-session-meta').textContent=`Level ${level} · ${ACTIVITY_LABELS[activity]}${detail?` · ${detail}`:''}`;
  document.querySelectorAll('[data-mode]').forEach(b=>{b.classList.toggle('selected',b.dataset.mode===mode);b.setAttribute('aria-pressed',b.dataset.mode===mode);});
+ if(activity==='verbs'){
+  $('practice-summary').textContent='Verbformen · Präsens';
+  $('home-session-meta').textContent='Verbformen · 200 Verben · Präsens';
+  $('session-title').textContent='Verbformen · Präsens';
+  const count=verbSession?.answers.length||0,total=verbSession?.count||0;
+  $('session-progress').textContent=total?`${count} / ${total}`:'Aufgabenanzahl wählen';
+  $('progress-bar').style.width=total?`${count/total*100}%`:'0%';return;
+ }
  if(activity==='writing'){const session=writingSessions[level],total=session?.items.length||0,count=session?.answers.length||0;$('session-title').textContent=`Level ${level} · Schreibtest · Deutsch → Finnisch`;$('session-progress').textContent=total?`${count} / ${total}`:(writingPool().length>=MIN_WRITING_SENTENCES?'Satzanzahl wählen':'Noch keine Sätze bereit');$('progress-bar').style.width=total?`${count/total*100}%`:'0%';return;}
  $('session-title').textContent=`Level ${level} · ${activity==='grammar'?GRAMMAR_TOPICS.find(t=>t.id===grammarTopic).label:mode==='new'?'Neue Sätze · Audio zuerst':mode==='review'?'Wiederholen':'Deine Favoriten'}`;
  $('session-progress').textContent=initialCount?`${completed} / ${completed+queue.length}`:'Keine Karten ausgewählt';
  $('progress-bar').style.width=initialCount?`${completed/(completed+queue.length)*100}%`:'0%';
 }
 function prioritizeAudio(pool){return [...shuffle(pool.filter(s=>s.audios.length&&!s.translations[0].origin)),...shuffle(pool.filter(s=>s.audios.length&&!!s.translations[0].origin)),...shuffle(pool.filter(s=>!s.audios.length))];}
-function start(){if(!ready)return;stopAudio();draft='';if(activity==='writing'&&!syncWritingAvailability())activity='translate';syncControls();if(activity==='writing'){queue=[];revealed=false;persist();render();return;}const pool=filtered();queue=(mode==='new'&&activity!=='grammar'?prioritizeAudio(pool):shuffle(pool)).slice(0,10).map(s=>{const choices=activity==='grammar'?studyDirections():eligibleDirections(s);return {...s,practiceDirection:choices[Math.floor(Math.random()*choices.length)]};});initialCount=queue.length;completed=0;revealed=false;persist();render();}
+function start(){if(!ready)return;stopAudio();draft='';if(activity==='writing'&&!syncWritingAvailability())activity='translate';syncControls();if(activity==='verbs'){queue=[];revealed=false;persist();render();return;}if(activity==='writing'){queue=[];revealed=false;persist();render();return;}const pool=filtered();queue=(mode==='new'&&activity!=='grammar'?prioritizeAudio(pool):shuffle(pool)).slice(0,10).map(s=>{const choices=activity==='grammar'?studyDirections():eligibleDirections(s);return {...s,practiceDirection:choices[Math.floor(Math.random()*choices.length)]};});initialCount=queue.length;completed=0;revealed=false;persist();render();}
 function source(s){
  const original=()=>`<a href="https://tatoeba.org/en/sentences/show/${s.id}" target="_blank" rel="noopener">#${s.id} · ${escape(s.owner||'Tatoeba')}</a> · ${escape(s.license)}`;
  if(s.origin==='english_bridge')return `Für diese App mit KI aus dem Englischen übersetzt.<br>Englische Vorlage: ${source(s.source)}<br><span lang="en">${escape(s.source.text)}</span>`;
@@ -91,13 +104,14 @@ function translationNote(s){
  return '';
 }
 function syncControls(){
+ $('settings-level-row').hidden=activity==='verbs';
  $('grammar-controls').hidden=activity!=='grammar';
  if(activity==='grammar'){
   const topic=GRAMMAR_TOPICS.find(t=>t.id===grammarTopic);
   $('grammar-topic').innerHTML=GRAMMAR_TOPICS.map(t=>{const count=data.filter(s=>s.level===level&&(!audioOnly||s.audios.length)&&topicNotes(s,grammar,t.id).length).length;return `<option value="${t.id}" ${t.id===grammarTopic?'selected':''}>${t.label} · ${count} Sätze</option>`;}).join('');
   $('grammar-help').textContent=grammarAvailable?`${topic.hint} Bis zu 10 Sätze pro Runde, auch bereits gelernte. Bewertungen zählen zur gewählten Lernrichtung.`:'Die Grammatikhilfen konnten nicht geladen werden. Bitte lade die Seite bei bestehender Verbindung neu.';
  }
- $('practice-toolbar').hidden=activity==='writing';$('learning-modes').hidden=['writing','grammar'].includes(activity);$('writing-help').hidden=activity!=='writing';$('writing-review-controls').hidden=activity!=='writing';$('writing-history').hidden=true;
+ $('practice-toolbar').hidden=['writing','verbs'].includes(activity);$('learning-modes').hidden=['writing','grammar','verbs'].includes(activity);$('writing-help').hidden=activity!=='writing';$('writing-review-controls').hidden=activity!=='writing';$('writing-history').hidden=true;
  $('direction-group').hidden=!isTranslation();
  for(const [name,value] of [['activity',activity],['direction',direction]])document.querySelectorAll(`[data-${name}]`).forEach(b=>{const selected=b.dataset[name]===value;b.classList.toggle('selected',selected);b.setAttribute('aria-pressed',selected);});
  $('audio-only').disabled=!isTranslation();
@@ -192,7 +206,59 @@ function grammarMarkup(s){
  return `<details class="grammar" ${activity==='grammar'?'open':''}><summary>${activity==='grammar'?escape(GRAMMAR_TOPICS.find(t=>t.id===grammarTopic).label):'Grammatik verstehen'} <span>${notes.length} ${notes.length===1?'Hinweis':'Hinweise'}</span></summary><div class="grammar-notes">${notes.map(n=>`<article><h3>${escape(n.title)}</h3><p class="grammar-focus" lang="fi">${escape(n.focus)}</p><p>${escape(n.text)}</p></article>`).join('')}</div><p class="grammar-credit">Mit KI formulierte Lernhilfe zu ausgewählten Stellen im Satz. <a href="https://uusikielemme.fi/finnish-grammar" target="_blank" rel="noopener">Grammatik zum Nachlesen (Englisch) ↗</a></p></details>`;
 }
 function audioMarkup(s){if(!s.audios.length)return revealed&&s.audio_status==='license_missing'?'<p class="audio-license-note">Auf Tatoeba gibt es eine Aufnahme. Da keine Wiederverwendungsfreigabe angegeben ist, wird sie hier nicht eingebunden.</p>':'';if(isTranslation()&&cardDirection(s)==='de-fi'&&!revealed)return '';const a=s.audios[0];return `<div class="audio-row"><button class="audio-button" id="play-audio" aria-label="Finnischen Satz anhören"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M11 4 5 9H2v6h3l6 5V4Z"/><path d="M15 8a6 6 0 0 1 0 8M18 4a11 11 0 0 1 0 16"/></svg><span>Anhören</span></button><button class="audio-button" id="replay-audio" aria-label="Aufnahme von vorne wiederholen">↻ Wiederholen</button><label class="speed-label">Tempo<select id="speed" aria-label="Wiedergabegeschwindigkeit"><option value="1" ${speed===1?'selected':''}>Normal</option><option value="0.75" ${speed===0.75?'selected':''}>Langsam · 0,75×</option><option value="0.5" ${speed===0.5?'selected':''}>Sehr langsam · 0,5×</option></select></label><a href="${safeURL(a.download_url)}" target="_blank" rel="noopener">Audiodatei ↗</a></div>`;}
-function render(){if(activity==='writing'){renderWritingSession();return;}$('writing-history').hidden=true;stopAudio();renderStats();preloadQueueAudio();const s=queue[0];$('actions').innerHTML='';$('keyboard-note').hidden=!s;$('keyboard-note').textContent=isTranslation()?'Nach dem Vergleich: 1 / 2 / 3 zum Bewerten':'Aufnahme beliebig oft anhören · Nach dem Aufdecken: 1 / 2 / 3 zum Bewerten';
+
+let verbSession = null;
+function saveVerbProgress(progress,answered=false) {
+ const daily=answered?{...memory.daily,[day()]:(Number(memory.daily[day()])||0)+1}:memory.daily;
+ try { commitLearning({...memory,verbProgress:progress,daily}); return true; }
+ catch { $('notice').textContent='Dein Lernstand konnte nicht gespeichert werden. Bitte versuche es erneut.'; return false; }
+}
+function nextVerbQuestion() {
+ const item=chooseCombination(VERBS,memory.verbProgress,verbSession);
+ if(!item)return;
+ if(!saveVerbProgress(markAsked(memory.verbProgress,item.key)))return;
+ verbSession.current=item;verbSession.draft='';verbSession.checked=false;
+ verbSession.history.push(item.key);render();$('verb-input')?.focus();
+}
+function submitVerbAnswer() {
+ const session=verbSession;
+ if(activity!=='verbs'||!session?.current||session.checked)return;
+ const answer=session.draft.trim();
+ if(!answer){$('notice').textContent='Trage zuerst die Verbform ein.';$('verb-input')?.focus();return;}
+ const {verb,person,key}=session.current,correct=answerMatches(answer,verb,person);
+ if(!saveVerbProgress(markAnswered(memory.verbProgress,key,correct),true))return;
+ session.checked=true;session.correct=correct;
+ const answeredIndex=session.answers.length;
+ session.answers.push({verb,person,answer,correct});
+ if(!correct){session.retries=session.retries.filter(r=>r.key!==key);session.retries.push({key,after:answeredIndex+3});}
+ $('notice').textContent='';render();guestSaveHint();$('verb-next')?.focus();
+}
+function renderVerbSession() {
+ stopAudio();renderStats();$('writing-history').hidden=true;$('actions').innerHTML='';$('keyboard-note').hidden=true;
+ const card=$('card'),session=verbSession,summary=verbSummary(VERBS,memory.verbProgress);
+ card.className='card verb-card';
+ if(!session){
+  card.innerHTML=`<span class="card-label">Verbformen · Präsens</span><h2>Wie viele Formen möchtest du üben?</h2><p>200 Verben · Zufällige Personalpronomen · Neue Formen und gezielte Wiederholungen</p><p class="verb-coverage">${summary.seen} von ${summary.total} Formen schon gesehen · ${summary.secure} sicher</p><div class="choice-buttons verb-counts" role="group" aria-label="Anzahl der Aufgaben"><button type="button" data-verb-count="5">5 Aufgaben</button><button type="button" data-verb-count="10">10 Aufgaben</button></div><p class="verb-hint">Nach jeder Antwort siehst du alle sechs Formen. Schwierige Formen kommen mit Abstand wieder.</p>`;
+  card.querySelectorAll('[data-verb-count]').forEach(b=>b.onclick=()=>{verbSession=createVerbSession(Number(b.dataset.verbCount));$('practice-settings').open=false;nextVerbQuestion();});
+  return;
+ }
+ if(!session.current){
+  const correct=session.answers.filter(a=>a.correct).length;
+  card.innerHTML=`<span class="complete-mark">✓</span><h2 tabindex="-1" id="verb-result-title">Runde geschafft.</h2><p>${correct} von ${session.answers.length} Antworten richtig.</p><p>Schwierige Formen bleiben für kommende Runden vorgemerkt.</p><ol class="verb-results">${session.answers.map(a=>`<li><span>${a.correct?'✓ Richtig':'Noch üben'}</span><strong lang="fi">${PRONOUNS[a.person]} ${escape(a.verb.forms[a.person])}</strong><small>${escape(a.verb.id)} · ${escape(a.verb.de)}</small>${a.correct?'':`<small>Deine Antwort: <span lang="fi">${escape(a.answer)}</span></small>`}</li>`).join('')}</ol>`;
+  $('actions').innerHTML='<button type="button" class="primary" id="verb-again">Neue Runde</button>';
+  $('verb-again').onclick=()=>{verbSession=null;render();};return;
+ }
+ const {verb,person}=session.current;
+ card.innerHTML=`<div class="card-top"><span class="card-label">Verbformen</span><span>${session.checked?session.answers.length:session.answers.length+1} von ${session.count}</span></div><p class="verb-hint">Welche Form? · Präsens</p><h2 class="verb-question" lang="fi">${PRONOUNS[person]} · ${escape(verb.id)}</h2><p class="verb-meaning">${escape(verb.de)}</p><form id="verb-form"><label for="verb-input">Deine Verbform</label><input id="verb-input" lang="fi" maxlength="100" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" aria-describedby="verb-input-hint" placeholder="Deine Antwort …" ${session.checked?'readonly':''} value="${escape(session.draft)}"><p class="verb-hint" id="verb-input-hint">Nur die Verbform oder mit „${PRONOUNS[person]}“. Achte auf ä, ö und doppelte Buchstaben.</p>${session.checked?'':`<div class="letter-buttons"><button type="button" data-verb-letter="ä" aria-label="ä einfügen">ä</button><button type="button" data-verb-letter="ö" aria-label="ö einfügen">ö</button></div><button class="primary" type="submit">Lösung prüfen</button>`}</form>${session.checked?`<div class="verb-feedback ${session.correct?'verb-correct':'verb-wrong'}" role="status">${session.correct?'✓ Richtig!':`Noch nicht richtig. Die Lösung ist <strong lang="fi">${escape(verb.forms[person])}</strong>.`}</div><table class="verb-forms"><caption>Alle sechs Formen von <span lang="fi">${escape(verb.id)}</span></caption><thead><tr><th scope="col">Personalpronomen</th><th scope="col">Präsens</th></tr></thead><tbody>${PRONOUNS.map((p,i)=>`<tr class="${i===person?'verb-target':''}"><th scope="row" lang="fi">${p}${i===person?' <span class="verb-hint">(gefragt)</span>':''}</th><td lang="fi">${escape(verb.forms[i])}</td></tr>`).join('')}</tbody></table>`:''}`;
+ const input=$('verb-input');input.oninput=()=>{if(!session.checked)session.draft=input.value;};
+ $('verb-form').onsubmit=e=>{e.preventDefault();submitVerbAnswer();};
+ card.querySelectorAll('[data-verb-letter]').forEach(b=>b.onclick=()=>{if(input.value.length>=100)return;input.setRangeText(b.dataset.verbLetter,input.selectionStart,input.selectionEnd,'end');session.draft=input.value;input.focus();});
+ $('actions').innerHTML=`${session.checked?`<button type="button" class="primary" id="verb-next">${session.answers.length===session.count?'Auswertung':'Weiter'}</button>`:''}<button type="button" class="quiet" id="verb-abort">Runde beenden</button>`;
+ if(session.checked)$('verb-next').onclick=()=>{if(session!==verbSession||!session.checked)return;if(session.answers.length>=session.count){session.current=null;render();$('verb-result-title')?.focus();}else nextVerbQuestion();};
+ $('verb-abort').onclick=()=>{verbSession=null;render();};
+}
+
+function render(){if(activity==='verbs'){renderVerbSession();return;}if(activity==='writing'){renderWritingSession();return;}$('writing-history').hidden=true;stopAudio();renderStats();preloadQueueAudio();const s=queue[0];$('actions').innerHTML='';$('keyboard-note').hidden=!s;$('keyboard-note').textContent=isTranslation()?'Nach dem Vergleich: 1 / 2 / 3 zum Bewerten':'Aufnahme beliebig oft anhören · Nach dem Aufdecken: 1 / 2 / 3 zum Bewerten';
  if(!s){$('card').className='card empty';if(initialCount){$('card').innerHTML='<span class="complete-mark">✓</span><h2>Gut gemacht.</h2><p>Deine Lerneinheit ist geschafft. Dein nächster Satz wartet schon.</p>';$('actions').innerHTML='<button class="primary" id="next-session">Nächste Lerneinheit</button>';$('next-session').onclick=start;}else{let title='Alles für heute wiederholt.',text='Hier erscheinen die Sätze, sobald deine nächste Wiederholung fällig ist.';if(mode==='new'){title='In diesem Level ist alles entdeckt.';text='Wiederhole deine Sätze oder wechsle zum nächsten Level.';}if(mode==='favorites'){title='Deine Lieblingssätze warten hier.';text='Markiere einen Satz mit dem Stern auf der Lernkarte.';}if((audioOnly||!isTranslation())&&!base(mode!=='new').length){title='Hier gibt es noch keine Aufnahme.';text=isTranslation()?'Schalte „Nur mit Audio“ aus oder wähle ein anderes Level.':'Wähle ein anderes Level oder die Übungsart Übersetzen.';}if(activity==='grammar'){title=grammarAvailable?'Keine passenden Sätze in dieser Auswahl.':'Grammatikhilfen nicht verfügbar.';text=grammarAvailable?'Wähle ein anderes Grammatikthema oder Level. Falls aktiv, schalte „Nur mit Audio“ aus.':'Lade die Seite bei bestehender Verbindung neu.';}$('card').innerHTML=`<h2>${title}</h2><p>${text}</p>`;}return;}
  $('card').className='card';const saved=memory.favorites.includes(s.id),front=!isTranslation()?(revealed?s.text:''):cardDirection(s)==='fi-de'?s.text:s.translations[0].text;
  $('card').innerHTML=`<div class="card-top"><span class="card-label">${!isTranslation()?(activity==='listen'?'Hörmodus':'Diktat'):cardDirection(s)==='fi-de'?'Finnisch':'Deutsch'} <span>·</span> Level ${s.level}${s.level_assessment?.status==='estimated'?' · geschätzt':''}</span><button class="favorite ${saved?'saved':''}" id="favorite" aria-label="${saved?'Aus Favoriten entfernen':'Als Favorit speichern'}" aria-pressed="${saved}">${saved?'★':'☆'}</button></div>${questionMarkup(s,front)}${audioMarkup(s)}${dictationMarkup(s)}${translationDraftMarkup(s)}${revealed?`<div class="translation"><span class="card-label" style="justify-content:center">${isTranslation()?'Vorlage · ':''}${!isTranslation()||cardDirection(s)==='fi-de'?'Deutsch':'Finnisch'}</span>${!isTranslation()||cardDirection(s)==='fi-de'?s.translations.map((t,i)=>`<p lang="de" class="${i?'variant':''}">${escape(t.text)}</p>`).join(''):`<p lang="fi">${escape(s.text)}</p>`}</div>${grammarMarkup(s)}${translationNote(s)?`<p class="bridge-note">${escape(translationNote(s))}</p>`:''}<details class="sources"><summary>Quellen &amp; Aufnahmen</summary><p>Finnisch: ${source(s)}</p>${s.translations.map(t=>`<p>Deutsch: ${source(t)}</p>`).join('')}${s.audios.map(a=>`<p>Aufnahme: <a href="${safeURL(a.attribution_url||`https://tatoeba.org/en/user/profile/${encodeURIComponent(a.author)}`)}" target="_blank" rel="noopener">${escape(a.author)}</a> · <a href="${safeURL(licenseURL(a.license))}" target="_blank" rel="noopener">${escape(a.license)}</a></p>`).join('')}</details>`:''}`;
@@ -228,10 +294,10 @@ function validateBackup(input){
  for(const [k,r] of reviews){objectRecord(r);if(!/^[1-9]\d{0,15}:(fi-de|de-fi|listen|dictation)$/.test(k)||!validInt(Number(k.split(':')[0]))||!validInt(r.due,8640000000000000)||!validInt(r.interval,180)||!validInt(r.repetitions,10000000)||(r.updatedAt!==undefined&&!validInt(r.updatedAt,8640000000000000)))throw new Error('Die Sicherung enthält eine ungültige Bewertung.');out.reviews[k]={due:r.due,interval:r.interval,repetitions:r.repetitions,...(r.updatedAt===undefined?{}:{updatedAt:r.updatedAt})};}
  if(!Array.isArray(m.favorites)||m.favorites.length>100000||m.favorites.some(id=>!Number.isSafeInteger(id)||id<1))throw new Error('Ungültige Favoriten.');out.favorites=[...new Set(m.favorites)];
  const daily=Object.entries(objectRecord(m.daily));if(daily.length>50000)throw new Error('Zu viele Tageswerte.');for(const [date,n] of daily){if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||!Number.isFinite(Date.parse(date))||new Date(date).toISOString().slice(0,10)!==date||!validInt(n,10000000))throw new Error('Ungültiger Tagesfortschritt.');out.daily[date]=n;}
- const p=objectRecord(m.prefs);if(!Number.isInteger(p.level)||p.level<1||p.level>1000||!['fi-de','de-fi','random'].includes(p.direction)||typeof p.audioOnly!=='boolean'||!['translate','listen','dictation','writing','grammar'].includes(p.activity)||![.5,.75,1].includes(p.speed))throw new Error('Ungültige Lerneinstellungen.');out.prefs={level:p.level,direction:p.direction,audioOnly:p.audioOnly,activity:p.activity,speed:p.speed,grammarTopic:GRAMMAR_TOPICS.some(t=>t.id===p.grammarTopic)?p.grammarTopic:'negation'};out.reports=validateReports(m.reports||{});out.writingRatings=validateWritingRatings(m.writingRatings||{});return out;
+ const p=objectRecord(m.prefs);if(!Number.isInteger(p.level)||p.level<1||p.level>1000||!['fi-de','de-fi','random'].includes(p.direction)||typeof p.audioOnly!=='boolean'||!['translate','listen','dictation','writing','grammar','verbs'].includes(p.activity)||![.5,.75,1].includes(p.speed))throw new Error('Ungültige Lerneinstellungen.');out.prefs={level:p.level,direction:p.direction,audioOnly:p.audioOnly,activity:p.activity,speed:p.speed,grammarTopic:GRAMMAR_TOPICS.some(t=>t.id===p.grammarTopic)?p.grammarTopic:'negation'};out.reports=validateReports(m.reports||{});out.writingRatings=validateWritingRatings(m.writingRatings||{});out.verbProgress=validateVerbProgress(m.verbProgress||{});return out;
 }
 function mergeLearning(current,incoming){
- const out={reviews:{...current.reviews},favorites:[...new Set([...current.favorites,...incoming.favorites])],daily:{...current.daily},prefs:{...incoming.prefs},reports:{...current.reports},writingRatings:{...current.writingRatings}};
+ const out={reviews:{...current.reviews},favorites:[...new Set([...current.favorites,...incoming.favorites])],daily:{...current.daily},prefs:{...incoming.prefs},reports:{...current.reports},writingRatings:{...current.writingRatings},verbProgress:mergeVerbProgress(current.verbProgress,incoming.verbProgress)};
  for(const [k,r] of Object.entries(incoming.reviews)){const old=out.reviews[k];const newer=old&&Number.isFinite(old.updatedAt)&&Number.isFinite(r.updatedAt)?r.updatedAt>old.updatedAt:!old||r.repetitions>old.repetitions||(r.repetitions===old.repetitions&&r.due>old.due);if(!old||newer)out.reviews[k]={...r};}
  for(const [date,n] of Object.entries(incoming.daily))out.daily[date]=Math.max(out.daily[date]||0,n);
  for(const [id,r] of Object.entries(incoming.writingRatings||{}))if(!out.writingRatings[id]||r.updatedAt>out.writingRatings[id].updatedAt)out.writingRatings[id]={...r};
@@ -240,12 +306,16 @@ function mergeLearning(current,incoming){
 }
 function commitLearning(candidate){if(accountActive())localStorage.setItem(STORE,JSON.stringify(candidate));else localStorage.removeItem(STORE);memory=candidate;}
 function learningSnapshot(){return JSON.parse(JSON.stringify({...memory,prefs:{level,direction,audioOnly,activity,speed,grammarTopic}}));}
-window.suomiLearningState={snapshot:learningSnapshot};
+window.suomiLearningState={snapshot:learningSnapshot,applyCloud:incoming=>{
+ if(activity!=='verbs')return false;
+ const candidate=mergeLearning(memory,{...incoming,prefs:learningSnapshot().prefs,verbProgress:validateVerbProgress(incoming.verbProgress||{})});
+ commitLearning(candidate);if(ready)renderStats();return true;
+}};
 function downloadJSON(filename,value){const blob=new Blob([JSON.stringify(value,null,2)+'\n'],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 let reportSentence=null,pendingBackup=null,importSequence=0;
 function openReport(s){stopAudio();reportSentence=s;$('report-card-label').textContent=`Satz #${s.id} · Level ${s.level}`;$('report-category').value=Object.values(memory.reports).find(r=>r.sentenceId===s.id)?.category||(['translate','grammar','writing'].includes(activity)?'translation':'audio');loadReportNote();$('report-dialog').showModal();}
 function loadReportNote(){if(!reportSentence)return;const saved=memory.reports[`${reportSentence.id}:${$('report-category').value}`];$('report-note').value=saved?.note||'';$('report-status').textContent=saved?'Für diesen Satz und Bereich ist bereits ein Hinweis gespeichert. Du kannst ihn aktualisieren.':'';}
-function renderReportList(){const reports=Object.entries(memory.reports).sort((a,b)=>b[1].updatedAt-a[1].updatedAt);$('export-reports').disabled=!reports.length;$('backup-summary').textContent=`${Object.keys(memory.reviews).length} geübte Satz-/Übungsart-Kombinationen · ${memory.favorites.length} Favoriten · ${reports.length} Hinweise`;
+function renderReportList(){const reports=Object.entries(memory.reports).sort((a,b)=>b[1].updatedAt-a[1].updatedAt);$('export-reports').disabled=!reports.length;$('backup-summary').textContent=`${Object.keys(memory.reviews).length} geübte Satz-/Übungsart-Kombinationen · ${Object.keys(memory.verbProgress).length} geübte Verbformen · ${memory.favorites.length} Favoriten · ${reports.length} Hinweise`;
  $('report-list').innerHTML=reports.length?`${reports.length>50?'<p>Die 50 zuletzt bearbeiteten Hinweise. Der Export enthält alle Hinweise.</p>':''}`+reports.slice(0,50).map(([id,r])=>`<details class="saved-report"><summary>#${r.sentenceId} · ${escape(REPORT_CATEGORIES[r.category])}</summary><p lang="fi">${escape(r.sentenceText)}</p><p>${escape(r.translationText)}</p><p class="user-report-note">${escape(r.note||'Ohne ergänzende Notiz.')}</p><a href="https://tatoeba.org/en/sentences/show/${r.sentenceId}" target="_blank" rel="noopener">Satz auf Tatoeba ↗</a><button class="quiet" data-delete-report="${escape(id)}">Hinweis löschen</button></details>`).join(''):'<p>Noch keine Hinweise. Nutze „Fehler melden“ direkt auf einer Lernkarte.</p>';
  document.querySelectorAll('[data-delete-report]').forEach(b=>b.onclick=()=>{const reports={...memory.reports};delete reports[b.dataset.deleteReport];try{commitLearning({...memory,reports});renderReportList();if($('report-error'))$('report-error').textContent=queue[0]&&Object.values(memory.reports).some(r=>r.sentenceId===queue[0].id)?'Hinweis bearbeiten':'Fehler melden';$('backup-status').textContent='Hinweis gelöscht.';}catch{$('backup-status').textContent='Der Hinweis konnte nicht gelöscht werden. Dein Browser hat das Speichern abgelehnt.';}});
 }
@@ -259,7 +329,7 @@ $('export-backup').onclick=()=>{if(!accountActive()){$('backup-status').textCont
 $('export-reports').onclick=()=>{if(!accountActive()){$('backup-status').textContent='Bitte melde dich an, um Hinweise dauerhaft zu speichern oder zu exportieren.';return;}try{downloadJSON(`suomi-hinweise-${day()}.json`,{format:'suomi-reports',version:1,exportedAt:new Date().toISOString(),reports:Object.values(memory.reports)});$('backup-status').textContent='Download gestartet. Hänge die Hinweise-Datei hier im Chat an, um die Korrekturen anzustoßen.';}catch{$('backup-status').textContent='Der Download konnte nicht gestartet werden.';}};
 $('import-backup').onchange=async e=>{if(!accountActive()){$('backup-status').textContent='Bitte melde dich an, um eine Sicherung zu importieren.';e.target.value='';return;}const sequence=++importSequence;pendingBackup=null;$('import-preview').hidden=true;$('backup-status').textContent='';const file=e.target.files?.[0];if(!file)return;try{if(file.size>20*1024*1024)throw new Error('Die Datei ist zu groß. Bitte verwende eine Suomi-Sicherung bis 20 MB.');const text=await file.text();if(sequence!==importSequence)return;const parsed=JSON.parse(text,(key,value)=>{if(['__proto__','constructor','prototype'].includes(key))throw new Error('Ungültige Datenfelder.');return value;});pendingBackup=validateBackup(parsed);$('import-summary').textContent=`Bereit zum Import: ${Object.keys(pendingBackup.reviews).length} Bewertungen, ${pendingBackup.favorites.length} Favoriten und ${Object.keys(pendingBackup.reports).length} Hinweise. Einstellungen aus der Sicherung werden übernommen; eine neue Lerneinheit beginnt.`;$('import-preview').hidden=false;}catch(err){if(sequence!==importSequence)return;pendingBackup=null;$('backup-status').textContent=err instanceof SyntaxError?'Die Datei enthält keine lesbare Sicherung. Dein Lernstand bleibt erhalten.':`${err.message} Dein Lernstand bleibt erhalten.`;}};
 $('cancel-import').onclick=()=>{clearImport();$('backup-status').textContent='Import abgebrochen.';};
-$('apply-backup').onclick=()=>{if(!accountActive()){$('backup-status').textContent='Bitte melde dich an, um eine Sicherung zu übernehmen.';return;}if(!pendingBackup||!ready)return;const candidate=mergeLearning(memory,pendingBackup);if(!levels.includes(candidate.prefs.level))candidate.prefs.level=levels[0]||1;try{commitLearning(candidate);}catch{$('backup-status').textContent='Dein Browser konnte die Sicherung nicht speichern. Der bisherige Lernstand bleibt erhalten.';return;}({level,direction,audioOnly,activity,speed,grammarTopic}=candidate.prefs);clearImport();mode='new';start();renderReportList();$('backup-status').textContent='Lernstand zusammengeführt. Deine Einstellungen sind übernommen und eine neue Lerneinheit ist bereit.';};
+$('apply-backup').onclick=()=>{if(!accountActive()){$('backup-status').textContent='Bitte melde dich an, um eine Sicherung zu übernehmen.';return;}if(!pendingBackup||!ready)return;const candidate=mergeLearning(memory,pendingBackup);if(!levels.includes(candidate.prefs.level))candidate.prefs.level=levels[0]||1;try{commitLearning(candidate);}catch{$('backup-status').textContent='Dein Browser konnte die Sicherung nicht speichern. Der bisherige Lernstand bleibt erhalten.';return;}({level,direction,audioOnly,activity,speed,grammarTopic}=candidate.prefs);clearImport();mode='new';verbSession=null;start();renderReportList();$('backup-status').textContent='Lernstand zusammengeführt. Deine Einstellungen sind übernommen und eine neue Lerneinheit ist bereit.';};
 
 function showView(name,openSettings=false){
  for(const view of ['home','practice','progress','classrooms']){const node=$(`${view}-view`);if(node)node.hidden=view!==name;}
@@ -276,9 +346,9 @@ document.querySelectorAll('[data-activity]').forEach(b=>b.onclick=()=>{if(b.data
 document.querySelectorAll('[data-direction]').forEach(b=>b.onclick=()=>{if(direction!==b.dataset.direction){direction=b.dataset.direction;start();}});
 $('grammar-topic').onchange=e=>{grammarTopic=e.target.value;start();};
 $('audio-only').checked=audioOnly;
-$('levels').onclick=e=>{const b=e.target.closest('[data-level]');if(b){level=Number(b.dataset.level);start();showView('practice');}};
+$('levels').onclick=e=>{const b=e.target.closest('[data-level]');if(b){if(activity==='verbs')activity='translate';level=Number(b.dataset.level);start();showView('practice');}};
 $('audio-only').onchange=e=>{audioOnly=e.target.checked;start();};document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;start();});
 $('about').onclick=()=>$('about-dialog').showModal();$('close-about').onclick=()=>$('about-dialog').close();$('about-dialog').onclick=e=>{if(e.target===$('about-dialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}};
-document.addEventListener('keydown',e=>{if(document.querySelector('dialog[open]')||(!$('classrooms-view')?.hidden)||!ready||activity==='writing'||$('about-dialog').open||$('report-dialog').open||$('manage-dialog').open||e.ctrlKey||e.metaKey||e.altKey||e.repeat||['INPUT','SELECT','TEXTAREA'].includes(e.target.tagName))return;if(e.code==='Space'&&e.target.tagName!=='BUTTON'&&!revealed&&queue.length&&isTranslation()){e.preventDefault();$('reveal').click();}else if(revealed&&['1','2','3'].includes(e.key)){e.preventDefault();grade({1:'again',2:'hard',3:'easy'}[e.key]);}});
+document.addEventListener('keydown',e=>{if(document.querySelector('dialog[open]')||(!$('classrooms-view')?.hidden)||!ready||['writing','verbs'].includes(activity)||$('about-dialog').open||$('report-dialog').open||$('manage-dialog').open||e.ctrlKey||e.metaKey||e.altKey||e.repeat||['INPUT','SELECT','TEXTAREA'].includes(e.target.tagName))return;if(e.code==='Space'&&e.target.tagName!=='BUTTON'&&!revealed&&queue.length&&isTranslation()){e.preventDefault();$('reveal').click();}else if(revealed&&['1','2','3'].includes(e.key)){e.preventDefault();grade({1:'again',2:'hard',3:'easy'}[e.key]);}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stopAudio();else if(ready)renderStats();});
 try{const response=await fetch('sentences.json');if(!response.ok)throw new Error('load');const payload=await response.json();data=payload.sentences;if(Array.isArray(payload.levels))levels=payload.levels.map(l=>l.id).filter(Number.isInteger);if(!levels.includes(level))level=levels[0]||1;archived=Array.isArray(payload.archived_sentences)?payload.archived_sentences:[];if(!Array.isArray(data)||!data.length)throw new Error('empty');try{const g=await fetch('grammar.json');if(g.ok){const payload=await g.json();grammar=payload.sentences||{};grammarAvailable=true;}}catch{}ready=true;start();if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});}catch{$('card').className='card empty';$('card').innerHTML='<h2>Die Sätze konnten nicht geladen werden.</h2><p>Prüfe deine Verbindung und lade die Seite erneut.</p>';$('actions').innerHTML='<button class="primary" id="retry">Erneut versuchen</button>';$('retry').onclick=()=>location.reload();$('total').textContent='Sätze nicht verfügbar';}

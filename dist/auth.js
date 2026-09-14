@@ -1,3 +1,4 @@
+import {mergeVerbProgress} from './verb-practice.mjs';
 import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './supabase-config.js';
 
 const STORE='suomi-learning-v1';
@@ -49,6 +50,7 @@ function mergeLearning(local,cloud){
   for(const [k,v] of Object.entries(local.reviews||{})){const old=out.reviews[k],a=Number(v.updatedAt)||0,b=Number(old?.updatedAt)||0;if(!old||a>b||(a===b&&(Number(v.repetitions)||0)>(Number(old.repetitions)||0)))out.reviews[k]=v}
   for(const [d,n] of Object.entries(local.daily||{}))out.daily[d]=Math.max(Number(out.daily[d])||0,Number(n)||0);
   for(const f of ['reports','writingRatings'])for(const [k,v] of Object.entries(local[f]||{}))if(!out[f][k]||(Number(v.updatedAt)||0)>(Number(out[f][k].updatedAt)||0))out[f][k]=v;
+  out.verbProgress=mergeVerbProgress(cloud.verbProgress,local.verbProgress);
   out.prefs={...(cloud.prefs||{}),...(local.prefs||{})};
   return out;
 }
@@ -64,14 +66,17 @@ async function synchronizeLearning(state=currentLearning(),reloadIfChanged=true,
     if(!silent)syncState('Synchronisierung läuft …');
     // Always merge the newest cloud snapshot before writing. Otherwise an
     // older, still-open device can overwrite progress made on another device.
-    const merged=mergeLearning(state,await cloudLearning());
+    const cloud=await cloudLearning();
+    const merged=mergeLearning(mergeLearning(currentLearning(),state),cloud);
     const changed=stableJSON(merged)!==stableJSON(currentLearning());
     localStorage.setItem(STORE,JSON.stringify(merged));
     const r=await request('/rest/v1/learning_state?on_conflict=user_id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({user_id:session.user.id,state:merged,updated_at:new Date().toISOString()})});
     if(!r.ok)throw new Error('Der Lernstand konnte nicht synchronisiert werden.');
     lastSnapshot=stableJSON(merged);lastCloudCheck=Date.now();
     if(!silent)syncState(`Synchronisiert · ${new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})}`);
-    if(changed&&reloadIfChanged)location.reload();
+    if(changed&&reloadIfChanged){
+      if(!window.suomiLearningState?.applyCloud?.(merged))location.reload();
+    }
     return merged;
   })();
   try{return await syncInFlight}finally{syncInFlight=null}
