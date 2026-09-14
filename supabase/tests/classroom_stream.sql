@@ -44,9 +44,16 @@ begin
  begin
   perform public.classroom_api('stream_delete',jsonb_build_object('room_id',rid,'post_id',pid));raise exception 'TEST peer delete allowed';
  exception when insufficient_privilege then null;end;
+ j:=public.classroom_api('stream_list',jsonb_build_object('room_id',rid));
+ perform public.classroom_api('stream_reply',jsonb_build_object('room_id',rid,'post_id',j->'posts'->0->'replies'->0->>'id','body','Danke!'));
+ j:=public.classroom_api('stream_list',jsonb_build_object('room_id',rid));
+ assert j->'posts'->0->'replies'->1->>'reply_to_id'=j->'posts'->0->'replies'->0->>'id','direct reply target preserved';
+ perform public.classroom_api('stream_reply',jsonb_build_object('room_id',rid,'post_id',j->'posts'->0->'replies'->1->>'id','body','Gern!'));
+ j:=public.classroom_api('stream_list',jsonb_build_object('room_id',rid));
+ assert j->'posts'->0->'replies'->2->>'reply_to_id'=j->'posts'->0->'replies'->1->>'id','deeper reply target preserved';
  perform set_config('request.jwt.claim.sub',s::text,true);
  perform public.classroom_api('stream_resolve',jsonb_build_object('room_id',rid,'post_id',pid,'resolved',true));
- j:=public.classroom_api('stream_list',jsonb_build_object('room_id',rid));assert (j->>'open_questions')::int=0,'author resolves';assert jsonb_array_length(j->'posts'->0->'replies')=1,'all may answer';
+ j:=public.classroom_api('stream_list',jsonb_build_object('room_id',rid));assert (j->>'open_questions')::int=0,'author resolves';assert jsonb_array_length(j->'posts'->0->'replies')=3,'all may answer';
  perform set_config('request.jwt.claim.sub',o::text,true);
  begin
   perform public.classroom_api('stream_list',jsonb_build_object('room_id',rid));raise exception 'TEST outsider access';
@@ -76,7 +83,7 @@ begin
  exception when insufficient_privilege then null;end;
  perform set_config('request.jwt.claim.sub',t::text,true);
  perform public.classroom_api('stream_delete',jsonb_build_object('room_id',rid,'post_id',pid));
- j:=public.classroom_api('stream_list',jsonb_build_object('room_id',rid));assert exists(select 1 from jsonb_array_elements(j->'posts') x where (x->>'deleted')::boolean and jsonb_array_length(x->'replies')=1),'delete preserves replies';
+ j:=public.classroom_api('stream_list',jsonb_build_object('room_id',rid));assert exists(select 1 from jsonb_array_elements(j->'posts') x where (x->>'deleted')::boolean and jsonb_array_length(x->'replies')=3),'delete preserves replies';
  perform public.classroom_api('archive',jsonb_build_object('room_id',rid));
  begin
   perform public.classroom_api('stream_post',jsonb_build_object('room_id',rid,'kind','post','body','closed'));raise exception 'TEST archived write';

@@ -254,7 +254,7 @@ const fileTypes={png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',webp:'image/
 const streamPosts=()=>Array.isArray(stream.posts)?stream.posts:[];
 const fileSize=n=>n<1048576?`${Math.ceil(n/1024)} KB`:`${(n/1048576).toFixed(1)} MB`;
 function richText(value){return String(value??'').split(/(https?:\/\/[^\s<>]+)/g).map(part=>/^https?:\/\//.test(part)?`<a href="${esc(part)}" target="_blank" rel="noopener noreferrer">${esc(part)}</a>`:esc(part)).join('');}
-function streamComposer(){return `<form data-cr-form="stream_post" class="cr-card cr-stream-compose"><h4>Was möchtest du mit der Klasse teilen?</h4><label>Beitragsart<select name="kind"><option value="question">Frage stellen</option><option value="post">Beitrag teilen</option>${room.teacher?'<option value="announcement">Ankündigung</option>':''}</select></label><label class="cr-compose-label">Dein Text<textarea name="body" required maxlength="3000" rows="3" placeholder="Eine Frage, ein Gedanke oder etwas Hilfreiches …"></textarea></label><div class="cr-toolbar"><label class="cr-file-picker">＋ Bilder &amp; Dateien<input type="file" name="files" multiple accept=".png,.jpg,.jpeg,.webp,.pdf,.txt,.csv,.zip,.docx,.xlsx,.pptx"></label><button class="primary">Veröffentlichen →</button></div><p class="cr-note">Bis zu 3 Dateien, je 10 MB · nur für diese Klasse sichtbar</p><div id="cr-draft-files" aria-live="polite"></div></form>`;}
+function streamComposer(){return `<details class="cr-card cr-stream-compose" id="cr-stream-compose"><summary><span><strong>Was möchtest du mit der Klasse teilen?</strong><small class="cr-compose-closed">Frage oder Beitrag erstellen · Aufklappen</small><small class="cr-compose-open">Beitragsbox einklappen</small></span></summary><form data-cr-form="stream_post"><label>Beitragsart<select name="kind"><option value="question">Frage stellen</option><option value="post">Beitrag teilen</option>${room.teacher?'<option value="announcement">Ankündigung</option>':''}</select></label><label class="cr-compose-label">Dein Text<textarea name="body" required maxlength="3000" rows="3" placeholder="Eine Frage, ein Gedanke oder etwas Hilfreiches …"></textarea></label><div class="cr-toolbar"><label class="cr-file-picker">＋ Bilder &amp; Dateien<input type="file" name="files" multiple accept=".png,.jpg,.jpeg,.webp,.pdf,.txt,.csv,.zip,.docx,.xlsx,.pptx"></label><button class="primary">Veröffentlichen →</button></div><p class="cr-note">Bis zu 3 Dateien, je 10 MB · nur für diese Klasse sichtbar</p><div id="cr-draft-files" aria-live="polite"></div></form></details>`;}
 function saveStreamDraft(){
  const form=document.querySelector('[data-cr-form=stream_post]');if(!form||!room)return;
  const draft=streamDrafts.get(room.id)||{files:[],id:crypto.randomUUID()};draft.body=form.elements.body.value;draft.kind=form.elements.kind.value;
@@ -289,8 +289,18 @@ function renderFeed(){
   return `<article class="cr-card cr-feed-card cr-feed-${p.kind}" id="cr-post-${p.id}"><div class="cr-feed-meta"><span class="cr-feed-type">${p.pinned?'ANGEHEFTET · ':''}${{question:'FRAGE',post:'BEITRAG',announcement:'ANKÜNDIGUNG'}[p.kind]||'BEITRAG'}</span>${p.kind==='question'&&!p.deleted?`<span class="cr-state ${p.resolved?'cr-resolved':''}">${p.resolved?'✓ Beantwortet':'Offen'}</span>`:''}</div><div class="cr-author"><strong>${esc(p.author)}</strong>${p.teacher?' · Lehrkraft':''} <time datetime="${esc(p.created_at)}">${esc(date(p.created_at))}</time></div><p class="cr-post-body">${p.deleted?'Beitrag entfernt.':richText(p.body)}</p>
  ${!p.deleted?(p.files||[]).map(f=>`<div class="cr-attachment" data-attachment="${f.id}"><div><strong>${esc(f.name)}</strong><small>${fileSize(f.size)}</small></div>${f.mime.startsWith('image/')?b('Bild ansehen','stream_preview',`data-id="${f.id}"`):''}${b('Herunterladen','stream_download',`data-id="${f.id}"`)}</div>`).join(''):''}
  <div class="cr-toolbar">${writable?b('Antworten','stream_reply',`data-id="${p.id}"`):''}${writable&&p.kind==='question'&&(room.teacher||p.own)?b(p.resolved?'Wieder öffnen':'Als beantwortet markieren','stream_resolve',`data-id="${p.id}" data-value="${!p.resolved}"`):''}${writable&&room.teacher?b(p.pinned?'Lösen':'Anpinnen','stream_pin',`data-id="${p.id}" data-value="${!p.pinned}"`):''}${writable&&(room.teacher||p.own)?b('Entfernen','stream_delete',`data-id="${p.id}"`):''}</div>
- ${(p.replies||[]).length?`<details class="cr-feed-replies"><summary>${p.replies.length} ${p.replies.length===1?'Antwort':'Antworten'}</summary>${p.replies.map(m=>`<article class="cr-message"><div class="cr-author"><strong>${esc(m.author)}</strong>${m.teacher?' · Lehrkraft':''}<time>${esc(date(m.created_at))}</time></div><p>${m.deleted?'Beitrag entfernt.':richText(m.body)}</p>${!room.archived&&!m.deleted&&(room.teacher||m.own)?b('Entfernen','stream_delete',`data-id="${m.id}"`):''}</article>`).join('')}</details>`:''}<div id="cr-stream-reply-${p.id}"></div></article>`;
+ ${(p.replies||[]).length?`<details class="cr-feed-replies"><summary>${p.replies.length} ${p.replies.length===1?'Antwort':'Antworten'}</summary>${renderStreamReplies(p)}</details>`:''}<div id="cr-stream-reply-${p.id}"></div></article>`;
  }).join('')||'<div class="cr-card"><h3>Hier beginnt euer Austausch.</h3><p>Noch keine Beiträge in dieser Ansicht. Stellt eine Frage oder teilt etwas mit der Klasse.</p></div>';
+}
+function renderStreamReplies(post){
+ const replies=post.replies||[],byId=new Map(replies.map(m=>[m.id,m])),children=new Map(),seen=new Set();
+ for(const m of replies){const target=byId.has(m.reply_to_id)?m.reply_to_id:null;if(!children.has(target))children.set(target,[]);children.get(target).push(m);}
+ function render(target,depth=0){return (children.get(target)||[]).map(m=>{
+  if(seen.has(m.id))return '';seen.add(m.id);
+  const parent=byId.get(m.reply_to_id);
+  return `<div class="cr-stream-thread"><article class="cr-message" id="cr-stream-message-${m.id}"><div class="cr-author"><strong>${esc(m.author)}</strong>${m.teacher?' · Lehrkraft':''}<time>${esc(date(m.created_at))}</time></div>${parent?`<small class="cr-note">Antwort an ${esc(parent.author)}</small>`:''}<p>${m.deleted?'Beitrag entfernt.':richText(m.body)}</p><div class="cr-toolbar">${!room.archived&&!m.deleted?b('Antworten','stream_reply',`data-id="${m.id}"`):''}${!room.archived&&!m.deleted&&(room.teacher||m.own)?b('Entfernen','stream_delete',`data-id="${m.id}"`):''}</div><div id="cr-stream-reply-${m.id}"></div></article>${children.has(m.id)?`<div class="cr-stream-children ${depth>=2?'cr-stream-children-flat':''}">${render(m.id,depth+1)}</div>`:''}</div>`;
+ }).join('');}
+ return render(null);
 }
 async function reloadStream(){stream=await api('stream_list',{room_id:room.id});renderRoom();}
 async function streamAction(action,el){
@@ -303,8 +313,10 @@ async function streamAction(action,el){
   stream={...next,posts:[...new Map([...streamPosts(),...next.posts].map(p=>[p.id,p])).values()]};renderFeed();if(!stream.has_more)el.remove();return;
  }
  if(action==='stream_reply'){
+  const target=streamPosts().flatMap(p=>[p,...(p.replies||[])]).find(p=>p.id===id);
+  if(!target||target.deleted||room.archived)throw new Error('Auf diesen Beitrag kann gerade nicht geantwortet werden.');
   const slot=$('cr-stream-reply-'+id);
-  if(!slot.querySelector('form'))slot.innerHTML=`<form data-cr-form="stream_reply" class="cr-reply-form"><input type="hidden" name="post_id" value="${id}"><input type="hidden" name="request_id" value="${crypto.randomUUID()}"><label>Deine Antwort<textarea name="body" data-stream-reply="${id}" required maxlength="3000" rows="3">${esc(replyDrafts.get('stream-'+id)||'')}</textarea></label><div class="cr-toolbar"><button class="primary">Antwort senden</button>${b('Abbrechen','stream_cancel_reply',`data-id="${id}"`)}</div></form>`;
+  if(!slot.querySelector('form'))slot.innerHTML=`<form data-cr-form="stream_reply" class="cr-reply-form"><input type="hidden" name="post_id" value="${id}"><input type="hidden" name="request_id" value="${crypto.randomUUID()}"><label>Antwort an ${esc(target.author)}<textarea name="body" data-stream-reply="${id}" required maxlength="3000" rows="3">${esc(replyDrafts.get('stream-'+id)||'')}</textarea></label><div class="cr-toolbar"><button class="primary">Antwort senden</button>${b('Abbrechen','stream_cancel_reply',`data-id="${id}"`)}</div></form>`;
   slot.querySelector('textarea').focus();return;
  }
  if(action==='stream_cancel_reply'){$('cr-stream-reply-'+id).innerHTML='';return;}
@@ -333,9 +345,10 @@ async function streamAction(action,el){
 }
 async function sendStream(form,data,action){
  if(action==='stream_reply'){
+  const root=streamPosts().find(p=>p.id===data.get('post_id')||(p.replies||[]).some(m=>m.id===data.get('post_id')));
   await api(action,{room_id:room.id,post_id:data.get('post_id'),request_id:data.get('request_id'),body:String(data.get('body')||'').trim()});
   replyDrafts.delete('stream-'+data.get('post_id'));await reloadStream();
-  const post=$('cr-post-'+data.get('post_id'));if(post){const replies=post.querySelector('details');if(replies)replies.open=true;post.scrollIntoView?.({block:'nearest'});}return;
+  const post=$('cr-post-'+(root?.id||data.get('post_id')));if(post){const replies=post.querySelector('details');if(replies)replies.open=true;post.scrollIntoView?.({block:'nearest'});}return;
  }
  saveStreamDraft();const draft=streamDrafts.get(room.id);
  if(!draft.body?.trim())throw new Error('Bitte einen Text zu deinem Beitrag eingeben.');

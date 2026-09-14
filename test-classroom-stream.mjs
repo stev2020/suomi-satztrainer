@@ -23,7 +23,7 @@ window.accountRequest=async(path,options={})=>{
  if(action==='stream_post'){
   const p={id:payload.request_id,kind:payload.kind,body:payload.body,author:'anna',own:true,teacher,resolved:false,created_at:'2026-09-13T12:00:00Z',files:payload.file_ids.map(id=>({id,name:'Hallo.txt',mime:'text/plain',size:5})),replies:[]};posts.unshift(p);result={id:p.id};
  }
- if(action==='stream_reply')posts.find(p=>p.id===payload.post_id).replies.push({id:'reply-'+(++counter),body:payload.body,author:'mika',own:false,created_at:'2026-09-13T12:01:00Z'});
+ if(action==='stream_reply'){const root=posts.find(p=>p.id===payload.post_id||p.replies.some(m=>m.id===payload.post_id));root.replies.push({id:'reply-'+(++counter),reply_to_id:root.id===payload.post_id?null:payload.post_id,body:payload.body,author:'mika',own:false,created_at:'2026-09-13T12:01:00Z'});}
  if(action==='stream_resolve')posts.find(p=>p.id===payload.post_id).resolved=payload.resolved;
  if(action==='stream_pin')posts.find(p=>p.id===payload.post_id).pinned=payload.pinned;
  if(action==='stream_delete')posts.find(p=>p.id===payload.post_id).deleted=true;
@@ -39,14 +39,21 @@ const input=(s,value)=>{$(s).value=value;$(s).dispatchEvent(new window.Event('in
 try{
  await click('#classrooms-button');await click('[data-cr=open]');
  assert($('.cr-stream-layout'));assert($('.cr-stream-sidebar'));assert($('.cr-feed-assignment'));
+ assert(!$('#cr-stream-compose').open,'composer starts collapsed');
+ assert($('#cr-stream-compose summary').textContent.includes('Aufklappen'));
+ await click('#cr-stream-compose summary');assert($('#cr-stream-compose').open);
  assert(!$('option[value=announcement]'));assert(!$('[data-cr=new_assignment]'));
  input('[data-cr-form=stream_post] textarea','Wie sagt man <img src=x onerror=alert(1)>? https://example.org/test');
  await submit('[data-cr-form=stream_post]');assert.equal(posts.length,1);assert.equal($('.cr-post-body img'),null);assert($('.cr-post-body a').rel.includes('noopener'));
  await click('[data-cr=stream_reply]');input('[data-cr-form=stream_reply] textarea','Hei!');await submit('[data-cr-form=stream_reply]');assert($('.cr-feed-replies').open);assert($('.cr-feed-replies').textContent.includes('Hei!'));
+ await click('#cr-stream-message-reply-1 [data-cr=stream_reply]');assert($('[data-cr-form=stream_reply]').textContent.includes('Antwort an mika'));input('[data-cr-form=stream_reply] textarea','Danke!');await submit('[data-cr-form=stream_reply]');
+ assert.equal(posts[0].replies[1].reply_to_id,'reply-1');assert($('.cr-stream-children #cr-stream-message-reply-2'));assert($('.cr-feed-replies').open);
+ await click('#cr-stream-message-reply-2 [data-cr=stream_reply]');input('[data-cr-form=stream_reply] textarea','Gern!');await submit('[data-cr-form=stream_reply]');assert.equal(posts[0].replies[2].reply_to_id,'reply-2');assert($('#cr-stream-message-reply-3').textContent.includes('Antwort an mika'));
  await click('[data-cr=stream_resolve]');assert($('.cr-resolved').textContent.includes('Beantwortet'));
  await click('[data-cr=stream_filter][data-filter=assignment]');assert(!$('.cr-feed-question'));assert($('.cr-feed-assignment'));
  await click('[data-cr=stream_filter][data-filter=all]');
  input('[data-cr-form=stream_post] textarea','Entwurf bleibt erhalten');
+ $('#cr-stream-compose').open=true;await click('#cr-stream-compose summary');assert(!$('#cr-stream-compose').open);assert.equal($('[data-cr-form=stream_post] textarea').value,'Entwurf bleibt erhalten');
  await click('[data-cr=refresh]');assert.equal($('[data-cr-form=stream_post] textarea').value,'Entwurf bleibt erhalten');
  const upload=$('[name=files]');Object.defineProperty(upload,'files',{configurable:true,value:[new window.File(['Hallo'],'Hallo.txt',{type:'text/plain'})]});upload.dispatchEvent(new window.Event('change',{bubbles:true}));Object.defineProperty(upload,'files',{configurable:true,value:[]});
  assert($('#cr-draft-files').textContent.includes('Hallo.txt'));

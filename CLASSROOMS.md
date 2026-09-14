@@ -127,3 +127,9 @@ Grenzen: 2.000 Hauptbeiträge pro Raum, 100 Antworten pro Beitrag, 1 GB reservie
 - `supabase/tests/classroom_stream.sql`: Transaktion mit Rollback; Mitgliedschaft, Rechte, Idempotenz, Uploadreservierung, Storage-RLS, Sperren und Archivierung.
 - Die neue Datenbankmigration und beide DOM-Suiten wurden erfolgreich geprüft. Die visuelle Browserprüfung war in der Ausführungsumgebung wegen gesperrter lokaler Vorschau nicht möglich.
 - Der vorhandene allgemeine Grammatiktest scheitert bereits mit dem unveränderten Stand an seinem veralteten DOM-Mock (`document.querySelector` fehlt); dieser Test wurde nicht inhaltlich verändert.
+
+### Antworten auf Antworten
+
+Auch jede einzelne Stream-Antwort besitzt einen Antworten-Button. `reply_to_id` hält den direkten Bezug fest, während `parent_id` weiterhin den ursprünglichen Beitrag bezeichnet. Dadurch bleiben Seitennavigation und das Limit von 100 Antworten pro Unterhaltung erhalten. Die Anzeige verschachtelt Antworten und nennt den jeweiligen Adressaten; auf schmalen Bildschirmen wird die Einrückung begrenzt. Bestehende Antworten bleiben unverändert. Migration: `20260913185859_classroom_stream_reply_targets.sql`. Die DOM- und SQL-Tests prüfen zusätzlich zwei weitere Antwortebenen.
+
+Die Beitragsbox ist standardmäßig eingeklappt. Ein nativer Aufklapppfeil und „Frage oder Beitrag erstellen · Aufklappen“ kennzeichnen den klickbaren Bereich. Beim Einklappen bleibt der Entwurf erhalten.
