@@ -102,4 +102,8 @@ header{flex-wrap:wrap}
 .cr-room-action:not([open]) .cr-room-action-open,.cr-room-action[open] .cr-room-action-closed{display:none}
 .cr-room-action>form{border-top:1px solid #172c3830;margin-top:14px;padding-top:8px}
 
-.cr-member-actions{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:flex-end}
+.cr-stream-sidebar .cr-member-menu{display:block;min-width:0}
+.cr-stream-sidebar .cr-member-menu>summary{font-weight:400;cursor:pointer;overflow-wrap:anywhere}
+.cr-member-menu>summary:focus-visible{outline:2px solid currentColor;outline-offset:3px;border-radius:3px}
+.cr-member-actions{display:flex;flex-wrap:nowrap;gap:.4rem;margin-top:.65rem;align-items:stretch}
+.cr-member-actions>button{flex:1 1 0;min-width:0;white-space:normal;overflow-wrap:anywhere;padding:8px 6px}
