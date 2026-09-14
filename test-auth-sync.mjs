@@ -23,7 +23,9 @@ assert.equal(merged.reviews['2:fi-de'].updatedAt,300,'newer laptop review is ret
 const mergeBeforeWrite=source.indexOf('const merged=mergeLearning(state,await cloudLearning())');
 const cloudWrite=source.indexOf("request('/rest/v1/learning_state?on_conflict=user_id'",mergeBeforeWrite);
 assert(mergeBeforeWrite>=0&&cloudWrite>mergeBeforeWrite,'cloud state is read and merged before every write');
-assert(source.includes('Date.now()-lastCloudCheck>=CLOUD_POLL_MS'),'open devices poll for newer cloud state');
+assert(source.includes('const CLOUD_POLL_MS=60000'),'unchanged devices poll no more than once per minute');
+assert(source.includes('const cur=stableJSON(currentLearning()),changed=cur!==lastSnapshot'),'field ordering cannot trigger false uploads');
+assert(source.includes('synchronizeLearning(currentLearning(),true,!changed)'),'unchanged background checks stay silent');
 assert(source.includes("window.addEventListener('focus',checkCloudNow)"),'returning to a device triggers an immediate cloud check');
 
 console.log('PASS: merge-before-write and automatic cross-device refresh are present');
