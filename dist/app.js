@@ -22,7 +22,7 @@ const WRITING_RATINGS={right:'Richtig',almost:'Fast richtig',again:'Noch üben'}
 const MIN_WRITING_SENTENCES=10;
 const ACTIVITY_LABELS={translate:'Übersetzen',listen:'Hörmodus',dictation:'Diktat',writing:'Schreibtest',grammar:'Grammatik'};
 const DIRECTION_LABELS={'fi-de':'Finnisch → Deutsch','de-fi':'Deutsch → Finnisch',random:'Zufällig'};
-const isWritingEligible=s=>['fi-de','de-fi','listen','dictation'].some(kind=>Number(memory.reviews[`${s.id}:${kind}`]?.repetitions)>=3);
+const isWritingEligible=s=>['fi-de','de-fi','listen','dictation'].some(kind=>Number(memory.reviews[`${s.id}:${kind}`]?.repetitions)>=2);
 const writingPool=()=>[...data,...archived].filter(s=>s.level===level&&isWritingEligible(s));
 function syncWritingAvailability(){
  const button=document.querySelector('[data-activity="writing"]'),count=ready?writingPool().length:0,available=ready&&count>=MIN_WRITING_SENTENCES;
