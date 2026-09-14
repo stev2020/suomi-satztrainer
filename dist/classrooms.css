@@ -107,3 +107,16 @@ header{flex-wrap:wrap}
 .cr-member-menu>summary:focus-visible{outline:2px solid currentColor;outline-offset:3px;border-radius:3px}
 .cr-member-actions{display:flex;flex-wrap:nowrap;gap:.4rem;margin-top:.65rem;align-items:stretch}
 .cr-member-actions>button{flex:1 1 0;min-width:0;white-space:normal;overflow-wrap:anywhere;padding:8px 6px}
+
+
+/* Compact classroom header and collapsible overview cards. */
+.cr-view-title{display:flex;align-items:center;justify-content:space-between;gap:18px;min-width:0;flex:1}
+.cr-view-title>div{min-width:0}
+.cr-view-title h1{overflow-wrap:anywhere}
+#classrooms-refresh{flex-shrink:0}
+.cr-today>[data-cr=new_assignment]{margin:2px 0 8px}
+.cr-sidebar-disclosure>summary{cursor:pointer;display:list-item;list-style:disclosure-closed;min-height:34px;font:700 23px/1.25 var(--heading)}
+.cr-sidebar-disclosure[open]>summary{list-style-type:disclosure-open}
+.cr-sidebar-disclosure>summary:focus-visible{outline:3px solid var(--purple);outline-offset:5px;border-radius:3px}
+.cr-sidebar-disclosure-content{border-top:1px solid #172c3830;margin-top:12px;padding-top:2px}
+@media(max-width:540px){.cr-view-title{align-items:flex-start}.cr-view-title h1{font-size:28px}.cr-view-title #classrooms-refresh{padding-inline:10px}}
