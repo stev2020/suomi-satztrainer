@@ -120,3 +120,11 @@ header{flex-wrap:wrap}
 .cr-sidebar-disclosure>summary:focus-visible{outline:3px solid var(--purple);outline-offset:5px;border-radius:3px}
 .cr-sidebar-disclosure-content{border-top:1px solid #172c3830;margin-top:12px;padding-top:2px}
 @media(max-width:540px){.cr-view-title{align-items:flex-start}.cr-view-title h1{font-size:28px}.cr-view-title #classrooms-refresh{padding-inline:10px}}
+
+/* Confirmed sentences are static cards; orange marks the next required action. */
+#classrooms-view [data-cr=confirm_custom]{background:#f6a24b;color:#172c38;border:2px solid #172c38;font-weight:800}
+#classrooms-view [data-cr=confirm_custom]:hover{background:#ed8d2a}
+#classrooms-view [data-cr=confirm_custom]:focus-visible{outline:3px solid var(--purple);outline-offset:3px}
+.cr-custom-item.cr-custom-added{background:#e9f5ed;border-color:#27613c}
+.cr-custom-added .cr-added{padding:0;min-height:0;margin:8px 0}
+.cr-custom-text{white-space:pre-wrap;overflow-wrap:anywhere}
