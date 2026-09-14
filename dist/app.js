@@ -177,7 +177,7 @@ function renderWritingSession(){
 }
 
 function translationDraftMarkup(s){
- if(!isTranslation())return '';
+ if(!isTranslation()||cardDirection(s)==='fi-de')return '';
  const target=cardDirection(s)==='fi-de'?'de':'fi',label=target==='de'?'Deutsch':'Finnisch';
  if(revealed)return draft.trim()?`<div class="own-translation"><span class="card-label">Deine Übersetzung · ${label}</span><p lang="${target}">${escape(draft)}</p><small>Vergleiche die Bedeutung mit der Vorlage. Auch andere Formulierungen können richtig sein.</small></div>`:'<p class="translation-hint">Lies die Vorlage und bewerte anschließend, wie gut du den Satz schon kannst.</p>';
  const letters=target==='fi'?['ä','ö']:['ä','ö','ü','ß'];
@@ -199,7 +199,7 @@ function render(){if(activity==='writing'){renderWritingSession();return;}$('wri
  $('report-error').onclick=()=>openReport(s);
  $('favorite').onclick=()=>{const i=memory.favorites.indexOf(s.id);if(i<0)memory.favorites.push(s.id);else memory.favorites.splice(i,1);persist();renderStats();const b=$('favorite'),active=memory.favorites.includes(s.id);b.classList.toggle('saved',active);b.textContent=active?'★':'☆';b.setAttribute('aria-pressed',active);b.setAttribute('aria-label',active?'Aus Favoriten entfernen':'Als Favorit speichern');guestSaveHint();};
  if($('play-audio')){$('play-audio').onclick=()=>play(s.audios[0]);$('replay-audio').onclick=()=>play(s.audios[0],true);$('speed').onchange=e=>{speed=Number(e.target.value);if(player)player.playbackRate=speed;persist();};}
- const inputId=activity==='dictation'?'dictation-input':isTranslation()?'translation-input':null;
+ const inputId=activity==='dictation'?'dictation-input':isTranslation()&&cardDirection(s)==='de-fi'?'translation-input':null;
  if(inputId&&!revealed){const input=$(inputId);input.value=draft;input.oninput=e=>{draft=e.target.value;$('notice').textContent='';};document.querySelectorAll('[data-letter]').forEach(b=>{b.onmousedown=e=>e.preventDefault();b.onclick=()=>{const pos=input.selectionStart,limit=activity==='dictation'?500:2000;if(input.value.length-(input.selectionEnd-pos)>=limit)return;input.setRangeText(b.dataset.letter,pos,input.selectionEnd,'end');draft=input.value;input.focus();};});}
  if(!revealed){$('actions').innerHTML='<button class="primary" id="reveal">'+(activity==='dictation'?'Diktat vergleichen':activity==='listen'?'Satz & Übersetzung aufdecken':'Übersetzung anzeigen')+'</button>';$('reveal').onclick=()=>{if(activity==='dictation'&&!draft.trim()){$('notice').textContent='Schreibe zuerst auf, was du gehört hast.';$(inputId).focus();return;}$('notice').textContent='';revealed=true;render();$('grade-again').focus({preventScroll:true});};}
  else{$('actions').innerHTML='<button class="grade" id="grade-again" data-grade="again">Nochmal<span>In dieser Einheit</span></button><button class="grade" data-grade="hard">Schwer<span>Morgen</span></button><button class="grade easy" data-grade="easy">Leicht<span>'+easyDays(s)+' Tage</span></button>';document.querySelectorAll('[data-grade]').forEach(b=>b.onclick=()=>grade(b.dataset.grade));}
