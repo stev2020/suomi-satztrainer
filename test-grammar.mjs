@@ -42,7 +42,8 @@ grammar=fixtureGrammar;activity='translate';audioOnly=false;mode='new';start();a
 assert(audioCache.size<=AUDIO_CACHE_LIMIT);const preparedURL=queue[0].audios[0].download_url;assert.strictEqual(prepareAudio(preparedURL),prepareAudio(preparedURL));
 activity='listen';start();assert(queue.every(s=>s.audios.length));assert($('direction-group').hidden);
 activity='dictation';start();assert(queue.every(s=>s.audios.length));assert(questionMarkup(queue[0],'').includes('Was hörst du'));
-activity='writing';start();assert($('practice-toolbar').hidden);
+for(const s of data.filter(s=>s.level===level).slice(0,5))memory.reviews[s.id+':fi-de']={repetitions:2,due:Date.now()+86400000,interval:1};
+activity='writing';start();assert.equal(activity,'writing');assert($('practice-toolbar').hidden);
 `,ctx);
 assert.equal(topicNotes({id:368188,text:'Changed sentence'},grammar,'negation').length,0);
 assert(!GRAMMAR_TOPICS.find(t=>t.id==='location').match.test('Hinweiswort im Partitiv'));
