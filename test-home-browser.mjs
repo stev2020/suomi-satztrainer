@@ -37,7 +37,7 @@ try{
  for(const [kind,count] of [['fi-de',1],['de-fi',2],['listen',3],['dictation',4]])for(const s of sentences.slice(0,count))state.reviews[s.id+':'+kind]={due:now,interval:0,repetitions:2,updatedAt:now};
  await page.evaluate(state=>window.suomiLearningState.applyCloud(state),state);
  assert.equal(await page.locator('#home-review').textContent(),'3 Verbformen wiederholen');
- assert.equal(await page.locator('#continue-practice').textContent(),'Verbformen üben');
+ assert.equal(await page.locator('#continue-practice').textContent(),'Üben');
  const colors=await page.evaluate(()=>['.today','#home-review','.home-exercises .selected','#continue-practice'].map(selector=>getComputedStyle(document.querySelector(selector)).backgroundColor));
  assert.equal(colors[0],colors[1]);assert.equal(colors[0],colors[2]);assert.notEqual(colors[0],colors[3]);
  assert.equal(await page.locator('#home-view').getByText('3 Verbformen zur Wiederholung').count(),0);
@@ -67,7 +67,8 @@ try{
  await page.locator('#continue-practice').click();assert.ok(await page.locator('[data-verb-count="5"]').isVisible());
  await home();
  for(const [activity,label,count] of [['translate','Übersetzen',1],['listen','Hörübung',3],['dictation','Diktat',4]]){
-  await select(activity);assert.equal(await page.locator('#continue-title').textContent(),label);
+ await select(activity);assert.equal(await page.locator('#continue-title').textContent(),label);
+  assert.equal(await page.locator('#continue-practice').textContent(),activity==='translate'?'Finnisch → Deutsch üben':'Üben');
   assert.equal(await page.locator('.home-exercises [aria-pressed="true"]').count(),1);
   assert.equal(await page.locator('#home-review').textContent(),count+' '+(count===1?'Satz':'Sätze')+' wiederholen');
   await page.locator('#home-review').click();

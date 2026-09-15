@@ -93,7 +93,7 @@ function renderHomeSession(verbStats,dueCount){
  $('home-direction-control').hidden=activity!=='translate';
  document.querySelectorAll('[data-home-direction]').forEach(b=>{const selected=b.dataset.homeDirection===direction;b.classList.toggle('selected',selected);b.setAttribute('aria-pressed',String(selected));});
  $('home-session-meta').textContent=activity==='verbs'?VERBS.length+' Verben · Präsens · alle sechs Personen':'Level '+level+(activity==='translate'?'':' · '+detail)+(isTranslation()&&audioOnly?' · Nur mit Audio':'');
- $('continue-practice').textContent=activity==='translate'?(direction==='random'?'Beide Lernrichtungen':DIRECTION_LABELS[direction])+' üben':ACTIVITY_LABELS[activity]+' üben';
+ $('continue-practice').textContent=activity==='translate'?(direction==='random'?'Beide Lernrichtungen':DIRECTION_LABELS[direction])+' üben':['listen','dictation','verbs'].includes(activity)?'Üben':ACTIVITY_LABELS[activity]+' üben';
  $('continue-practice').disabled=!ready;
  const count=activity==='verbs'?verbStats.due:dueCount;
  const unit=activity==='verbs'?(count===1?'Verbform':'Verbformen'):(count===1?'Satz':'Sätze');
