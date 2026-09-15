@@ -301,6 +301,7 @@ function upcomingAssignments(){
  return items.map(a=>`<div class="cr-upcoming"><strong>${esc(a.title)}</strong><p class="cr-note">${esc(date(a.due_at))}</p>${b('Zur Aufgabe →','assignment',`data-id="${a.id}"`)}</div>`).join('')||'<p>Im Moment steht keine Aufgabe an.</p>';
 }
 function renderFeed(){
+ const preview=$('cr-image-dialog');if(preview?.open)preview.close();
  for(const url of attachmentURLs)URL.revokeObjectURL(url);attachmentURLs.clear();
  const entries=[...streamPosts(),...room.assignments.map(a=>({...a,kind:'assignment',created_at:stream.assignment_dates?.[a.id]}))]
  .filter(p=>streamFilter==='all'||p.kind===streamFilter).sort((a,b)=>Number(!!b.pinned)-Number(!!a.pinned)||(Date.parse(b.created_at)||0)-(Date.parse(a.created_at)||0)||String(b.id).localeCompare(String(a.id)));
@@ -308,10 +309,30 @@ function renderFeed(){
   if(p.kind==='assignment')return `<article class="cr-card cr-feed-card cr-feed-assignment"><span class="cr-feed-type">NEUE AUFGABE</span>${p.created_at?`<time>${esc(date(p.created_at))}</time>`:''}<h3>${esc(p.title)}</h3><p>${p.items.length} Sätze · ${esc(date(p.due_at))}</p><div class="cr-toolbar">${b('Aufgabe öffnen →','assignment',`data-id="${p.id}"`)}<span class="cr-state">${p.released?'Vergleich freigegeben':p.submissions.some(s=>s.own)?'Abgegeben':p.due_at&&new Date(p.due_at)<new Date()?'Frist abgelaufen':'Offen'}</span></div></article>`;
   const writable=!room.archived&&!p.deleted;
   return `<article class="cr-card cr-feed-card cr-feed-${p.kind}" id="cr-post-${p.id}"><div class="cr-feed-meta"><span class="cr-feed-type">${p.pinned?'ANGEHEFTET · ':''}${{question:'FRAGE',post:'BEITRAG',announcement:'ANKÜNDIGUNG'}[p.kind]||'BEITRAG'}</span>${p.kind==='question'&&!p.deleted?`<span class="cr-state ${p.resolved?'cr-resolved':''}">${p.resolved?'✓ Beantwortet':'Offen'}</span>`:''}</div><div class="cr-author"><strong>${esc(p.author)}</strong>${p.teacher?' · Lehrkraft':''} <time datetime="${esc(p.created_at)}">${esc(date(p.created_at))}</time></div><p class="cr-post-body">${p.deleted?'Beitrag entfernt.':richText(p.body)}</p>
- ${!p.deleted?(p.files||[]).map(f=>`<div class="cr-attachment" data-attachment="${f.id}"><div><strong>${esc(f.name)}</strong><small>${fileSize(f.size)}</small></div>${f.mime.startsWith('image/')?b('Bild ansehen','stream_preview',`data-id="${f.id}"`):''}${b('Herunterladen','stream_download',`data-id="${f.id}"`)}</div>`).join(''):''}
+ ${!p.deleted?(p.files||[]).map(f=>f.mime.startsWith('image/')?`<div class="cr-attachment cr-image-attachment" data-attachment="${f.id}"><button type="button" class="cr-image-thumb" data-cr="stream_preview" data-id="${f.id}" aria-label="Bild vergrößern"><span>Vorschau wird geladen …</span></button>${b('Herunterladen','stream_download',`data-id="${f.id}"`)}</div>`:`<div class="cr-attachment" data-attachment="${f.id}"><div><strong>${esc(f.name)}</strong><small>${fileSize(f.size)}</small></div>${b('Herunterladen','stream_download',`data-id="${f.id}"`)}</div>`).join(''):''}
  <div class="cr-toolbar">${writable?b('Antworten','stream_reply',`data-id="${p.id}"`):''}${writable&&p.kind==='question'&&(room.teacher||p.own)?b(p.resolved?'Wieder öffnen':'Als beantwortet markieren','stream_resolve',`data-id="${p.id}" data-value="${!p.resolved}"`):''}${writable&&room.teacher?b(p.pinned?'Lösen':'Anpinnen','stream_pin',`data-id="${p.id}" data-value="${!p.pinned}"`):''}${writable&&(room.teacher||p.own)?b('Entfernen','stream_delete',`data-id="${p.id}"`):''}</div>
  ${(p.replies||[]).length?`<details class="cr-feed-replies"><summary>${p.replies.length} ${p.replies.length===1?'Antwort':'Antworten'}</summary>${renderStreamReplies(p)}</details>`:''}<div id="cr-stream-reply-${p.id}"></div></article>`;
  }).join('')||'<div class="cr-card"><h3>Hier beginnt euer Austausch.</h3><p>Noch keine Beiträge in dieser Ansicht. Stellt eine Frage oder teilt etwas mit der Klasse.</p></div>';
+ loadImageThumbs();
+}
+const attachmentFile=id=>streamPosts().flatMap(p=>p.files||[]).find(f=>f.id===id);
+async function loadImageThumb(button,file){
+ const response=await accountRequest('/storage/v1/object/authenticated/classroom-stream/'+encodeURIComponent(file.id));
+ if(!response.ok)throw new Error('Vorschau nicht verfügbar.');
+ const raw=await response.blob();if(!button.isConnected)return;
+ const url=URL.createObjectURL(new Blob([raw],{type:file.mime}));attachmentURLs.add(url);
+ const img=document.createElement('img');img.src=url;img.alt='Angehängtes Bild';img.loading='lazy';button.replaceChildren(img);
+}
+function loadImageThumbs(){
+ document.querySelectorAll('.cr-image-thumb[data-id]').forEach(button=>{const file=attachmentFile(button.dataset.id);if(!file)return;loadImageThumb(button,file).catch(()=>{if(button.isConnected)button.innerHTML='<span>Vorschau nicht verfügbar</span>';});});
+}
+function showImagePreview(url){
+ let dialog=$('cr-image-dialog');
+ if(!dialog){
+  document.body.insertAdjacentHTML('beforeend','<dialog id="cr-image-dialog" class="cr-image-dialog" aria-label="Bildansicht"><button type="button" class="cr-image-dialog-close" aria-label="Bildansicht schließen">✕</button><img alt="Angehängtes Bild"></dialog>');dialog=$('cr-image-dialog');
+  dialog.querySelector('button').onclick=()=>dialog.close();dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close();});dialog.addEventListener('close',()=>dialog.querySelector('img').removeAttribute('src'));
+ }
+ dialog.querySelector('img').src=url;dialog.showModal();
 }
 function renderStreamReplies(post){
  const replies=post.replies||[],byId=new Map(replies.map(m=>[m.id,m])),children=new Map(),seen=new Set();
@@ -350,14 +371,15 @@ async function streamAction(action,el){
   draft.files.splice(i,1);renderDraftFiles(draft);return;
  }
  if(action==='stream_download'||action==='stream_preview'){
-  const file=streamPosts().flatMap(p=>p.files||[]).find(f=>f.id===id);if(!file)throw new Error('Anhang nicht gefunden.');
+  const file=attachmentFile(id);if(!file)throw new Error('Anhang nicht gefunden.');
+  if(action==='stream_preview'){
+   const image=el.querySelector('img');if(image?.src){showImagePreview(image.src);return;}
+  }
   const response=await accountRequest('/storage/v1/object/authenticated/classroom-stream/'+encodeURIComponent(id));
   if(!response.ok)throw new Error('Die Datei konnte nicht geladen werden. Bitte aktualisieren und erneut versuchen.');
   const raw=await response.blob(),blob=new Blob([raw],{type:action==='stream_preview'?file.mime:'application/octet-stream'}),url=URL.createObjectURL(blob);attachmentURLs.add(url);
-  if(action==='stream_preview'){
-   const host=el.closest('[data-attachment]');host.querySelector('img')?.remove();
-   const img=document.createElement('img');img.src=url;img.alt=file.name;img.className='cr-image-preview';host.append(img);el.remove();
-  }else{const a=document.createElement('a');a.href=url;a.download=file.name;document.body.append(a);a.click();a.remove();}
+  if(action==='stream_preview')showImagePreview(url);
+  else{const a=document.createElement('a');a.href=url;a.download=file.name;document.body.append(a);a.click();a.remove();}
   return;
  }
  if(action==='stream_delete'&&!confirm('Beitrag entfernen? Antworten bleiben erhalten.'))return;
