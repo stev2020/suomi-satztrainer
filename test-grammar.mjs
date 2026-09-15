@@ -41,10 +41,13 @@ grammar={};start();assert.equal(queue.length,0);assert($('card').innerHTML.inclu
 grammar=fixtureGrammar;activity='translate';audioOnly=false;mode='new';start();assert(!$('direction-group').hidden);assert($('grammar-controls').hidden);
 assert(audioCache.size<=AUDIO_CACHE_LIMIT);const preparedURL=queue[0].audios[0].download_url;assert.strictEqual(prepareAudio(preparedURL),prepareAudio(preparedURL));
 activity='listen';start();assert(queue.every(s=>s.audios.length));assert($('direction-group').hidden);
+const audioCard=queue[0],audioHtml=audioMarkup(audioCard);assert(audioHtml.includes('id="play-audio"'));assert(!audioHtml.includes('replay-audio'));
 activity='dictation';start();assert(queue.every(s=>s.audios.length));assert(questionMarkup(queue[0],'').includes('Was hörst du'));
 for(const s of data.filter(s=>s.level===level).slice(0,5))memory.reviews[s.id+':fi-de']={repetitions:2,due:Date.now()+86400000,interval:1};
 activity='writing';start();assert.equal(activity,'writing');assert($('practice-toolbar').hidden);
 `,ctx);
+await vm.runInContext(`activity='listen';start();globalThis.audioButton=$('play-audio');audioButton.dataset={};play(queue[0]);`,ctx);
+vm.runInContext(`assert.equal(audioButton.querySelector('span').textContent,'Anhalten');player.onended();assert.equal(audioButton.querySelector('span').textContent,'Wiederholen');assert(audioMarkup(queue[0]).includes('<span>Wiederholen</span>'));`,ctx);
 assert.equal(topicNotes({id:368188,text:'Changed sentence'},grammar,'negation').length,0);
 assert(!GRAMMAR_TOPICS.find(t=>t.id==='location').match.test('Hinweiswort im Partitiv'));
 const html=fs.readFileSync(new URL('./dist/index.html',import.meta.url),'utf8');
