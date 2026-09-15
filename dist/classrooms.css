@@ -6,6 +6,7 @@
 .cr-hero h2{font-size:32px;margin:10px 0}
 .cr-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .cr-card{padding:20px;border:1px solid var(--ink);border-radius:14px;background:var(--paper);margin:14px 0;min-width:0}
+.cr-room-card{background:var(--mint)}
 .cr-card h3{margin:0 0 12px}.cr-card p,.cr-message p{overflow-wrap:anywhere;white-space:pre-wrap}
 .cr-toolbar{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
 .cr-badge{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
