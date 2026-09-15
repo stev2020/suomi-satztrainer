@@ -2,11 +2,31 @@
 <html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#faf7f0"><title>Suomi · Finnisch lernen</title><meta name="description" content="Lerne finnische Sätze mit deutschen Übersetzungen, Levels und Originalaufnahmen von Tatoeba."><link rel="preconnect" href="https://api.tatoeba.org" crossorigin><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="verbs.css"></head>
 <body><header><a class="brand" href="./" aria-label="Suomi Startseite"><span class="brand-mark">s.</span>suomi<span class="brand-caption">FINNISCH LERNEN</span></a><nav class="bottom-nav header-nav" aria-label="Hauptnavigation"><button type="button" data-view="home" class="selected" aria-current="page"><span aria-hidden="true">⌂</span>Start</button><button type="button" data-view="practice"><span aria-hidden="true">▶</span>Üben</button><button type="button" data-view="progress"><span aria-hidden="true">◫</span>Fortschritt</button></nav><button id="account-button" class="quiet">Anmelden</button></header>
 <main><section id="home-view" class="app-view home-view"><section class="intro"><div><div class="eyebrow">DEIN SATZTRAINER</div><h1>Ein bisschen Finnisch.<br><span>Jeden Tag.</span></h1></div><div class="today"><span id="today-count">0</span><div>heute geübt</div></div></section>
-<section class="home-launch" aria-labelledby="continue-title"><button id="continue-practice" class="continue-practice" type="button"><span class="small-label">WEITERÜBEN</span><strong id="continue-title">Deine nächste Lerneinheit</strong><span id="home-session-meta">Level 1 · Übersetzen · Finnisch → Deutsch</span><span class="continue-action">Jetzt üben <span aria-hidden="true">→</span></span></button><div class="home-shortcuts"><button id="home-review" class="shortcut-card" type="button"><span class="shortcut-icon" aria-hidden="true">↻</span><span><strong>Wiederholen</strong><small><span id="home-review-count">0</span> <span id="home-review-unit">Sätze sind fällig</span></small></span></button><button id="home-choose" class="shortcut-card" type="button"><span class="shortcut-icon" aria-hidden="true">≡</span><span><strong>Übung wählen</strong><small>Art, Richtung und Level</small></span></button></div><p id="storage-note" class="home-storage">Ohne Konto wird dein Fortschritt nicht gespeichert.</p></section></section>
+<section class="home-launch" aria-labelledby="home-exercise-title">
+<h2 id="home-exercise-title" class="home-exercise-title">Was möchtest du üben?</h2>
+<div class="home-exercises" role="group" aria-label="Übung auswählen">
+<button type="button" data-home-activity="translate" aria-pressed="true" aria-controls="home-session" class="selected"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v16M12 5C9 3 5 3 2 4v15c3-1 7-1 10 2 3-3 7-3 10-2V4c-3-1-7-1-10 1Z"/></svg><span>Übersetzen</span></button>
+<button type="button" data-home-activity="listen" aria-pressed="false" aria-controls="home-session"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 14v-3a9 9 0 0 1 18 0v3"/><rect x="3" y="12" width="4" height="9" rx="2"/><rect x="17" y="12" width="4" height="9" rx="2"/></svg><span>Hörübung</span></button>
+<button type="button" data-home-activity="dictation" aria-pressed="false" aria-controls="home-session"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m16 3 5 5L8 21H3v-5ZM13 6l5 5"/></svg><span>Diktat</span></button>
+<button type="button" data-home-activity="verbs" aria-pressed="false" aria-controls="home-session"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5h12M9 12h12M9 19h12"/><circle cx="3" cy="5" r="1"/><circle cx="3" cy="12" r="1"/><circle cx="3" cy="19" r="1"/></svg><span>Verbformen</span></button>
+</div>
+<section id="home-session" class="home-session" aria-labelledby="continue-title">
+<span class="small-label">AUSGEWÄHLTE ÜBUNG</span>
+<h2 id="continue-title">Übersetzen</h2>
+<p id="home-session-description">Übe finnische Sätze und ihre deutsche Übersetzung.</p>
+<p id="home-session-meta">Level 1 · Finnisch → Deutsch</p>
+<div class="home-session-actions">
+<button id="continue-practice" type="button" disabled>Finnisch → Deutsch üben</button>
+<button id="home-review" type="button" disabled>Keine Sätze zu wiederholen</button>
+</div>
+</section>
+<button id="home-choose" class="home-choose" type="button">Weitere Übungen &amp; Einstellungen <span aria-hidden="true">→</span></button>
+<p id="storage-note" class="home-storage">Ohne Konto wird dein Fortschritt nicht gespeichert.</p>
+</section></section>
 <section id="practice-view" class="app-view" hidden><div class="view-heading"><button class="back-link" type="button" data-view="home" aria-label="Zurück zur Startseite">← Start</button><div><div class="eyebrow">DEINE LERNEINHEIT</div><h1>Üben</h1></div></div><div class="practice"><details id="practice-settings" class="practice-settings"><summary><span>Übung auswählen</span><strong id="practice-summary">Level 1 · Übersetzen</strong></summary><div class="settings-body"><div class="settings-level-row" id="settings-level-row"><span><small>Aktuelles Level</small><strong id="settings-level">Level 1</strong></span><button type="button" class="quiet" data-view="progress">Level ändern</button></div>
 <fieldset class="choice-field activity-field"><legend>Übungsart</legend><div class="choice-buttons">
 <button type="button" data-activity="translate" aria-pressed="true" class="selected">Übersetzen</button>
-<button type="button" data-activity="listen" aria-pressed="false">Hörmodus</button>
+<button type="button" data-activity="listen" aria-pressed="false">Hörübung</button>
 <button type="button" data-activity="dictation" aria-pressed="false">Diktat</button>
 <button type="button" data-activity="writing" aria-pressed="false" aria-disabled="true" disabled title="Der Schreibtest wird nach dem Laden der Sätze verfügbar.">Schreibtest</button>
 <button type="button" data-activity="verbs" aria-pressed="false">Verbformen</button>
