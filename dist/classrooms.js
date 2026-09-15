@@ -8,8 +8,9 @@ let room=null,selected=null,deck=null,grammar=null,customItems=[],busy=false,dir
 const replyDrafts=new Map();
 const drafts=new Map(); // Memory only; never localStorage or service-worker data.
 const css=document.createElement('link');css.rel='stylesheet';css.href='./classrooms.css';document.head.append(css);
-const button=document.createElement('button');button.id='classrooms-button';button.className='quiet';button.textContent='Klassenräume';
-$('account-button').before(button);
+const button=document.createElement('button');button.id='classrooms-button';button.type='button';button.dataset.view='classrooms';button.textContent='Klassenräume';
+const headerNav=document.querySelector('.header-nav');
+if(headerNav)headerNav.insertBefore(button,headerNav.querySelector('[data-view="progress"]'));else $('account-button').before(button);
 const main=document.querySelector('main')||document.body.appendChild(document.createElement('main'));
 const classroomAnchor=main.querySelector('.page-tools')||main.querySelector('.bottom-nav')||main.querySelector('footer');
 const classroomMarkup=`<section id="classrooms-view" class="app-view classrooms-view" aria-labelledby="classrooms-title" hidden><div class="view-heading"><button type="button" id="classrooms-close" class="back-link" aria-label="Zurück">← Zurück</button><div class="cr-view-title"><div><div class="eyebrow">GEMEINSAM LERNEN</div><h1 id="classrooms-title">Klassenräume</h1></div><button type="button" id="classrooms-refresh" class="quiet" hidden>Aktualisieren</button></div></div><p id="classrooms-status" role="status" aria-live="polite"></p><div id="classrooms-content"></div></section>`;
@@ -140,16 +141,15 @@ function openClassrooms(){
  previousView=visibleAppView();
  document.querySelectorAll('.app-view').forEach(view=>{view.hidden=true;});
  $('classrooms-view').hidden=false;
- button.setAttribute('aria-current','page');
- document.querySelectorAll('.bottom-nav [data-view]').forEach(item=>{item.classList.remove('selected');item.removeAttribute('aria-current');});
+ document.querySelectorAll('.header-nav [data-view]').forEach(item=>{const active=item===button;item.classList.toggle('selected',active);if(active)item.setAttribute('aria-current','page');else item.removeAttribute('aria-current');});
  window.scrollTo?.({top:0,behavior:'smooth'});
  run(home);
 }
 function closeClassrooms(){
  if(!canNavigate())return;
  $('classrooms-view').hidden=true;
- button.removeAttribute('aria-current');
- const destination=document.querySelector(`.bottom-nav [data-view="${previousView}"]`)||document.querySelector('.bottom-nav [data-view="home"]');
+ button.classList.remove('selected');button.removeAttribute('aria-current');
+ const destination=document.querySelector(`.header-nav [data-view="${previousView}"]`);
  if(destination)destination.click();
  else{const fallback=$(`${previousView}-view`)||$('home-view');if(fallback)fallback.hidden=false;}
 }

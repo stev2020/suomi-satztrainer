@@ -349,7 +349,7 @@ $('apply-backup').onclick=()=>{if(!accountActive()){$('backup-status').textConte
 
 function showView(name,openSettings=false){
  for(const view of ['home','practice','progress','classrooms']){const node=$(`${view}-view`);if(node)node.hidden=view!==name;}
- document.querySelectorAll('.bottom-nav [data-view]').forEach(b=>{const selected=b.dataset.view===name;b.classList.toggle('selected',selected);if(selected)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
+ document.querySelectorAll('.header-nav [data-view]').forEach(b=>{const selected=b.dataset.view===name;b.classList.toggle('selected',selected);if(selected)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
  if(name!=='practice')stopAudio();
  if(name==='practice')$('practice-settings').open=openSettings;
  window.scrollTo({top:0,behavior:'smooth'});

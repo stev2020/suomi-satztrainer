@@ -99,7 +99,7 @@ function renderAccount(){
   $('account-logged-in')?.toggleAttribute('hidden',!logged);
   if(logged&&$('account-name'))$('account-name').textContent=session.user.user_metadata?.username||'Nutzer';
   document.body.dataset.account=logged?'authenticated':'guest';
-  if($('account-button'))$('account-button').textContent=logged?'Konto ✓':'Anmelden';
+  if($('account-button'))$('account-button').textContent='Konto';
   if(logged)syncState('Synchronisierung wird geprüft …');else if($('storage-note')){$('storage-note').textContent='Ohne Konto wird dein Fortschritt nicht gespeichert.';$('storage-note').classList.remove('error');}
   watch();
 }

@@ -14,7 +14,7 @@ try{
  const context=await browser.newContext({viewport:{width:1280,height:1000},serviceWorkers:'block'});
  await context.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());
  const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
- const home=()=>page.locator('.header-nav [data-view="home"]').click();
+ const home=()=>page.locator('.app-view:not([hidden]) .back-link[data-view="home"]').click();
  const select=activity=>page.locator('[data-home-activity="'+activity+'"]').click();
  await page.goto(origin);
  await page.locator('#continue-practice:not([disabled])').waitFor();
