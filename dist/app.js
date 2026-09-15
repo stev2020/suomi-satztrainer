@@ -88,7 +88,9 @@ function renderHomeSession(verbStats,dueCount){
  const detail=activity==='grammar'?GRAMMAR_TOPICS.find(t=>t.id===grammarTopic)?.label:activity==='writing'?'Deutsch → Finnisch':isTranslation()?DIRECTION_LABELS[direction]:'Mit Originalaufnahme';
  $('continue-title').textContent=ACTIVITY_LABELS[activity];
  $('home-session-description').textContent=descriptions[activity];
- $('home-session-meta').textContent=activity==='verbs'?VERBS.length+' Verben · Präsens · alle sechs Personen':'Level '+level+' · '+detail+(isTranslation()&&audioOnly?' · Nur mit Audio':'');
+ $('home-direction-control').hidden=activity!=='translate';
+ document.querySelectorAll('[data-home-direction]').forEach(b=>{const selected=b.dataset.homeDirection===direction;b.classList.toggle('selected',selected);b.setAttribute('aria-pressed',String(selected));});
+ $('home-session-meta').textContent=activity==='verbs'?VERBS.length+' Verben · Präsens · alle sechs Personen':'Level '+level+(activity==='translate'?'':' · '+detail)+(isTranslation()&&audioOnly?' · Nur mit Audio':'');
  $('continue-practice').textContent=activity==='translate'?(direction==='random'?'Beide Lernrichtungen':DIRECTION_LABELS[direction])+' üben':ACTIVITY_LABELS[activity]+' üben';
  $('continue-practice').disabled=!ready;
  const count=activity==='verbs'?verbStats.due:dueCount;
@@ -371,6 +373,7 @@ $('home-review').onclick=()=>{
 $('home-choose').onclick=()=>{showView('practice',true);$('practice-settings').querySelector('summary')?.focus();};
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>showView(b.dataset.view));
 document.querySelectorAll('[data-home-activity]').forEach(b=>b.onclick=()=>{if(!ready||activity===b.dataset.homeActivity)return;activity=b.dataset.homeActivity;mode='new';start();});
+document.querySelectorAll('[data-home-direction]').forEach(b=>b.onclick=()=>{if(!ready||direction===b.dataset.homeDirection)return;direction=b.dataset.homeDirection;mode='new';start();});
 document.querySelectorAll('[data-activity]').forEach(b=>b.onclick=()=>{if(b.dataset.activity==='writing'&&!syncWritingAvailability())return;if(activity!==b.dataset.activity){activity=b.dataset.activity;mode='new';start();}});
 document.querySelectorAll('[data-direction]').forEach(b=>b.onclick=()=>{if(direction!==b.dataset.direction){direction=b.dataset.direction;start();}});
 $('grammar-topic').onchange=e=>{grammarTopic=e.target.value;start();};

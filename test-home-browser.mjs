@@ -18,6 +18,13 @@ try{
  const select=activity=>page.locator('[data-home-activity="'+activity+'"]').click();
  await page.goto(origin);
  await page.locator('#continue-practice:not([disabled])').waitFor();
+ assert.ok(await page.locator('#home-direction-control').isVisible());
+ await page.locator('[data-home-direction="de-fi"]').click();
+ assert.equal(await page.locator('#continue-practice').textContent(),'Deutsch → Finnisch üben');
+ assert.equal(await page.locator('[data-home-direction="de-fi"]').getAttribute('aria-pressed'),'true');
+ await page.locator('[data-home-direction="random"]').click();
+ assert.equal(await page.locator('#continue-practice').textContent(),'Beide Lernrichtungen üben');
+ await page.locator('[data-home-direction="fi-de"]').click();
  assert.equal(await page.locator('#home-review').isDisabled(),true);
  await select('verbs');
  const now=Date.now()-60000;
@@ -39,6 +46,7 @@ try{
   await page.setViewportSize({width,height:844});
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   for(const button of await page.locator('.home-exercises button').all())assert.ok(await button.isVisible());
+  for(const button of await page.locator('.home-direction-control button').all())assert.ok(await button.isVisible());
   if(width===390&&process.env.HOME_SCREENSHOTS)await page.screenshot({path:process.env.HOME_SCREENSHOTS+'/home-mobile.png',fullPage:true});
  }
  await page.setViewportSize({width:1280,height:1000});
