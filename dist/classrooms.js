@@ -4,7 +4,7 @@ import {GRAMMAR_TOPICS,topicNotes} from './grammar-topics.mjs';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $=id=>document.getElementById(id);
 const date=v=>v?new Date(v).toLocaleString('de-DE'):'Ohne Abgabetermin';
-let room=null,selected=null,deck=null,grammar=null,customItems=[],busy=false,dirty=false,previousView='home';
+let room=null,selected=null,deck=null,grammar=null,customItems=[],busy=false,dirty=false;
 const replyDrafts=new Map();
 const drafts=new Map(); // Memory only; never localStorage or service-worker data.
 const css=document.createElement('link');css.rel='stylesheet';css.href='./classrooms.css';document.head.append(css);
@@ -13,7 +13,7 @@ const headerNav=document.querySelector('.header-nav');
 if(headerNav)headerNav.insertBefore(button,headerNav.querySelector('[data-view="progress"]'));else $('account-button').before(button);
 const main=document.querySelector('main')||document.body.appendChild(document.createElement('main'));
 const classroomAnchor=main.querySelector('.page-tools')||main.querySelector('.bottom-nav')||main.querySelector('footer');
-const classroomMarkup=`<section id="classrooms-view" class="app-view classrooms-view" aria-labelledby="classrooms-title" hidden><div class="view-heading"><button type="button" id="classrooms-close" class="back-link" aria-label="Zurück">← Zurück</button><div class="cr-view-title"><div><div class="eyebrow">GEMEINSAM LERNEN</div><h1 id="classrooms-title">Klassenräume</h1></div><button type="button" id="classrooms-refresh" class="quiet" hidden>Aktualisieren</button></div></div><p id="classrooms-status" role="status" aria-live="polite"></p><div id="classrooms-content"></div></section>`;
+const classroomMarkup=`<section id="classrooms-view" class="app-view classrooms-view" aria-labelledby="classrooms-title" hidden><div class="view-heading"><div class="cr-view-title"><div><div class="eyebrow">GEMEINSAM LERNEN</div><h1 id="classrooms-title">Klassenräume</h1></div><button type="button" id="classrooms-refresh" class="quiet" hidden>Aktualisieren</button></div></div><p id="classrooms-status" role="status" aria-live="polite"></p><div id="classrooms-content"></div></section>`;
 if(classroomAnchor)classroomAnchor.insertAdjacentHTML('beforebegin',classroomMarkup);else main.insertAdjacentHTML('beforeend',classroomMarkup);
 const status=(s,error=false)=>{$('classrooms-status').textContent=s;$('classrooms-status').classList.toggle('error',error);};
 async function api(action,payload={}){
@@ -38,7 +38,6 @@ const sources=s=>s.origin==='teacher_created'?'<details class="cr-sources"><summ
 function updateHeading(){
  $('classrooms-title').textContent=room?.name||'Klassenräume';
  $('classrooms-refresh').hidden=!room;
- $('classrooms-close').setAttribute('aria-label',room?'Zurück zu meinen Klassenräumen':'Zurück zur vorherigen Seite');
 }
 async function home(){
  room=null;selected=null;dirty=false;streamFilter='all';updateHeading();
@@ -134,27 +133,14 @@ function discussion(a){
 }
 async function refreshAssignment(){const id=selected;room=await api('room',{room_id:room.id});assignment(id);}
 function canNavigate(){return !dirty||confirm('Ungespeicherte Eingaben verlassen? Antwortentwürfe bleiben bis zum Neuladen dieser Seite erhalten.');}
-function visibleAppView(){
- return [...document.querySelectorAll('.app-view')].find(view=>!view.hidden&&view.id!=='classrooms-view')?.id.replace(/-view$/,'')||'home';
-}
 function openClassrooms(){
- previousView=visibleAppView();
  document.querySelectorAll('.app-view').forEach(view=>{view.hidden=true;});
  $('classrooms-view').hidden=false;
  document.querySelectorAll('.header-nav [data-view]').forEach(item=>{const active=item===button;item.classList.toggle('selected',active);if(active)item.setAttribute('aria-current','page');else item.removeAttribute('aria-current');});
  window.scrollTo?.({top:0,behavior:'smooth'});
  run(home);
 }
-function closeClassrooms(){
- if(!canNavigate())return;
- $('classrooms-view').hidden=true;
- button.classList.remove('selected');button.removeAttribute('aria-current');
- const destination=document.querySelector(`.header-nav [data-view="${previousView}"]`);
- if(destination)destination.click();
- else{const fallback=$(`${previousView}-view`)||$('home-view');if(fallback)fallback.hidden=false;}
-}
 button.onclick=openClassrooms;
-$('classrooms-close').onclick=()=>{if(!room)return closeClassrooms();if(!canNavigate())return;run(home);};
 $('classrooms-refresh').onclick=()=>{if(room&&canNavigate())run(()=>open(room.id));};
 $('classrooms-content').addEventListener('input',e=>{
  dirty=true;

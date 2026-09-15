@@ -36,7 +36,7 @@ const click=async s=>{assert($(s),s);$(s).click();await settle();};
 const submit=async s=>{$(s).dispatchEvent(new window.Event('submit',{bubbles:true,cancelable:true}));await settle();};
 try{
  await click('#classrooms-button');assert($('#classrooms-content').textContent.includes('Zum Beitreten und Speichern'));assert.deepEqual(calls,[]);
- await click('#classrooms-close');logged=true;await click('#classrooms-button');
+ assert.equal($('#classrooms-close'),null);logged=true;await click('#classrooms-button');
  $('[data-cr-form=create] input').value='Testklasse';$('[data-cr-form=create] [name=display_name]').value='teacher';await submit('[data-cr-form=create]');
  assert.equal($('#classrooms-title').textContent,'Testklasse');assert(!$('#classrooms-refresh').hidden);
  assert.equal($('.cr-hero'),null);assert(!$('#classrooms-content').textContent.includes('Unser Klassenstream'));assert(!$('#classrooms-content').textContent.includes('IM AUSTAUSCH BLEIBEN'));
@@ -68,7 +68,7 @@ try{
  assert.equal(room.assignments[0].items[1].origin,'teacher_created');assert.equal(room.assignments[0].items[1].translations[0].text,'Heute lernen wir zusammen.');
  await click('[data-cr=assignment]');assert($('[data-cr=release]'));
  assert(!$('#classrooms-content').textContent.includes('Noch ohne Abgabe: teacher'));
- await click('#classrooms-close');teacher=false;await click('#classrooms-button');await click('[data-cr=open]');
+ await click('#classrooms-button');teacher=false;await click('[data-cr=open]');
  assert($('.cr-roster').textContent.includes('Lehrkraft · Ersteller'));assert.equal($('.cr-roster').querySelectorAll('[data-cr=remove]').length,0);
  assert(!$('[data-cr=new_assignment]'));assert(!$('[data-cr=delete_room]'));await click('[data-cr=assignment]');assert(!$('[data-cr=release]'));
  assert($('#classrooms-content').textContent.includes('Heute lernen wir zusammen.'));assert(!$('#classrooms-content').textContent.includes('Tänään opiskelemme yhdessä.'));
@@ -83,7 +83,7 @@ try{
  await click('[data-cr=reply][data-id=message-2]');$('.cr-reply-form textarea').value='<b>Antwort auf Antwort</b>';await submit('.cr-reply-form');
  assert($('.cr-replies .cr-replies'));assert.equal($('#classrooms-content').querySelectorAll('.cr-message b').length,0);
  await click('[data-cr=delete_message][data-id=message-1]');assert($('.cr-removed'));assert.equal($('.cr-discussions').querySelectorAll('.cr-message').length,3);
- await click('#classrooms-close');teacher=true;await click('#classrooms-button');await click('[data-cr=open]');await click('[data-cr=assignment]');
+ await click('#classrooms-button');teacher=true;await click('[data-cr=open]');await click('[data-cr=assignment]');
  await click('[data-cr=reply][data-id=message-1]');$('.cr-reply-form textarea').value='Erklärung der Lehrkraft';await submit('.cr-reply-form');
  assert($('#cr-message-message-4').textContent.includes('Lehrkraft'));assert.equal($('.cr-discussions').children.length,1);
  $('[data-cr-form=message] textarea').value='Neue Diskussion';await submit('[data-cr-form=message]');assert.equal($('.cr-discussions').children.length,2);

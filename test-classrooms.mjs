@@ -29,7 +29,7 @@ await page.route('**/rest/v1/rpc/classroom_api',async route=>{
 try{
  await page.goto(base);await page.locator('#classrooms-button').click();
  await page.getByText('Zum Beitreten und Speichern brauchst du ein Konto.').waitFor();
- await page.locator('#classrooms-close').click();
+ assert.equal(await page.locator('#classrooms-close').count(),0);
  await page.evaluate(id=>localStorage.setItem('suomi-auth-session-v1',JSON.stringify({access_token:'test',refresh_token:'test',user:{id,user_metadata:{username:'teacher'}}})),id);
  await page.reload();await page.locator('#classrooms-button').click();
  await page.locator('[data-cr-form=create] input').fill('Finnisch am Mittwoch');
@@ -41,8 +41,8 @@ try{
  await page.locator('[data-cr=assignment]').click();
  await page.getByRole('heading',{name:'Unsere erste Runde'}).waitFor();
  assert(await page.locator('[data-cr=release]').isVisible());
- await page.locator('#classrooms-close').click();teacher=false;
- await page.locator('#classrooms-button').click();await page.locator('[data-cr=open]').click();
+ await page.locator('#classrooms-button').click();teacher=false;
+ await page.locator('[data-cr=open]').click();
  assert.equal(await page.locator('[data-cr=new_assignment]').count(),0);
  await page.locator('[data-cr=assignment]').click();
  await page.locator('[data-answer]').fill('<img src=x onerror=alert(1)> Hei!');
@@ -51,8 +51,8 @@ try{
  assert.equal(await page.locator('#classrooms-content img').count(),0);
  await page.locator('[data-cr-form=message] textarea').fill('Warum steht hier diese Form?');
  await page.locator('[data-cr-form=message] button').click();await page.locator('.cr-message').waitFor();
- await page.locator('#classrooms-close').click();teacher=true;
- await page.locator('#classrooms-button').click();await page.locator('[data-cr=open]').click();await page.locator('[data-cr=assignment]').click();
+ await page.locator('#classrooms-button').click();teacher=true;
+ await page.locator('[data-cr=open]').click();await page.locator('[data-cr=assignment]').click();
  await page.locator('[data-cr=release]').click();await page.locator('[data-cr=react]').first().waitFor();
  await page.screenshot({path:'/workspace/scratch/a73c6d3205e6/classroom-desktop.png',fullPage:true});
  await page.setViewportSize({width:390,height:844});
