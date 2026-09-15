@@ -51,13 +51,13 @@ header{flex-wrap:wrap}
 .cr-stream-hero p{margin-bottom:0}.cr-stream-hero button{flex-shrink:0;background:var(--paper)}
 .cr-stream-layout h3{font:700 26px/1.25 var(--heading)}
 .cr-stream-layout .cr-card{border-radius:7px;margin:0 0 20px;border-width:1.5px}
-.cr-stream-compose{box-shadow:3px 3px 0 var(--ink)}.cr-stream-compose h4{margin:0;font:700 21px var(--heading)}
+.cr-stream-compose{background:var(--mint);box-shadow:3px 3px 0 var(--ink)}.cr-stream-compose h4{margin:0;font:700 21px var(--heading)}
 .cr-stream-main>.cr-section-heading{margin:8px 0 20px}.cr-stream-main>.cr-section-heading h3{margin:5px 0 0;font-size:31px}
 #classrooms-view .cr-stream-compose label{font-size:14px}.cr-stream-compose .cr-toolbar{justify-content:space-between;align-items:center}
 #classrooms-view .cr-file-picker{position:relative;overflow:hidden;border:1px solid var(--ink);border-radius:5px;padding:10px;cursor:pointer;margin:0;min-height:44px}
 #classrooms-view .cr-file-picker input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer}
 .cr-file-picker:focus-within{outline:3px solid var(--purple);outline-offset:3px}
-#classrooms-view .cr-feed-filters button[aria-pressed=true]{background:var(--ink);color:var(--paper)}
+#classrooms-view .cr-feed-filters button[aria-pressed=true]{background:var(--lavender);color:var(--ink)}
 #classrooms-view .cr-toolbar button{margin-left:0}.cr-feed-filters{margin:24px 0 18px;gap:8px}
 .cr-feed-card{border-top:5px solid var(--mint)!important}.cr-feed-card.cr-feed-question{border-top-color:var(--purple)!important}
 .cr-feed-card.cr-feed-announcement{background:var(--lavender);border-top-color:var(--purple)!important}
