@@ -22,7 +22,7 @@ const matchesTopic=s=>topicNotes(s,grammar,grammarTopic).length>0;
 const writingSessions={};
 const WRITING_RATINGS={right:'Richtig',almost:'Fast richtig',again:'Noch üben'};
 const MIN_WRITING_SENTENCES=5;
-const ACTIVITY_LABELS={translate:'Übersetzen',listen:'Hörmodus',dictation:'Diktat',writing:'Schreibtest',grammar:'Grammatik',verbs:'Verbformen'};
+const ACTIVITY_LABELS={translate:'Übersetzen',listen:'Hörübung',dictation:'Diktat',writing:'Schreibtest',grammar:'Grammatik',verbs:'Verbformen'};
 const DIRECTION_LABELS={'fi-de':'Finnisch → Deutsch','de-fi':'Deutsch → Finnisch',random:'Zufällig'};
 const isWritingEligible=s=>['fi-de','de-fi','listen','dictation'].some(kind=>Number(memory.reviews[`${s.id}:${kind}`]?.repetitions)>=2);
 const writingPool=()=>[...data,...archived].filter(s=>s.level===level&&isWritingEligible(s));
@@ -66,17 +66,13 @@ function renderStats(){
  $('new-count').textContent=base().filter(s=>eligibleDirections(s,'new').length).length;
  const dueCount=base(true).filter(s=>eligibleDirections(s,'review').length).length;
  $('due-count').textContent=dueCount;
- $('home-review-count').textContent=activity==='verbs'?verbStats.due:dueCount;
- $('home-review-unit').textContent=activity==='verbs'?'Verbformen sind fällig':'Sätze sind fällig';
+ renderHomeSession(verbStats,dueCount);
  $('fav-count').textContent=base(true).filter(s=>memory.favorites.includes(s.id)).length;
- const detail=activity==='grammar'?GRAMMAR_TOPICS.find(t=>t.id===grammarTopic)?.label:activity==='writing'?'Deutsch → Finnisch':isTranslation()?DIRECTION_LABELS[direction]:'Mit Originalaufnahme';
  $('practice-summary').textContent=`Level ${level} · ${ACTIVITY_LABELS[activity]}`;
  $('settings-level').textContent=`Level ${level}`;
- $('home-session-meta').textContent=`Level ${level} · ${ACTIVITY_LABELS[activity]}${detail?` · ${detail}`:''}`;
  document.querySelectorAll('[data-mode]').forEach(b=>{b.classList.toggle('selected',b.dataset.mode===mode);b.setAttribute('aria-pressed',b.dataset.mode===mode);});
  if(activity==='verbs'){
   $('practice-summary').textContent='Verbformen · Präsens';
-  $('home-session-meta').textContent='Verbformen · 200 Verben · Präsens';
   $('session-title').textContent='Verbformen · Präsens';
   const count=verbSession?.answers.length||0,total=verbSession?.count||0;
   $('session-progress').textContent=total?`${count} / ${total}`:'Aufgabenanzahl wählen';
@@ -86,6 +82,22 @@ function renderStats(){
  $('session-title').textContent=`Level ${level} · ${activity==='grammar'?GRAMMAR_TOPICS.find(t=>t.id===grammarTopic).label:mode==='new'?'Neue Sätze · Audio zuerst':mode==='review'?'Wiederholen':'Deine Favoriten'}`;
  $('session-progress').textContent=initialCount?`${completed} / ${completed+queue.length}`:'Keine Karten ausgewählt';
  $('progress-bar').style.width=initialCount?`${completed/(completed+queue.length)*100}%`:'0%';
+}
+function renderHomeSession(verbStats,dueCount){
+ const descriptions={translate:'Übe finnische Sätze und ihre deutsche Übersetzung.',listen:'Höre finnische Sätze und verstehe ihre Bedeutung.',dictation:'Höre einen finnischen Satz und schreibe ihn auf.',verbs:'Übe die richtige Verbform im Präsens.',writing:'Übersetze bekannte deutsche Sätze ins Finnische.',grammar:'Übe Sätze zu einem bestimmten Grammatikthema.'};
+ const detail=activity==='grammar'?GRAMMAR_TOPICS.find(t=>t.id===grammarTopic)?.label:activity==='writing'?'Deutsch → Finnisch':isTranslation()?DIRECTION_LABELS[direction]:'Mit Originalaufnahme';
+ $('continue-title').textContent=ACTIVITY_LABELS[activity];
+ $('home-session-description').textContent=descriptions[activity];
+ $('home-session-meta').textContent=activity==='verbs'?VERBS.length+' Verben · Präsens · alle sechs Personen':'Level '+level+' · '+detail+(isTranslation()&&audioOnly?' · Nur mit Audio':'');
+ $('continue-practice').textContent=activity==='translate'?(direction==='random'?'Beide Lernrichtungen':DIRECTION_LABELS[direction])+' üben':ACTIVITY_LABELS[activity]+' üben';
+ $('continue-practice').disabled=!ready;
+ const count=activity==='verbs'?verbStats.due:dueCount;
+ const unit=activity==='verbs'?(count===1?'Verbform':'Verbformen'):(count===1?'Satz':'Sätze');
+ $('home-review').textContent=count?count+' '+unit+' wiederholen':'Keine '+(activity==='verbs'?'Verbformen':'Sätze')+' zu wiederholen';
+ $('home-review').disabled=!ready||count===0;
+ $('home-review').hidden=['writing','grammar'].includes(activity);
+ $('home-review').setAttribute('aria-label',$('home-review').textContent+' · '+ACTIVITY_LABELS[activity]+(isTranslation()?' · '+DIRECTION_LABELS[direction]:''));
+ document.querySelectorAll('[data-home-activity]').forEach(b=>{const selected=b.dataset.homeActivity===activity;b.classList.toggle('selected',selected);b.setAttribute('aria-pressed',String(selected));});
 }
 function prioritizeAudio(pool){return [...shuffle(pool.filter(s=>s.audios.length&&!s.translations[0].origin)),...shuffle(pool.filter(s=>s.audios.length&&!!s.translations[0].origin)),...shuffle(pool.filter(s=>!s.audios.length))];}
 function start(){if(!ready)return;stopAudio();draft='';if(activity==='writing'&&!syncWritingAvailability())activity='translate';syncControls();if(activity==='verbs'){queue=[];revealed=false;persist();render();return;}if(activity==='writing'){queue=[];revealed=false;persist();render();return;}const pool=filtered();queue=(mode==='new'&&activity!=='grammar'?prioritizeAudio(pool):shuffle(pool)).slice(0,10).map(s=>{const choices=activity==='grammar'?studyDirections():eligibleDirections(s);return {...s,practiceDirection:choices[Math.floor(Math.random()*choices.length)]};});initialCount=queue.length;completed=0;revealed=false;persist();render();}
@@ -246,7 +258,7 @@ function renderVerbSession() {
   const correct=session.answers.filter(a=>a.correct).length;
   card.innerHTML=`<span class="complete-mark">✓</span><h2 tabindex="-1" id="verb-result-title">Runde geschafft.</h2><p>${correct} von ${session.answers.length} Antworten richtig.</p><p>Schwierige Formen bleiben für kommende Runden vorgemerkt.</p><ol class="verb-results">${session.answers.map(a=>`<li><span>${a.correct?'✓ Richtig':'Noch üben'}</span><strong lang="fi">${PRONOUNS[a.person]} ${escape(a.verb.forms[a.person])}</strong><small>${escape(a.verb.id)} · ${escape(a.verb.de)}</small>${a.correct?'':`<small>Deine Antwort: <span lang="fi">${escape(a.answer)}</span></small>`}</li>`).join('')}</ol>`;
   $('actions').innerHTML='<button type="button" class="primary" id="verb-again">Neue Runde</button>';
-  $('verb-again').onclick=()=>{verbSession=null;render();};return;
+  $('verb-again').onclick=()=>{verbSession=null;mode='new';render();};return;
  }
  const {verb,person}=session.current;
  card.innerHTML=`<div class="card-top"><span class="card-label">Verbformen</span><span>${session.checked?session.answers.length:session.answers.length+1} von ${session.count}</span></div><p class="verb-hint">Welche Form? · Präsens</p><h2 class="verb-question" lang="fi">${PRONOUNS[person]} · ${escape(verb.id)}</h2><p class="verb-meaning">${escape(verb.de)}</p><form id="verb-form"><label for="verb-input">Deine Verbform</label><input id="verb-input" lang="fi" maxlength="100" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" aria-describedby="verb-input-hint" placeholder="Deine Antwort …" ${session.checked?'readonly':''} value="${escape(session.draft)}"><p class="verb-hint" id="verb-input-hint">${person===2||person===5?`Schreibe „${PRONOUNS[person]}“ zusammen mit der Verbform. Das Pronomen ist hier erforderlich.`:`Nur die Verbform oder mit „${PRONOUNS[person]}“.`} Achte auf ä, ö und doppelte Buchstaben.</p>${session.checked?'':`<div class="letter-buttons"><button type="button" data-verb-letter="ä" aria-label="ä einfügen">ä</button><button type="button" data-verb-letter="ö" aria-label="ö einfügen">ö</button></div><button class="primary" type="submit">Lösung prüfen</button>`}</form>${session.checked?`<div class="verb-feedback ${session.correct?'verb-correct':'verb-wrong'}" role="status">${session.correct?'✓ Richtig!':`Noch nicht richtig. Die Lösung ist <strong lang="fi">${person===2||person===5?PRONOUNS[person]+' ':''}${escape(verb.forms[person])}</strong>.`}</div><table class="verb-forms"><caption>Alle sechs Formen von <span lang="fi">${escape(verb.id)}</span></caption><thead><tr><th scope="col">Personalpronomen</th><th scope="col">Präsens</th></tr></thead><tbody>${PRONOUNS.map((p,i)=>`<tr class="${i===person?'verb-target':''}"><th scope="row" lang="fi">${p}${i===person?' <span class="verb-hint">(gefragt)</span>':''}</th><td lang="fi">${escape(verb.forms[i])}</td></tr>`).join('')}</tbody></table>`:''}`;
@@ -338,11 +350,28 @@ function showView(name,openSettings=false){
  if(name==='practice')$('practice-settings').open=openSettings;
  window.scrollTo({top:0,behavior:'smooth'});
 }
-$('continue-practice').onclick=()=>showView('practice');
-$('home-review').onclick=()=>{mode='review';start();showView('practice');};
+$('continue-practice').onclick=()=>{
+ if(!ready)return;
+ if(activity==='verbs'&&verbSession&&!verbSession.current)verbSession=null;
+ if(mode!=='new'){mode='new';start();}else if(activity==='verbs')render();
+ showView('practice');
+};
+$('home-review').onclick=()=>{
+ if(!ready||$('home-review').disabled)return;
+ if(activity==='verbs'){
+  if(verbSession?.current){showView('practice');$('notice').textContent='Beende zuerst deine laufende Runde. Deine Eingabe bleibt erhalten.';return;}
+  const now=Date.now();
+  const reviewKeys=VERBS.flatMap(v=>PRONOUNS.map((_,p)=>v.id+':'+p)).filter(k=>memory.verbProgress[k]?.seen&&memory.verbProgress[k].due<=now);
+  if(!reviewKeys.length){renderStats();return;}
+  verbSession={...createVerbSession(10),count:Math.min(10,reviewKeys.length),reviewKeys};
+  mode='review';nextVerbQuestion();showView('practice');return;
+ }
+ mode='review';start();showView('practice');
+};
 $('home-choose').onclick=()=>{showView('practice',true);$('practice-settings').querySelector('summary')?.focus();};
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>showView(b.dataset.view));
-document.querySelectorAll('[data-activity]').forEach(b=>b.onclick=()=>{if(b.dataset.activity==='writing'&&!syncWritingAvailability())return;if(activity!==b.dataset.activity){activity=b.dataset.activity;start();}});
+document.querySelectorAll('[data-home-activity]').forEach(b=>b.onclick=()=>{if(!ready||activity===b.dataset.homeActivity)return;activity=b.dataset.homeActivity;mode='new';start();});
+document.querySelectorAll('[data-activity]').forEach(b=>b.onclick=()=>{if(b.dataset.activity==='writing'&&!syncWritingAvailability())return;if(activity!==b.dataset.activity){activity=b.dataset.activity;mode='new';start();}});
 document.querySelectorAll('[data-direction]').forEach(b=>b.onclick=()=>{if(direction!==b.dataset.direction){direction=b.dataset.direction;start();}});
 $('grammar-topic').onchange=e=>{grammarTopic=e.target.value;start();};
 $('audio-only').checked=audioOnly;

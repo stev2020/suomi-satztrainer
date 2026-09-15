@@ -53,6 +53,12 @@ export function chooseCombination(verbs,progress,session,now = Date.now(),random
   const recent = new Set(session.history.slice(-2));
   const pick = list => list[Math.min(list.length-1,Math.floor(random()*list.length))];
   const all = verbs.flatMap(verb => PRONOUNS.map((_,person) => ({verb,person,key:combinationKey(verb,person)})));
+  // A dedicated review round only asks forms that were due when it started.
+  // Each appears once; mistakes remain due for the next round.
+  if (session.reviewKeys) {
+    const remaining = all.filter(item => session.reviewKeys.includes(item.key) && !session.history.includes(item.key));
+    return remaining.length ? pick(remaining) : null;
+  }
   // A mistake returns only after two intervening questions. A short round
   // never grows indefinitely; outstanding mistakes remain due next round.
   const unseen = all.filter(item => !progress[item.key]?.seen && !recent.has(item.key));

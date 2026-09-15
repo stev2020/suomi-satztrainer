@@ -27,3 +27,13 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Check mobile, desktop and persistence
         run: node test-verbforms-browser.mjs
+      - name: Check home exercise selection and review launches
+        run: node test-home-browser.mjs
+        env:
+          HOME_SCREENSHOTS: ${{ runner.temp }}
+      - name: Save home previews
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: home-previews
+          path: ${{ runner.temp }}/home-*.png
