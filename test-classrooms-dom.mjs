@@ -16,7 +16,7 @@ window.accountRequest=async(url,opts)=>{
  const {action,payload}=JSON.parse(opts.body);calls.push(action);let result={};
  if(action==='list')result=deleted?[]:[{...room,teacher}];
  if(action==='create'||action==='join'){assert(payload.display_name);result={id:room.id};}
- if(action==='room')result={...room,teacher,owner:teacher&&owner,code:teacher?room.code:null,members:room.members};
+ if(action==='room')result={...room,assignments:room.assignments.map(a=>({...a,own_assignment:teacher})),teacher,owner:teacher&&owner,code:teacher?room.code:null,members:room.members};
  if(action==='rename'){assert.equal(payload.room_id,room.id);room.members.find(m=>m.own).name=payload.display_name;}
  if(action==='set_role'){assert(teacher&&owner);assert.equal(payload.room_id,room.id);room.members.find(m=>m.id===payload.user_id).role=payload.role;}
  if(action==='assign')room.assignments.push({id:'22222222-2222-4222-a222-222222222222',title:payload.title,items:payload.items,due_at:payload.due_at,released:false,submissions:[],messages:[],submitted_count:0});
@@ -60,6 +60,9 @@ try{
  assert($('#cr-tab-existing [data-cr=confirm_custom]'));await click('#cr-tab-existing [data-cr=confirm_custom]');
  assert($('#cr-tab-existing .cr-added').textContent.includes('✓ Hinzugefügt'));
  assert.equal($('#cr-selection-count').textContent,'2 Sätze ausgewählt');
+ assert(!$('#cr-tab-existing .cr-custom-added textarea'));
+ assert.equal($('#cr-tab-existing [data-custom-field=de]').value,'');
+ assert.equal(window.document.activeElement,$('#cr-tab-existing [data-custom-field=de]'));
  assert.equal($('[data-cr-form=assign] button.primary').textContent,'Aufgabe veröffentlichen');
  await submit('[data-cr-form=assign]');assert.equal(room.assignments[0].items.length,2);
  assert.equal(room.assignments[0].items[1].origin,'teacher_created');assert.equal(room.assignments[0].items[1].translations[0].text,'Heute lernen wir zusammen.');
