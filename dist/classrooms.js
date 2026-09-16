@@ -38,7 +38,7 @@ const sentenceSourceIcon=s=>{
  if(!s||!/^\d+$/.test(String(s.id))||['english_bridge','finnish_adaptation','teacher_created'].includes(s.origin))return '';
  const id=Number(s.id),owner=s.owner||'Tatoeba',license=s.license||'CC BY 2.0 FR';
  const label=`Quelle: Tatoeba-Satz #${id} von ${owner}, Lizenz ${license}. Auf Tatoeba öffnen.`;
- return `<a class="sentence-source-icon" href="https://tatoeba.org/en/sentences/show/${id}" target="_blank" rel="noopener" aria-label="${esc(label)}" title="${esc(label)}"></a>`;
+ return `<button type="button" class="sentence-source-icon" data-source-url="https://tatoeba.org/en/sentences/show/${id}" data-source-label="${esc(label)}" aria-label="${esc(label)}" aria-expanded="false" title="${esc(label)}"></button>`;
 };
 const sources=s=>s.origin==='teacher_created'?'<details class="cr-sources"><summary>Herkunft</summary><p>Eigener Satz und richtige Übersetzung der Lehrkraft.</p></details>':`<details class="cr-sources"><summary>Quellen &amp; Lizenzen</summary><p>Finnisch: ${source(s)}</p><p>Deutsch: ${source(s.translations?.[0])}</p></details>`;
 function updateHeading(){
