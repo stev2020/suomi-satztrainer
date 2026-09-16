@@ -494,12 +494,14 @@ function showView(name,openSettings=false){
 }
 $('continue-practice').onclick=()=>{
  if(!ready)return;
+ if(dailySession?.active){dailySession=null;mode='new';start();showView('practice');return;}
  if(activity==='verbs'&&verbSession&&!verbSession.current)verbSession=null;
  if(mode!=='new'){mode='new';start();}else if(activity==='verbs')render();
  showView('practice');
 };
 $('home-review').onclick=()=>{
  if(!ready||$('home-review').disabled)return;
+ dailySession=null;
  if(activity==='verbs'){
   if(verbSession?.current){showView('practice');$('notice').textContent='Beende zuerst deine laufende Runde. Deine Eingabe bleibt erhalten.';return;}
   const now=Date.now();
@@ -511,7 +513,7 @@ $('home-review').onclick=()=>{
  mode='review';start();showView('practice');
 };
 $('start-daily-session').onclick=startDailySession;
-$('home-choose').onclick=()=>{showView('practice',true);$('practice-settings').querySelector('summary')?.focus();};
+$('home-choose').onclick=()=>{if(dailySession?.active){dailySession=null;mode='new';start();}showView('practice',true);$('practice-settings').querySelector('summary')?.focus();};
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>showView(b.dataset.view));
 document.querySelectorAll('[data-home-activity]').forEach(b=>b.onclick=()=>{if(!ready||activity===b.dataset.homeActivity)return;activity=b.dataset.homeActivity;mode='new';start();});
 document.querySelectorAll('[data-home-direction]').forEach(b=>b.onclick=()=>{if(!ready||direction===b.dataset.homeDirection)return;direction=b.dataset.homeDirection;mode='new';start();});
