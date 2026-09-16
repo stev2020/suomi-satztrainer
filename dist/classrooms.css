@@ -132,3 +132,49 @@ header{flex-wrap:wrap}
 .cr-custom-item.cr-custom-added{background:#e9f5ed;border-color:#27613c}
 .cr-custom-added .cr-added{padding:0;min-height:0;margin:8px 0}
 .cr-custom-text{white-space:pre-wrap;overflow-wrap:anywhere}
+
+
+/* Classroom assignment workspace */
+.cr-assignment-nav{margin:2px 0 16px}
+.cr-assignment-nav button{background:var(--paper)}
+.cr-assignment-hero{position:relative;overflow:hidden;padding:28px 30px;border:2px solid var(--ink);border-radius:18px;background:var(--mint);box-shadow:5px 5px 0 var(--ink);margin-bottom:22px}
+.cr-assignment-hero:after{content:'✦';position:absolute;right:24px;top:8px;color:#ffffff80;font:700 92px/1 var(--heading);transform:rotate(12deg);pointer-events:none}
+.cr-assignment-kicker,.cr-assignment-language{display:block;color:var(--purple);font-size:11px;font-weight:800;letter-spacing:.11em;text-transform:uppercase}
+.cr-assignment-hero h2{position:relative;z-index:1;max-width:720px;margin:7px 0 20px;font-size:clamp(29px,4vw,42px);line-height:1.12}
+.cr-assignment-meta{position:relative;z-index:1;display:flex;align-items:stretch;flex-wrap:wrap;gap:10px}
+.cr-assignment-meta>span{display:grid;gap:1px;min-width:132px;padding:9px 13px;border:1.5px solid var(--ink);border-radius:10px;background:var(--paper);font-size:13px}
+.cr-assignment-meta strong{font-size:11px;letter-spacing:.05em;text-transform:uppercase}
+.cr-assignment-meta .cr-assignment-status{display:flex;align-items:center;justify-content:center;min-width:auto;background:var(--orange);font-weight:800}
+.cr-assignment-intro{display:flex;align-items:flex-start;gap:14px;margin:0 0 22px;padding:16px 18px;border:1.5px solid var(--ink);border-radius:13px;background:var(--lavender)}
+.cr-assignment-intro>span{display:grid;place-items:center;flex:0 0 34px;width:34px;height:34px;border:1.5px solid var(--ink);border-radius:9px;background:var(--paper);color:var(--purple);font-size:19px}
+.cr-assignment-intro p{margin:0;line-height:1.6}
+.cr-assignment-item{position:relative;display:grid;grid-template-columns:46px minmax(0,1fr);gap:16px;padding:22px;border-width:1.5px;box-shadow:3px 3px 0 var(--lavender)}
+.cr-assignment-item:nth-of-type(even){box-shadow:3px 3px 0 var(--mint)}
+.cr-assignment-number{display:grid;place-items:center;width:46px;height:46px;border:2px solid var(--ink);border-radius:12px;background:var(--orange);font:700 22px/1 var(--heading)}
+.cr-assignment-item-body{min-width:0}
+.cr-assignment-item h3{margin:4px 0 16px;font:700 clamp(20px,2.7vw,26px)/1.35 var(--heading)}
+#classrooms-view .cr-assignment-item label{margin-top:8px;color:var(--purple);font-size:13px}
+#classrooms-view .cr-assignment-item textarea{min-height:94px;padding:13px 14px;border-width:2px;border-radius:11px;font-size:17px;line-height:1.55;box-shadow:inset 0 0 0 2px #ffffff}
+#classrooms-view .cr-assignment-item textarea:focus{background:#fffdf8}
+.cr-assignment-item>div>p{padding:12px 14px;border-radius:10px;background:#faf7f0}
+.cr-assignment-item>div>p+ p{background:var(--mint)}
+.cr-assignment-section-title{display:flex;align-items:center;gap:13px;margin:30px 0 14px;padding-top:24px;border-top:2px solid var(--ink)}
+.cr-assignment-section-title>span{display:grid;place-items:center;flex:0 0 42px;width:42px;height:42px;border:2px solid var(--ink);border-radius:12px;background:var(--orange);font:800 20px/1 var(--heading)}
+.cr-assignment-section-title h3{margin:2px 0 0!important;font:700 25px/1.2 var(--heading)}
+.cr-submission-card{border-width:1.5px;border-left:7px solid var(--purple);box-shadow:3px 3px 0 var(--lavender)}
+.cr-submission-card h4{margin:0 0 12px;font-size:17px}
+.cr-submission-card p{padding:9px 11px;border-radius:8px;background:#faf7f0}
+.cr-discussion-title>span{background:var(--mint)}
+.cr-discussion-note{margin:-6px 0 18px}
+#classrooms-view form[data-cr-form=submit]>.primary{margin-top:8px}
+@media(max-width:640px){
+ .cr-assignment-hero{padding:22px 18px;box-shadow:4px 4px 0 var(--ink)}
+ .cr-assignment-hero:after{right:8px;font-size:70px}
+ .cr-assignment-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+ .cr-assignment-meta>span{min-width:0}
+ .cr-assignment-meta .cr-assignment-status{grid-column:1/-1;min-height:42px}
+ .cr-assignment-item{grid-template-columns:38px minmax(0,1fr);gap:11px;padding:16px 13px}
+ .cr-assignment-number{width:38px;height:38px;border-radius:10px;font-size:18px}
+ .cr-assignment-item h3{font-size:20px}
+ .cr-assignment-intro{padding:14px}
+}
