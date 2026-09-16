@@ -7,7 +7,7 @@ const render=source.slice(source.indexOf('function renderCustomItems('),source.i
 const check=new Function('teacher','creator','submitted','closed',`
  const room={teacher,archived:false,member_count:1,members:[],assignments:[{id:'a',own_assignment:creator,title:'Test',submissions:submitted?[{own:true,answers:['MY ANSWER'],reactions:{}}]:[],released:closed,items:[{text:'SECRET SOLUTION',translations:[{text:'Hallo'}]}],submitted_count:0}]};
  let selected,dirty;const drafts=new Map(),target={};const $=()=>target;
- const b=(text)=>text,esc=String,date=()=>'',sources=()=>'',discussion=()=>'';${assignment}
+ const b=(text)=>text,esc=String,date=()=>'',sources=()=>'',discussion=()=>'',sentenceSourceIcon=()=>'';${assignment}
  assignment('a');return target.innerHTML;
 `);
 for(const teacher of [false,true])for(const creator of [false,true])for(const submitted of [false,true])for(const closed of [false,true]){
