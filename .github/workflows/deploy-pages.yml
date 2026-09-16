@@ -34,6 +34,7 @@ jobs:
           npx playwright install --with-deps chromium
           node test-word-practice-browser.mjs
           node test-suchsel-browser.mjs
+          node test-home-browser.mjs
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
       - name: Upload website
