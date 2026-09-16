@@ -19,6 +19,8 @@ try{
   assert.match(await page.locator('.search-count').textContent(),/0 von 3/);
   await page.locator('.search-hint').click();assert.match(await page.locator('.search-hint-text').textContent(),/Suche/);assert.equal(await page.locator('.search-grid .hint').count(),1);
   for(const width of [320,390,1280]){await page.setViewportSize({width,height:950});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
+  await page.setViewportSize({width:320,height:950});
+  const scroll=page.locator('.search-scroll');assert.ok(await scroll.evaluate(el=>el.scrollWidth>el.clientWidth));await scroll.evaluate(el=>{el.scrollLeft=el.scrollWidth;});assert.ok(await scroll.evaluate(el=>el.scrollLeft>0));
   await page.setViewportSize({width:390,height:844});
   let i=0;for(const word of ['KAHVIA','JUON','TÄNÄÄN']){
    const cells=await path(word,difficulty==='hard');
@@ -31,5 +33,5 @@ try{
   const state=await page.evaluate(()=>window.suomiLearningState.snapshot());assert.ok(state.reviews['987654:suchsel']);assert.equal(state.prefs.searchDifficulty,difficulty);assert.equal(state.reviews['987654:de-fi'],undefined);
   await page.locator('#search-skip').click();assert.equal(await page.locator('.search-grid').count(),0);
  }
- assert.deepEqual(errors,[]);console.log('Suchsel browser: tap, drag, keyboard, hints, both difficulties, solution, repeat, progress and responsive layout passed.');
+ assert.deepEqual(errors,[]);console.log('Wortsel browser: tap, drag, keyboard, hints, both difficulties, solution, repeat, progress and responsive layout passed.');
 }finally{await browser?.close();server.kill();}

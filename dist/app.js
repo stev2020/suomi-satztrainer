@@ -28,7 +28,7 @@ const matchesTopic=s=>topicNotes(s,grammar,grammarTopic).length>0;
 const writingSessions={};
 const WRITING_RATINGS={right:'Richtig',almost:'Fast richtig',again:'Noch üben'};
 const MIN_WRITING_SENTENCES=5;
-const ACTIVITY_LABELS={translate:'Übersetzen',listen:'Hörübung',dictation:'Diktat',writing:'Schreibtest',grammar:'Grammatik',verbs:'Verbformen',suchsel:'Suchsel'};
+const ACTIVITY_LABELS={translate:'Übersetzen',listen:'Hörübung',dictation:'Diktat',writing:'Schreibtest',grammar:'Grammatik',verbs:'Verbformen',suchsel:'Wortsel'};
 const DIRECTION_LABELS={'fi-de':'Finnisch → Deutsch','de-fi':'Deutsch → Finnisch',random:'Zufällig'};
 const isWritingEligible=s=>['fi-de','de-fi','listen','dictation'].some(kind=>Number(memory.reviews[`${s.id}:${kind}`]?.repetitions)>=2);
 const writingPool=()=>[...data,...archived].filter(s=>s.level===level&&isWritingEligible(s));
@@ -307,8 +307,8 @@ function renderVerbSession() {
 function renderSearchCard(s){
  $('keyboard-note').hidden=true;$('card').className='card search-card';
  if(!searchPuzzle)searchPuzzle=createSearch(s,searchDifficulty);
- $('session-title').textContent=`Level ${level} · Suchsel · Deutsch → Finnisch`;
- $('card').innerHTML=`<div class="card-top"><span class="card-label">Suchsel · ${searchDifficulty==='hard'?'Schwer':'Leicht'}</span></div><p class="sentence" lang="de">${escape(s.translations[0].text)}</p>${revealed?`<div class="search-solution"><h2 tabindex="-1" id="search-finished">Alle Wörter gefunden!</h2><span class="card-label">Der finnische Satz</span><p lang="fi" class="sentence">${escape(s.text)}</p></div>${audioMarkup(s)}${grammarMarkup(s)}<details class="sources"><summary>Quellen</summary><p>Finnisch: ${source(s)}</p><p>Deutsch: ${source(s.translations[0])}</p></details>`:'<div id="search-puzzle"></div>'}<button type="button" id="report-error" class="report-error">Fehler melden</button>`;
+ $('session-title').textContent=`Level ${level} · Wortsel · Deutsch → Finnisch`;
+ $('card').innerHTML=`<div class="card-top"><span class="card-label">Wortsel · ${searchDifficulty==='hard'?'Schwer':'Leicht'}</span></div><p class="sentence" lang="de">${escape(s.translations[0].text)}</p>${revealed?`<div class="search-solution"><h2 tabindex="-1" id="search-finished">Alle Wörter gefunden!</h2><span class="card-label">Der finnische Satz</span><p lang="fi" class="sentence">${escape(s.text)}</p></div>${audioMarkup(s)}${grammarMarkup(s)}<details class="sources"><summary>Quellen</summary><p>Finnisch: ${source(s)}</p><p>Deutsch: ${source(s.translations[0])}</p></details>`:'<div id="search-puzzle"></div>'}<button type="button" id="report-error" class="report-error">Fehler melden</button>`;
  $('report-error').onclick=()=>openReport(s);
  if(!revealed){mountSearch($('search-puzzle'),searchPuzzle,()=>{revealed=true;render();$('search-finished').focus({preventScroll:true});});$('actions').innerHTML='<button type="button" class="quiet" id="search-skip">Satz überspringen</button>';$('search-skip').onclick=()=>{queue.shift();searchPuzzle=null;playedAudioCard=null;render();};}
  else{$('actions').innerHTML='<button class="grade" id="grade-again" data-grade="again">Nochmal<span>In dieser Einheit</span></button><button class="grade" data-grade="hard">Schwer<span>Morgen</span></button><button class="grade easy" data-grade="easy">Leicht<span>'+easyDays(s)+' Tage</span></button>';document.querySelectorAll('[data-grade]').forEach(b=>b.onclick=()=>grade(b.dataset.grade));if($('play-audio')){$('play-audio').onclick=()=>play(s);$('speed').onchange=e=>{speed=Number(e.target.value);if(player)player.playbackRate=speed;persist();};}}

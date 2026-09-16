@@ -19,4 +19,4 @@ for(const difficulty of ['easy','hard'])for(const sentence of [{text:'Juon tän�
  assert.equal(p.found.length,p.words.length);assert.equal(searchHint(p),null);
 }
 const p=createSearch({text:'Kahvia tänään.'},'easy');assert.deepEqual(selectionCells(p,9,0),[]);p.difficulty='hard';assert.ok(selectionCells(p,9,0).length);
-console.log('Suchsel: placement, directions, Finnish letters, duplicates, hints and completion passed across corpus samples.');
+console.log('Wortsel: placement, directions, Finnish letters, duplicates, hints and completion passed across corpus samples.');
