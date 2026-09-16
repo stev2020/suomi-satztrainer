@@ -460,7 +460,6 @@ function mergeLearning(current,incoming){
 function commitLearning(candidate){if(accountActive())localStorage.setItem(STORE,JSON.stringify(candidate));else localStorage.removeItem(STORE);memory=candidate;}
 function learningSnapshot(){return JSON.parse(JSON.stringify({...memory,prefs:{level,direction,audioOnly,activity,speed,grammarTopic,difficulty,searchDifficulty}}));}
 window.suomiLearningState={snapshot:learningSnapshot,applyCloud:incoming=>{
- if(activity!=='verbs')return false;
  const candidate=mergeLearning(memory,{...incoming,prefs:learningSnapshot().prefs,verbProgress:validateVerbProgress(incoming.verbProgress||{})});
  commitLearning(candidate);if(ready)renderStats();return true;
 }};
