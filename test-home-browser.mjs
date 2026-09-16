@@ -36,6 +36,14 @@ try{
  const sentences=JSON.parse(fs.readFileSync('dist/sentences.json','utf8')).sentences.filter(s=>s.level===1&&s.audios.length).slice(0,6);
  for(const [kind,count] of [['fi-de',1],['de-fi',2],['listen',3],['dictation',4]])for(const s of sentences.slice(0,count))state.reviews[s.id+':'+kind]={due:now,interval:0,repetitions:2,updatedAt:now};
  await page.evaluate(state=>window.suomiLearningState.applyCloud(state),state);
+ assert.ok(await page.locator('.home-daily').isVisible());
+ assert.equal(await page.locator('#daily-plan-level').textContent(),'Level 1');
+ assert.equal(await page.locator('#start-daily-session').isDisabled(),false);
+ assert.ok(Number(await page.locator('#daily-due').textContent())>0);
+ await page.locator('#start-daily-session').click();
+ assert.ok((await page.locator('#session-progress').textContent()).endsWith('/ 10'));
+ await home();
+ assert.equal(await page.locator('#start-daily-session').textContent(),'Heutige Runde fortsetzen');
  assert.equal(await page.locator('#home-review').textContent(),'3 Verbformen wiederholen');
  assert.equal(await page.locator('#continue-practice').textContent(),'Üben');
  const colors=await page.evaluate(()=>['.today','#home-review','.home-exercises .selected','#continue-practice'].map(selector=>getComputedStyle(document.querySelector(selector)).backgroundColor));
@@ -89,5 +97,5 @@ try{
  assert.equal(await page.evaluate(()=>localStorage.getItem('suomi-learning-v1')),null);
  assert.deepEqual(errors,[]);
  await context.close();
- console.log('PASS: home selector, scoped review counts and launches, due-only verb round, preserved draft, identical colors, mobile layout, other exercises and guest privacy.');
+ console.log('PASS: daily round, home selector, scoped review counts and launches, due-only verb round, preserved draft, identical colors, mobile layout, other exercises and guest privacy.');
 }finally{await browser?.close();server.kill();}
