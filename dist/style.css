@@ -125,3 +125,5 @@ header .header-nav button:hover,header .header-nav button.selected{background:va
 /* Keep answer rating controls close to the revealed solution. */
 .actions:empty{display:none}.card.revealed{min-height:0;padding-bottom:16px}.card.revealed .sentence{margin:20px 0 14px}.card.revealed .audio-row{margin-bottom:10px}.card.revealed .word-result{margin:16px 0 10px;padding:14px 18px}.card.revealed .word-result p{margin:8px 0}.card.revealed .translation{padding-top:14px;margin-top:6px}.card.revealed .translation p{margin:6px 0 8px}.inline-grades{width:100%;margin:14px 0 2px;padding:12px;border:2px solid var(--ink);border-radius:13px;background:#fffdf8cc}.inline-grades .grade{min-height:54px}
 @media(max-width:700px){.card.revealed{padding-bottom:13px}.card.revealed .sentence{margin:16px 0 10px}.card.revealed .word-result{margin:12px 0 8px;padding:12px 14px}.inline-grades{position:sticky;bottom:8px;z-index:3;margin-top:12px;padding:8px;box-shadow:3px 3px 0 var(--ink);background:var(--paper)}.inline-grades .grade{min-width:82px;padding:9px 6px}}
+
+#grade-again{background:var(--orange)}#grade-again:hover{background:#ffad81}
