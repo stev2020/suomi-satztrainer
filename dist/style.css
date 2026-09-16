@@ -101,3 +101,9 @@ header .header-nav button:hover,header .header-nav button.selected{background:va
 .search-grid button{min-width:0;height:clamp(28px,4vw,42px);padding:0;border:1px solid #172c3830;border-radius:0;background:transparent;font-size:clamp(15px,2.5vw,21px);font-weight:600;line-height:1;color:var(--ink);touch-action:none}.search-grid button.found{background:var(--lavender)}.search-grid button.preview{background:var(--orange)}.search-grid button.anchor,.search-grid button.hint{box-shadow:inset 0 0 0 3px var(--purple);background:var(--paper)}.search-grid button:focus-visible{outline-offset:-3px;position:relative;z-index:1}
 .search-feedback{min-height:1.6em;font-size:14px}.search-found{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.search-found span{background:var(--lavender);border:1px solid var(--ink);border-radius:8px;padding:4px 9px;overflow-wrap:anywhere}.search-hint-text{font-size:14px;overflow-wrap:anywhere}.search-solution{border-top:2px solid #172c3840;padding-top:16px}.search-solution h2{font-size:22px}
 @media(max-width:700px){.home-exercises{grid-template-columns:repeat(2,minmax(0,1fr))}.home-exercises button:last-child{grid-column:1/-1}.search-card{padding:16px 12px}}
+
+
+/* Per-sentence Tatoeba attribution link. */
+.sentence-source-icon{display:inline-grid;place-items:center;width:1.45em;height:1.45em;margin-left:.38em;border:1.5px solid currentColor;border-radius:50%;background:var(--paper);color:var(--purple);font:800 .58em/1 'DM Sans',sans-serif;text-decoration:none;vertical-align:.16em;box-shadow:1px 1px 0 var(--ink);text-transform:none;letter-spacing:0}
+.sentence-source-icon:hover{background:var(--lavender);transform:translateY(-1px)}
+.cr-pick .sentence-source-icon{font-size:11px;vertical-align:middle}
