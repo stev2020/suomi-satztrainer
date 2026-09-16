@@ -51,7 +51,7 @@ try{
  assert.equal($('[data-cr=tab_custom]').getAttribute('aria-selected'),'true');assert(!$('#cr-tab-custom').hidden);assert($('#cr-tab-existing').hidden);
  assert($('#cr-tab-custom').textContent.includes('nur für diese Aufgabe'));await click('[data-cr=tab_existing]');
  assert.equal($('[data-cr=tab_existing]').getAttribute('aria-selected'),'true');assert($('#cr-tab-custom').hidden);assert(!$('#cr-tab-existing').hidden);
- assert($('#cr-topic'));assert(!$('#cr-search'));assert($('#cr-topic-hint').textContent.length>0);assert.match($('#cr-topic option').textContent,/\(\d+\)$/);
+ assert($('#cr-topic'));assert(!$('#cr-search'));assert.equal($('#cr-topic').value,'all');assert.match($('#cr-topic option').textContent,/^Alle \(\d+\)$/);assert($('#cr-topic-hint').textContent.includes('Alle vorhandenen Sätze'));assert($('#cr-sentence-picker').querySelectorAll('[data-sentence]').length>80);
  $('[name=title]').value='Testaufgabe';
  const check=$('[data-sentence]');check.checked=true;check.dispatchEvent(new window.Event('change',{bubbles:true}));
  const de=$('#cr-tab-existing [data-custom-field=de]'),fi=$('#cr-tab-existing [data-custom-field=fi]');
