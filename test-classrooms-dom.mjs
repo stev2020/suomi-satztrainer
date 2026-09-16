@@ -82,9 +82,9 @@ try{
  assert.equal($('.cr-discussions').children.length,1);assert.equal($('.cr-replies').querySelectorAll('.cr-message').length,1);
  await click('[data-cr=reply][data-id=message-2]');$('.cr-reply-form textarea').value='<b>Antwort auf Antwort</b>';await submit('.cr-reply-form');
  assert($('.cr-replies .cr-replies'));assert.equal($('#classrooms-content').querySelectorAll('.cr-message b').length,0);
- await click('[data-cr=delete_message][data-id=message-1]');assert($('.cr-removed'));assert.equal($('.cr-discussions').querySelectorAll('.cr-message').length,3);
+ await click('[data-cr=delete_message][data-id=message-1]');assert(!$('#cr-message-message-1'));assert(!$('.cr-discussions').textContent.includes('Beitrag entfernt'));assert.equal($('.cr-discussions').querySelectorAll('.cr-message').length,2);
  await click('#classrooms-button');teacher=true;await click('[data-cr=open]');await click('[data-cr=assignment]');
- await click('[data-cr=reply][data-id=message-1]');$('.cr-reply-form textarea').value='Erklärung der Lehrkraft';await submit('.cr-reply-form');
+ await click('[data-cr=reply][data-id=message-2]');$('.cr-reply-form textarea').value='Erklärung der Lehrkraft';await submit('.cr-reply-form');
  assert($('#cr-message-message-4').textContent.includes('Lehrkraft'));assert.equal($('.cr-discussions').children.length,1);
  $('[data-cr-form=message] textarea').value='Neue Diskussion';await submit('[data-cr-form=message]');assert.equal($('.cr-discussions').children.length,2);
  console.log('PASS DOM: task tabs, per-level grammar counts, confirmed custom sentence, mixed task, hidden then revealed solution and threaded discussion');
