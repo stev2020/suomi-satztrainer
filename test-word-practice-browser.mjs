@@ -26,6 +26,9 @@ try{
   for(let i=0;i<length;i++)await page.locator(`[data-pick-word="${i}"]`).click();
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   await page.locator('#reveal').click();assert.ok(await page.locator('.word-result.correct').isVisible());
+  assert.equal(await page.locator('#inline-grades').evaluate(el=>el.parentElement.id),'card');
+  const gradeBox=await page.locator('#grade-again').boundingBox();assert.ok(gradeBox&&gradeBox.y<844&&gradeBox.y+gradeBox.height>0);
+  const layout=await page.evaluate(()=>({grades:document.querySelector('#inline-grades').getBoundingClientRect().top,grammar:document.querySelector('.grammar')?.getBoundingClientRect().top??Infinity}));assert.ok(layout.grades<layout.grammar);
   await page.locator('#grade-again').click();assert.equal(await page.locator('[data-return-word]').count(),0);
   const remaining=await page.locator('[data-pick-word]').count();await page.locator(`[data-pick-word="${remaining-1}"]`).click();await page.locator('#reveal').click();
   assert.ok(await page.locator('.word-result.incorrect').isVisible());
@@ -36,5 +39,5 @@ try{
  await page.locator('[data-direction="fi-de"]').click();assert.equal(await page.locator('#translation-input').count(),0);
  await page.locator('#practice-view [data-difficulty="easy"]').click();
  await page.locator('[data-activity="listen"]').click();assert.equal(await page.locator('#word-bank').count(),0);
- assert.deepEqual(errors,[]);console.log('Browser: both directions, random, removal, correct/wrong, next card, hard mode, listening and mobile passed');
+ assert.deepEqual(errors,[]);console.log('Browser: compact inline ratings, both directions, random, removal, correct/wrong, next card, hard mode, listening and mobile passed');
 }finally{await browser?.close();server.kill();}
