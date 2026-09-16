@@ -54,7 +54,7 @@ try{
   await page.setViewportSize({width,height:844});
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   for(const button of await page.locator('.home-exercises button').all())assert.ok(await button.isVisible());
-  for(const button of await page.locator('.home-direction-control button').all())assert.ok(await button.isVisible());
+  assert.equal(await page.locator('#home-direction-control').isVisible(),false);
   if(width===390&&process.env.HOME_SCREENSHOTS)await page.screenshot({path:process.env.HOME_SCREENSHOTS+'/home-mobile.png',fullPage:true});
  }
  await page.setViewportSize({width:1280,height:1000});
