@@ -122,8 +122,48 @@ function sourceIcon(s){
  if(!s||!/^\d+$/.test(String(s.id))||['english_bridge','finnish_adaptation','teacher_created'].includes(s.origin))return '';
  const id=Number(s.id),owner=s.owner||'Tatoeba',license=s.license||'CC BY 2.0 FR';
  const label=`Quelle: Tatoeba-Satz #${id} von ${owner}, Lizenz ${license}. Auf Tatoeba öffnen.`;
- return `<a class="sentence-source-icon" href="https://tatoeba.org/en/sentences/show/${id}" target="_blank" rel="noopener" aria-label="${escape(label)}" title="${escape(label)}"></a>`;
+ return `<button type="button" class="sentence-source-icon" data-source-url="https://tatoeba.org/en/sentences/show/${id}" data-source-label="${escape(label)}" aria-label="${escape(label)}" aria-expanded="false" title="${escape(label)}"></button>`;
 }
+let sourcePopover=null,sourcePopoverTrigger=null;
+function closeSourcePopover(){
+ if(!sourcePopover||sourcePopover.hidden)return;
+ sourcePopover.hidden=true;
+ sourcePopoverTrigger?.setAttribute('aria-expanded','false');
+ sourcePopoverTrigger=null;
+}
+function openSourcePopover(trigger){
+ if(sourcePopoverTrigger===trigger&&!sourcePopover?.hidden){closeSourcePopover();return;}
+ if(!sourcePopover){
+  sourcePopover=document.createElement('div');
+  sourcePopover.id='sentence-source-popover';
+  sourcePopover.className='sentence-source-popover';
+  sourcePopover.hidden=true;
+  sourcePopover.setAttribute('role','dialog');
+  sourcePopover.setAttribute('aria-label','Satzquelle');
+  sourcePopover.innerHTML='<p class="sentence-source-popover-text"></p><a target="_blank" rel="noopener">Satz auf Tatoeba öffnen ↗</a>';
+  document.body.appendChild(sourcePopover);
+ }
+ sourcePopoverTrigger?.setAttribute('aria-expanded','false');
+ sourcePopoverTrigger=trigger;
+ trigger.setAttribute('aria-expanded','true');
+ sourcePopover.querySelector('p').textContent=trigger.dataset.sourceLabel;
+ sourcePopover.querySelector('a').href=trigger.dataset.sourceUrl;
+ sourcePopover.hidden=false;
+ const rect=trigger.getBoundingClientRect(),box=sourcePopover.getBoundingClientRect(),gap=8;
+ let top=rect.bottom+gap;
+ if(top+box.height>window.innerHeight-12)top=Math.max(12,rect.top-box.height-gap);
+ const left=Math.min(Math.max(12,rect.left+rect.width/2-box.width/2),window.innerWidth-box.width-12);
+ sourcePopover.style.top=`${top}px`;
+ sourcePopover.style.left=`${left}px`;
+}
+document.addEventListener('click',event=>{
+ const trigger=event.target.closest?.('.sentence-source-icon');
+ if(trigger){event.preventDefault();event.stopPropagation();openSourcePopover(trigger);return;}
+ if(sourcePopover&&!sourcePopover.contains(event.target))closeSourcePopover();
+});
+document.addEventListener('keydown',event=>{if(event.key==='Escape')closeSourcePopover();});
+window.addEventListener('resize',closeSourcePopover);
+window.addEventListener('scroll',closeSourcePopover,true);
 function translationNote(s){
  const origin=s.translations[0].origin;
  if(origin==='english_bridge')return 'Deutsch aus einer englischen Tatoeba-Vorlage übersetzt.';
