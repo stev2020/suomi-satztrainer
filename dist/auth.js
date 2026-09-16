@@ -155,5 +155,5 @@ function bind(){
 loadSession();bind();
 export const accountUser=()=>session?.user||null;
 export {request as accountRequest};
-import('./classrooms.js').catch(()=>{});
+import('./classrooms.js?v=62').catch(()=>{});
 if(session?.user&&configured())refreshSession().then(async ok=>{if(!ok)return;try{await pullAndMerge();watch();}catch(err){syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true);status(err.message,true);}}).catch(()=>{syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true);});
