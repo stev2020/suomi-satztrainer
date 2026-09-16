@@ -21,6 +21,7 @@ try{
   for(const width of [320,390,1280]){await page.setViewportSize({width,height:950});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
   await page.setViewportSize({width:320,height:950});
   const scroll=page.locator('.search-scroll');await page.locator('.search-grid').evaluate(el=>{el.style.minWidth='600px';});assert.ok(await scroll.evaluate(el=>el.scrollWidth>el.clientWidth));await scroll.evaluate(el=>{el.scrollLeft=el.scrollWidth;});assert.ok(await scroll.evaluate(el=>el.scrollLeft>0));
+  await page.locator('.search-grid').evaluate(el=>{el.style.minWidth='';});await scroll.evaluate(el=>{el.scrollLeft=0;});
   await page.setViewportSize({width:390,height:844});
   let i=0;for(const word of ['KAHVIA','JUON','TÄNÄÄN']){
    const cells=await path(word,difficulty==='hard');
