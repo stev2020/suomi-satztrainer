@@ -66,6 +66,7 @@ try{
  const question=posts.find(p=>p.kind==='question');question.own=false;await click('[data-cr=refresh]');assert(!$('#cr-post-'+question.id+' [data-cr=stream_resolve]'));
  teacher=true;await click('[data-cr=refresh]');assert($('option[value=announcement]'));assert($('#cr-post-'+question.id+' [data-cr=stream_resolve]'));assert($('[data-cr=stream_pin]'));
  await click('[data-cr=stream_pin]');assert($('.cr-feed-type').textContent.includes('ANGEHEFTET'));
+ const deletedQuestionId=question.id;await click(`#cr-post-${deletedQuestionId} [data-cr=stream_delete]`);assert(!$('#cr-post-'+deletedQuestionId));assert(!$('#cr-stream-feed').textContent.includes('Beitrag entfernt'));
  room.archived=true;await click('[data-cr=refresh]');assert(!$('[data-cr-form=stream_post]'));assert(!$('[data-cr=stream_reply]'));assert(!$('[data-cr=stream_resolve]'));assert($('.cr-feed-card'));
  console.log('PASS stream: layout, task events, questions, links/XSS, replies, resolution rights, filters, drafts, failed upload retry, attachments, teacher pinning and archive');
 }finally{await window.happyDOM.close();}
