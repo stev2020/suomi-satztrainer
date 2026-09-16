@@ -90,15 +90,17 @@ function setComposerTab(name){
 }
 function renderTopicOptions(){
  const select=$('cr-topic'),level=Number($('cr-level').value),current=select.value;
- select.innerHTML=GRAMMAR_TOPICS.map(t=>{const count=deck.filter(s=>s.level===level&&s.translations?.length&&topicNotes(s,grammar,t.id).length).length;return `<option value="${t.id}">${esc(t.label)} (${count})</option>`;}).join('');
- if(GRAMMAR_TOPICS.some(t=>t.id===current))select.value=current;
+ const allCount=deck.filter(s=>s.level===level&&s.translations?.length).length;
+ select.innerHTML=`<option value="all">Alle (${allCount})</option>`+GRAMMAR_TOPICS.map(t=>{const count=deck.filter(s=>s.level===level&&s.translations?.length&&topicNotes(s,grammar,t.id).length).length;return `<option value="${t.id}">${esc(t.label)} (${count})</option>`;}).join('');
+ if(current==='all'||GRAMMAR_TOPICS.some(t=>t.id===current))select.value=current;
 }
 function picker(){
- const level=Number($('cr-level').value),topicId=$('cr-topic').value,topic=GRAMMAR_TOPICS.find(t=>t.id===topicId);
- const matches=deck.filter(s=>s.level===level&&s.translations?.length&&topicNotes(s,grammar,topicId).length);
- $('cr-topic-hint').textContent=topic?.hint||'';
- $('cr-sentence-picker').innerHTML=matches.slice(0,80).map(s=>`<label class="cr-pick"><input type="checkbox" data-sentence="${s.id}" ${selected.has(s.id)?'checked':''}><span>${esc(s.translations[0].text)}<small lang="fi">${esc(s.text)}</small></span></label>`).join('')||'<p>Keine passenden Sätze.</p>';
- if(matches.length>80)$('cr-sentence-picker').insertAdjacentHTML('beforeend','<p>Die ersten 80 Treffer. Wähle bei Bedarf ein anderes Level oder Thema.</p>');
+ const level=Number($('cr-level').value),topicId=$('cr-topic').value,topic=GRAMMAR_TOPICS.find(t=>t.id===topicId),showAll=topicId==='all';
+ const matches=deck.filter(s=>s.level===level&&s.translations?.length&&(showAll||topicNotes(s,grammar,topicId).length));
+ $('cr-topic-hint').textContent=showAll?'Alle vorhandenen Sätze dieses Levels.':topic?.hint||'';
+ const visible=showAll?matches:matches.slice(0,80);
+ $('cr-sentence-picker').innerHTML=visible.map(s=>`<label class="cr-pick"><input type="checkbox" data-sentence="${s.id}" ${selected.has(s.id)?'checked':''}><span>${esc(s.translations[0].text)}<small lang="fi">${esc(s.text)}</small></span></label>`).join('')||'<p>Keine passenden Sätze.</p>';
+ if(!showAll&&matches.length>80)$('cr-sentence-picker').insertAdjacentHTML('beforeend','<p>Die ersten 80 Treffer. Wähle bei Bedarf ein anderes Level oder Thema.</p>');
 }
 function renderCustomItems(){
  const html=customItems.map((item,i)=>`<fieldset class="cr-custom-item ${item.added?'cr-custom-added':''}"><legend>Eigener Satz ${i+1}${item.added?' · ✓ Hinzugefügt':''}</legend>${item.added?`<p class="cr-added" role="status">✓ Hinzugefügt – dieser Satz ist Teil der Aufgabe.</p><p class="cr-custom-text" lang="de"><strong>Deutscher Satz</strong><br>${esc(item.de)}</p><p class="cr-custom-text" lang="fi"><strong>Richtige finnische Übersetzung</strong><br>${esc(item.fi)}</p>`:`<label>Deutscher Satz<textarea data-custom-index="${i}" data-custom-field="de" maxlength="500" rows="2" lang="de" placeholder="Welchen Satz sollen die Schüler übersetzen?">${esc(item.de)}</textarea></label><label>Richtige finnische Übersetzung<textarea data-custom-index="${i}" data-custom-field="fi" maxlength="500" rows="2" lang="fi" placeholder="Die richtige Lösung auf Finnisch">${esc(item.fi)}</textarea></label>`}<div class="cr-toolbar">${item.added?b('Satz bearbeiten','edit_custom',`data-index="${i}"`):b('Satz hinzufügen','confirm_custom',`data-index="${i}"`)}${b('Satz entfernen','remove_custom',`data-index="${i}"`)}</div></fieldset>`).join('')||'<p class="cr-note">Noch keine eigenen Sätze eingegeben.</p>';
