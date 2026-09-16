@@ -108,3 +108,8 @@ header .header-nav button:hover,header .header-nav button.selected{background:va
 .sentence-source-icon:before{content:'i'}
 .sentence-source-icon:hover{background:var(--lavender);transform:translateY(-1px)}
 .cr-pick .sentence-source-icon{font-size:11px;vertical-align:middle}
+
+.sentence-source-popover{position:fixed;z-index:1000;width:min(320px,calc(100vw - 24px));padding:14px 16px;border:2px solid var(--ink);border-radius:12px;background:var(--paper);color:var(--ink);box-shadow:4px 4px 0 var(--purple);font:14px/1.5 'DM Sans',sans-serif;text-align:left}
+.sentence-source-popover p{margin:0 0 9px;overflow-wrap:anywhere}
+.sentence-source-popover a{display:inline-block;color:var(--purple);font-weight:700}
+.sentence-source-popover[hidden]{display:none}
