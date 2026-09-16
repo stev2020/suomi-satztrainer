@@ -485,6 +485,7 @@ $('cancel-import').onclick=()=>{clearImport();$('backup-status').textContent='Im
 $('apply-backup').onclick=()=>{if(!accountActive()){$('backup-status').textContent='Bitte melde dich an, um eine Sicherung zu übernehmen.';return;}if(!pendingBackup||!ready)return;const candidate=mergeLearning(memory,pendingBackup);if(!levels.includes(candidate.prefs.level))candidate.prefs.level=levels[0]||1;try{commitLearning(candidate);}catch{$('backup-status').textContent='Dein Browser konnte die Sicherung nicht speichern. Der bisherige Lernstand bleibt erhalten.';return;}({level,direction,audioOnly,activity,speed,grammarTopic,difficulty,searchDifficulty}=candidate.prefs);clearImport();mode='new';verbSession=null;start();renderReportList();$('backup-status').textContent='Lernstand zusammengeführt. Deine Einstellungen sind übernommen und eine neue Lerneinheit ist bereit.';};
 
 function showView(name,openSettings=false){
+ if(name==='home'&&dailySession?.active){const previous=dailySession.previous;activity=previous.activity;direction=previous.direction;difficulty=previous.difficulty;mode=previous.mode;syncControls();renderStats();}
  for(const view of ['home','practice','progress','classrooms']){const node=$(`${view}-view`);if(node)node.hidden=view!==name;}
  document.querySelectorAll('.header-nav [data-view]').forEach(b=>{const selected=b.dataset.view===name;b.classList.toggle('selected',selected);if(selected)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
  if(name!=='practice')stopAudio();
