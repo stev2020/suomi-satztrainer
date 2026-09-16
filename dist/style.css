@@ -105,5 +105,6 @@ header .header-nav button:hover,header .header-nav button.selected{background:va
 
 /* Per-sentence Tatoeba attribution link. */
 .sentence-source-icon{display:inline-grid;place-items:center;width:1.45em;height:1.45em;margin-left:.38em;border:1.5px solid currentColor;border-radius:50%;background:var(--paper);color:var(--purple);font:800 .58em/1 'DM Sans',sans-serif;text-decoration:none;vertical-align:.16em;box-shadow:1px 1px 0 var(--ink);text-transform:none;letter-spacing:0}
+.sentence-source-icon:before{content:'i'}
 .sentence-source-icon:hover{background:var(--lavender);transform:translateY(-1px)}
 .cr-pick .sentence-source-icon{font-size:11px;vertical-align:middle}
