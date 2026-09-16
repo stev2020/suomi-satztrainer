@@ -93,7 +93,7 @@ function renderDailyPlan(){
  $('daily-difficult').textContent=stats.difficultCount;
  $('daily-new').textContent=stats.newCount;
  $('daily-plan-level').textContent=`Level ${level}`;
- button.disabled=!ready||(!available&&!dailySession?.queue?.length);
+ button.disabled=!ready||(!available&&!(dailySession?.active&&queue.length));
  button.textContent=dailySession?.active&&queue.length?'Heutige Runde fortsetzen':`Heutige Runde starten · ${available} Aufgaben`;
 }
 function applyDailyCard(){
