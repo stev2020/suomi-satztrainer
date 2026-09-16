@@ -18,6 +18,7 @@ try{
  const select=activity=>page.locator('[data-home-activity="'+activity+'"]').click();
  await page.goto(origin);
  await page.locator('#continue-practice:not([disabled])').waitFor();
+ assert.equal(await page.evaluate(()=>window.suomiLearningState.applyCloud(window.suomiLearningState.snapshot())),true);
  assert.ok(await page.locator('#home-direction-control').isVisible());
  await page.locator('[data-home-direction="de-fi"]').click();
  assert.equal(await page.locator('#continue-practice').textContent(),'Deutsch → Finnisch üben');
@@ -97,5 +98,5 @@ try{
  assert.equal(await page.evaluate(()=>localStorage.getItem('suomi-learning-v1')),null);
  assert.deepEqual(errors,[]);
  await context.close();
- console.log('PASS: daily round, home selector, scoped review counts and launches, due-only verb round, preserved draft, identical colors, mobile layout, other exercises and guest privacy.');
+ console.log('PASS: live cloud apply without reload, daily round, home selector, scoped review counts and launches, due-only verb round, preserved draft, identical colors, mobile layout, other exercises and guest privacy.');
 }finally{await browser?.close();server.kill();}
