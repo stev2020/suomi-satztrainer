@@ -122,7 +122,7 @@ function sourceIcon(s){
  if(!s||!/^\d+$/.test(String(s.id))||['english_bridge','finnish_adaptation','teacher_created'].includes(s.origin))return '';
  const id=Number(s.id),owner=s.owner||'Tatoeba',license=s.license||'CC BY 2.0 FR';
  const label=`Quelle: Tatoeba-Satz #${id} von ${owner}, Lizenz ${license}. Auf Tatoeba öffnen.`;
- return `<a class="sentence-source-icon" href="https://tatoeba.org/en/sentences/show/${id}" target="_blank" rel="noopener" aria-label="${escape(label)}" title="${escape(label)}">i</a>`;
+ return `<a class="sentence-source-icon" href="https://tatoeba.org/en/sentences/show/${id}" target="_blank" rel="noopener" aria-label="${escape(label)}" title="${escape(label)}"></a>`;
 }
 function translationNote(s){
  const origin=s.translations[0].origin;
