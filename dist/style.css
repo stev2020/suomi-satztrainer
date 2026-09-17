@@ -91,7 +91,7 @@ header .header-nav button:hover,header .header-nav button.selected{background:va
 .word-answer{min-height:80px;border:2px dashed var(--ink);background:var(--bg);margin-bottom:16px;align-content:flex-start}
 .word-bank{padding:4px 0}.word-answer button,.word-bank button{min-height:44px;padding:9px 14px;border:2px solid var(--ink);border-radius:10px;background:var(--paper);box-shadow:2px 2px 0 var(--ink);max-width:100%;overflow-wrap:anywhere}
 .word-answer button{background:var(--lavender)}.word-bank button:hover:not(:disabled){background:var(--mint)}.word-bank button:disabled{opacity:.3;box-shadow:none}.word-placeholder{color:var(--muted);font-size:14px}
-.word-result{padding:18px;margin:24px 0;border:2px solid var(--ink);border-radius:12px}.word-result.correct,.word-result.incorrect{background:#fff0e5}.word-result.correct strong{color:#146b3a}.word-result p{font-size:20px;overflow-wrap:anywhere}
+.word-result{padding:20px;margin:24px 0;border:2px solid var(--ink);border-radius:12px;background:#fffdf8}.word-result strong{display:block;margin-bottom:8px;font-size:24px;line-height:1.25}.word-result.correct strong,.word-result.correct p{color:#146b3a}.word-result.incorrect strong{color:#b42318}.word-result p{font-size:22px;line-height:1.45;overflow-wrap:anywhere}.hard-translation-solution{padding:20px 18px;margin-top:18px;border:2px solid var(--ink);border-radius:12px;background:#fffdf8}.hard-translation-solution p{font-size:28px;line-height:1.4;margin-bottom:4px}
 
 .difficulty-field .choice-buttons button.selected{background:var(--lavender);color:var(--ink)}
 
