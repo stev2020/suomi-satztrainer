@@ -4,7 +4,7 @@ export function searchInstructions(puzzle){
 }
 export function mountSearch(container,puzzle,onComplete,prompt=''){
  const doc=container.ownerDocument;
- container.innerHTML='<p class="sentence search-prompt" lang="de"></p><p class="search-count" role="status"></p><div class="search-scroll" tabindex="0" aria-label="Buchstabengitter, bei Bedarf seitlich scrollen"><div class="search-grid" role="group" aria-label="Finnische Wörter suchen" lang="fi"></div></div><p class="search-feedback" role="status"></p><div class="search-found" aria-label="Gefundene Wörter"></div><button type="button" class="quiet search-hint">Hinweis</button><p class="search-hint-text" role="status"></p>';
+ container.innerHTML='<p class="sentence search-prompt" lang="de"></p><p class="search-count" role="status"></p><div class="search-scroll" tabindex="0" aria-label="Buchstabengitter, bei Bedarf seitlich scrollen"><div class="search-grid" role="group" aria-label="Finnische Wörter suchen" lang="fi"></div></div><p class="search-feedback" role="status"></p><div class="search-found" aria-label="Gefundene Wörter"></div><div class="search-footer"><button type="button" class="quiet search-hint">Hinweis</button><div class="search-inline-difficulty" role="group" aria-label="Schwierigkeit"><button type="button" data-search-inline-difficulty="easy">Leicht</button><button type="button" data-search-inline-difficulty="hard">Schwer</button></div><p class="search-inline-note"></p></div><p class="search-hint-text" role="status"></p>';
  const grid=container.querySelector('.search-grid'),feedback=container.querySelector('.search-feedback');
  container.querySelector('.search-prompt').textContent=prompt;
  grid.style.setProperty('--search-size',puzzle.size);
