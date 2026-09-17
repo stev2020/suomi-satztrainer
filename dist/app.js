@@ -317,7 +317,7 @@ function wordPracticeMarkup(s){
  const language=cardDirection(s)==='fi-de'?'de':'fi';
  if(!wordExercise)wordExercise=createWordExercise(s,language,data);
  const w=wordExercise;
- if(revealed){const correct=wordAnswerMatches(w);return `<div class="word-result ${correct?'correct':'incorrect'}"><strong>${correct?'Richtig!':'Noch nicht ganz.'}</strong><p lang="${language}">${escape(draft)}</p><small>${correct?'Du hast die Wörter richtig zusammengesetzt.':'Deine Wortfolge entspricht noch nicht der Vorlage. Vergleiche unten die Lösung und wähle „Nochmal“, um weiterzuüben.'}</small></div>`;}
+ if(revealed){const correct=wordAnswerMatches(w);return `<div class="word-result ${correct?'correct':'incorrect'}"><strong>${correct?'Richtig!':'Noch nicht ganz.'}</strong><p lang="${language}">${escape(draft)}</p><small>${correct?'Perfekt zusammengesetzt.':'Vergleiche deine Wortfolge mit der Lösung darunter. Mit „Nochmal“ übst du sie direkt erneut.'}</small></div>`;}
  return `<div class="word-practice"><p id="word-hint">Bilde die Übersetzung auf ${language==='de'?'Deutsch':'Finnisch'}. ${w.tokens.length-w.expected.length===1?'1 Wort gehört':'2 Wörter gehören'} nicht dazu. Klicke ein Wort im Antwortsatz an, um es zurückzulegen.</p><div id="word-answer" class="word-answer" role="group" aria-label="Dein Antwortsatz" lang="${language}"></div><div id="word-bank" class="word-bank" role="group" aria-label="Verfügbare Wörter" lang="${language}" aria-describedby="word-hint"></div></div>`;
 }
 function bindWordPractice(){
