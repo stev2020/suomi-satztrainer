@@ -62,7 +62,7 @@ try{
  await page.locator('#home-review').click();
  const asked=[];
  for(let i=0;i<3;i++){
-  const [pronoun,id]=(await page.locator('.verb-question').textContent()).split(' · '),person=PRONOUNS.indexOf(pronoun);
+  const question=page.locator('.verb-question'),pronoun=(await question.textContent()).split(' · ')[0],id=await question.evaluate(el=>{const copy=el.cloneNode(true);copy.querySelector('.verb-meaning-inline')?.remove();return copy.textContent.split(' · ')[1].trim();}),person=PRONOUNS.indexOf(pronoun);
   const key=id+':'+person;assert.ok(dueKeys.includes(key));assert.ok(!asked.includes(key));asked.push(key);
   if(i===0){
    await page.locator('#verb-input').fill('Entwurf');await home();await page.locator('#home-review').click();
