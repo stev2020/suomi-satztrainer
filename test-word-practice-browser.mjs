@@ -13,9 +13,7 @@ try{
  await page.locator('#home-view [data-difficulty="easy"]').click();
  await page.locator('#continue-practice').click();
  for(const direction of ['fi-de','de-fi','random']){
-  await page.locator('#practice-settings').evaluate(el=>el.open=true);
-  await page.locator(`[data-direction="${direction}"]`).click();
-  await page.locator('#practice-settings').evaluate(el=>el.open=false);
+  await page.locator(`[data-direction="${direction}"]`).evaluate(el=>el.click());
   assert.equal(await page.locator('#translation-input').count(),0);
   await page.locator('#reveal').click();assert.match(await page.locator('#notice').textContent(),/Wähle/);
   const hint=await page.locator('#word-hint').textContent(),extra=Number(hint.match(/(\d) W/)[1]);
@@ -34,10 +32,15 @@ try{
   assert.ok(await page.locator('.word-result.incorrect').isVisible());
   await page.locator('#grade-again').click();
  }
- await page.locator('#practice-settings').evaluate(el=>el.open=true);await page.locator('[data-direction="de-fi"]').click();
- await page.locator('#practice-view [data-difficulty="hard"]').click();assert.ok(await page.locator('#translation-input').isVisible());
- await page.locator('[data-direction="fi-de"]').click();assert.equal(await page.locator('#translation-input').count(),0);
- await page.locator('#practice-view [data-difficulty="easy"]').click();
- await page.locator('[data-activity="listen"]').click();assert.equal(await page.locator('#word-bank').count(),0);
+ assert.equal(await page.locator('#practice-view [data-difficulty]').count(),0);
+ await page.locator('#practice-view [data-view="home"]').click();
+ await page.locator('[data-home-direction="de-fi"]').click();
+ await page.locator('#home-view [data-difficulty="hard"]').click();
+ await page.locator('#continue-practice').click();assert.ok(await page.locator('#translation-input').isVisible());
+ await page.locator('#practice-view [data-view="home"]').click();
+ await page.locator('[data-home-direction="fi-de"]').click();assert.equal(await page.locator('#translation-input').count(),0);
+ await page.locator('#home-view [data-difficulty="easy"]').click();
+ await page.locator('[data-home-activity="listen"]').click();
+ await page.locator('#continue-practice').click();assert.equal(await page.locator('#word-bank').count(),0);
  assert.deepEqual(errors,[]);console.log('Browser: compact inline ratings, both directions, random, removal, correct/wrong, next card, hard mode, listening and mobile passed');
 }finally{await browser?.close();server.kill();}
