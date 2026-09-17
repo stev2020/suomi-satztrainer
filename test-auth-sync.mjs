@@ -24,9 +24,12 @@ assert.equal(merged.reviews['2:fi-de'].updatedAt,300,'newer laptop review is ret
 const mergeBeforeWrite=source.indexOf('const cloud=await cloudLearning()');
 const cloudWrite=source.indexOf("request('/rest/v1/learning_state?on_conflict=user_id'",mergeBeforeWrite);
 assert(mergeBeforeWrite>=0&&cloudWrite>mergeBeforeWrite,'cloud state is read and merged before every write');
-assert(source.includes('const CLOUD_POLL_MS=60000'),'unchanged devices poll no more than once per minute');
-assert(source.includes('const cur=stableJSON(currentLearning()),changed=cur!==lastSnapshot'),'field ordering cannot trigger false uploads');
-assert(source.includes('synchronizeLearning(currentLearning(),true,!changed)'),'unchanged background checks stay silent');
-assert(source.includes("window.addEventListener('focus',checkCloudNow)"),'returning to a device triggers an immediate cloud check');
+assert(!source.includes('CLOUD_POLL_MS'),'unchanged devices never trigger periodic cloud synchronization');
+assert(!source.includes('lastCloudCheck'),'there is no elapsed-time based cloud synchronization');
+assert(source.includes('const current=currentLearning(),snapshot=stableJSON(current);'),'field ordering cannot trigger false uploads');
+assert(source.includes('if(snapshot!==lastSnapshot)synchronizeLearning(current,true,false)'),'only a real local change starts synchronization');
+assert(source.includes("window.addEventListener('focus',syncChangedNow)"),'returning to a device flushes a pending local change without an unconditional cloud check');
+assert(source.includes("$('sync-now').onclick"),'manual synchronization remains available');
+assert(source.includes('await pullAndMerge();watch();'),'the cloud state is still loaded once on startup');
 
-console.log('PASS: merge-before-write and automatic cross-device refresh are present');
+console.log('PASS: merge-before-write and change-triggered synchronization are present');
