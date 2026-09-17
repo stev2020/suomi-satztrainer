@@ -178,3 +178,97 @@ header{flex-wrap:wrap}
  .cr-assignment-item h3{font-size:20px}
  .cr-assignment-intro{padding:14px}
 }
+
+/* Post cards echo the "Heutige Runde" surface while keeping each type distinct. */
+.cr-feed-card{
+ position:relative;
+ isolation:isolate;
+ overflow:hidden;
+ padding:24px 25px;
+ border:2px solid var(--ink)!important;
+ border-radius:20px!important;
+ background:var(--paper);
+ box-shadow:6px 6px 0 var(--mint);
+}
+.cr-feed-card::after{
+ content:'';
+ position:absolute;
+ z-index:-1;
+ right:-46px;
+ top:-54px;
+ width:142px;
+ height:142px;
+ border:2px solid var(--ink);
+ border-radius:50%;
+ background:var(--lavender);
+ opacity:.72;
+ pointer-events:none;
+}
+.cr-feed-card>*{position:relative}
+.cr-feed-card .cr-feed-type{
+ display:inline-flex;
+ align-items:center;
+ min-height:29px;
+ padding:6px 10px;
+ border:1.5px solid var(--ink);
+ border-radius:999px;
+ background:var(--paper);
+ color:var(--ink);
+ line-height:1;
+}
+.cr-feed-card .cr-feed-meta{padding-right:54px}
+.cr-feed-card .cr-author{
+ margin:3px 0 17px;
+ padding-bottom:12px;
+ border-bottom:1px solid #172c3830;
+}
+.cr-feed-card .cr-post-body{margin:0 0 18px}
+
+/* Ankündigungen: closest to the daily-round card and visually most prominent. */
+.cr-feed-card.cr-feed-announcement{
+ background:var(--lavender);
+ border-top-color:var(--ink)!important;
+ box-shadow:6px 6px 0 var(--orange);
+}
+.cr-feed-card.cr-feed-announcement::after{background:var(--mint)}
+.cr-feed-announcement .cr-feed-type{background:var(--orange)}
+
+/* Fragen: cool mint surface with a purple accent and status focus. */
+.cr-feed-card.cr-feed-question{
+ background:var(--mint);
+ border-top-color:var(--ink)!important;
+ box-shadow:6px 6px 0 var(--purple);
+}
+.cr-feed-card.cr-feed-question::after{background:var(--lavender)}
+.cr-feed-question .cr-feed-type{background:var(--lavender)}
+.cr-feed-question .cr-state{box-shadow:2px 2px 0 var(--ink)}
+
+/* Beiträge: calm paper surface with a warm, friendly marker. */
+.cr-feed-card.cr-feed-post{
+ background:var(--paper);
+ border-top-color:var(--ink)!important;
+ box-shadow:6px 6px 0 var(--mint);
+}
+.cr-feed-card.cr-feed-post::after{background:var(--orange);opacity:.58}
+.cr-feed-post .cr-feed-type{background:var(--mint)}
+
+/* Aufgaben: energetic orange surface, separated from the conversation types. */
+.cr-feed-card.cr-feed-assignment{
+ background:#ffe2d2;
+ border-top-color:var(--ink)!important;
+ box-shadow:6px 6px 0 var(--purple);
+}
+.cr-feed-card.cr-feed-assignment::after{background:var(--lavender)}
+.cr-feed-assignment .cr-feed-type{background:var(--purple);color:white}
+.cr-feed-assignment .cr-state{background:var(--paper);box-shadow:2px 2px 0 var(--ink)}
+
+@media(max-width:640px){
+ .cr-feed-card{padding:20px 17px;box-shadow:4px 4px 0 var(--mint)}
+ .cr-feed-card.cr-feed-announcement{box-shadow:4px 4px 0 var(--orange)}
+ .cr-feed-card.cr-feed-question,.cr-feed-card.cr-feed-assignment{box-shadow:4px 4px 0 var(--purple)}
+ .cr-feed-card.cr-feed-post{box-shadow:4px 4px 0 var(--mint)}
+ .cr-feed-card::after{right:-62px;top:-65px;width:132px;height:132px}
+ .cr-feed-card .cr-feed-meta{padding-right:24px}
+ .cr-feed-card .cr-author time{width:100%;margin-left:0}
+}
+
