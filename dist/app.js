@@ -1,5 +1,5 @@
 import {canSearch,createSearch} from './wordsearch.mjs';
-import {mountSearch,searchInstructions} from './wordsearch-ui.mjs?v=61';
+import {mountSearch,searchInstructions} from './wordsearch-ui.mjs?v=62';
 import {createWordExercise,wordAnswerMatches,finnishSentenceMatches} from './word-practice.mjs?v=59';
 import {VERBS} from './verbs-data.mjs';
 import {PRONOUNS,validateVerbProgress,mergeVerbProgress,markAsked,markAnswered,answerMatches,createVerbSession,chooseCombination,verbSummary} from './verb-practice.mjs';
@@ -234,6 +234,7 @@ function syncControls(){
  document.querySelectorAll('[data-search-difficulty]').forEach(b=>{const selected=b.dataset.searchDifficulty===searchDifficulty;b.classList.toggle('selected',selected);b.setAttribute('aria-pressed',String(selected));});
  document.querySelectorAll('[data-difficulty-group]').forEach(g=>g.hidden=activity!=='translate');
  document.querySelectorAll('[data-difficulty]').forEach(b=>{const selected=b.dataset.difficulty===difficulty;b.classList.toggle('selected',selected);b.setAttribute('aria-pressed',String(selected));});
+ const difficultyNote=$('translation-difficulty-note');if(difficultyNote)difficultyNote.textContent=difficulty==='easy'?'Wörter in die richtige Reihenfolge bringen':'Übersetzung selbst schreiben';
  for(const [name,value] of [['activity',activity],['direction',direction]])document.querySelectorAll(`[data-${name}]`).forEach(b=>{const selected=b.dataset[name]===value;b.classList.toggle('selected',selected);b.setAttribute('aria-pressed',selected);});
  $('audio-only').disabled=!isTranslation();
  $('audio-only').checked=!isTranslation()||audioOnly;
@@ -405,7 +406,12 @@ function renderSearchCard(s){
  $('session-title').textContent=`Level ${level} · Wortsel · Deutsch → Finnisch`;
  $('card').innerHTML=`<div class="card-top"><span class="card-label">Wortsel · ${searchDifficulty==='hard'?'Schwer':'Leicht'}</span></div><p class="search-instructions">${escape(searchInstructions(searchPuzzle))}</p>${revealed?`<p class="sentence" lang="de">${escape(s.translations[0].text)}${sourceIcon(s.translations[0])}</p><div class="search-solution"><h2 tabindex="-1" id="search-finished">Alle Wörter gefunden!</h2><span class="card-label">Der finnische Satz</span><p lang="fi" class="sentence">${escape(s.text)}${sourceIcon(s)}</p></div>${audioMarkup(s)}${grammarMarkup(s)}<details class="sources"><summary>Quellen</summary><p>Finnisch: ${source(s)}</p><p>Deutsch: ${source(s.translations[0])}</p></details>`:'<div id="search-puzzle"></div>'}<button type="button" id="report-error" class="report-error">Fehler melden</button>`;
  $('report-error').onclick=()=>openReport(s);
- if(!revealed){mountSearch($('search-puzzle'),searchPuzzle,()=>{revealed=true;render();$('search-finished').focus({preventScroll:true});},s.translations[0].text);$('actions').innerHTML='<button type="button" class="quiet" id="search-skip">Satz überspringen</button>';$('search-skip').onclick=()=>{queue.shift();searchPuzzle=null;playedAudioCard=null;render();};}
+ if(!revealed){
+  mountSearch($('search-puzzle'),searchPuzzle,()=>{revealed=true;render();$('search-finished').focus({preventScroll:true});},s.translations[0].text);
+  document.querySelectorAll('[data-search-inline-difficulty]').forEach(b=>{const selected=b.dataset.searchInlineDifficulty===searchDifficulty;b.classList.toggle('selected',selected);b.setAttribute('aria-pressed',String(selected));b.onclick=()=>{const next=b.dataset.searchInlineDifficulty;if(next===searchDifficulty)return;searchDifficulty=next;searchPuzzle=null;persist();render();};});
+  const inlineNote=document.querySelector('.search-inline-note');if(inlineNote)inlineNote.textContent=searchDifficulty==='hard'?'Auch diagonal und rückwärts':'Nur nach rechts und unten';
+  $('actions').innerHTML='<button type="button" class="quiet" id="search-skip">Satz überspringen</button>';$('search-skip').onclick=()=>{queue.shift();searchPuzzle=null;playedAudioCard=null;render();};
+ }
  else{$('actions').innerHTML='<button class="grade" id="grade-again" data-grade="again">Nochmal<span>Jetzt gleich wiederholen</span></button><button class="grade" data-grade="hard">Schwer<span>Morgen wiederholen</span></button><button class="grade easy" data-grade="easy">Leicht<span>In '+easyDays(s)+' Tagen wiederholen</span></button>';document.querySelectorAll('[data-grade]').forEach(b=>b.onclick=()=>grade(b.dataset.grade));if($('play-audio')){$('play-audio').onclick=()=>play(s);$('speed').onchange=e=>{speed=Number(e.target.value);if(player)player.playbackRate=speed;persist();};}}
 }
 
