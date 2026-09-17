@@ -7,7 +7,7 @@ const date=v=>v?new Date(v).toLocaleString('de-DE'):'Ohne Abgabetermin';
 let room=null,selected=null,deck=null,grammar=null,customItems=[],busy=false,dirty=false;
 const replyDrafts=new Map();
 const drafts=new Map(); // Memory only; never localStorage or service-worker data.
-const css=document.createElement('link');css.rel='stylesheet';css.href='./classrooms.css';document.head.append(css);
+const css=document.createElement('link');css.rel='stylesheet';css.href='./classrooms.css?v=68';document.head.append(css);
 const button=document.createElement('button');button.id='classrooms-button';button.type='button';button.dataset.view='classrooms';button.textContent='Klassenräume';
 const headerNav=document.querySelector('.header-nav');
 if(headerNav)headerNav.insertBefore(button,headerNav.querySelector('[data-view="progress"]'));else $('account-button').before(button);
