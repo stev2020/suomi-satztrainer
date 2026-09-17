@@ -4,8 +4,7 @@ import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './supabase-config.js';
 const STORE='suomi-learning-v1';
 const SESSION='suomi-auth-session-v1';
 const $=id=>document.getElementById(id);
-let session=null,lastSnapshot='',timer=null,syncInFlight=null,lastCloudCheck=0;
-const CLOUD_POLL_MS=60000;
+let session=null,lastSnapshot='',timer=null,syncInFlight=null;
 
 const configured=()=>/^https:\/\/.+\.supabase\.co$/.test(SUPABASE_URL)&&SUPABASE_PUBLISHABLE_KEY.length>20;
 const normalizeUsername=v=>{
@@ -72,7 +71,7 @@ async function synchronizeLearning(state=currentLearning(),reloadIfChanged=true,
     localStorage.setItem(STORE,JSON.stringify(merged));
     const r=await request('/rest/v1/learning_state?on_conflict=user_id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({user_id:session.user.id,state:merged,updated_at:new Date().toISOString()})});
     if(!r.ok)throw new Error('Der Lernstand konnte nicht synchronisiert werden.');
-    lastSnapshot=stableJSON(merged);lastCloudCheck=Date.now();
+    lastSnapshot=stableJSON(merged);
     if(!silent)syncState(`Synchronisiert · ${new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})}`);
     if(changed&&reloadIfChanged){
       if(!window.suomiLearningState?.applyCloud?.(merged))location.reload();
@@ -84,14 +83,15 @@ async function synchronizeLearning(state=currentLearning(),reloadIfChanged=true,
 async function uploadLearning(state=currentLearning()){return synchronizeLearning(state,false)}
 async function pullAndMerge(){return synchronizeLearning(currentLearning(),true)}
 function syncError(){syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true)}
-function checkCloudNow(){
+function syncChangedNow(){
   if(!session?.user||document.hidden)return;
-  synchronizeLearning(currentLearning(),true,true).catch(syncError);
+  const current=currentLearning(),snapshot=stableJSON(current);
+  if(snapshot!==lastSnapshot)synchronizeLearning(current,true,false).catch(syncError);
 }
 function watch(){
   clearInterval(timer);if(!session?.user)return;
   lastSnapshot=stableJSON(currentLearning());
-  timer=setInterval(()=>{if(document.hidden)return;const cur=stableJSON(currentLearning()),changed=cur!==lastSnapshot;if(changed||Date.now()-lastCloudCheck>=CLOUD_POLL_MS)synchronizeLearning(currentLearning(),true,!changed).catch(syncError)},2500);
+  timer=setInterval(()=>{if(document.hidden)return;const current=currentLearning(),snapshot=stableJSON(current);if(snapshot!==lastSnapshot)synchronizeLearning(current,true,false).catch(syncError)},2500);
 }
 function renderAccount(){
   const logged=!!session?.user;
@@ -148,8 +148,8 @@ function bind(){
   $('logout').onclick=async()=>{await logout()};
   $('sync-now').onclick=async()=>{try{status('');await pullAndMerge()}catch(err){syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true);status(err.message,true)}};
   $('copy-recovery').onclick=async()=>{try{await navigator.clipboard.writeText($('recovery-code-result').textContent);status('Code kopiert.')}catch{status('Bitte kopiere den Code manuell.',true)}};
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkCloudNow()});
-  window.addEventListener('focus',checkCloudNow);window.addEventListener('online',checkCloudNow);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncChangedNow()});
+  window.addEventListener('focus',syncChangedNow);window.addEventListener('online',syncChangedNow);
   renderAccount();
 }
 loadSession();bind();
