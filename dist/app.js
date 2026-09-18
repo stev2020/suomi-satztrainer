@@ -94,7 +94,7 @@ function renderDailyPlan(){
  $('daily-new').textContent=stats.newCount;
  $('daily-plan-level').textContent=`Level ${level}`;
  button.disabled=!ready||(!available&&!(dailySession?.active&&queue.length));
- button.textContent=dailySession?.active&&queue.length?'Heutige Runde fortsetzen':`Heutige Runde starten · ${available} Aufgaben`;
+ button.textContent=dailySession?.active&&queue.length?'Heutige Runde fortsetzen':`${available} Aufgaben starten`;
 }
 function applyDailyCard(){
  if(!dailySession?.active||!queue.length)return;
