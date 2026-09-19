@@ -130,6 +130,13 @@ try{
   }
   if(difficulties[i]==='easy')await focused.locator('[data-pick-word]').first().click();
   await focused.locator('#reveal').click();
+  if(i===0){
+   const before=await focused.evaluate(()=>window.suomiLearningState.snapshot().reviews);
+   await focused.locator('#practice-view [data-view="home"]').click();
+   await focused.keyboard.press('1');
+   assert.deepEqual(await focused.evaluate(()=>window.suomiLearningState.snapshot().reviews),before);
+   await focused.locator('#start-daily-session').click();
+  }
   await focused.locator(i===0?'#grade-again':'[data-grade="hard"]').click();
  }
  await focused.locator('#finish-daily-session').click();
