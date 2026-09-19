@@ -49,7 +49,7 @@ const studyDirections=()=>isTranslation()&&direction==='random'?['fi-de','de-fi'
 const eligibleDirections=(s,selection=mode)=>studyDirections().filter(dir=>selection==='new'?!review(s,dir):selection==='review'?due(s,dir):memory.favorites.includes(s.id));
 const base=(includeArchived=false)=>(includeArchived?[...data,...archived]:data).filter(s=>s.level===level&&(activity==='suchsel'?canSearch(s):(!(audioOnly||!isTranslation())||s.audios.length))&&(activity!=='grammar'||matchesTopic(s)));
 const filtered=()=>activity==='grammar'?base():base(mode!=='new').filter(s=>eligibleDirections(s).length);
-function persist(){const saved=dailySession?.previous||{};memory.prefs={level,direction:saved.direction||direction,audioOnly,activity:saved.activity||activity,speed,grammarTopic,difficulty:saved.difficulty||difficulty,searchDifficulty};try{if(accountActive())localStorage.setItem(STORE,JSON.stringify(memory));else localStorage.removeItem(STORE);}catch{if(accountActive())$('notice').textContent='Dein Lernstand konnte gerade nicht lokal zwischengespeichert werden.';}}
+function persist(){const saved=dailySession?.previous||{};memory.prefs={level,direction:saved.direction||direction,audioOnly,activity:saved.activity||activity,speed,grammarTopic,difficulty:saved.difficulty||difficulty,searchDifficulty};try{if(accountActive()){localStorage.setItem(STORE,JSON.stringify(memory));window.dispatchEvent(new Event('suomi-learning-changed'));}else localStorage.removeItem(STORE);}catch{if(accountActive())$('notice').textContent='Dein Lernstand konnte gerade nicht lokal zwischengespeichert werden.';}}
 let guestSaveNoticeShown=false;
 function guestSaveHint(){if(accountActive()||guestSaveNoticeShown)return;guestSaveNoticeShown=true;const n=$('notice');if(n)n.textContent='Du übst ohne Konto. Dein Fortschritt wird nicht gespeichert. Registriere dich kostenlos, um ihn zu behalten.';}
 const restingAudioLabel=b=>b?.dataset.played==='true'?'Wiederholen':'Anhören';
@@ -494,11 +494,11 @@ function mergeLearning(current,incoming){
  for(const [id,r] of Object.entries(incoming.reports))if(!out.reports[id]||r.updatedAt>out.reports[id].updatedAt)out.reports[id]={...r};
  return out;
 }
-function commitLearning(candidate){if(accountActive())localStorage.setItem(STORE,JSON.stringify(candidate));else localStorage.removeItem(STORE);memory=candidate;}
+function commitLearning(candidate,notify=true){if(accountActive())localStorage.setItem(STORE,JSON.stringify(candidate));else localStorage.removeItem(STORE);memory=candidate;if(notify&&accountActive())window.dispatchEvent(new Event('suomi-learning-changed'));}
 function learningSnapshot(){return JSON.parse(JSON.stringify({...memory,prefs:{level,direction,audioOnly,activity,speed,grammarTopic,difficulty,searchDifficulty}}));}
 window.suomiLearningState={snapshot:learningSnapshot,applyCloud:incoming=>{
  const candidate=mergeLearning(memory,{...incoming,prefs:learningSnapshot().prefs,verbProgress:validateVerbProgress(incoming.verbProgress||{})});
- commitLearning(candidate);if(ready)renderStats();return true;
+ commitLearning(candidate,false);if(ready)renderStats();return true;
 }};
 function downloadJSON(filename,value){const blob=new Blob([JSON.stringify(value,null,2)+'\n'],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 let reportSentence=null,pendingBackup=null,importSequence=0;

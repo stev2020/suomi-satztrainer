@@ -5,7 +5,7 @@ import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './supabase-config.js';
 const STORE='suomi-learning-v1';
 const SESSION='suomi-auth-session-v1';
 const $=id=>document.getElementById(id);
-let session=null,lastSnapshot='',timer=null,syncInFlight=null;
+let session=null,lastSnapshot='',timer=null,syncInFlight=null,syncQueued=false,syncReady=false;
 
 const configured=()=>/^https:\/\/.+\.supabase\.co$/.test(SUPABASE_URL)&&SUPABASE_PUBLISHABLE_KEY.length>20;
 const normalizeUsername=v=>{
@@ -62,37 +62,49 @@ async function cloudLearning(){
 async function synchronizeLearning(state=currentLearning(),reloadIfChanged=true,silent=false){
   if(!session?.user||!state)return;
   if(syncInFlight)return syncInFlight;
+  clearTimeout(timer);syncQueued=false;
+  let succeeded=false;
   syncInFlight=(async()=>{
     if(!silent)syncState('Synchronisierung läuft …');
-    // Always merge the newest cloud snapshot before writing. Otherwise an
-    // older, still-open device can overwrite progress made on another device.
+    // Merge before writing so another device's newer answers are retained.
     const cloud=await cloudLearning();
     const merged=mergeLearning(mergeLearning(currentLearning(),state),cloud);
     const changed=stableJSON(merged)!==stableJSON(currentLearning());
+    // Apply before the upload: answers made while POST is pending must remain
+    // in memory and local storage and be sent by the queued follow-up.
     localStorage.setItem(STORE,JSON.stringify(merged));
+    let applied=false;
+    if(changed&&reloadIfChanged)applied=!!window.suomiLearningState?.applyCloud?.(merged);
+    const acceptedSnapshot=stableJSON(currentLearning());
     const r=await request('/rest/v1/learning_state?on_conflict=user_id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({user_id:session.user.id,state:merged,updated_at:new Date().toISOString()})});
     if(!r.ok)throw new Error('Der Lernstand konnte nicht synchronisiert werden.');
-    lastSnapshot=stableJSON(merged);
+    // The app can normalize fields/order when applying cloud data. Compare
+    // future edits with that accepted app snapshot, not the raw cloud object.
+    lastSnapshot=acceptedSnapshot;succeeded=true;
     if(!silent)syncState(`Synchronisiert · ${new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})}`);
-    if(changed&&reloadIfChanged){
-      if(!window.suomiLearningState?.applyCloud?.(merged))location.reload();
-    }
+    if(changed&&reloadIfChanged&&!applied)location.reload();
     return merged;
   })();
-  try{return await syncInFlight}finally{syncInFlight=null}
+  try{return await syncInFlight}finally{
+    syncInFlight=null;
+    if(succeeded&&syncQueued)scheduleSync();
+  }
 }
 async function uploadLearning(state=currentLearning()){return synchronizeLearning(state,false)}
 async function pullAndMerge(){return synchronizeLearning(currentLearning(),true)}
 function syncError(){syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true)}
 function syncChangedNow(){
-  if(!session?.user||document.hidden)return;
+  clearTimeout(timer);
+  if(!session?.user||!syncReady||syncInFlight)return;
+  syncQueued=false;
   const current=currentLearning(),snapshot=stableJSON(current);
   if(snapshot!==lastSnapshot)synchronizeLearning(current,true,false).catch(syncError);
 }
-function watch(){
-  clearInterval(timer);if(!session?.user)return;
-  lastSnapshot=stableJSON(currentLearning());
-  timer=setInterval(()=>{if(document.hidden)return;const current=currentLearning(),snapshot=stableJSON(current);if(snapshot!==lastSnapshot)synchronizeLearning(current,true,false).catch(syncError)},2500);
+function scheduleSync(){
+  if(!session?.user)return;
+  syncQueued=true;
+  clearTimeout(timer);
+  if(syncReady&&!syncInFlight)timer=setTimeout(syncChangedNow,500);
 }
 function renderAccount(){
   const logged=!!session?.user;
@@ -102,7 +114,6 @@ function renderAccount(){
   document.body.dataset.account=logged?'authenticated':'guest';
   if($('account-button'))$('account-button').textContent='Konto';
   if(logged)syncState('Synchronisierung wird geprüft …');else if($('storage-note')){$('storage-note').textContent='Ohne Konto wird dein Fortschritt nicht gespeichert.';$('storage-note').classList.remove('error');}
-  watch();
 }
 async function login(username,password,syncCloud=true,seedState=null){
   username=normalizeUsername(username);checkPassword(password);
@@ -128,7 +139,7 @@ async function recover(username,recoveryCode,newPassword){
   await login(username,newPassword,true);return result.recoveryCode;
 }
 async function logout(){
-  clearInterval(timer);
+  clearTimeout(timer);
   if(session?.access_token)await api('/auth/v1/logout',{method:'POST',headers:authHeaders()}).catch(()=>{});
   localStorage.removeItem(STORE);
   saveSession(null);
@@ -149,6 +160,7 @@ function bind(){
   $('logout').onclick=async()=>{await logout()};
   $('sync-now').onclick=async()=>{try{status('');await pullAndMerge()}catch(err){syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true);status(err.message,true)}};
   $('copy-recovery').onclick=async()=>{try{await navigator.clipboard.writeText($('recovery-code-result').textContent);status('Code kopiert.')}catch{status('Bitte kopiere den Code manuell.',true)}};
+  window.addEventListener('suomi-learning-changed',scheduleSync);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncChangedNow()});
   window.addEventListener('focus',syncChangedNow);window.addEventListener('online',syncChangedNow);
   renderAccount();
@@ -157,4 +169,5 @@ loadSession();bind();
 export const accountUser=()=>session?.user||null;
 export {request as accountRequest};
 import('./classrooms.js?v=68').catch(()=>{});
-if(session?.user&&configured())refreshSession().then(async ok=>{if(!ok)return;try{await pullAndMerge();watch();}catch(err){syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true);status(err.message,true);}}).catch(()=>{syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true);});
+if(session?.user&&configured())refreshSession().then(async ok=>{if(!ok)return;try{await pullAndMerge();}catch(err){syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true);status(err.message,true);}}).catch(syncError).finally(()=>{syncReady=true;if(syncQueued)scheduleSync()});
+else syncReady=true;
