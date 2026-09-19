@@ -1,4 +1,5 @@
 import {mergeVerbProgress} from './verb-practice.mjs';
+import {mergePerformanceEvents} from './learning-insights.mjs';
 import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './supabase-config.js';
 
 const STORE='suomi-learning-v1';
@@ -44,7 +45,7 @@ async function request(path,options={}){
 }
 function mergeLearning(local,cloud){
   if(!local)return cloud;if(!cloud)return local;
-  const out={...cloud,...local,reviews:{...(cloud.reviews||{})},daily:{...(cloud.daily||{})},reports:{...(cloud.reports||{})},writingRatings:{...(cloud.writingRatings||{})}};
+  const out={...cloud,...local,reviews:{...(cloud.reviews||{})},daily:{...(cloud.daily||{})},reports:{...(cloud.reports||{})},writingRatings:{...(cloud.writingRatings||{})},performanceEvents:mergePerformanceEvents(cloud.performanceEvents||[],local.performanceEvents||[])};
   out.favorites=[...new Set([...(cloud.favorites||[]),...(local.favorites||[])])];
   for(const [k,v] of Object.entries(local.reviews||{})){const old=out.reviews[k],a=Number(v.updatedAt)||0,b=Number(old?.updatedAt)||0;if(!old||a>b||(a===b&&(Number(v.repetitions)||0)>(Number(old.repetitions)||0)))out.reviews[k]=v}
   for(const [d,n] of Object.entries(local.daily||{}))out.daily[d]=Math.max(Number(out.daily[d])||0,Number(n)||0);

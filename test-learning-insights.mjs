@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {addPerformanceEvent,buildLearningInsights,mergePerformanceEvents,validatePerformanceEvents} from './dist/learning-insights.mjs';
+const sentences=[{id:1,text:'Minä ostan uuden kirjan.'},{id:2,text:'Hän lukee kirjan kotona.'},{id:3,text:'Missä sinä asut?'}];
+const grammar={'3':{sentence:'Missä sinä asut?',notes:[{title:'Fragewort missä'}]}},grammarTopics=[{id:'questions',match:/frage/i}];
+const verbs=[{id:'olla',de:'sein'}],verbProgress={'olla:2':{attempts:4,errors:3,updatedAt:10}};
+let events=[];
+events=addPerformanceEvent(events,{kind:'sentence',sentenceId:1,activity:'translate',direction:'de-fi',difficulty:'easy',grade:'again',at:1},()=>.1);
+events=addPerformanceEvent(events,{kind:'sentence',sentenceId:2,activity:'translate',direction:'de-fi',difficulty:'hard',grade:'again',at:2},()=>.2);
+events=addPerformanceEvent(events,{kind:'sentence',sentenceId:3,activity:'grammar',direction:'fi-de',difficulty:'hard',grammarTopic:'questions',grade:'again',at:3},()=>.3);
+events=addPerformanceEvent(events,{kind:'sentence',sentenceId:3,activity:'grammar',direction:'fi-de',difficulty:'hard',grammarTopic:'questions',grade:'hard',at:4},()=>.4);
+const insights=buildLearningInsights({sentences,grammar,grammarTopics,verbs,pronouns:['minä','sinä','hän','me','te','he'],verbProgress,events});
+assert.equal(insights.words.ready,true);assert.ok(insights.words.labels.includes('kirjan'));
+assert.equal(insights.verbs.items[0].label,'olla · hän');assert.equal(insights.grammar.topicId,'questions');
+assert.equal(validatePerformanceEvents(events).length,4);assert.equal(mergePerformanceEvents(events,events).length,4);
+assert.throws(()=>validatePerformanceEvents([{id:'x',at:1,kind:'sentence',sentenceId:1,activity:'bad',grade:'again'}]));
+console.log('learning insights tests passed');
