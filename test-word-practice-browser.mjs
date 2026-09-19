@@ -9,7 +9,7 @@ try{
  const context=await browser.newContext({viewport:{width:390,height:844},serviceWorkers:'block'});
  await context.route('**/*',route=>new URL(route.request().url()).origin==='http://localhost:4173'?route.continue():route.abort());
  const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto('http://localhost:4173');await page.locator('#continue-practice:not([disabled])').waitFor();
+ await page.goto('http://localhost:4173');await page.locator('#start-new-sentences:not([disabled])').waitFor();await page.locator('#more-exercises > summary').click();
  await page.locator('#home-view [data-difficulty="easy"]').click();
  await page.locator('#continue-practice').click();
  for(const direction of ['fi-de','de-fi','random']){

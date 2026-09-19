@@ -17,8 +17,12 @@ try{
  const home=()=>page.locator('.app-view:not([hidden]) .back-link[data-view="home"]').click();
  const select=activity=>page.locator('[data-home-activity="'+activity+'"]').click();
  await page.goto(origin);
- await page.locator('#continue-practice:not([disabled])').waitFor();
+ await page.locator('#start-new-sentences:not([disabled])').waitFor();
  assert.equal(await page.evaluate(()=>window.suomiLearningState.applyCloud(window.suomiLearningState.snapshot())),true);
+ assert.equal(await page.locator('#home-direction-control').isVisible(),false);
+ assert.equal(await page.locator('#start-daily-session').isDisabled(),true);
+ assert.equal(await page.locator('#quick-verb-review').isVisible(),false);
+ await page.locator('#more-exercises > summary').click();
  assert.ok(await page.locator('#home-direction-control').isVisible());
  await page.locator('[data-home-direction="de-fi"]').click();
  assert.equal(await page.locator('#continue-practice').textContent(),'Deutsch → Finnisch üben');
@@ -42,9 +46,9 @@ try{
  assert.equal(await page.locator('#start-daily-session').isDisabled(),false);
  assert.ok(Number(await page.locator('#daily-due').textContent())>0);
  await page.locator('#start-daily-session').click();
- assert.ok((await page.locator('#session-progress').textContent()).endsWith('/ 10'));
+ assert.ok((await page.locator('#session-progress').textContent()).endsWith('/ 4'));
  await home();
- assert.equal(await page.locator('#start-daily-session').textContent(),'Heutige Runde fortsetzen');
+ assert.equal(await page.locator('#start-daily-session').textContent(),'Wiederholung fortsetzen');
  assert.equal(await page.locator('#home-review').textContent(),'3 Verbformen wiederholen');
  assert.equal(await page.locator('#continue-practice').textContent(),'Üben');
  const colors=await page.evaluate(()=>['.today','#home-review','.home-exercises .selected','#continue-practice'].map(selector=>getComputedStyle(document.querySelector(selector)).backgroundColor));
@@ -96,6 +100,54 @@ try{
  assert.equal(await page.locator('#continue-practice').textContent(),'Deutsch → Finnisch üben');
  assert.equal(await page.locator('#home-review').textContent(),'2 Sätze wiederholen');
  assert.equal(await page.evaluate(()=>localStorage.getItem('suomi-learning-v1')),null);
+ assert.deepEqual(errors,[]);
+ // Fresh learner: no automatic reviews; all specialist controls start collapsed.
+ const focused=await context.newPage();focused.on('pageerror',e=>errors.push(e.message));
+ await focused.goto(origin);await focused.locator('#start-new-sentences:not([disabled])').waitFor();
+ assert.equal(await focused.locator('#more-exercises').getAttribute('open'),null);
+ assert.equal(await focused.locator('#start-daily-session').isDisabled(),true);
+ for(const width of [1280,390,320]){
+  await focused.setViewportSize({width,height:844});
+  assert.ok(await focused.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+  assert.equal(await focused.locator('[data-home-activity="translate"]').isVisible(),false);
+ }
+ const focusedState={...state,reviews:{},verbProgress:{}};
+ const reviewSentences=sentences.slice(0,3).sort((a,b)=>a.id-b.id);
+ for(const s of reviewSentences)focusedState.reviews[s.id+':fi-de']={due:now,interval:0,repetitions:1,updatedAt:now};
+ await focused.evaluate(state=>window.suomiLearningState.applyCloud(state),focusedState);
+ assert.equal(await focused.locator('#daily-due').textContent(),'3');
+ await focused.locator('#start-daily-session').click();
+ // Explicit retry keeps its difficulty and comes after two other sentences.
+ const expected=[reviewSentences[0],reviewSentences[1],reviewSentences[2],reviewSentences[0]];
+ const difficulties=['easy','easy','hard','easy'];
+ for(let i=0;i<expected.length;i++){
+  assert.equal(await focused.locator('.sentence').evaluate(el=>{const copy=el.cloneNode(true);copy.querySelectorAll('button').forEach(b=>b.remove());return copy.textContent;}),expected[i].text);
+  assert.equal(await focused.locator('#word-bank').isVisible(),difficulties[i]==='easy');
+  if(i===0){
+   await focused.locator('#practice-view [data-view="home"]').click();
+   assert.equal(await focused.locator('#start-daily-session').textContent(),'Wiederholung fortsetzen');
+   await focused.locator('#start-daily-session').click();
+  }
+  if(difficulties[i]==='easy')await focused.locator('[data-pick-word]').first().click();
+  await focused.locator('#reveal').click();
+  await focused.locator(i===0?'#grade-again':'[data-grade="hard"]').click();
+ }
+ await focused.locator('#finish-daily-session').click();
+ assert.equal(await focused.locator('#daily-due').textContent(),'0');
+ assert.equal(await focused.locator('#start-daily-session').isDisabled(),true);
+ const afterReview=await focused.evaluate(()=>window.suomiLearningState.snapshot());
+ assert.equal(Object.keys(afterReview.reviews).length,3);
+ for(const s of reviewSentences)assert.ok(afterReview.reviews[s.id+':fi-de'].due>Date.now());
+ await focused.locator('#start-new-sentences').click();
+ assert.ok((await focused.locator('#session-progress').textContent()).endsWith('/ 5'));
+ for(let i=0;i<5;i++){
+  assert.ok(await focused.locator('#word-bank').isVisible());
+  await focused.locator('[data-pick-word]').first().click();await focused.locator('#reveal').click();
+  await focused.locator('[data-grade="easy"]').click();
+ }
+ assert.equal(Object.keys((await focused.evaluate(()=>window.suomiLearningState.snapshot())).reviews).length,8);
+ await focused.locator('#next-session').click();
+ assert.ok((await focused.locator('#session-progress').textContent()).endsWith('/ 5'));
  assert.deepEqual(errors,[]);
  await context.close();
  console.log('PASS: live cloud apply without reload, daily round, home selector, scoped review counts and launches, due-only verb round, preserved draft, identical colors, mobile layout, other exercises and guest privacy.');

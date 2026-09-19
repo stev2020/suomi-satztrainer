@@ -4,6 +4,7 @@ import {createWordExercise,wordAnswerMatches,finnishSentenceMatches} from './wor
 import {VERBS} from './verbs-data.mjs';
 import {PRONOUNS,validateVerbProgress,mergeVerbProgress,markAsked,markAnswered,answerMatches,createVerbSession,chooseCombination,verbSummary} from './verb-practice.mjs';
 import {GRAMMAR_TOPICS,topicNotes} from './grammar-topics.mjs';
+import {reviewPlan,dueSentences,unseenSentences,lastPracticed} from './review-plan.mjs';
 const $=id=>document.getElementById(id);
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const safeURL=s=>{try{const u=new URL(s);return ['https:','http:'].includes(u.protocol)?escape(u.href):'#';}catch{return '#';}};
@@ -64,37 +65,22 @@ function prepareAudio(url){
 function preloadQueueAudio(){const urls=queue.slice(0,3).map(s=>s.audios?.[0]?.download_url).filter(Boolean);for(const url of new Set(urls))prepareAudio(url);}
 function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function dailyPlan(){
- const pool=data.filter(s=>s.level===level&&s.translations?.length),now=Date.now(),used=new Set(),plan=[];
- const add=(s,kind,dir=null,difficultyValue='hard')=>{if(!s||used.has(s.id)||plan.length>=10)return false;used.add(s.id);plan.push({...s,dailyActivity:kind,practiceDirection:dir||undefined,dailyDifficulty:difficultyValue});return true;};
- const dueItems=[];
- for(const s of pool){
-  for(const dir of ['fi-de','de-fi']){const r=memory.reviews[`${s.id}:${dir}`];if(r?.due<=now)dueItems.push({s,kind:'translate',dir,r});}
-  if(s.audios?.length)for(const kind of ['listen','dictation']){const r=memory.reviews[`${s.id}:${kind}`];if(r?.due<=now)dueItems.push({s,kind,r});}
- }
- dueItems.sort((a,b)=>(Number(a.r.interval)||0)-(Number(b.r.interval)||0)||(Number(a.r.due)||0)-(Number(b.r.due)||0));
- for(const item of dueItems)if(plan.length<6)add(item.s,item.kind,item.dir);
- const audioPool=shuffle(pool.filter(s=>s.audios?.length&&!used.has(s.id)));
- for(let i=0;i<audioPool.length&&plan.length<8;i++)add(audioPool[i],plan.filter(x=>['listen','dictation'].includes(x.dailyActivity)).length%2?'dictation':'listen');
- const newTranslations=shuffle(pool.filter(s=>!used.has(s.id))).flatMap(s=>shuffle(['fi-de','de-fi']).filter(dir=>!memory.reviews[`${s.id}:${dir}`]).map(dir=>({s,dir})));
- for(const item of newTranslations)if(plan.length<10)add(item.s,'translate',item.dir,plan.length===9?'easy':'hard');
- if(plan.length<10)for(const s of shuffle(pool.filter(s=>!used.has(s.id))))if(plan.length<10)add(s,'translate',Math.random()<.5?'fi-de':'de-fi');
- return plan;
+ return reviewPlan([...data,...archived],memory.reviews,level,{translationOffset:reviewTranslationCount});
 }
+let reviewTranslationCount=0,guidedNew=false;
 function dailyPlanStats(){
- const pool=data.filter(s=>s.level===level&&s.translations?.length),now=Date.now();
- let dueCount=0,difficultCount=0;
- for(const s of pool)for(const kind of ['fi-de','de-fi','listen','dictation']){const r=memory.reviews[`${s.id}:${kind}`];if(r?.due<=now){dueCount++;if((Number(r.interval)||0)<=1)difficultCount++;}}
- return {dueCount,difficultCount,newCount:pool.filter(s=>!memory.reviews[`${s.id}:fi-de`]||!memory.reviews[`${s.id}:de-fi`]).length};
+ return {dueCount:dueSentences([...data,...archived],memory.reviews,level).length,newCount:unseenSentences(data,memory.reviews,level).length};
 }
 function renderDailyPlan(){
  const button=$('start-daily-session');if(!button)return;
- const stats=dailyPlanStats(),available=dailyPlan().length;
+ const stats=dailyPlanStats(),available=Math.min(10,stats.dueCount);
  $('daily-due').textContent=stats.dueCount;
- $('daily-difficult').textContent=stats.difficultCount;
- $('daily-new').textContent=stats.newCount;
+ $('start-new-sentences').disabled=!ready||!stats.newCount;
+ $('new-sentences-note').textContent=stats.newCount?'Fünf neue Sätze · mit Wörtern zum Zusammensetzen.':'In diesem Level hast du alle Sätze kennengelernt.';
+ $('daily-plan-note').textContent=stats.dueCount?'Bekannte, fällige Sätze – abwechslungsreich üben, ohne neue Sätze.':'Für heute ist alles wiederholt.';
  $('daily-plan-level').textContent=`Level ${level}`;
  button.disabled=!ready||(!available&&!(dailySession?.active&&queue.length));
- button.textContent=dailySession?.active&&queue.length?'Heutige Runde fortsetzen':`${available} Aufgaben starten`;
+ button.textContent=dailySession?.active&&queue.length?'Wiederholung fortsetzen':available?`${available} ${available===1?'Satz':'Sätze'} wiederholen`:'Alles wiederholt';
 }
 function applyDailyCard(){
  if(!dailySession?.active||!queue.length)return;
@@ -104,7 +90,8 @@ function startDailySession(){
  if(!ready)return;
  if(dailySession?.active&&queue.length){applyDailyCard();showView('practice');render();return;}
  const plan=dailyPlan();if(!plan.length){renderDailyPlan();return;}
- dailySession={active:true,previous:{activity,direction,difficulty,mode},mix:{translate:plan.filter(x=>x.dailyActivity==='translate').length,listen:plan.filter(x=>x.dailyActivity==='listen').length,dictation:plan.filter(x=>x.dailyActivity==='dictation').length}};
+ guidedNew=false;
+ dailySession={active:true,previous:{activity,direction,difficulty,mode},mix:{translate:plan.filter(x=>x.dailyActivity==='translate').length,listen:plan.filter(x=>x.dailyActivity==='listen').length,dictation:plan.filter(x=>x.dailyActivity==='dictation').length,suchsel:plan.filter(x=>x.dailyActivity==='suchsel').length}};
  queue=plan;initialCount=plan.length;completed=0;revealed=false;wordExercise=null;searchPuzzle=null;draft='';playedAudioCard=null;applyDailyCard();syncControls();showView('practice');render();
 }
 function finishDailySession(){
@@ -116,6 +103,8 @@ function renderStats(){
  syncWritingAvailability();
  const verbStats=verbSummary(VERBS,memory.verbProgress);
  $('verb-progress-summary').textContent=`${verbStats.seen} von ${verbStats.total} Formen gesehen · ${verbStats.secure} sicher · ${verbStats.due} zum Wiederholen`;
+ $('quick-verb-review').hidden=!verbStats.due;
+ $('quick-verb-review').textContent=`${verbStats.due} ${verbStats.due===1?'Verbform':'Verbformen'} wiederholen`;
  $('today-count').textContent=memory.daily[day()]||0;
  $('total').textContent=`${data.length} finnische Sätze`;
  $('audio-total').textContent=`${data.filter(s=>s.audios.length).length} mit Originalaufnahme`;
@@ -159,7 +148,7 @@ function renderHomeSession(verbStats,dueCount){
  document.querySelectorAll('[data-home-activity]').forEach(b=>{const selected=b.dataset.homeActivity===activity;b.classList.toggle('selected',selected);b.setAttribute('aria-pressed',String(selected));});
 }
 function prioritizeAudio(pool){return [...shuffle(pool.filter(s=>s.audios.length&&!s.translations[0].origin)),...shuffle(pool.filter(s=>s.audios.length&&!!s.translations[0].origin)),...shuffle(pool.filter(s=>!s.audios.length))];}
-function start(){if(!ready)return;dailySession=null;wordExercise=null;searchPuzzle=null;stopAudio();playedAudioCard=null;draft='';if(activity==='writing'&&!syncWritingAvailability())activity='translate';syncControls();if(activity==='verbs'){queue=[];revealed=false;persist();render();return;}if(activity==='writing'){queue=[];revealed=false;persist();render();return;}const pool=filtered();queue=(mode==='new'&&!['grammar','suchsel'].includes(activity)?prioritizeAudio(pool):shuffle(pool)).slice(0,10).map(s=>{const choices=activity==='grammar'?studyDirections():eligibleDirections(s);return {...s,practiceDirection:choices[Math.floor(Math.random()*choices.length)]};});initialCount=queue.length;completed=0;revealed=false;persist();render();}
+function start(){if(!ready)return;guidedNew=false;dailySession=null;wordExercise=null;searchPuzzle=null;stopAudio();playedAudioCard=null;draft='';if(activity==='writing'&&!syncWritingAvailability())activity='translate';syncControls();if(activity==='verbs'){queue=[];revealed=false;persist();render();return;}if(activity==='writing'){queue=[];revealed=false;persist();render();return;}const pool=filtered();queue=(mode==='new'&&!['grammar','suchsel'].includes(activity)?prioritizeAudio(pool):mode==='review'?shuffle(pool).sort((a,b)=>lastPracticed(a,memory.reviews)-lastPracticed(b,memory.reviews)):shuffle(pool)).slice(0,10).map(s=>{const choices=activity==='grammar'?studyDirections():eligibleDirections(s);return {...s,practiceDirection:choices[Math.floor(Math.random()*choices.length)]};});initialCount=queue.length;completed=0;revealed=false;persist();render();}
 function source(s){
  const original=()=>`<a href="https://tatoeba.org/en/sentences/show/${s.id}" target="_blank" rel="noopener">#${s.id} · ${escape(s.owner||'Tatoeba')}</a> · ${escape(s.license)}`;
  if(s.origin==='english_bridge')return `Für diese App mit KI aus dem Englischen übersetzt.<br>Englische Vorlage: ${source(s.source)}<br><span lang="en">${escape(s.source.text)}</span>`;
@@ -221,6 +210,7 @@ function translationNote(s){
  return '';
 }
 function syncControls(){
+ $('practice-settings').hidden=!!dailySession?.active;
  $('settings-level-row').hidden=activity==='verbs';
  $('grammar-controls').hidden=activity!=='grammar';
  if(activity==='grammar'){
@@ -416,7 +406,7 @@ function renderSearchCard(s){
 }
 
 function render(){applyDailyCard();if(activity==='verbs'){renderVerbSession();return;}if(activity==='writing'){renderWritingSession();return;}$('writing-history').hidden=true;stopAudio();renderStats();preloadQueueAudio();const s=queue[0];$('actions').innerHTML='';$('keyboard-note').hidden=!s;$('keyboard-note').textContent=isTranslation()?'Nach dem Vergleich: 1 / 2 / 3 zum Bewerten':'Aufnahme beliebig oft anhören · Nach dem Aufdecken: 1 / 2 / 3 zum Bewerten';
- if(!s){$('card').className='card empty';if(dailySession?.active&&initialCount){const mix=dailySession.mix;$('card').innerHTML=`<span class="complete-mark">✓</span><h2>Heutige Runde geschafft.</h2><p>${completed} Aufgaben erledigt · ${mix.translate} Übersetzen · ${mix.listen} Hören · ${mix.dictation} Diktat</p><p>Fällige und schwierige Inhalte wurden zuerst berücksichtigt.</p>`;$('actions').innerHTML='<button class="primary" id="finish-daily-session">Zur Startseite</button>';$('finish-daily-session').onclick=finishDailySession;}else if(initialCount){$('card').innerHTML='<span class="complete-mark">✓</span><h2>Gut gemacht.</h2><p>Deine Lerneinheit ist geschafft. Dein nächster Satz wartet schon.</p>';$('actions').innerHTML='<div class="completion-actions"><button class="primary completion-home" id="completion-home">Zur Startseite</button><button class="primary" id="next-session">Nächste Lerneinheit</button></div>';$('completion-home').onclick=()=>showView('home');$('next-session').onclick=start;}else{let title='Alles für heute wiederholt.',text='Hier erscheinen die Sätze, sobald deine nächste Wiederholung fällig ist.';if(mode==='new'){title='In diesem Level ist alles entdeckt.';text='Wiederhole deine Sätze oder wechsle zum nächsten Level.';}if(mode==='favorites'){title='Deine Lieblingssätze warten hier.';text='Markiere einen Satz mit dem Stern auf der Lernkarte.';}if((audioOnly||!isTranslation())&&!base(mode!=='new').length){title='Hier gibt es noch keine Aufnahme.';text=isTranslation()?'Schalte „Nur mit Audio“ aus oder wähle ein anderes Level.':'Wähle ein anderes Level oder die Übungsart Übersetzen.';}if(activity==='grammar'){title=grammarAvailable?'Keine passenden Sätze in dieser Auswahl.':'Grammatikhilfen nicht verfügbar.';text=grammarAvailable?'Wähle ein anderes Grammatikthema oder Level. Falls aktiv, schalte „Nur mit Audio“ aus.':'Lade die Seite bei bestehender Verbindung neu.';}$('card').innerHTML=`<h2>${title}</h2><p>${text}</p>`;}return;}
+ if(!s){$('card').className='card empty';if(dailySession?.active&&initialCount){const mix=dailySession.mix;$('card').innerHTML=`<span class="complete-mark">✓</span><h2>Heutige Runde geschafft.</h2><p>${completed} Aufgaben erledigt · ${mix.translate} Übersetzen · ${mix.listen} Hören · ${mix.dictation} Diktat${mix.suchsel?' · '+mix.suchsel+' Wortsel':''}</p><p>Fällige und schwierige Inhalte wurden zuerst berücksichtigt.</p>`;$('actions').innerHTML='<button class="primary" id="finish-daily-session">Zur Startseite</button>';$('finish-daily-session').onclick=finishDailySession;}else if(initialCount){$('card').innerHTML='<span class="complete-mark">✓</span><h2>Gut gemacht.</h2><p>Deine Lerneinheit ist geschafft. Dein nächster Satz wartet schon.</p>';$('actions').innerHTML='<div class="completion-actions"><button class="primary completion-home" id="completion-home">Zur Startseite</button><button class="primary" id="next-session">Nächste Lerneinheit</button></div>';$('completion-home').onclick=()=>showView('home');$('next-session').onclick=guidedNew?startNewSentences:start;}else{let title='Alles für heute wiederholt.',text='Hier erscheinen die Sätze, sobald deine nächste Wiederholung fällig ist.';if(mode==='new'){title='In diesem Level ist alles entdeckt.';text='Wiederhole deine Sätze oder wechsle zum nächsten Level.';}if(mode==='favorites'){title='Deine Lieblingssätze warten hier.';text='Markiere einen Satz mit dem Stern auf der Lernkarte.';}if((audioOnly||!isTranslation())&&!base(mode!=='new').length){title='Hier gibt es noch keine Aufnahme.';text=isTranslation()?'Schalte „Nur mit Audio“ aus oder wähle ein anderes Level.':'Wähle ein anderes Level oder die Übungsart Übersetzen.';}if(activity==='grammar'){title=grammarAvailable?'Keine passenden Sätze in dieser Auswahl.':'Grammatikhilfen nicht verfügbar.';text=grammarAvailable?'Wähle ein anderes Grammatikthema oder Level. Falls aktiv, schalte „Nur mit Audio“ aus.':'Lade die Seite bei bestehender Verbindung neu.';}$('card').innerHTML=`<h2>${title}</h2><p>${text}</p>`;}return;}
  if(activity==='suchsel'){renderSearchCard(s);return;}
  $('card').className=`card${revealed?' revealed':''}`;const saved=memory.favorites.includes(s.id),front=!isTranslation()?(revealed?s.text:''):cardDirection(s)==='fi-de'?s.text:s.translations[0].text;
  $('card').innerHTML=`<div class="card-top"><span class="card-label">${!isTranslation()?(activity==='listen'?'Hörmodus':'Diktat'):cardDirection(s)==='fi-de'?'Finnisch':'Deutsch'} <span>·</span> Level ${s.level}${s.level_assessment?.status==='estimated'?' · geschätzt':''}</span><button class="favorite ${saved?'saved':''}" id="favorite" aria-label="${saved?'Aus Favoriten entfernen':'Als Favorit speichern'}" aria-pressed="${saved}">${saved?'★':'☆'}</button></div>${questionMarkup(s,front)}${audioMarkup(s)}${dictationMarkup(s)}${translationDraftMarkup(s)}${revealed?`<div class="translation ${activity==='translate'&&!isWordPractice()?'hard-translation-solution':activity==='listen'?'listening-solution-card':''}" ${isWordPractice()||activity==='dictation'?'hidden':''}><span class="card-label" style="justify-content:center">${isTranslation()?'Vorlage · ':''}${!isTranslation()||cardDirection(s)==='fi-de'?'Deutsch':'Finnisch'}</span>${!isTranslation()||cardDirection(s)==='fi-de'?s.translations.map((t,i)=>`<p lang="de" class="${i?'variant':''}">${escape(t.text)}${sourceIcon(t)}</p>`).join(''):`<p lang="fi">${escape(s.text)}${sourceIcon(s)}</p>`}</div><div id="inline-grades" class="actions inline-grades" aria-label="Antwort bewerten"></div>${grammarMarkup(s)}${translationNote(s)?`<p class="bridge-note">${escape(translationNote(s))}</p>`:''}<details class="sources"><summary>Quellen &amp; Aufnahmen</summary><p>Finnisch: ${source(s)}</p>${s.translations.map(t=>`<p>Deutsch: ${source(t)}</p>`).join('')}${s.audios.map(a=>`<p>Aufnahme: <a href="${safeURL(a.attribution_url||`https://tatoeba.org/en/user/profile/${encodeURIComponent(a.author)}`)}" target="_blank" rel="noopener">${escape(a.author)}</a> · <a href="${safeURL(licenseURL(a.license))}" target="_blank" rel="noopener">${escape(a.license)}</a></p>`).join('')}</details>`:''}`;
@@ -434,7 +424,7 @@ function render(){applyDailyCard();if(activity==='verbs'){renderVerbSession();re
 }
 function licenseURL(license){if(license==='CC0 1.0')return 'https://creativecommons.org/publicdomain/zero/1.0/';const m=license.match(/^CC (BY(?:-[A-Z]+)*) ([\d.]+)(?: (FR))?$/i);return m?`https://creativecommons.org/licenses/${m[1].toLowerCase()}/${m[2]}/${m[3]?'fr/':''}`:'https://tatoeba.org/en/terms_of_use';}
 function easyDays(s){return Math.min(180,Math.max(3,Math.round((Number(review(s)?.interval)||0)*2.5)));}
-function grade(g){if(activity==='writing')return;if(!revealed||!queue.length)return;const s=queue.shift(),interval=g==='again'?0:g==='hard'?1:easyDays(s);memory.reviews[key(s)]={due:Date.now()+interval*86400000,interval,repetitions:(Number(review(s)?.repetitions)||0)+1,updatedAt:Date.now()};memory.daily[day()]=(Number(memory.daily[day()])||0)+1;if(g==='again')queue.splice(Math.min(2,queue.length),0,s);completed++;wordExercise=null;searchPuzzle=null;revealed=false;playedAudioCard=null;draft='';persist();render();guestSaveHint();$('reveal')?.focus({preventScroll:true});}
+function grade(g){if(activity==='writing')return;if(!revealed||!queue.length)return;const s=queue.shift(),interval=g==='again'?0:g==='hard'?1:easyDays(s);memory.reviews[key(s)]={due:Date.now()+interval*86400000,interval,repetitions:(Number(review(s)?.repetitions)||0)+1,updatedAt:Date.now()};memory.daily[day()]=(Number(memory.daily[day()])||0)+1;if(dailySession?.active&&activity==='translate'&&!s.translationCounted){reviewTranslationCount++;s.translationCounted=true;}if(g==='again')queue.splice(Math.min(2,queue.length),0,s);completed++;wordExercise=null;searchPuzzle=null;revealed=false;playedAudioCard=null;draft='';persist();render();guestSaveHint();$('reveal')?.focus({preventScroll:true});}
 async function play(s){const a=s.audios[0],b=$('play-audio');if(player&&!player.paused){stopAudio();return;}stopAudio();const current=prepareAudio(a.download_url);if(!current)return;player=current;current.currentTime=0;current.playbackRate=speed;current.preservesPitch=true;setAudioButtonLabel(b,current.readyState>=3?'Startet …':'Lädt …');const reset=()=>{if(player===current&&$('play-audio')===b)setAudioButtonLabel(b,restingAudioLabel(b));};current.onended=reset;current.onerror=()=>{if(player!==current)return;audioCache.delete(a.download_url);reset();$('notice').textContent='Die Aufnahme ist gerade nicht erreichbar. Versuche den Link „Audiodatei“ oder prüfe deine Internetverbindung.';};try{await current.play();if(player===current){playedAudioCard=s;b.dataset.played='true';setAudioButtonLabel(b,'Anhalten');}}catch{if(player!==current)return;audioCache.delete(a.download_url);reset();$('notice').textContent='Die Aufnahme konnte nicht abgespielt werden. Du kannst sie über „Audiodatei“ öffnen.';}}
 // Portable backups accept only known, bounded fields. Imported text is always escaped.
 function objectRecord(value){if(!value||typeof value!=='object'||Array.isArray(value))throw new Error('Ungültige Datenstruktur.');return value;}
@@ -496,7 +486,7 @@ function showView(name,openSettings=false){
  for(const view of ['home','practice','progress','classrooms']){const node=$(`${view}-view`);if(node)node.hidden=view!==name;}
  document.querySelectorAll('.header-nav [data-view]').forEach(b=>{const selected=b.dataset.view===name;b.classList.toggle('selected',selected);if(selected)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
  if(name!=='practice')stopAudio();
- if(name==='practice')$('practice-settings').open=openSettings;
+ if(name==='practice'){applyDailyCard();$('practice-settings').open=openSettings;}
  window.scrollTo({top:0,behavior:'smooth'});
 }
 $('continue-practice').onclick=()=>{
@@ -519,6 +509,17 @@ $('home-review').onclick=()=>{
  }
  mode='review';start();showView('practice');
 };
+function startNewSentences(){
+ if(!ready)return;
+ const pool=unseenSentences(data,memory.reviews,level);
+ if(!pool.length){renderDailyPlan();showView('home');return;}
+ dailySession=null;guidedNew=true;activity='translate';direction='fi-de';difficulty='easy';mode='new';
+ queue=prioritizeAudio(pool).slice(0,5).map(s=>({...s,practiceDirection:'fi-de'}));
+ initialCount=queue.length;completed=0;revealed=false;wordExercise=null;searchPuzzle=null;draft='';playedAudioCard=null;
+ syncControls();persist();showView('practice');render();
+}
+$('start-new-sentences').onclick=startNewSentences;
+$('quick-verb-review').onclick=()=>{if(dailySession)finishDailySession();activity='verbs';syncControls();renderStats();$('home-review').click();};
 $('start-daily-session').onclick=startDailySession;
 $('home-choose').onclick=()=>{if(dailySession?.active){dailySession=null;mode='new';start();}showView('practice',true);$('practice-settings').querySelector('summary')?.focus();};
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>showView(b.dataset.view));
