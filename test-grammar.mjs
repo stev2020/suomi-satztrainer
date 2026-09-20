@@ -6,13 +6,14 @@ import * as VerbPractice from './dist/verb-practice.mjs';
 import {GRAMMAR_TOPICS,topicNotes} from './dist/grammar-topics.mjs';
 import * as LearningInsights from './dist/learning-insights.mjs';
 import * as ReviewPlan from './dist/review-plan.mjs';
+import {finnishSentenceMatches} from './dist/word-practice.mjs';
 const payload=JSON.parse(fs.readFileSync(new URL('./dist/sentences.json',import.meta.url)));
 const grammar=JSON.parse(fs.readFileSync(new URL('./dist/grammar.json',import.meta.url))).sentences;
 const elements=new Map();
 class AudioStub{constructor(){this.paused=true;this.readyState=4;AudioStub.instances.push(this)}load(){}pause(){this.paused=true}play(){this.paused=false;return Promise.resolve()}removeAttribute(name){if(name==='src')this.src=''}}
 AudioStub.instances=[];
 function element(id){if(!elements.has(id))elements.set(id,{innerHTML:'',textContent:'',value:'',style:{},dataset:{},classList:{toggle(){}},setAttribute(){},addEventListener(){},querySelector(){return element('audio-label');},querySelectorAll(){return [];},insertAdjacentHTML(_,html){this.innerHTML+=html;},focus(){}});return elements.get(id);}
-const ctx=vm.createContext({GRAMMAR_TOPICS,topicNotes,VERBS,...VerbPractice,...LearningInsights,...ReviewPlan,console,URL,Audio:AudioStub,assert,payload,fixtureGrammar:grammar,localStorage:{getItem(){return null;},setItem(){}},document:{getElementById:element,querySelector(){return element('selected-element');},querySelectorAll(){return [];},addEventListener(){}}});
+const ctx=vm.createContext({GRAMMAR_TOPICS,topicNotes,finnishSentenceMatches,VERBS,...VerbPractice,...LearningInsights,...ReviewPlan,console,URL,Audio:AudioStub,assert,payload,fixtureGrammar:grammar,localStorage:{getItem(){return null;},setItem(){}},document:{getElementById:element,querySelector(){return element('selected-element');},querySelectorAll(){return [];},addEventListener(){}}});
 let app=fs.readFileSync(new URL('./dist/app.js',import.meta.url),'utf8').replace(/^import .*\n/gm,'');
 ctx.window={addEventListener(){},removeEventListener(){}};
 ctx.document.body={dataset:{account:'authenticated'}};
@@ -50,6 +51,31 @@ activity='writing';start();assert.equal(activity,'writing');assert($('practice-t
 `,ctx);
 await vm.runInContext(`activity='listen';start();globalThis.audioButton=$('play-audio');audioButton.dataset={};play(queue[0]);`,ctx);
 vm.runInContext(`assert.equal(audioButton.querySelector('span').textContent,'Anhalten');player.onended();assert.equal(audioButton.querySelector('span').textContent,'Wiederholen');assert(audioMarkup(queue[0]).includes('<span>Wiederholen</span>'));`,ctx);
+vm.runInContext(`
+const feedbackSentence={id:354158,text:'Sinä olet ihminen.',practiceDirection:'de-fi'};
+const feedbackNotes=fixtureGrammar['354158'].notes;
+assert.equal(answerGrammarNotes(feedbackSentence,feedbackNotes,'Sinä olen ihminen.')[0].focus,'olet');
+for(const answer of ['', 'SINÄ OLET IHMINEN!', 'Olet ihminen.', 'Sinä olet toinen ihminen.'])assert.equal(answerGrammarNotes(feedbackSentence,feedbackNotes,answer).length,0);
+assert.equal(answerGrammarNotes(feedbackSentence,feedbackNotes,'Sinä ihminen.').length,1);
+assert.equal(answerGrammarNotes(feedbackSentence,[{focus:'ole',title:'Not a whole word'}],'Sinä olen ihminen.').length,0);
+assert.equal(answerGrammarNotes(feedbackSentence,feedbackNotes,'sana '.repeat(301)).length,0);
+activity='translate';revealed=true;draft='Sinä olen ihminen.';
+let feedbackHTML=grammarMarkup(feedbackSentence);
+assert(feedbackHTML.includes('Hinweise zu deiner Antwort'));assert(!feedbackHTML.includes('class="grammar" open'));
+assert(feedbackHTML.includes('andere Formulierungen'));assert(feedbackHTML.includes('du-Form'));
+assert(!grammarMarkup({...feedbackSentence,text:'Changed sentence'}).includes('Hinweise zu deiner Antwort'));
+assert(!grammarMarkup({...feedbackSentence,practiceDirection:'fi-de'}).includes('Hinweise zu deiner Antwort'));
+activity='listen';assert(!grammarMarkup(feedbackSentence).includes('Hinweise zu deiner Antwort'));
+activity='dictation';assert(grammarMarkup(feedbackSentence).includes('Hinweise zu deiner Antwort'));
+revealed=false;assert.equal(grammarMarkup(feedbackSentence),'');
+activity='writing';assert(grammarMarkup(feedbackSentence,'Sinä olen ihminen.').includes('Hinweise zu deiner Antwort'));
+assert(!grammarMarkup(feedbackSentence,'Olet ihminen.').includes('Hinweise zu deiner Antwort'));
+const focusNotes=[{focus:'Sinä',title:'Subject',text:'subject'},{focus:'olet',title:'Verb',text:'verb'},{focus:'Sinä olet',title:'Phrase',text:'phrase'}];
+assert.equal(answerGrammarNotes(feedbackSentence,focusNotes,'Minä olen ihminen.').length,2);
+grammar={'354158':{sentence:feedbackSentence.text,notes:[{focus:'olet',title:'<script>',text:'<img src=x>'}]}};
+assert(grammarMarkup(feedbackSentence,'olen ihminen').includes('&lt;script&gt;'));
+grammar=fixtureGrammar;draft='';
+`,ctx);
 assert.equal(topicNotes({id:368188,text:'Changed sentence'},grammar,'negation').length,0);
 assert(!GRAMMAR_TOPICS.find(t=>t.id==='location').match.test('Hinweiswort im Partitiv'));
 const html=fs.readFileSync(new URL('./dist/index.html',import.meta.url),'utf8');

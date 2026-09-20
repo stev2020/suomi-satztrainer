@@ -34,6 +34,9 @@ header{flex-wrap:wrap}.report-error{align-self:center;margin:18px 0 0;padding:7p
 .writing-rating-buttons{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}.writing-rating-buttons button{flex:1;min-width:110px}
 .writing-rating-buttons button[aria-pressed="true"]{background:var(--purple);color:#fff}.writing-rating-status{font-size:.875rem;color:var(--muted)}
 .activity-field .choice-buttons{grid-template-columns:repeat(3,minmax(0,1fr))}
+.grammar p.grammar-answer-intro{font-size:14px;line-height:1.5;color:var(--muted)}
+.grammar-answer-notes{border-left:3px solid var(--purple);padding-left:12px}
+.grammar-more summary{font-size:14px;padding:12px 0}
 .grammar-controls{margin:0 0 20px;padding:16px;border:2px solid var(--ink);border-radius:12px;background:var(--lavender)}
 .grammar-controls[hidden]{display:none}
 .grammar-controls label{display:block;font-size:1rem;font-weight:700;margin-bottom:8px}
