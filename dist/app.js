@@ -5,6 +5,7 @@ import {VERBS} from './verbs-data.mjs';
 import {PRONOUNS,validateVerbProgress,mergeVerbProgress,markAsked,markAnswered,answerMatches,createVerbSession,chooseCombination,verbSummary} from './verb-practice.mjs';
 import {GRAMMAR_TOPICS,topicNotes} from './grammar-topics.mjs';
 import {reviewPlan,dueSentences,unseenSentences,lastPracticed} from './review-plan.mjs';
+import {everydayPathState,homeReviewPool} from './learning-path.mjs';
 import {addPerformanceEvent,buildLearningInsights,mergePerformanceEvents,validatePerformanceEvents} from './learning-insights.mjs';
 const $=id=>document.getElementById(id);
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -66,20 +67,34 @@ function prepareAudio(url){
 function preloadQueueAudio(){const urls=queue.slice(0,3).map(s=>s.audios?.[0]?.download_url).filter(Boolean);for(const url of new Set(urls))prepareAudio(url);}
 function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function dailyPlan(){
- return reviewPlan([...data,...archived],memory.reviews,level,{translationOffset:reviewTranslationCount});
+ return reviewPlan(homeReviewPool([...data,...archived],level),memory.reviews,null,{translationOffset:reviewTranslationCount});
 }
-let reviewTranslationCount=0,guidedNew=false;
+let reviewTranslationCount=0,guidedNew=false,pathSession=null;
+const pathState=()=>everydayPathState([...data,...archived],memory.reviews);
+function renderLearningPath(){
+ const state=pathState(),active=guidedNew&&pathSession&&queue.length;
+ $('start-new-sentences').disabled=!ready||(!active&&!state.lesson?.remaining.length);
+ $('start-new-sentences').textContent=active?'Etappe fortsetzen':state.complete?'Alltagspfad geschafft':state.seen?'Weiterlernen':'Alltagspfad starten';
+ $('path-current-title').textContent=active?pathSession.topic.title:state.topic?.title||'Dein Alltagspfad ist geschafft!';
+ $('new-sentences-note').textContent=active?`Etappe ${pathSession.lesson.index+1} von 2 · ${pathSession.lesson.title}`:state.lesson?`Etappe ${state.lesson.index+1} von 2 · ${state.lesson.title} · ${state.lesson.remaining.length} neue Sätze`:'Alle sechs Themen kennengelernt. Festige deine Sätze mit den Wiederholungen oder entdecke weitere Sätze unter „Weitere Übungen und Einstellungen“.';
+ $('path-goal').textContent=active?pathSession.topic.goal:state.topic?.goal||'Du hast dir eine Grundlage für sechs Alltagssituationen erarbeitet.';
+ $('path-progress-text').textContent=`${state.seen} von ${state.total} Sätzen kennengelernt`;
+ $('path-progress').max=state.total;$('path-progress').value=state.seen;
+ $('path-overview').innerHTML=state.topics.map((topic,index)=>{
+  const current=active?topic.id===pathSession.topic.id:topic.id===state.topic?.id;
+  return `<li class="path-stop ${current?'current':topic.complete?'complete':'upcoming'}" ${current?'aria-current="step"':''}><span class="path-number" aria-hidden="true">${topic.complete&&!current?'✓':index+1}</span><div><h4>${escape(topic.title)}</h4><p>${current?'Du bist hier':topic.complete?'Kennengelernt':'Danach'} · ${topic.seen}/${topic.total}</p></div></li>`;
+ }).join('');
+}
 function dailyPlanStats(){
- return {dueCount:dueSentences([...data,...archived],memory.reviews,level).length,newCount:unseenSentences(data,memory.reviews,level).length};
+ return {dueCount:dueSentences(homeReviewPool([...data,...archived],level),memory.reviews,null).length,newCount:unseenSentences(data,memory.reviews,level).length};
 }
 function renderDailyPlan(){
  const button=$('start-daily-session');if(!button)return;
  const stats=dailyPlanStats(),available=Math.min(10,stats.dueCount);
  $('daily-due').textContent=stats.dueCount;
- $('start-new-sentences').disabled=!ready||!stats.newCount;
- $('new-sentences-note').textContent=stats.newCount?'Fünf neue Sätze · mit Wörtern zum Zusammensetzen.':'In diesem Level hast du alle Sätze kennengelernt.';
+ renderLearningPath();
  $('daily-plan-note').textContent=stats.dueCount?'Bekannte, fällige Sätze – abwechslungsreich üben, ohne neue Sätze.':'Für heute ist alles wiederholt.';
- $('daily-plan-level').textContent=`Level ${level}`;
+ $('daily-plan-level').textContent=`Level ${level}${dueSentences(homeReviewPool([...data,...archived],level),memory.reviews,null).some(x=>x.s.level!==level)?' · Alltagspfad':''}`;
  button.disabled=!ready||(!available&&!(dailySession?.active&&queue.length));
  button.textContent=dailySession?.active&&queue.length?'Wiederholung fortsetzen':available?`${available} ${available===1?'Satz':'Sätze'} wiederholen`:'Alles wiederholt';
 }
@@ -127,7 +142,7 @@ function renderStats(){
   $('progress-bar').style.width=total?`${count/total*100}%`:'0%';return;
  }
  if(activity==='writing'){const session=writingSessions[level],total=session?.items.length||0,count=session?.answers.length||0;$('session-title').textContent=`Level ${level} · Schreibtest · Deutsch → Finnisch`;$('session-progress').textContent=total?`${count} / ${total}`:(writingPool().length>=MIN_WRITING_SENTENCES?'Satzanzahl wählen':'Noch keine Sätze bereit');$('progress-bar').style.width=total?`${count/total*100}%`:'0%';return;}
- $('session-title').textContent=`Level ${level} · ${activity==='grammar'?GRAMMAR_TOPICS.find(t=>t.id===grammarTopic).label:mode==='new'?'Neue Sätze · Audio zuerst':mode==='review'?'Wiederholen':'Deine Favoriten'}`;
+ $('session-title').textContent=guidedNew&&pathSession?`${pathSession.topic.title} · ${pathSession.lesson.title}`:`Level ${level} · ${activity==='grammar'?GRAMMAR_TOPICS.find(t=>t.id===grammarTopic).label:mode==='new'?'Neue Sätze · Audio zuerst':mode==='review'?'Wiederholen':'Deine Favoriten'}`;
  $('session-progress').textContent=initialCount?`${completed} / ${completed+queue.length}`:'Keine Karten ausgewählt';
  $('progress-bar').style.width=initialCount?`${completed/(completed+queue.length)*100}%`:'0%';
 }
@@ -248,7 +263,7 @@ function translationNote(s){
  return '';
 }
 function syncControls(){
- $('practice-settings').hidden=!!dailySession?.active;
+ $('practice-settings').hidden=!!dailySession?.active||guidedNew;
  $('settings-level-row').hidden=activity==='verbs';
  $('grammar-controls').hidden=activity!=='grammar';
  if(activity==='grammar'){
@@ -474,6 +489,14 @@ function renderSearchCard(s){
 }
 
 function render(){applyDailyCard();if(activity==='verbs'){renderVerbSession();return;}if(activity==='writing'){renderWritingSession();return;}$('writing-history').hidden=true;stopAudio();renderStats();preloadQueueAudio();const s=queue[0];$('actions').innerHTML='';$('keyboard-note').hidden=!s;$('keyboard-note').textContent=isTranslation()?'Nach dem Vergleich: 1 / 2 / 3 zum Bewerten':'Aufnahme beliebig oft anhören · Nach dem Aufdecken: 1 / 2 / 3 zum Bewerten';
+ if(!s&&guidedNew&&pathSession&&initialCount){
+  const state=pathState(),topic=state.topics.find(t=>t.id===pathSession.topic.id);
+  const title=state.complete?'Dein Alltagspfad ist geschafft!':topic.complete?`${topic.title} geschafft!`:'Etappe geschafft!';
+  $('card').className='card empty';
+  $('card').innerHTML=`<span class="complete-mark">✓</span><h2>${escape(title)}</h2><p>${topic.seen} von ${topic.total} Sätzen in diesem Thema kennengelernt.</p><p>${state.lesson?`Als Nächstes: ${escape(state.topic.title)} · ${escape(state.lesson.title)}.`:'Du hast alle sechs Alltagsthemen kennengelernt.'}</p><p>Festige das Gelernte später mit „Sätze wiederholen“.</p>`;
+  $('actions').innerHTML=`<div class="completion-actions"><button class="primary completion-home" id="completion-home">Zur Startseite</button>${state.lesson?.remaining.length?'<button class="primary" id="next-session">Weiter auf dem Lernpfad</button>':''}</div>`;
+  $('completion-home').onclick=()=>showView('home');if(state.lesson?.remaining.length)$('next-session').onclick=startNewSentences;return;
+ }
  if(!s){$('card').className='card empty';if(dailySession?.active&&initialCount){const mix=dailySession.mix;$('card').innerHTML=`<span class="complete-mark">✓</span><h2>Heutige Runde geschafft.</h2><p>${completed} Aufgaben erledigt · ${mix.translate} Übersetzen · ${mix.listen} Hören · ${mix.dictation} Diktat${mix.suchsel?' · '+mix.suchsel+' Wortsel':''}</p><p>Nur fällige Sätze – ohne neue Inhalte.</p>`;$('actions').innerHTML='<button class="primary" id="finish-daily-session">Zur Startseite</button>';$('finish-daily-session').onclick=finishDailySession;}else if(initialCount){$('card').innerHTML='<span class="complete-mark">✓</span><h2>Gut gemacht.</h2><p>Deine Lerneinheit ist geschafft. Dein nächster Satz wartet schon.</p>';$('actions').innerHTML='<div class="completion-actions"><button class="primary completion-home" id="completion-home">Zur Startseite</button><button class="primary" id="next-session">Nächste Lerneinheit</button></div>';$('completion-home').onclick=()=>showView('home');$('next-session').onclick=guidedNew?startNewSentences:start;}else{let title='Alles für heute wiederholt.',text='Hier erscheinen die Sätze, sobald deine nächste Wiederholung fällig ist.';if(mode==='new'){title='In diesem Level ist alles entdeckt.';text='Wiederhole deine Sätze oder wechsle zum nächsten Level.';}if(mode==='favorites'){title='Deine Lieblingssätze warten hier.';text='Markiere einen Satz mit dem Stern auf der Lernkarte.';}if((audioOnly||!isTranslation())&&!base(mode!=='new').length){title='Hier gibt es noch keine Aufnahme.';text=isTranslation()?'Schalte „Nur mit Audio“ aus oder wähle ein anderes Level.':'Wähle ein anderes Level oder die Übungsart Übersetzen.';}if(activity==='grammar'){title=grammarAvailable?'Keine passenden Sätze in dieser Auswahl.':'Grammatikhilfen nicht verfügbar.';text=grammarAvailable?'Wähle ein anderes Grammatikthema oder Level. Falls aktiv, schalte „Nur mit Audio“ aus.':'Lade die Seite bei bestehender Verbindung neu.';}$('card').innerHTML=`<h2>${title}</h2><p>${text}</p>`;}return;}
  if(activity==='suchsel'){renderSearchCard(s);return;}
  $('card').className=`card${revealed?' revealed':''}`;const saved=memory.favorites.includes(s.id),front=!isTranslation()?(revealed?s.text:''):cardDirection(s)==='fi-de'?s.text:s.translations[0].text;
@@ -550,6 +573,7 @@ $('cancel-import').onclick=()=>{clearImport();$('backup-status').textContent='Im
 $('apply-backup').onclick=()=>{if(!accountActive()){$('backup-status').textContent='Bitte melde dich an, um eine Sicherung zu übernehmen.';return;}if(!pendingBackup||!ready)return;const candidate=mergeLearning(memory,pendingBackup);if(!levels.includes(candidate.prefs.level))candidate.prefs.level=levels[0]||1;try{commitLearning(candidate);}catch{$('backup-status').textContent='Dein Browser konnte die Sicherung nicht speichern. Der bisherige Lernstand bleibt erhalten.';return;}({level,direction,audioOnly,activity,speed,grammarTopic,difficulty,searchDifficulty}=candidate.prefs);clearImport();mode='new';verbSession=null;start();renderReportList();$('backup-status').textContent='Lernstand zusammengeführt. Deine Einstellungen sind übernommen und eine neue Lerneinheit ist bereit.';};
 
 function showView(name,openSettings=false){
+ if(name==='home'&&ready)renderDailyPlan();
  if(name==='progress'&&ready)renderStats();
  if(name==='home'&&dailySession?.active){const previous=dailySession.previous;activity=previous.activity;direction=previous.direction;difficulty=previous.difficulty;mode=previous.mode;syncControls();renderStats();}
  for(const view of ['home','practice','progress','classrooms']){const node=$(`${view}-view`);if(node)node.hidden=view!==name;}
@@ -560,6 +584,7 @@ function showView(name,openSettings=false){
 }
 $('continue-practice').onclick=()=>{
  if(!ready)return;
+ if(guidedNew){mode='new';start();showView('practice');return;}
  if(dailySession?.active){dailySession=null;mode='new';start();showView('practice');return;}
  if(activity==='verbs'&&verbSession&&!verbSession.current)verbSession=null;
  if(mode!=='new'){mode='new';start();}else if(activity==='verbs')render();
@@ -567,7 +592,7 @@ $('continue-practice').onclick=()=>{
 };
 $('home-review').onclick=()=>{
  if(!ready||$('home-review').disabled)return;
- dailySession=null;
+ dailySession=null;guidedNew=false;
  if(activity==='verbs'){
   if(verbSession?.current){showView('practice');$('notice').textContent='Beende zuerst deine laufende Runde. Deine Eingabe bleibt erhalten.';return;}
   const now=Date.now();
@@ -580,17 +605,19 @@ $('home-review').onclick=()=>{
 };
 function startNewSentences(){
  if(!ready)return;
- const pool=unseenSentences(data,memory.reviews,level);
+ if(guidedNew&&pathSession&&queue.length){showView('practice');render();return;}
+ const state=pathState(),pool=state.lesson?.remaining||[];
  if(!pool.length){renderDailyPlan();showView('home');return;}
+ pathSession={topic:state.topic,lesson:state.lesson};
  dailySession=null;guidedNew=true;activity='translate';direction='fi-de';difficulty='easy';mode='new';
- queue=prioritizeAudio(pool).slice(0,5).map(s=>({...s,practiceDirection:'fi-de'}));
+ stopAudio();queue=pool.map(s=>({...s,practiceDirection:'fi-de'}));
  initialCount=queue.length;completed=0;revealed=false;wordExercise=null;searchPuzzle=null;draft='';playedAudioCard=null;
  syncControls();persist();showView('practice');render();
 }
 $('start-new-sentences').onclick=startNewSentences;
 $('quick-verb-review').onclick=()=>{if(dailySession)finishDailySession();activity='verbs';syncControls();renderStats();$('home-review').click();};
 $('start-daily-session').onclick=startDailySession;
-$('home-choose').onclick=()=>{if(dailySession?.active){dailySession=null;mode='new';start();}showView('practice',true);$('practice-settings').querySelector('summary')?.focus();};
+$('home-choose').onclick=()=>{if(dailySession?.active||guidedNew){dailySession=null;mode='new';start();}showView('practice',true);$('practice-settings').querySelector('summary')?.focus();};
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>showView(b.dataset.view));
 document.querySelectorAll('[data-home-activity]').forEach(b=>b.onclick=()=>{if(!ready||activity===b.dataset.homeActivity)return;activity=b.dataset.homeActivity;mode='new';start();});
 document.querySelectorAll('[data-home-direction]').forEach(b=>b.onclick=()=>{if(!ready||direction===b.dataset.homeDirection)return;direction=b.dataset.homeDirection;mode='new';start();});

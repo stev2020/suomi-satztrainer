@@ -9,7 +9,7 @@ export function unseenSentences(sentences,reviews,level){
 export function dueSentences(sentences,reviews,level,now=Date.now()){
  const unique=new Map();
  for(const s of sentences){
-  if(s.level!==level||!s.translations?.length||unique.has(s.id))continue;
+  if((level!==null&&s.level!==level)||!s.translations?.length||unique.has(s.id))continue;
   const items=REVIEW_KINDS.filter(kind=>!['listen','dictation'].includes(kind)||s.audios?.length).flatMap(kind=>{
    const r=reviews[`${s.id}:${kind}`];
    return r&&Number.isFinite(r.due)&&r.due<=now?[{kind,r}]:[];

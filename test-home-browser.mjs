@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import {spawn} from 'node:child_process';
 import {chromium} from 'playwright';
 import {VERBS} from './dist/verbs-data.mjs';
+import {EVERYDAY_PATH} from './dist/learning-path.mjs';
 import {PRONOUNS,markAsked,markAnswered} from './dist/verb-practice.mjs';
 const origin='http://localhost:4173';
 const server=spawn(process.execPath,['server.mjs'],{stdio:['ignore','pipe','inherit']});
@@ -147,6 +148,14 @@ try{
  for(const s of reviewSentences)assert.ok(afterReview.reviews[s.id+':fi-de'].due>Date.now());
  await focused.locator('#start-new-sentences').click();
  assert.ok((await focused.locator('#session-progress').textContent()).endsWith('/ 5'));
+ assert.match(await focused.locator('#session-title').textContent(),/Begrüßung und Kennenlernen/);
+ assert.equal(await focused.locator('#practice-settings').isVisible(),false);
+ await focused.locator('[data-pick-word]').first().click();
+ await focused.locator('#practice-view [data-view="home"]').click();
+ assert.equal(await focused.locator('#start-new-sentences').textContent(),'Etappe fortsetzen');
+ await focused.locator('#start-new-sentences').click();
+ assert.equal(await focused.locator('[data-return-word]').count(),1);
+ await focused.locator('[data-return-word]').first().click();
  for(let i=0;i<5;i++){
   assert.ok(await focused.locator('#word-bank').isVisible());
   await focused.locator('[data-pick-word]').first().click();await focused.locator('#reveal').click();
@@ -155,6 +164,28 @@ try{
  assert.equal(Object.keys((await focused.evaluate(()=>window.suomiLearningState.snapshot())).reviews).length,8);
  await focused.locator('#next-session').click();
  assert.ok((await focused.locator('#session-progress').textContent()).endsWith('/ 5'));
+ assert.match(await focused.locator('#session-title').textContent(),/Ins Gespräch kommen/);
+ for(let i=0;i<5;i++){
+  await focused.locator('[data-pick-word]').first().click();await focused.locator('#reveal').click();await focused.locator('[data-grade="easy"]').click();
+ }
+ assert.match(await focused.locator('#card h2').textContent(),/Begrüßung und Kennenlernen geschafft/);
+ await focused.locator('#next-session').click();
+ assert.match(await focused.locator('#session-title').textContent(),/Café und Restaurant/);
+ await focused.locator('#practice-view [data-view="home"]').click();
+ await focused.locator('.path-details > summary').click();
+ assert.equal(await focused.locator('.path-stop').count(),6);
+ assert.equal(await focused.locator('.path-stop[aria-current="step"]').count(),1);
+ for(const width of [390,320]){await focused.setViewportSize({width,height:844});assert.ok(await focused.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
+ // Imported progress advances the same path without a new persistence schema.
+ const finished=await focused.evaluate(()=>window.suomiLearningState.snapshot());
+ for(const topic of EVERYDAY_PATH)for(const lesson of topic.lessons)for(const id of lesson.ids)finished.reviews[id+':fi-de']={due:Date.now()+86400000,repetitions:1,interval:1,updatedAt:Date.now()};
+ await focused.evaluate(state=>window.suomiLearningState.applyCloud(state),finished);
+ // Leaving a live lesson and returning recomputes the next position from reviews.
+ await focused.locator('#more-exercises > summary').click();
+ await focused.locator('#continue-practice').click();await focused.locator('#practice-view [data-view="home"]').click();
+ assert.equal(await focused.locator('#start-new-sentences').isDisabled(),true);
+ assert.equal(await focused.locator('#path-progress-text').textContent(),'60 von 60 Sätzen kennengelernt');
+ assert.equal(await focused.locator('.path-stop.complete').count(),6);
  assert.deepEqual(errors,[]);
  await context.close();
  console.log('PASS: live cloud apply without reload, daily round, home selector, scoped review counts and launches, due-only verb round, preserved draft, identical colors, mobile layout, other exercises and guest privacy.');
