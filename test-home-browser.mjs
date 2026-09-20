@@ -19,6 +19,7 @@ try{
  const select=activity=>page.locator('[data-home-activity="'+activity+'"]').click();
  await page.goto(origin);
  await page.locator('#start-new-sentences:not([disabled])').waitFor();
+ assert.equal(await page.locator('#account-dialog').count(),1);
  assert.equal(await page.locator('#progress-nav').isVisible(),false);
  assert.equal(await page.locator('#account-button').textContent(),'Anmelden / Registrieren');
  assert.ok(await page.locator('#storage-account-link').isVisible());

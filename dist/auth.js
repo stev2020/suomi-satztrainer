@@ -180,6 +180,6 @@ function bind(){
 loadSession();bind();
 export const accountUser=()=>session?.user||null;
 export {request as accountRequest};
-import('./classrooms.js?v=68').catch(()=>{});
+import('./classrooms.js?v=69').catch(()=>{});
 if(session?.user&&configured())refreshSession().then(async ok=>{if(!ok)return;try{await pullAndMerge();}catch(err){syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true);status(err.message,true);}}).catch(syncError).finally(()=>{syncReady=true;if(syncQueued)scheduleSync()});
 else syncReady=true;
