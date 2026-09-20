@@ -19,6 +19,10 @@ try{
  const select=activity=>page.locator('[data-home-activity="'+activity+'"]').click();
  await page.goto(origin);
  await page.locator('#start-new-sentences:not([disabled])').waitFor();
+ assert.equal(await page.locator('#progress-nav').isVisible(),false);
+ assert.equal(await page.locator('#account-button').textContent(),'Anmelden / Registrieren');
+ assert.ok(await page.locator('#storage-account-link').isVisible());
+ await page.locator('#storage-account-link').click();assert.ok(await page.locator('#login-form').isVisible());await page.locator('#close-account').click();
  assert.equal(await page.evaluate(()=>window.suomiLearningState.applyCloud(window.suomiLearningState.snapshot())),true);
  assert.equal(await page.locator('#home-direction-control').isVisible(),false);
  assert.equal(await page.locator('#start-daily-session').isDisabled(),true);
@@ -47,6 +51,11 @@ try{
  assert.equal(await page.locator('#start-daily-session').isDisabled(),false);
  assert.ok(Number(await page.locator('#daily-due').textContent())>0);
  await page.locator('#start-daily-session').click();
+ assert.ok(await page.locator('#guest-start-dialog').isVisible());
+ assert.match(await page.locator('#guest-start-dialog').textContent(),/Ohne Konto wird dein Fortschritt nicht gespeichert/);
+ assert.equal(await page.locator('[data-guest-account]').count(),2);
+ await page.locator('[data-guest-account="register"]').click();assert.ok(await page.locator('#register-form').isVisible());await page.locator('#close-account').click();
+ await page.locator('#start-daily-session').click();await page.locator('#guest-continue').click();
  assert.ok((await page.locator('#session-progress').textContent()).endsWith('/ 4'));
  await home();
  assert.equal(await page.locator('#start-daily-session').textContent(),'Wiederholung fortsetzen');
@@ -117,7 +126,7 @@ try{
  for(const s of reviewSentences)focusedState.reviews[s.id+':fi-de']={due:now,interval:0,repetitions:1,updatedAt:now};
  await focused.evaluate(state=>window.suomiLearningState.applyCloud(state),focusedState);
  assert.equal(await focused.locator('#daily-due').textContent(),'3');
- await focused.locator('#start-daily-session').click();
+ await focused.locator('#start-daily-session').click();assert.ok(await focused.locator('#guest-start-dialog').isVisible());await focused.locator('#guest-continue').click();
  // Explicit retry keeps its difficulty and comes after two other sentences.
  const expected=[reviewSentences[0],reviewSentences[1],reviewSentences[2],reviewSentences[0]];
  const difficulties=['easy','easy','hard','easy'];

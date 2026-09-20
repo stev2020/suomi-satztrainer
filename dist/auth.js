@@ -112,8 +112,9 @@ function renderAccount(){
   $('account-logged-in')?.toggleAttribute('hidden',!logged);
   if(logged&&$('account-name'))$('account-name').textContent=session.user.user_metadata?.username||'Nutzer';
   document.body.dataset.account=logged?'authenticated':'guest';
-  if($('account-button'))$('account-button').textContent='Konto';
-  if(logged)syncState('Synchronisierung wird geprüft …');else if($('storage-note')){$('storage-note').textContent='Ohne Konto wird dein Fortschritt nicht gespeichert.';$('storage-note').classList.remove('error');}
+  if($('account-button'))$('account-button').textContent=logged?'Konto':'Anmelden / Registrieren';
+  if($('progress-nav'))$('progress-nav').hidden=!logged;
+  if(logged)syncState('Synchronisierung wird geprüft …');else if($('storage-note'))$('storage-note').classList.remove('error');
 }
 async function login(username,password,syncCloud=true,seedState=null){
   username=normalizeUsername(username);checkPassword(password);
@@ -149,9 +150,20 @@ function addDialog(){
   document.body.insertAdjacentHTML('beforeend',`<dialog id="account-dialog" aria-labelledby="account-title"><div class="dialog-top"><h2 id="account-title">Dein Konto</h2><button id="close-account" class="quiet" aria-label="Schließen">✕</button></div><div id="account-unconfigured" hidden><p>Die Kontofunktion ist vorbereitet, aber die Serververbindung ist noch nicht aktiviert.</p></div><div id="account-logged-out"><div class="account-tabs"><button type="button" data-account-tab="login" class="selected">Anmelden</button><button type="button" data-account-tab="register">Registrieren</button><button type="button" data-account-tab="recover">Passwort vergessen</button></div><form id="login-form" class="account-form"><label>Benutzername<input id="login-name" autocomplete="username" required></label><label>Passwort<input id="login-password" type="password" autocomplete="current-password" required minlength="8"></label><button class="primary" type="submit">Anmelden</button></form><form id="register-form" class="account-form" hidden><label>Benutzername<input id="register-name" autocomplete="username" required></label><label>Passwort<input id="register-password" type="password" autocomplete="new-password" required minlength="8"></label><button class="primary" type="submit">Konto erstellen</button><p class="account-hint">Keine E-Mail nötig. Danach erhältst du einmalig einen Wiederherstellungscode.</p></form><form id="recover-form" class="account-form" hidden><label>Benutzername<input id="recover-name" autocomplete="username" required></label><label>Wiederherstellungscode<input id="recover-code" autocomplete="off" required></label><label>Neues Passwort<input id="recover-password" type="password" autocomplete="new-password" required minlength="8"></label><button class="primary" type="submit">Passwort neu setzen</button></form></div><div id="account-logged-in" hidden><p>Angemeldet als <strong id="account-name"></strong></p><p id="account-sync">Synchronisierung wird geprüft …</p><button id="sync-now" class="quiet" type="button">Jetzt synchronisieren</button><button id="logout" class="quiet" type="button">Abmelden</button></div><div id="recovery-result" class="recovery-result" hidden><h3>Wiederherstellungscode</h3><p>Speichere diesen Code sicher. Er wird nicht noch einmal angezeigt.</p><code id="recovery-code-result"></code><button id="copy-recovery" class="quiet" type="button">Code kopieren</button></div><p id="account-status" role="status"></p></dialog>`);
 }
 function showRecovery(code){$('recovery-code-result').textContent=code;$('recovery-result').hidden=false}
+function selectAccountTab(tab='login'){
+  const selected=document.querySelector(`[data-account-tab="${tab}"]`)||document.querySelector('[data-account-tab="login"]');
+  if(selected)selected.click();
+}
+function openAccount(tab='login'){
+  const ok=configured();$('account-unconfigured').hidden=ok;$('account-logged-out').hidden=!!session||!ok;$('account-logged-in').hidden=!session;
+  if(!session&&ok)selectAccountTab(tab);
+  if(!$('account-dialog').open)$('account-dialog').showModal();
+}
 function bind(){
   addDialog();
-  $('account-button').onclick=()=>{const ok=configured();$('account-unconfigured').hidden=ok;$('account-logged-out').hidden=!!session||!ok;$('account-logged-in').hidden=!session;$('account-dialog').showModal()};
+  window.suomiOpenAccount=openAccount;
+  $('account-button').onclick=()=>openAccount('login');
+  if($('storage-account-link'))$('storage-account-link').onclick=()=>openAccount('login');
   $('close-account').onclick=()=>$('account-dialog').close();
   document.querySelectorAll('[data-account-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-account-tab]').forEach(x=>x.classList.toggle('selected',x===b));for(const n of ['login','register','recover'])$(n+'-form').hidden=b.dataset.accountTab!==n;$('recovery-result').hidden=true;status('')});
   $('login-form').onsubmit=async e=>{e.preventDefault();try{status('Anmeldung …');await login($('login-name').value,$('login-password').value)}catch(err){status(err.message,true)}};

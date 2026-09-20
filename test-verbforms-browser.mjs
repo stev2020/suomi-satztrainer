@@ -13,6 +13,7 @@ const session={access_token:'test-access',refresh_token:'test-refresh',user:{id:
 let cloud=structuredClone(base),audioRequests=0;
 async function context(options={}){
  const c=await browser.newContext({serviceWorkers:'block',...options});
+ await c.addInitScript(()=>sessionStorage.setItem('suomi-guest-exercise-accepted','1'));
  await c.route('**/*',async route=>{
   const request=route.request(),url=new URL(request.url());
   if(url.origin===origin)return route.continue();
@@ -86,6 +87,7 @@ try {
  const p=await logged.newPage();p.on('pageerror',e=>errors.push(e.message));
  await p.goto(origin);
  await p.waitForFunction(()=>document.querySelector('[data-verb-count="5"]'));
+ assert.ok(await p.locator('#progress-nav').isVisible());assert.equal(await p.locator('#account-button').textContent(),'Konto');
  await p.locator('#continue-practice').click();
  await p.locator('[data-verb-count="5"]').click();
  const key=await answer(p);

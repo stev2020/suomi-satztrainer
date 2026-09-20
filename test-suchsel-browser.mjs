@@ -6,6 +6,7 @@ const fixture={id:987654,text:'Juon tänään kahvia.',level:1,audios:[],transla
 try{
  browser=await chromium.launch({headless:true});
  const context=await browser.newContext({viewport:{width:390,height:844},hasTouch:true,serviceWorkers:'block'});
+ await context.addInitScript(()=>sessionStorage.setItem('suomi-guest-exercise-accepted','1'));
  await context.route('**/*',route=>new URL(route.request().url()).origin==='http://localhost:4173'?route.continue():route.abort());
  await context.route('**/sentences.json',route=>route.fulfill({contentType:'application/json',body:JSON.stringify({sentences:[fixture],levels:[{id:1}]})}));
  const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));

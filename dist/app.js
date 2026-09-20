@@ -14,6 +14,8 @@ const STORE='suomi-learning-v1';
 const SESSION='suomi-auth-session-v1';
 const hasStoredSession=()=>{try{const s=JSON.parse(localStorage.getItem(SESSION));return !!(s?.access_token&&s?.refresh_token&&s?.user?.id);}catch{return false;}};
 const accountActive=()=>document.body.dataset.account==='authenticated'||hasStoredSession();
+let guestExerciseAccepted=false,pendingGuestStart=null;
+try{guestExerciseAccepted=sessionStorage.getItem('suomi-guest-exercise-accepted')==='1';}catch{}
 if(!hasStoredSession())try{localStorage.removeItem(STORE);}catch{}
 const REPORT_CATEGORIES={translation:'Übersetzung',grammar:'Grammatikhilfe',audio:'Aufnahme',level:'Level',other:'Sonstiges'};
 let memory={reviews:{},favorites:[],daily:{},prefs:{},reports:{},writingRatings:{},verbProgress:{},performanceEvents:[]};
@@ -52,7 +54,7 @@ const base=(includeArchived=false)=>(includeArchived?[...data,...archived]:data)
 const filtered=()=>activity==='grammar'?base():base(mode!=='new').filter(s=>eligibleDirections(s).length);
 function persist(){const saved=dailySession?.previous||{};memory.prefs={level,direction:saved.direction||direction,audioOnly,activity:saved.activity||activity,speed,grammarTopic,difficulty:saved.difficulty||difficulty,searchDifficulty};try{if(accountActive()){localStorage.setItem(STORE,JSON.stringify(memory));window.dispatchEvent(new Event('suomi-learning-changed'));}else localStorage.removeItem(STORE);}catch{if(accountActive())$('notice').textContent='Dein Lernstand konnte gerade nicht lokal zwischengespeichert werden.';}}
 let guestSaveNoticeShown=false;
-function guestSaveHint(){if(accountActive()||guestSaveNoticeShown)return;guestSaveNoticeShown=true;const n=$('notice');if(n)n.textContent='Du übst ohne Konto. Dein Fortschritt wird nicht gespeichert. Registriere dich kostenlos, um ihn zu behalten.';}
+function guestSaveHint(){if(accountActive()||guestExerciseAccepted||guestSaveNoticeShown)return;guestSaveNoticeShown=true;const n=$('notice');if(n)n.textContent='Du übst ohne Konto. Dein Fortschritt wird nicht gespeichert. Registriere dich kostenlos, um ihn zu behalten.';}
 const restingAudioLabel=b=>b?.dataset.played==='true'?'Wiederholen':'Anhören';
 function setAudioButtonLabel(b,label){if(!b)return;b.querySelector('span').textContent=label;b.setAttribute('aria-label',label==='Wiederholen'?'Aufnahme wiederholen':label==='Anhalten'?'Wiedergabe anhalten':'Finnischen Satz anhören');}
 function stopAudio(){if(player){player.pause();player=null;}const b=$('play-audio');if(b)setAudioButtonLabel(b,restingAudioLabel(b));}
@@ -147,7 +149,7 @@ function renderStats(){
  $('progress-bar').style.width=initialCount?`${completed/(completed+queue.length)*100}%`:'0%';
 }
 let currentInsights=null;
-function insightButton(kind,ready){return `<button type="button" data-insight="${kind}" ${ready?'':'disabled'}>${ready?'Jetzt üben':'Noch Daten sammeln'}</button>`;}
+function insightButton(kind,ready){return `<button type="button" data-insight="${kind}" data-exercise-start ${ready?'':'disabled'}>${ready?'Jetzt üben':'Noch Daten sammeln'}</button>`;}
 function renderLearningInsights(){
  const container=$('learning-insights');if(!container||!ready)return;
  currentInsights=buildLearningInsights({sentences:[...data,...archived],grammar,grammarTopics:GRAMMAR_TOPICS,reviews:memory.reviews,verbProgress:memory.verbProgress,verbs:VERBS,pronouns:PRONOUNS,events:memory.performanceEvents});
@@ -339,7 +341,7 @@ function submitWritingAnswer(session,index){
 }
 function renderWritingSession(){
  renderWritingReviewControls();stopAudio();renderStats();$('keyboard-note').hidden=true;$('actions').innerHTML='';$('writing-history').hidden=true;
- const session=writingSessions[level];if(!session?.items.length){const available=writingPool().length;if(available>=MIN_WRITING_SENTENCES){$('card').className='card writing-setup';$('card').innerHTML=`<h2 id="writing-setup-title" tabindex="-1">Wie viele Sätze möchtest du schreiben?</h2><p>Wähle die Länge deines Schreibtests. Aktuell sind ${available} geeignete ${available===1?'Satz':'Sätze'} in diesem Level verfügbar.</p><div class="choice-buttons writing-count-options" role="group" aria-label="Satzanzahl wählen"><button type="button" data-writing-count="5">5 Sätze</button><button type="button" data-writing-count="10" ${available<10?'disabled title="Dafür brauchst du mindestens 10 geeignete Sätze."':''}>10 Sätze</button></div>`;document.querySelectorAll('[data-writing-count]').forEach(b=>b.onclick=()=>{startWritingSession(true,false,Number(b.dataset.writingCount));$('notice').textContent='';render();$('writing-input')?.focus();});return;}$('card').className='card empty';$('card').innerHTML='<h2>Noch keine Sätze bereit.</h2><p>Übe mindestens fünf Sätze jeweils zweimal in derselben Lernrichtung oder Hörübung. Du kannst auch ein anderes Level wählen.</p>';$('actions').innerHTML='<button id="writing-go-learn" class="primary">Sätze üben</button>';$('writing-go-learn').onclick=()=>{activity='translate';mode='new';start();};return;}
+ const session=writingSessions[level];if(!session?.items.length){const available=writingPool().length;if(available>=MIN_WRITING_SENTENCES){$('card').className='card writing-setup';$('card').innerHTML=`<h2 id="writing-setup-title" tabindex="-1">Wie viele Sätze möchtest du schreiben?</h2><p>Wähle die Länge deines Schreibtests. Aktuell sind ${available} geeignete ${available===1?'Satz':'Sätze'} in diesem Level verfügbar.</p><div class="choice-buttons writing-count-options" role="group" aria-label="Satzanzahl wählen"><button type="button" data-writing-count="5" data-exercise-start>5 Sätze</button><button type="button" data-writing-count="10" data-exercise-start ${available<10?'disabled title="Dafür brauchst du mindestens 10 geeignete Sätze."':''}>10 Sätze</button></div>`;document.querySelectorAll('[data-writing-count]').forEach(b=>b.onclick=()=>{startWritingSession(true,false,Number(b.dataset.writingCount));$('notice').textContent='';render();$('writing-input')?.focus();});return;}$('card').className='card empty';$('card').innerHTML='<h2>Noch keine Sätze bereit.</h2><p>Übe mindestens fünf Sätze jeweils zweimal in derselben Lernrichtung oder Hörübung. Du kannst auch ein anderes Level wählen.</p>';$('actions').innerHTML='<button id="writing-go-learn" class="primary" data-exercise-start>Sätze üben</button>';$('writing-go-learn').onclick=()=>{activity='translate';mode='new';start();};return;}
  const count=session.answers.length,total=session.items.length;
  if(count===total){
   $('card').className='card writing-results';
@@ -453,7 +455,7 @@ function renderVerbSession() {
  const card=$('card'),session=verbSession,summary=verbSummary(VERBS,memory.verbProgress);
  card.className='card verb-card';
  if(!session){
-  card.innerHTML=`<span class="card-label">Verbformen · Präsens</span><h2>Wie viele Formen möchtest du üben?</h2><p>200 Verben · Zufällige Personalpronomen · Neue Formen und gezielte Wiederholungen</p><p class="verb-coverage">${summary.seen} von ${summary.total} Formen schon gesehen · ${summary.secure} sicher</p><div class="choice-buttons verb-counts" role="group" aria-label="Anzahl der Aufgaben"><button type="button" data-verb-count="5">5 Aufgaben</button><button type="button" data-verb-count="10">10 Aufgaben</button></div><p class="verb-hint">Nach jeder Antwort siehst du alle sechs Formen. Schwierige Formen kommen mit Abstand wieder.</p>`;
+  card.innerHTML=`<span class="card-label">Verbformen · Präsens</span><h2>Wie viele Formen möchtest du üben?</h2><p>200 Verben · Zufällige Personalpronomen · Neue Formen und gezielte Wiederholungen</p><p class="verb-coverage">${summary.seen} von ${summary.total} Formen schon gesehen · ${summary.secure} sicher</p><div class="choice-buttons verb-counts" role="group" aria-label="Anzahl der Aufgaben"><button type="button" data-verb-count="5" data-exercise-start>5 Aufgaben</button><button type="button" data-verb-count="10" data-exercise-start>10 Aufgaben</button></div><p class="verb-hint">Nach jeder Antwort siehst du alle sechs Formen. Schwierige Formen kommen mit Abstand wieder.</p>`;
   card.querySelectorAll('[data-verb-count]').forEach(b=>b.onclick=()=>{verbSession=createVerbSession(Number(b.dataset.verbCount));$('practice-settings').open=false;nextVerbQuestion();});
   return;
  }
@@ -618,6 +620,23 @@ $('start-new-sentences').onclick=startNewSentences;
 $('quick-verb-review').onclick=()=>{if(dailySession)finishDailySession();activity='verbs';syncControls();renderStats();$('home-review').click();};
 $('start-daily-session').onclick=startDailySession;
 $('home-choose').onclick=()=>{if(dailySession?.active||guidedNew){dailySession=null;mode='new';start();}showView('practice',true);$('practice-settings').querySelector('summary')?.focus();};
+document.addEventListener('click',event=>{
+ const button=event.target.closest?.('[data-exercise-start]');
+ if(!button||accountActive()||guestExerciseAccepted)return;
+ event.preventDefault();event.stopImmediatePropagation();pendingGuestStart=button;
+ if(!$('guest-start-dialog').open)$('guest-start-dialog').showModal();
+},true);
+$('guest-continue').onclick=()=>{
+ guestExerciseAccepted=true;try{sessionStorage.setItem('suomi-guest-exercise-accepted','1');}catch{}
+ const button=pendingGuestStart;pendingGuestStart=null;$('guest-start-dialog').close();button?.click();
+};
+$('close-guest-start').onclick=()=>{$('guest-start-dialog').close();};
+$('guest-start-dialog').addEventListener('close',()=>{pendingGuestStart=null;});
+document.querySelectorAll('[data-guest-account]').forEach(button=>button.onclick=()=>{
+ pendingGuestStart=null;$('guest-start-dialog').close();
+ if(window.suomiOpenAccount)window.suomiOpenAccount(button.dataset.guestAccount);
+ else{$('account-button')?.click();setTimeout(()=>document.querySelector(`[data-account-tab="${button.dataset.guestAccount}"]`)?.click(),0);}
+});
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>showView(b.dataset.view));
 document.querySelectorAll('[data-home-activity]').forEach(b=>b.onclick=()=>{if(!ready||activity===b.dataset.homeActivity)return;activity=b.dataset.homeActivity;mode='new';start();});
 document.querySelectorAll('[data-home-direction]').forEach(b=>b.onclick=()=>{if(!ready||direction===b.dataset.homeDirection)return;direction=b.dataset.homeDirection;mode='new';start();});
