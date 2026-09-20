@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import {spawn} from 'node:child_process';
 import {chromium} from 'playwright';
 import {VERBS} from './dist/verbs-data.mjs';
-import {EVERYDAY_PATH} from './dist/learning-path.mjs';
+import {EVERYDAY_PATH,LEVEL_PATHS} from './dist/learning-path.mjs';
 import {PRONOUNS,markAsked,markAnswered} from './dist/verb-practice.mjs';
 const origin='http://localhost:4173';
 const server=spawn(process.execPath,['server.mjs'],{stdio:['ignore','pipe','inherit']});
@@ -158,7 +158,7 @@ try{
  for(const s of reviewSentences)assert.ok(afterReview.reviews[s.id+':fi-de'].due>Date.now());
  await focused.locator('#start-new-sentences').click();
  assert.ok((await focused.locator('#session-progress').textContent()).endsWith('/ 5'));
- assert.match(await focused.locator('#session-title').textContent(),/Begrüßung und Kennenlernen/);
+ assert.match(await focused.locator('#session-title').textContent(),/Begrüßung und Grundlagen/);
  assert.equal(await focused.locator('#practice-settings').isVisible(),false);
  await focused.locator('[data-pick-word]').first().click();
  await focused.locator('#practice-view [data-view="home"]').click();
@@ -174,16 +174,16 @@ try{
  assert.equal(Object.keys((await focused.evaluate(()=>window.suomiLearningState.snapshot())).reviews).length,8);
  await focused.locator('#next-session').click();
  assert.ok((await focused.locator('#session-progress').textContent()).endsWith('/ 5'));
- assert.match(await focused.locator('#session-title').textContent(),/Ins Gespräch kommen/);
+ assert.match(await focused.locator('#session-title').textContent(),/Begrüßung und Grundlagen · Teil 2/);
  for(let i=0;i<5;i++){
   await focused.locator('[data-pick-word]').first().click();await focused.locator('#reveal').click();await focused.locator('[data-grade="easy"]').click();
  }
- assert.match(await focused.locator('#card h2').textContent(),/Begrüßung und Kennenlernen geschafft/);
+ assert.match(await focused.locator('#card h2').textContent(),/Begrüßung und Grundlagen geschafft/);
  await focused.locator('#next-session').click();
- assert.match(await focused.locator('#session-title').textContent(),/Café und Restaurant/);
+ assert.match(await focused.locator('#session-title').textContent(),/Zahlen und Zeit/);
  await focused.locator('#practice-view [data-view="home"]').click();
  await focused.locator('.path-details > summary').click();
- assert.equal(await focused.locator('.path-stop').count(),6);
+ assert.equal(await focused.locator('.path-stop').count(),13);
  assert.equal(await focused.locator('.path-stop[aria-current="step"]').count(),1);
  for(const width of [390,320]){await focused.setViewportSize({width,height:844});assert.ok(await focused.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
  // Imported progress advances the same path without a new persistence schema.
@@ -194,8 +194,25 @@ try{
  await focused.locator('#more-exercises > summary').click();
  await focused.locator('#continue-practice').click();await focused.locator('#practice-view [data-view="home"]').click();
  assert.equal(await focused.locator('#start-new-sentences').isDisabled(),true);
- assert.equal(await focused.locator('#path-progress-text').textContent(),'60 von 60 Sätzen kennengelernt');
- assert.equal(await focused.locator('.path-stop.complete').count(),6);
+ assert.equal(await focused.locator('#path-progress-text').textContent(),`Level 1 · ${EVERYDAY_PATH.flatMap(t=>t.lessons.flatMap(l=>l.ids)).length} von ${EVERYDAY_PATH.flatMap(t=>t.lessons.flatMap(l=>l.ids)).length} Sätzen kennengelernt`);
+ assert.equal(await focused.locator('.path-stop.complete').count(),EVERYDAY_PATH.filter(t=>t.lessons.length).length);
+ assert.ok(await focused.locator('#path-next-level').isVisible());
+ await focused.locator('#path-next-level').click();
+ assert.equal(await focused.locator('#path-level').inputValue(),'2');
+ assert.equal(await focused.locator('#daily-plan-level').textContent(),'Level 2');
+ assert.match(await focused.locator('#path-progress-text').textContent(),/Level 2 · 0 von/);
+ await focused.locator('#path-level').selectOption('6');
+ assert.equal(await focused.locator('.path-stop').count(),13);
+ assert.ok(await focused.locator('.path-stop').getByText('Noch keine passenden Sätze in diesem Level',{exact:true}).count()>0);
+ await focused.locator('#start-new-sentences').click();
+ assert.match(await focused.locator('.card-top .card-label').textContent(),/Level 6/);
+ await focused.locator('#practice-view [data-view="home"]').click();
+ await focused.locator('#path-level').selectOption('2');
+ await focused.locator('#start-new-sentences').click();
+ assert.match(await focused.locator('.card-top .card-label').textContent(),/Level 2/);
+ await focused.locator('#practice-view [data-view="home"]').click();
+ await focused.locator('#path-level').selectOption('1');
+ assert.equal(await focused.locator('#start-new-sentences').isDisabled(),true);
  assert.deepEqual(errors,[]);
  await context.close();
  console.log('PASS: live cloud apply without reload, daily round, home selector, scoped review counts and launches, due-only verb round, preserved draft, identical colors, mobile layout, other exercises and guest privacy.');

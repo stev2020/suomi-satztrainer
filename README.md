@@ -207,3 +207,11 @@ Die Module und Styles sind Teil des Offline-Caches.
 Prüfen: `node test-verbforms.mjs`, `node test-auth-sync.mjs`.
 Browserprüfung: `node test-verbforms-browser.mjs` mit Playwright 1.55.0 und Chromium.
 Die GitHub-Action „Verify verb practice“ führt diese Prüfungen aus.
+
+## Levelbezogene Alltagspfade (2026-09-20)
+
+Jedes der sechs vorhandenen Levels hat einen eigenen Pfad mit 13 Themen in derselben Reihenfolge: Begrüßung/Grundlagen, Zahlen/Zeit, Essen/Trinken, Familie/Beziehungen, Reisen/Orientierung, Einkaufen/Geld, Körper/Gesundheit, Wetter/Natur, Gefühle/Meinungen, Arbeit/Technik, Umgangssprache/Slang, Liebe/Romantik und Notfälle/Hilfe. Der Levelwähler steht direkt am Lernpfad; nach Abschluss führt ein Button zum nächsten Level. Etappen enthalten maximal fünf Sätze.
+
+`dist/learning-path-data.mjs` hält feste Satz-IDs pro Level/Thema fest. Satztexte, Einstufungen, Quellen, Aufnahmen und bestehende Review-Schlüssel bleiben unverändert. Bereits geübte Sätze zählen im zugehörigen Level mit; die Startseiten-Wiederholungsrunde verwendet nur das gewählte Level. Fehlende Themeninhalte werden sichtbar gekennzeichnet, automatisch übersprungen und niemals als gelernt gezählt. Insbesondere Level 6 hat im Ausgangsbestand nur 19 Sätze; die Pfade sind daher noch kein vollständig ausgearbeiteter Kurs für jede Themen-/Level-Kombination.
+
+Prüfung: `node test-learning-path.mjs` sowie `node test-home-browser.mjs` (Playwright) für Levelwechsel, Fortsetzung, importierten Fortschritt und mobile Darstellung.

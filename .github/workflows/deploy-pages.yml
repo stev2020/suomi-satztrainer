@@ -29,6 +29,7 @@ jobs:
         run: |
           node --check dist/app.js
           node test-auth-sync.mjs
+          node test-learning-path.mjs
           node test-review-plan.mjs
           node test-word-practice.mjs
           node test-suchsel.mjs
