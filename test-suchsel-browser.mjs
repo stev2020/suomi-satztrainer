@@ -12,7 +12,7 @@ try{
  const cell=i=>page.locator(`[data-cell="${i}"]`);
  async function path(word,hard){return page.evaluate(({word,hard})=>{const b=[...document.querySelectorAll('[data-cell]')],n=Math.sqrt(b.length),dirs=hard?[[0,1],[1,0],[0,-1],[-1,0],[1,1],[1,-1],[-1,1],[-1,-1]]:[[0,1],[1,0]];for(let r=0;r<n;r++)for(let c=0;c<n;c++)for(const [dr,dc] of dirs){const cells=Array.from(word,(_,i)=>[r+dr*i,c+dc*i]);if(cells.every(([r,c],i)=>r>=0&&r<n&&c>=0&&c<n&&b[r*n+c].textContent===word[i]))return cells.map(([r,c])=>r*n+c);}throw Error('Word not placed');},{word,hard});}
  for(const difficulty of ['easy','hard']){
-  await page.goto('http://localhost:4173');await page.locator('#start-new-sentences:not([disabled])').waitFor();await page.locator('#more-exercises > summary').click();await page.locator('[data-home-activity="suchsel"]').click();
+  await page.goto('http://localhost:4173');await page.locator('#more-exercises > summary').click();await page.locator('#continue-practice:not([disabled])').waitFor();await page.locator('[data-home-activity="suchsel"]').click();
   assert.equal(await page.locator('#home-direction-control').isVisible(),false);
   await page.locator(`#home-view [data-search-difficulty="${difficulty}"]`).click();await page.locator('#continue-practice').click();
   assert.equal(await page.locator('#play-audio').count(),0);assert.equal(await page.locator('.search-found span').count(),0);
