@@ -45,7 +45,8 @@ try{
  for(const key of dueKeys)progress=markAnswered(markAsked(progress,key,now),key,false,now+1);
  progress=markAnswered(markAsked(progress,'olla:1',now),'olla:1',true,now+1);
  const state={reviews:{},favorites:[],daily:{},reports:{},writingRatings:{},verbProgress:progress,prefs:{level:1,direction:'fi-de',activity:'verbs',audioOnly:false,speed:1,grammarTopic:'negation'}};
- const sentences=JSON.parse(fs.readFileSync('dist/sentences.json','utf8')).sentences.filter(s=>s.level===1&&s.audios.length).slice(0,6);
+ const sentencePayload=JSON.parse(fs.readFileSync('dist/sentences.json','utf8'));
+ const sentences=sentencePayload.sentences.filter(s=>s.level===1&&s.audios.length).slice(0,6);
  for(const [kind,count] of [['fi-de',1],['de-fi',2],['listen',3],['dictation',4]])for(const s of sentences.slice(0,count))state.reviews[s.id+':'+kind]={due:now,interval:0,repetitions:2,updatedAt:now};
  await page.evaluate(state=>window.suomiLearningState.applyCloud(state),state);
  assert.ok(await page.locator('.home-daily').isVisible());
@@ -189,26 +190,27 @@ try{
  assert.match(await focused.locator('#session-title').textContent(),/Zahlen und Zeit/);
  await focused.locator('#practice-view [data-view="home"]').click();
  await focused.locator('.path-details > summary').click();
- assert.equal(await focused.locator('.path-stop').count(),13);
+ assert.equal(await focused.locator('.path-stop').count(),14);
  assert.equal(await focused.locator('.path-stop[aria-current="step"]').count(),1);
  for(const width of [390,320]){await focused.setViewportSize({width,height:844});assert.ok(await focused.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
  // Imported progress advances the same path without a new persistence schema.
  const finished=await focused.evaluate(()=>window.suomiLearningState.snapshot());
- for(const topic of EVERYDAY_PATH)for(const lesson of topic.lessons)for(const id of lesson.ids)finished.reviews[id+':fi-de']={due:Date.now()+86400000,repetitions:1,interval:1,updatedAt:Date.now()};
+ const levelOneIds=[...new Set([...sentencePayload.sentences,...sentencePayload.archived_sentences].filter(s=>s.level===1&&s.translations?.length).map(s=>s.id))];
+ for(const id of levelOneIds)finished.reviews[id+':fi-de']={due:Date.now()+86400000,repetitions:1,interval:1,updatedAt:Date.now()};
  await focused.evaluate(state=>window.suomiLearningState.applyCloud(state),finished);
  // Leaving a live lesson and returning recomputes the next position from reviews.
  await focused.locator('#more-exercises > summary').click();
  await focused.locator('#continue-practice').click();await focused.locator('#practice-view [data-view="home"]').click();
  assert.equal(await focused.locator('#start-new-sentences').isDisabled(),true);
- assert.equal(await focused.locator('#path-progress-text').textContent(),`Level 1 · ${EVERYDAY_PATH.flatMap(t=>t.lessons.flatMap(l=>l.ids)).length} von ${EVERYDAY_PATH.flatMap(t=>t.lessons.flatMap(l=>l.ids)).length} Sätzen kennengelernt`);
- assert.equal(await focused.locator('.path-stop.complete').count(),EVERYDAY_PATH.filter(t=>t.lessons.length).length);
+ assert.equal(await focused.locator('#path-progress-text').textContent(),`Level 1 · ${levelOneIds.length} von ${levelOneIds.length} Sätzen kennengelernt`);
+ assert.equal(await focused.locator('.path-stop.complete').count(),EVERYDAY_PATH.filter(t=>t.lessons.length).length+1);
  assert.ok(await focused.locator('#path-next-level').isVisible());
  await focused.locator('#path-next-level').click();
  assert.equal(await focused.locator('#path-level').inputValue(),'2');
  assert.equal(await focused.locator('#daily-plan-level').textContent(),'Level 2');
  assert.match(await focused.locator('#path-progress-text').textContent(),/Level 2 · 0 von/);
  await focused.locator('#path-level').selectOption('6');
- assert.equal(await focused.locator('.path-stop').count(),13);
+ assert.equal(await focused.locator('.path-stop').count(),14);
  assert.ok(await focused.locator('.path-stop').getByText('Noch keine passenden Sätze in diesem Level',{exact:true}).count()>0);
  await focused.locator('#start-new-sentences').click();
  assert.match(await focused.locator('.card-top .card-label').textContent(),/Level 6/);
