@@ -21,6 +21,7 @@ try{
  await page.locator('#start-new-sentences:not([disabled])').waitFor();
  assert.equal(await page.locator('#account-dialog').count(),1);
  assert.equal(await page.locator('#progress-nav').isVisible(),false);
+ assert.equal(await page.locator('#header-practice').isDisabled(),true);
  assert.equal(await page.locator('#account-button').textContent(),'Anmelden / Registrieren');
  assert.ok(await page.locator('#storage-account-link').isVisible());
  await page.locator('#storage-account-link').click();assert.ok(await page.locator('#login-form').isVisible());await page.locator('#close-account').click();
@@ -50,6 +51,7 @@ try{
  assert.ok(await page.locator('.home-daily').isVisible());
  assert.equal(await page.locator('#daily-plan-level').textContent(),'Level 1');
  assert.equal(await page.locator('#start-daily-session').isDisabled(),false);
+ assert.equal(await page.locator('#header-practice').isDisabled(),false);
  assert.ok(Number(await page.locator('#daily-due').textContent())>0);
  await page.locator('#start-daily-session').click();
  assert.ok(await page.locator('#guest-start-dialog').isVisible());
@@ -60,6 +62,10 @@ try{
  assert.ok((await page.locator('#session-progress').textContent()).endsWith('/ 4'));
  await home();
  assert.equal(await page.locator('#start-daily-session').textContent(),'Wiederholung fortsetzen');
+ await page.locator('#header-practice').click();
+ assert.ok(await page.locator('#practice-view').isVisible());
+ assert.equal(await page.locator('#practice-settings').isVisible(),false);
+ await home();
  assert.equal(await page.locator('#home-review').textContent(),'3 Verbformen wiederholen');
  assert.equal(await page.locator('#continue-practice').textContent(),'Üben');
  const colors=await page.evaluate(()=>['.today','#home-review','.home-exercises .selected','#continue-practice'].map(selector=>getComputedStyle(document.querySelector(selector)).backgroundColor));

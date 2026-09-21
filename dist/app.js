@@ -104,6 +104,7 @@ function renderDailyPlan(){
  $('daily-plan-level').textContent=`Level ${level}`;
  button.disabled=!ready||(!available&&!(dailySession?.active&&queue.length));
  button.textContent=dailySession?.active&&queue.length?'Wiederholung fortsetzen':available?`${available} ${available===1?'Satz':'Sätze'} wiederholen`:'Alles wiederholt';
+ $('header-practice').disabled=button.disabled;
 }
 function applyDailyCard(){
  if(!dailySession?.active||!queue.length)return;
@@ -585,6 +586,7 @@ function showView(name,openSettings=false){
  if(name==='home'&&dailySession?.active){const previous=dailySession.previous;activity=previous.activity;direction=previous.direction;difficulty=previous.difficulty;mode=previous.mode;syncControls();renderStats();}
  for(const view of ['home','practice','progress','classrooms']){const node=$(`${view}-view`);if(node)node.hidden=view!==name;}
  document.querySelectorAll('.header-nav [data-view]').forEach(b=>{const selected=b.dataset.view===name;b.classList.toggle('selected',selected);if(selected)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
+ const headerPractice=$('header-practice');headerPractice.classList.toggle('selected',name==='practice');if(name==='practice')headerPractice.setAttribute('aria-current','page');else headerPractice.removeAttribute('aria-current');
  if(name!=='practice')stopAudio();
  if(name==='practice'){applyDailyCard();$('practice-settings').open=openSettings;}
  window.scrollTo({top:0,behavior:'smooth'});
@@ -631,6 +633,7 @@ $('path-level').onchange=e=>choosePathLevel(Number(e.target.value));
 $('path-next-level').onclick=()=>choosePathLevel(levels.find(n=>n>level));
 $('quick-verb-review').onclick=()=>{if(dailySession)finishDailySession();activity='verbs';syncControls();renderStats();$('home-review').click();};
 $('start-daily-session').onclick=startDailySession;
+$('header-practice').onclick=startDailySession;
 $('home-choose').onclick=()=>{if(dailySession?.active||guidedNew){dailySession=null;mode='new';start();}showView('practice',true);$('practice-settings').querySelector('summary')?.focus();};
 document.addEventListener('click',event=>{
  const button=event.target.closest?.('[data-exercise-start]');
