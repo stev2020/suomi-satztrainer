@@ -30,4 +30,16 @@ assert.deepEqual(third.map(s=>s.id),[21,22,23,24,25,1]);
 assert.equal(reviewPlan([...sentences,sentences[0]],reviews,1,{now}).filter(s=>s.id===1).length,1);
 assert.deepEqual(reviewPlan(sentences,{'1:fi-de':record(NaN)},1,{now}),[]);
 assert.equal(reviewPlan(sentences,{'1:suchsel':record()},1,{now})[0].dailyActivity,'suchsel');
-console.log('PASS: due-only, unseen-only, unique sentences, fairness across rounds, levels, audio eligibility, archives and 2:1 difficulty.');
+const mixedReviews={
+ '1:suchsel':record(now-300,1),
+ '2:suchsel':record(now-200,2),
+ '2:de-fi':record(now-100,3),
+ '3:suchsel':record(now-100,4),
+ ...Object.fromEntries(sentences.slice(3,13).map((s,i)=>[`${s.id}:fi-de`,record(now-50,10+i)]))
+};
+const mixedPlan=reviewPlan(sentences,mixedReviews,1,{now});
+assert.equal(mixedPlan.length,10);
+assert.equal(mixedPlan.filter(s=>s.dailyActivity==='suchsel').length,1);
+assert.equal(mixedPlan.find(s=>s.id===2)?.dailyActivity,'translate');
+assert.ok(!mixedPlan.some(s=>s.id===3));
+console.log('PASS: due-only, unseen-only, unique sentences, fairness across rounds, levels, audio eligibility, archives, 2:1 difficulty and one Wortsel per round.');

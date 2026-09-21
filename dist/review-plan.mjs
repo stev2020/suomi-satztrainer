@@ -19,10 +19,16 @@ export function dueSentences(sentences,reviews,level,now=Date.now()){
  return [...unique.values()].sort((a,b)=>a.last-b.last||a.items[0].r.due-b.items[0].r.due||a.s.id-b.s.id);
 }
 export function reviewPlan(sentences,reviews,level,{now=Date.now(),limit=10,translationOffset=0}={}){
- let translated=translationOffset;
- return dueSentences(sentences,reviews,level,now).slice(0,limit).map(({s,items})=>{
-  const {kind}=items[0],translate=['fi-de','de-fi'].includes(kind);
-  return {...s,dailyActivity:translate?'translate':kind,practiceDirection:translate?kind:undefined,
-   dailyDifficulty:translate?(translated++%3===2?'hard':'easy'):'hard'};
- });
+ let translated=translationOffset,searchIncluded=false;
+ const plan=[];
+ for(const {s,items} of dueSentences(sentences,reviews,level,now)){
+  const item=searchIncluded?items.find(({kind})=>kind!=='suchsel'):items[0];
+  if(!item)continue;
+  const {kind}=item,translate=['fi-de','de-fi'].includes(kind);
+  plan.push({...s,dailyActivity:translate?'translate':kind,practiceDirection:translate?kind:undefined,
+   dailyDifficulty:translate?(translated++%3===2?'hard':'easy'):'hard'});
+  if(kind==='suchsel')searchIncluded=true;
+  if(plan.length>=limit)break;
+ }
+ return plan;
 }
