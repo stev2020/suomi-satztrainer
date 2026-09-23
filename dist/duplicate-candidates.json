@@ -1,0 +1,202 @@
+{
+  "version": 1,
+  "count": 14,
+  "candidates": [
+    {
+      "left": {
+        "id": 2668745,
+        "text": "Mene nukkumaan!",
+        "level": 2
+      },
+      "right": {
+        "id": 4562316,
+        "text": "Mene nukkumaan.",
+        "level": 2
+      },
+      "match": "exact",
+      "similarity": 1
+    },
+    {
+      "left": {
+        "id": 4896913,
+        "text": "Tomi on hukkumaisillaan.",
+        "level": 5
+      },
+      "right": {
+        "id": 4896917,
+        "text": "Tomi on hukkumaisillaan!",
+        "level": 5
+      },
+      "match": "exact",
+      "similarity": 1
+    },
+    {
+      "left": {
+        "id": 4896914,
+        "text": "Tomi hukkuu.",
+        "level": 3
+      },
+      "right": {
+        "id": 4896916,
+        "text": "Tomi hukkuu!",
+        "level": 3
+      },
+      "match": "exact",
+      "similarity": 1
+    },
+    {
+      "left": {
+        "id": 5539258,
+        "text": "Asuin ulkomailla kymmenen vuotta.",
+        "level": 4
+      },
+      "right": {
+        "id": 6146559,
+        "text": "Asuin kymmenen vuotta ulkomailla.",
+        "level": 4
+      },
+      "match": "near",
+      "similarity": 1
+    },
+    {
+      "left": {
+        "id": 5300956,
+        "text": "Siirretään sohva.",
+        "level": 4
+      },
+      "right": {
+        "id": 5300957,
+        "text": "Siirretään sohvaa.",
+        "level": 4
+      },
+      "match": "near",
+      "similarity": 0.9189
+    },
+    {
+      "left": {
+        "id": 4181817,
+        "text": "Matkustatko usein ulkomaille?",
+        "level": 3
+      },
+      "right": {
+        "id": 4181821,
+        "text": "Matkustatteko usein ulkomaille?",
+        "level": 3
+      },
+      "match": "near",
+      "similarity": 0.918
+    },
+    {
+      "left": {
+        "id": 6944870,
+        "text": "Matkustin ympäri Eurooppaa.",
+        "level": 4
+      },
+      "right": {
+        "id": 6944872,
+        "text": "Minä matkustin ympäri Eurooppaa.",
+        "level": 4
+      },
+      "match": "near",
+      "similarity": 0.918
+    },
+    {
+      "left": {
+        "id": 6952522,
+        "text": "Mitä kieliä osaat puhua?",
+        "level": 2
+      },
+      "right": {
+        "id": 6952523,
+        "text": "Mitä kieliä sinä osaat puhua?",
+        "level": 3
+      },
+      "match": "near",
+      "similarity": 0.9091
+    },
+    {
+      "left": {
+        "id": 4203513,
+        "text": "Tomi oli raivoissaan Marille.",
+        "level": 4
+      },
+      "right": {
+        "id": 4409351,
+        "text": "Tomi oli aivan raivoissaan Marille.",
+        "level": 5
+      },
+      "match": "near",
+      "similarity": 0.9063
+    },
+    {
+      "left": {
+        "id": 6946881,
+        "text": "Kirjoita minulle jotakin.",
+        "level": 2
+      },
+      "right": {
+        "id": 6947231,
+        "text": "Kirjoita minulle jotain.",
+        "level": 2
+      },
+      "match": "near",
+      "similarity": 0.902
+    },
+    {
+      "left": {
+        "id": 3553413,
+        "text": "Voitko avata oven?",
+        "level": 4
+      },
+      "right": {
+        "id": 7586539,
+        "text": "Voisitko avata oven?",
+        "level": 4
+      },
+      "match": "near",
+      "similarity": 0.9
+    },
+    {
+      "left": {
+        "id": 4139335,
+        "text": "Tomi on älykkäämpi kuin minä.",
+        "level": 4
+      },
+      "right": {
+        "id": 4673680,
+        "text": "Tomi on älykkäämpi kuin sinä.",
+        "level": 4
+      },
+      "match": "near",
+      "similarity": 0.9
+    },
+    {
+      "left": {
+        "id": 1962157,
+        "text": "Minulla on vähän rahaa.",
+        "level": 1
+      },
+      "right": {
+        "id": 5526401,
+        "text": "Minulla on hyvin vähän rahaa.",
+        "level": 1
+      },
+      "match": "near",
+      "similarity": 0.8889
+    },
+    {
+      "left": {
+        "id": 5050765,
+        "text": "Mari on todella kaunis.",
+        "level": 1
+      },
+      "right": {
+        "id": 6973818,
+        "text": "Mari on todella kaunis tyttö.",
+        "level": 1
+      },
+      "match": "near",
+      "similarity": 0.8519
+    }
+  ]
+}

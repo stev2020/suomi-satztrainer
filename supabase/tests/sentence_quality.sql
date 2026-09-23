@@ -5,6 +5,7 @@ insert into quality_test_ids values('owner',gen_random_uuid()),('student',gen_ra
 insert into auth.users(id,aud,role) select v,'authenticated','authenticated' from quality_test_ids;
 insert into public.profiles(user_id,username,recovery_token_hash)
  select v,'quality_'||substr(replace(v::text,'-',''),1,20),repeat('a',64) from quality_test_ids;
+insert into quality_private.reviewers(user_id) select v from quality_test_ids where k='owner';
 grant all on quality_test_ids to authenticated;
 set local role authenticated;
 do $$
@@ -22,6 +23,16 @@ begin
  v:=public.sentence_quality_exclusions();
  assert exists(select 1 from jsonb_array_elements(v->'translations') x where x->>'sentence_id'='42' and x->>'translation_id'='84'),
    'public exclusion list contains quarantined translation';
+ v:=public.sentence_quality_review_api('status','{}');assert (v->>'reviewer')::boolean,'reviewer status is private and explicit';
+ v:=public.sentence_quality_review_api('list_reports','{}');assert jsonb_array_length(v)=1,'reviewer sees open report';
+ perform public.sentence_quality_review_api('resolve_report',jsonb_build_object('report_id',v->0->>'id','decision','restore'));
+ v:=public.sentence_quality_exclusions();
+ assert not exists(select 1 from jsonb_array_elements(v->'translations') x where x->>'sentence_id'='42' and x->>'translation_id'='84'),
+   'reviewer can restore reported translation';
+ perform public.sentence_quality_review_api('resolve_duplicate',jsonb_build_object('left_sentence_id',90,'right_sentence_id',91,
+   'left_text','Hei.','right_text','Hei!','match_kind','exact','similarity',1,'decision','disable_right'));
+ v:=public.sentence_quality_exclusions();assert exists(select 1 from jsonb_array_elements(v->'sentence_ids') x where x::text='91'),
+   'duplicate decision disables selected sentence';
 
  perform public.sentence_quality_api('classroom_hide',jsonb_build_object('room_id',rid,'sentence_id',42,'reason','Nicht für diese Klasse'));
  v:=public.sentence_quality_api('classroom_list',jsonb_build_object('room_id',rid));
@@ -29,6 +40,11 @@ begin
 
  perform set_config('request.jwt.claim.sub',s::text,true);
  perform public.classroom_api('join',jsonb_build_object('code',code,'display_name','Student'));
+ v:=public.sentence_quality_review_api('status','{}');assert not (v->>'reviewer')::boolean,'student is not a reviewer';
+ begin
+   perform public.sentence_quality_review_api('list_reports','{}');
+   raise exception 'FAIL student reviewer queue';
+ exception when insufficient_privilege then null; end;
  begin
    perform public.sentence_quality_api('classroom_hide',jsonb_build_object('room_id',rid,'sentence_id',99));
    raise exception 'FAIL student classroom exclusion';
@@ -40,5 +56,5 @@ begin
  assert jsonb_array_length(v)=0,'teacher can restore classroom sentence';
 end $$;
 reset role;
-select 'PASS: quality quarantine, public filtering, teacher isolation and restore' as result;
+select 'PASS: quality quarantine, reviewer decisions, duplicate review, teacher isolation and restore' as result;
 rollback;

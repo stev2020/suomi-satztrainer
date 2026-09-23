@@ -1,4 +1,5 @@
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2';
+import {isPwnedPassword} from '../_shared/pwned-password.ts';
 
 const cors={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'authorization, x-client-info, apikey, content-type'};
 const json=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status,headers:{...cors,'Content-Type':'application/json','Cache-Control':'no-store'}});
@@ -23,6 +24,7 @@ Deno.serve(async req=>{
     if(!await consume(admin,serviceKey,'register-user',username,3,3600))return json({error:'Zu viele Registrierungsversuche für diesen Benutzernamen. Bitte versuche es später erneut.'},429);
     const existing=await admin.from('profiles').select('user_id').eq('username',username).maybeSingle();
     if(existing.data)return json({error:'Dieser Benutzername ist bereits vergeben.'},409);
+    try{if(await isPwnedPassword(password))return json({error:'Dieses Passwort ist aus bekannten Datenlecks bekannt. Bitte verwende ein anderes Passwort.'},400);}catch{}
     const created=await admin.auth.admin.createUser({email:`u${hex(username)}@users.suomi.invalid`,password,email_confirm:true,user_metadata:{username}});
     if(created.error||!created.data.user)return json({error:'Konto konnte nicht erstellt werden.'},400);
     const recoveryCode=code();

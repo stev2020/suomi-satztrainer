@@ -1,4 +1,5 @@
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2';
+import {isPwnedPassword} from '../_shared/pwned-password.ts';
 
 const cors={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'authorization, x-client-info, apikey, content-type'};
 const json=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status,headers:{...cors,'Content-Type':'application/json','Cache-Control':'no-store'}});
@@ -21,6 +22,7 @@ Deno.serve(async req=>{
     if(!await consume(admin,serviceKey,'recover-user',username,5,900))return json({error:'Zu viele Wiederherstellungsversuche für dieses Konto. Bitte versuche es in 15 Minuten erneut.'},429);
     const profile=await admin.from('profiles').select('user_id,recovery_token_hash').eq('username',username).maybeSingle();
     if(!profile.data||profile.data.recovery_token_hash!==await hash(recoveryCode))return json({error:'Benutzername oder Wiederherstellungscode ist falsch.'},403);
+    try{if(await isPwnedPassword(newPassword))return json({error:'Dieses Passwort ist aus bekannten Datenlecks bekannt. Bitte verwende ein anderes Passwort.'},400);}catch{}
     const updated=await admin.auth.admin.updateUserById(profile.data.user_id,{password:newPassword});
     if(updated.error)return json({error:'Passwort konnte nicht geändert werden.'},500);
     const nextCode=code();

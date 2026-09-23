@@ -176,3 +176,16 @@ header .header-nav button:hover,header .header-nav button.selected{background:va
 /* Sentence provenance stays visible without competing with the exercise. */
 .translation-provenance{display:inline-flex;align-items:center;width:fit-content;margin:2px auto 8px;padding:4px 8px;border:1px solid #172c3860;border-radius:999px;background:var(--paper);color:var(--muted);font-size:11px;font-weight:700;line-height:1.3}
 .translation-provenance.generated{background:#fff0db;color:#7b3517}.translation-provenance.indirect{background:var(--lavender);color:var(--purple)}.translation-provenance.direct{background:#e4f5f0;color:#27584f}.writing-result>.translation-provenance{margin:0 0 12px}
+
+.quality-review{border-top:1px solid var(--line);margin-top:1.5rem;padding-top:1rem}
+.quality-review-heading,.quality-review-meta,.quality-review-actions{display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap}
+.quality-review-heading h3,.quality-review-heading p{margin:.15rem 0}
+.quality-review-list{display:grid;gap:.75rem;margin-top:.75rem}
+.quality-review-card{border:1px solid var(--line);border-radius:14px;padding:.9rem;background:var(--paper)}
+.quality-review-card p{margin:.5rem 0}
+.quality-review-meta span,.quality-review-note{color:var(--muted);font-size:.9rem}
+.quality-review-actions{justify-content:flex-start;margin-top:.75rem}
+.quality-disable{color:#8c2f24;border-color:#d9a29b}
+.quality-duplicate-pair{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.quality-duplicate-pair p{background:#f7f3ea;border-radius:10px;padding:.65rem}
+@media(max-width:600px){.quality-duplicate-pair{grid-template-columns:1fr}.quality-review-actions button{width:100%}}

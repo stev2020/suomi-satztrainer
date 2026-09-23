@@ -182,6 +182,7 @@ export const accountUser=()=>session?.user||null;
 export {request as accountRequest};
 window.suomiAccountUser=()=>session?.user||null;
 window.suomiAccountRequest=request;
-import('./classrooms.js?v=70').catch(()=>{});
+import('./classrooms.js?v=71').catch(()=>{});
+import('./quality-review.js?v=1').catch(()=>{});
 if(session?.user&&configured())refreshSession().then(async ok=>{if(!ok)return;try{await pullAndMerge();}catch(err){syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true);status(err.message,true);}}).catch(syncError).finally(()=>{syncReady=true;if(syncQueued)scheduleSync()});
 else syncReady=true;
