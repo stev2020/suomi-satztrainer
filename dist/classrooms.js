@@ -1,4 +1,4 @@
-import {accountUser,accountRequest} from './auth.js?v=95';
+import {accountUser,accountRequest} from './auth.js?v=96';
 import {GRAMMAR_TOPICS,topicNotes} from './grammar-topics.mjs';
 
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
