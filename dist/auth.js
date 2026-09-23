@@ -5,7 +5,7 @@ import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './supabase-config.js';
 const STORE='suomi-learning-v1';
 const SESSION='suomi-auth-session-v1';
 const $=id=>document.getElementById(id);
-let session=null,lastSnapshot='',timer=null,syncInFlight=null,syncQueued=false,syncReady=false;
+let session=null,lastSnapshot='',timer=null,syncInFlight=null,syncQueued=false,syncReady=false,deletionManifest=null;
 
 const configured=()=>/^https:\/\/.+\.supabase\.co$/.test(SUPABASE_URL)&&SUPABASE_PUBLISHABLE_KEY.length>20;
 const normalizeUsername=v=>{
@@ -17,6 +17,7 @@ const checkPassword=v=>{
   const s=String(v||'');
   if(s.length<8||s.length>200) throw new Error('Das Passwort muss 8–200 Zeichen lang sein.');
 };
+const escapeHTML=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const hex=s=>Array.from(new TextEncoder().encode(s)).map(b=>b.toString(16).padStart(2,'0')).join('');
 const technicalEmail=u=>`u${hex(u)}@users.suomi.invalid`;
 const api=(path,options={})=>fetch(`${SUPABASE_URL}${path}`,{...options,headers:{apikey:SUPABASE_PUBLISHABLE_KEY,'Content-Type':'application/json',...(options.headers||{})}});
@@ -139,6 +140,37 @@ async function recover(username,recoveryCode,newPassword){
   if(!r.ok)throw new Error(result.error||'Wiederherstellung fehlgeschlagen.');
   await login(username,newPassword,true);return result.recoveryCode;
 }
+async function loadDeletionManifest(){
+  const r=await request('/rest/v1/rpc/account_deletion_manifest',{method:'POST',body:'{}'});
+  const result=await r.json().catch(()=>null);
+  if(!r.ok||!result)throw new Error('Die Kontodaten konnten nicht geladen werden.');
+  deletionManifest=result;return result;
+}
+function renderDeletionRooms(manifest){
+  const rooms=Array.isArray(manifest.rooms)?manifest.rooms:[];
+  $('delete-account-rooms').innerHTML=rooms.length?rooms.map(room=>{
+    const teachers=Array.isArray(room.teachers)?room.teachers:[];
+    if(!teachers.length)return `<section class="account-delete-room"><strong>${escapeHTML(room.name)}</strong><p>Keine weitere Lehrkraft vorhanden: Dieser Klassenraum wird vollständig gelöscht.</p><input type="hidden" data-delete-room="${escapeHTML(room.id)}" value=""></section>`;
+    return `<section class="account-delete-room"><label>${escapeHTML(room.name)}<select data-delete-room="${escapeHTML(room.id)}" required><option value="">Bitte auswählen</option>${teachers.map(teacher=>`<option value="${escapeHTML(teacher.id)}">An ${escapeHTML(teacher.name)} übertragen</option>`).join('')}<option value="delete">Klassenraum vollständig löschen</option></select></label></section>`;
+  }).join(''):'<p>Du besitzt keine Klassenräume. Es ist keine Übergabe erforderlich.</p>';
+}
+function deletionDecisions(){
+  if(!deletionManifest)throw new Error('Die Klassenraum-Auswahl wurde noch nicht geladen.');
+  return [...document.querySelectorAll('[data-delete-room]')].map(input=>{
+    if(input.tagName==='SELECT'&&!input.value)throw new Error('Bitte entscheide für jeden eigenen Klassenraum.');
+    return {room_id:input.dataset.deleteRoom,new_owner_id:input.value&&input.value!=='delete'?input.value:null};
+  });
+}
+async function deleteAccount(username,password,decisions){
+  username=normalizeUsername(username);checkPassword(password);
+  const r=await request('/functions/v1/delete-account',{method:'POST',body:JSON.stringify({username,password,decisions})});
+  const result=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error(result.error||'Das Konto konnte nicht gelöscht werden.');
+  clearTimeout(timer);syncQueued=false;syncReady=false;
+  localStorage.removeItem(STORE);localStorage.removeItem(SESSION);
+  try{sessionStorage.removeItem('suomi-guest-exercise-accepted')}catch{}
+  session=null;location.reload();
+}
 async function logout(){
   clearTimeout(timer);
   if(session?.access_token)await api('/auth/v1/logout',{method:'POST',headers:authHeaders()}).catch(()=>{});
@@ -147,7 +179,7 @@ async function logout(){
   location.reload();
 }
 function addDialog(){
-  document.body.insertAdjacentHTML('beforeend',`<dialog id="account-dialog" aria-labelledby="account-title"><div class="dialog-top"><h2 id="account-title">Dein Konto</h2><button id="close-account" class="quiet" aria-label="Schließen">✕</button></div><div id="account-unconfigured" hidden><p>Die Kontofunktion ist vorbereitet, aber die Serververbindung ist noch nicht aktiviert.</p></div><div id="account-logged-out"><div class="account-tabs"><button type="button" data-account-tab="login" class="selected">Anmelden</button><button type="button" data-account-tab="register">Registrieren</button><button type="button" data-account-tab="recover">Passwort vergessen</button></div><form id="login-form" class="account-form"><label>Benutzername<input id="login-name" autocomplete="username" required></label><label>Passwort<input id="login-password" type="password" autocomplete="current-password" required minlength="8"></label><button class="primary" type="submit">Anmelden</button></form><form id="register-form" class="account-form" hidden><label>Benutzername<input id="register-name" autocomplete="username" required></label><label>Passwort<input id="register-password" type="password" autocomplete="new-password" required minlength="8"></label><button class="primary" type="submit">Konto erstellen</button><p class="account-hint">Keine E-Mail nötig. Danach erhältst du einmalig einen Wiederherstellungscode.</p></form><form id="recover-form" class="account-form" hidden><label>Benutzername<input id="recover-name" autocomplete="username" required></label><label>Wiederherstellungscode<input id="recover-code" autocomplete="off" required></label><label>Neues Passwort<input id="recover-password" type="password" autocomplete="new-password" required minlength="8"></label><button class="primary" type="submit">Passwort neu setzen</button></form></div><div id="account-logged-in" hidden><p>Angemeldet als <strong id="account-name"></strong></p><p id="account-sync">Synchronisierung wird geprüft …</p><button id="sync-now" class="quiet" type="button">Jetzt synchronisieren</button><button id="logout" class="quiet" type="button">Abmelden</button></div><div id="recovery-result" class="recovery-result" hidden><h3>Wiederherstellungscode</h3><p>Speichere diesen Code sicher. Er wird nicht noch einmal angezeigt.</p><code id="recovery-code-result"></code><button id="copy-recovery" class="quiet" type="button">Code kopieren</button></div><p id="account-status" role="status"></p></dialog>`);
+  document.body.insertAdjacentHTML('beforeend',`<dialog id="account-dialog" aria-labelledby="account-title"><div class="dialog-top"><h2 id="account-title">Dein Konto</h2><button id="close-account" class="quiet" aria-label="Schließen">✕</button></div><div id="account-unconfigured" hidden><p>Die Kontofunktion ist vorbereitet, aber die Serververbindung ist noch nicht aktiviert.</p></div><div id="account-logged-out"><div class="account-tabs"><button type="button" data-account-tab="login" class="selected">Anmelden</button><button type="button" data-account-tab="register">Registrieren</button><button type="button" data-account-tab="recover">Passwort vergessen</button></div><form id="login-form" class="account-form"><label>Benutzername<input id="login-name" autocomplete="username" required></label><label>Passwort<input id="login-password" type="password" autocomplete="current-password" required minlength="8"></label><button class="primary" type="submit">Anmelden</button></form><form id="register-form" class="account-form" hidden><label>Benutzername<input id="register-name" autocomplete="username" required></label><label>Passwort<input id="register-password" type="password" autocomplete="new-password" required minlength="8"></label><button class="primary" type="submit">Konto erstellen</button><p class="account-hint">Keine E-Mail nötig. Danach erhältst du einmalig einen Wiederherstellungscode.</p></form><form id="recover-form" class="account-form" hidden><label>Benutzername<input id="recover-name" autocomplete="username" required></label><label>Wiederherstellungscode<input id="recover-code" autocomplete="off" required></label><label>Neues Passwort<input id="recover-password" type="password" autocomplete="new-password" required minlength="8"></label><button class="primary" type="submit">Passwort neu setzen</button></form></div><div id="account-logged-in" hidden><p>Angemeldet als <strong id="account-name"></strong></p><p id="account-sync">Synchronisierung wird geprüft …</p><button id="sync-now" class="quiet" type="button">Jetzt synchronisieren</button><button id="logout" class="quiet" type="button">Abmelden</button><button id="delete-account-open" class="quiet account-danger" type="button">Konto löschen</button><form id="delete-account-form" class="account-form account-delete-form" hidden><h3>Konto endgültig löschen</h3><p>Dein Konto, Lernstand, Beiträge, Abgaben, Meldungen und Mitgliedschaften werden unwiderruflich gelöscht. Eigene Klassenräume kannst du an eine dort aktive Lehrkraft übergeben; ohne Übergabe werden sie mitsamt allen Inhalten gelöscht.</p><div id="delete-account-rooms"></div><label>Benutzername zur Bestätigung<input id="delete-account-name" autocomplete="off" required></label><label>Aktuelles Passwort<input id="delete-account-password" type="password" autocomplete="current-password" required minlength="8"></label><div class="account-delete-actions"><button id="delete-account-confirm" class="account-danger" type="submit">Konto endgültig löschen</button><button id="delete-account-cancel" class="quiet" type="button">Abbrechen</button></div></form></div><div id="recovery-result" class="recovery-result" hidden><h3>Wiederherstellungscode</h3><p>Speichere diesen Code sicher. Er wird nicht noch einmal angezeigt.</p><code id="recovery-code-result"></code><button id="copy-recovery" class="quiet" type="button">Code kopieren</button></div><p id="account-status" role="status"></p></dialog>`);
 }
 function showRecovery(code){$('recovery-code-result').textContent=code;$('recovery-result').hidden=false}
 function selectAccountTab(tab='login'){
@@ -170,6 +202,9 @@ function bind(){
   $('register-form').onsubmit=async e=>{e.preventDefault();try{status('Konto wird erstellt …');showRecovery(await register($('register-name').value,$('register-password').value));status('Konto erstellt und angemeldet.')}catch(err){status(err.message,true)}};
   $('recover-form').onsubmit=async e=>{e.preventDefault();try{status('Konto wird wiederhergestellt …');showRecovery(await recover($('recover-name').value,$('recover-code').value,$('recover-password').value));status('Passwort geändert. Der alte Wiederherstellungscode ist ungültig.')}catch(err){status(err.message,true)}};
   $('logout').onclick=async()=>{await logout()};
+  $('delete-account-open').onclick=async()=>{try{status('Klassenräume werden geprüft …');$('delete-account-open').disabled=true;renderDeletionRooms(await loadDeletionManifest());$('delete-account-form').hidden=false;$('delete-account-name').focus();status('')}catch(err){status(err.message,true)}finally{$('delete-account-open').disabled=false}};
+  $('delete-account-cancel').onclick=()=>{$('delete-account-form').reset();$('delete-account-form').hidden=true;deletionManifest=null;status('')};
+  $('delete-account-form').onsubmit=async e=>{e.preventDefault();const submit=$('delete-account-confirm');try{submit.disabled=true;status('Konto und gespeicherte Daten werden gelöscht …');await deleteAccount($('delete-account-name').value,$('delete-account-password').value,deletionDecisions())}catch(err){submit.disabled=false;status(err.message,true)}};
   $('sync-now').onclick=async()=>{try{status('');await pullAndMerge()}catch(err){syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true);status(err.message,true)}};
   $('copy-recovery').onclick=async()=>{try{await navigator.clipboard.writeText($('recovery-code-result').textContent);status('Code kopiert.')}catch{status('Bitte kopiere den Code manuell.',true)}};
   window.addEventListener('suomi-learning-changed',scheduleSync);
