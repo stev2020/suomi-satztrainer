@@ -14,6 +14,8 @@ let teacher=true;
 const room={id,name:'Finnisch am Mittwoch',teacher:true,owner:true,teacher_count:1,archived:false,code:'ABCD1234ABCD1234',member_count:1,members:[{id:'student',name:'learner',role:'student',owner:false,blocked:false}],assignments:[]};
 await page.route('**/auth/v1/**',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({access_token:'test',refresh_token:'test',user:{id,user_metadata:{username:'teacher'}}})}));
 await page.route('**/rest/v1/learning_state**',route=>route.fulfill({status:200,contentType:'application/json',body:'[]'}));
+await page.route('**/rest/v1/rpc/sentence_quality_exclusions',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({sentence_ids:[],translations:[]})}));
+await page.route('**/rest/v1/rpc/sentence_quality_api',route=>route.fulfill({status:200,contentType:'application/json',body:'[]'}));
 await page.route('**/rest/v1/rpc/classroom_api',async route=>{
  const {action,payload}=route.request().postDataJSON();let result={};
  if(action==='list')result=[{...room,teacher}];
@@ -54,10 +56,10 @@ try{
  await page.locator('#classrooms-button').click();teacher=true;
  await page.locator('[data-cr=open]').click();await page.locator('[data-cr=assignment]').click();
  await page.locator('[data-cr=release]').click();await page.locator('[data-cr=react]').first().waitFor();
- await page.screenshot({path:'/workspace/scratch/a73c6d3205e6/classroom-desktop.png',fullPage:true});
+ if(process.env.CLASSROOM_SCREENSHOTS)await page.screenshot({path:process.env.CLASSROOM_SCREENSHOTS+'/classroom-desktop.png',fullPage:true});
  await page.setViewportSize({width:390,height:844});
  await page.locator('[data-cr=back]').click();
  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'no mobile horizontal overflow');
- await page.screenshot({path:'/workspace/scratch/a73c6d3205e6/classroom-mobile.png',fullPage:true});
+ if(process.env.CLASSROOM_SCREENSHOTS)await page.screenshot({path:process.env.CLASSROOM_SCREENSHOTS+'/classroom-mobile.png',fullPage:true});
  assert.deepEqual(errors,[]);console.log('PASS: guest gate, create, assignment picker, submit, XSS escaping, questions, release, teacher/student UI, mobile layout');
 }finally{await browser.close();}

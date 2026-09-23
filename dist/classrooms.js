@@ -5,9 +5,10 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const $=id=>document.getElementById(id);
 const date=v=>v?new Date(v).toLocaleString('de-DE'):'Ohne Abgabetermin';
 let room=null,selected=null,deck=null,grammar=null,customItems=[],busy=false,dirty=false;
+let classroomHidden=new Map(),globalQuality={sentence_ids:[],translations:[]};
 const replyDrafts=new Map();
 const drafts=new Map(); // Memory only; never localStorage or service-worker data.
-const css=document.createElement('link');css.rel='stylesheet';css.href='./classrooms.css?v=68';document.head.append(css);
+const css=document.createElement('link');css.rel='stylesheet';css.href='./classrooms.css?v=69';document.head.append(css);
 const button=document.createElement('button');button.id='classrooms-button';button.type='button';button.dataset.view='classrooms';button.textContent='Klassenräume';
 const headerNav=document.querySelector('.header-nav');
 if(headerNav)headerNav.insertBefore(button,headerNav.querySelector('[data-view="progress"]'));else $('account-button').before(button);
@@ -22,6 +23,23 @@ async function api(action,payload={}){
  const value=await response.json().catch(()=>({}));
  if(!response.ok||value.error)throw new Error(value.error||(value.code==='23505'?'Bereits abgegeben. Bitte aktualisieren.':value.message)||'Anfrage fehlgeschlagen. Bitte erneut versuchen.');
  return value;
+}
+async function qualityApi(action,payload={}){
+ if(!accountUser())throw new Error('Bitte zuerst anmelden.');
+ const response=await accountRequest('/rest/v1/rpc/sentence_quality_api',{method:'POST',body:JSON.stringify({action,payload})});
+ const value=await response.json().catch(()=>({}));
+ if(!response.ok||value.error)throw new Error(value.error||value.message||'Qualitätsprüfung nicht verfügbar. Bitte erneut versuchen.');
+ return value;
+}
+async function loadGlobalQuality(){
+ const response=await accountRequest('/rest/v1/rpc/sentence_quality_exclusions',{method:'POST',body:'{}'});
+ if(!response.ok)return {sentence_ids:[],translations:[]};
+ return response.json();
+}
+function availableDeck(){
+ const blockedSentences=new Set([...(globalQuality.sentence_ids||[]).map(Number),...classroomHidden.keys()]);
+ const blockedTranslations=new Set((globalQuality.translations||[]).map(pair=>`${Number(pair.sentence_id)}:${Number(pair.translation_id)}`));
+ return (deck||[]).filter(s=>!blockedSentences.has(Number(s.id))).map(s=>({...s,translations:(s.translations||[]).filter(t=>!blockedTranslations.has(`${Number(s.id)}:${Number(t.id)}`))})).filter(s=>s.translations.length);
 }
 async function run(fn){
  if(busy)return;busy=true;status('Wird geladen …');$('classrooms-view').setAttribute('aria-busy','true');
@@ -80,11 +98,13 @@ async function composer(){
    if(!sentencesResponse.ok||!grammarResponse.ok)throw new Error('Sätze und Grammatikthemen konnten nicht geladen werden.');
    deck=(await sentencesResponse.json()).sentences;grammar=(await grammarResponse.json()).sentences;
  }
+ const [quality,hidden]=await Promise.all([loadGlobalQuality(),qualityApi('classroom_list',{room_id:room.id})]);
+ globalQuality=quality||{sentence_ids:[],translations:[]};classroomHidden=new Map((hidden||[]).map(item=>[Number(item.sentence_id),item]));
  selected=new Map();customItems=[{de:'',fi:'',added:false}];
  const customSection=title=>`<section class="cr-assignment-source"><div class="cr-section-heading"><div><h4>${title}</h4><p class="cr-note">Diese Sätze gelten nur für diese Aufgabe und erscheinen später nicht als gespeicherte Auswahl.</p></div>${b('＋ Weiteren Satz eingeben','add_custom')}</div><div data-custom-host></div></section>`;
  $('cr-composer').scrollIntoView?.({block:'start',behavior:'smooth'});
- $('cr-composer').innerHTML=`<form data-cr-form="assign" class="cr-card"><h3>Neue Aufgabe</h3><div class="cr-tabs" role="tablist" aria-label="Art der Sätze"><button type="button" role="tab" aria-selected="true" data-cr="tab_custom">Eigene Sätze</button><button type="button" role="tab" aria-selected="false" data-cr="tab_existing">Vorhandene Sätze</button></div><label>Titel<input name="title" required minlength="3" maxlength="100" placeholder="Unsere erste Übersetzungsrunde"></label><label>Abgabetermin (optional)<input name="due" type="datetime-local"></label><div id="cr-tab-custom" role="tabpanel">${customSection('Eigene Sätze erstellen')}</div><div id="cr-tab-existing" role="tabpanel" hidden><section class="cr-assignment-source"><h4>Vorhandene Sätze auswählen</h4><div class="cr-grid"><label>Level<select id="cr-level">${[1,2,3,4,5,6].map(n=>`<option>${n}</option>`).join('')}</select></label><label>Grammatikthema<select id="cr-topic"></select></label></div><p id="cr-topic-hint" class="cr-note"></p><div id="cr-sentence-picker"></div></section>${customSection('Eigene Sätze ergänzen')}</div><p>Insgesamt sind 1–20 hinzugefügte oder ausgewählte Sätze möglich.</p><p id="cr-selection-count">0 Sätze ausgewählt</p><button class="primary">Aufgabe veröffentlichen</button></form>`;
- renderTopicOptions();picker();renderCustomItems();updateSelectionCount();
+ $('cr-composer').innerHTML=`<form data-cr-form="assign" class="cr-card"><h3>Neue Aufgabe</h3><div class="cr-tabs" role="tablist" aria-label="Art der Sätze"><button type="button" role="tab" aria-selected="true" data-cr="tab_custom">Eigene Sätze</button><button type="button" role="tab" aria-selected="false" data-cr="tab_existing">Vorhandene Sätze</button></div><label>Titel<input name="title" required minlength="3" maxlength="100" placeholder="Unsere erste Übersetzungsrunde"></label><label>Abgabetermin (optional)<input name="due" type="datetime-local"></label><div id="cr-tab-custom" role="tabpanel">${customSection('Eigene Sätze erstellen')}</div><div id="cr-tab-existing" role="tabpanel" hidden><section class="cr-assignment-source"><h4>Vorhandene Sätze auswählen</h4><div class="cr-grid"><label>Level<select id="cr-level">${[1,2,3,4,5,6].map(n=>`<option>${n}</option>`).join('')}</select></label><label>Grammatikthema<select id="cr-topic"></select></label></div><p id="cr-topic-hint" class="cr-note"></p><div id="cr-sentence-picker"></div><details class="cr-hidden-sentences"><summary>Für diesen Klassenraum ausgeblendet · <span id="cr-hidden-count">0</span></summary><div id="cr-hidden-list"></div></details></section>${customSection('Eigene Sätze ergänzen')}</div><p>Insgesamt sind 1–20 hinzugefügte oder ausgewählte Sätze möglich.</p><p id="cr-selection-count">0 Sätze ausgewählt</p><button class="primary">Aufgabe veröffentlichen</button></form>`;
+ renderTopicOptions();picker();renderHiddenSentences();renderCustomItems();updateSelectionCount();
 }
 const addedCustomItems=()=>customItems.filter(item=>item.added);
 const selectionSize=()=>selected.size+addedCustomItems().length;
@@ -95,18 +115,23 @@ function setComposerTab(name){
  document.querySelectorAll('.cr-tabs [role=tab]').forEach(tab=>tab.setAttribute('aria-selected',String(tab.dataset.cr===(custom?'tab_custom':'tab_existing'))));
 }
 function renderTopicOptions(){
- const select=$('cr-topic'),level=Number($('cr-level').value),current=select.value;
- const allCount=deck.filter(s=>s.level===level&&s.translations?.length).length;
- select.innerHTML=`<option value="all">Alle (${allCount})</option>`+GRAMMAR_TOPICS.map(t=>{const count=deck.filter(s=>s.level===level&&s.translations?.length&&topicNotes(s,grammar,t.id).length).length;return `<option value="${t.id}">${esc(t.label)} (${count})</option>`;}).join('');
+ const select=$('cr-topic'),level=Number($('cr-level').value),current=select.value,usable=availableDeck();
+ const allCount=usable.filter(s=>s.level===level&&s.translations?.length).length;
+ select.innerHTML=`<option value="all">Alle (${allCount})</option>`+GRAMMAR_TOPICS.map(t=>{const count=usable.filter(s=>s.level===level&&s.translations?.length&&topicNotes(s,grammar,t.id).length).length;return `<option value="${t.id}">${esc(t.label)} (${count})</option>`;}).join('');
  if(current==='all'||GRAMMAR_TOPICS.some(t=>t.id===current))select.value=current;
 }
 function picker(){
  const level=Number($('cr-level').value),topicId=$('cr-topic').value,topic=GRAMMAR_TOPICS.find(t=>t.id===topicId),showAll=topicId==='all';
- const matches=deck.filter(s=>s.level===level&&s.translations?.length&&(showAll||topicNotes(s,grammar,topicId).length));
+ const matches=availableDeck().filter(s=>s.level===level&&s.translations?.length&&(showAll||topicNotes(s,grammar,topicId).length));
  $('cr-topic-hint').textContent=showAll?'Alle vorhandenen Sätze dieses Levels.':topic?.hint||'';
  const visible=showAll?matches:matches.slice(0,80);
- $('cr-sentence-picker').innerHTML=visible.map(s=>`<label class="cr-pick"><input type="checkbox" data-sentence="${s.id}" ${selected.has(s.id)?'checked':''}><span>${esc(s.translations[0].text)}${sentenceSourceIcon(s.translations[0])}<small lang="fi">${esc(s.text)}${sentenceSourceIcon(s)}</small></span></label>`).join('')||'<p>Keine passenden Sätze.</p>';
+ $('cr-sentence-picker').innerHTML=visible.map(s=>`<div class="cr-pick-row"><label class="cr-pick"><input type="checkbox" data-sentence="${s.id}" ${selected.has(s.id)?'checked':''}><span>${esc(s.translations[0].text)}${sentenceSourceIcon(s.translations[0])}<small lang="fi">${esc(s.text)}${sentenceSourceIcon(s)}</small></span></label>${b('Ausblenden','hide_sentence',`data-id="${s.id}" aria-label="Satz nur in diesem Klassenraum ausblenden"`)}</div>`).join('')||'<p>Keine passenden Sätze.</p>';
  if(!showAll&&matches.length>80)$('cr-sentence-picker').insertAdjacentHTML('beforeend','<p>Die ersten 80 Treffer. Wähle bei Bedarf ein anderes Level oder Thema.</p>');
+}
+function renderHiddenSentences(){
+ if(!$('cr-hidden-list'))return;
+ $('cr-hidden-count').textContent=classroomHidden.size;
+ $('cr-hidden-list').innerHTML=[...classroomHidden.keys()].map(id=>{const s=deck.find(item=>Number(item.id)===id);return `<div class="cr-hidden-row"><span>${s?`${esc(s.translations?.[0]?.text||'')}<small lang="fi">${esc(s.text)}</small>`:`Satz #${id}`}</span>${b('Wieder einblenden','restore_sentence',`data-id="${id}"`)}</div>`;}).join('')||'<p class="cr-note">Noch keine Sätze ausgeblendet.</p>';
 }
 function renderCustomItems(){
  const html=customItems.map((item,i)=>`<fieldset class="cr-custom-item ${item.added?'cr-custom-added':''}"><legend>Eigener Satz ${i+1}${item.added?' · ✓ Hinzugefügt':''}</legend>${item.added?`<p class="cr-added" role="status">✓ Hinzugefügt – dieser Satz ist Teil der Aufgabe.</p><p class="cr-custom-text" lang="de"><strong>Deutscher Satz</strong><br>${esc(item.de)}</p><p class="cr-custom-text" lang="fi"><strong>Richtige finnische Übersetzung</strong><br>${esc(item.fi)}</p>`:`<label>Deutscher Satz<textarea data-custom-index="${i}" data-custom-field="de" maxlength="500" rows="2" lang="de" placeholder="Welchen Satz sollen die Schüler übersetzen?">${esc(item.de)}</textarea></label><label>Richtige finnische Übersetzung<textarea data-custom-index="${i}" data-custom-field="fi" maxlength="500" rows="2" lang="fi" placeholder="Die richtige Lösung auf Finnisch">${esc(item.fi)}</textarea></label>`}<div class="cr-toolbar">${item.added?b('Satz bearbeiten','edit_custom',`data-index="${i}"`):b('Satz hinzufügen','confirm_custom',`data-index="${i}"`)}${b('Satz entfernen','remove_custom',`data-index="${i}"`)}</div></fieldset>`).join('')||'<p class="cr-note">Noch keine eigenen Sätze eingegeben.</p>';
@@ -177,6 +202,14 @@ $('classrooms-content').addEventListener('click',e=>{
    if(action==='assignment')return assignment(el.dataset.id);
    if(action==='refresh_assignment')return refreshAssignment();
    if(action==='new_assignment')return composer();
+   if(action==='hide_sentence'){
+     const id=Number(el.dataset.id),sentence=deck?.find(s=>Number(s.id)===id);if(!sentence)throw new Error('Satz nicht gefunden.');
+     if(!confirm('Diesen Satz für zukünftige Aufgaben in diesem Klassenraum ausblenden?'))return;
+     await qualityApi('classroom_hide',{room_id:room.id,sentence_id:id});classroomHidden.set(id,{sentence_id:id});selected.delete(id);renderTopicOptions();picker();renderHiddenSentences();updateSelectionCount();return;
+   }
+   if(action==='restore_sentence'){
+     const id=Number(el.dataset.id);await qualityApi('classroom_restore',{room_id:room.id,sentence_id:id});classroomHidden.delete(id);renderTopicOptions();picker();renderHiddenSentences();return;
+   }
    if(action==='tab_custom')return setComposerTab('custom');
    if(action==='tab_existing')return setComposerTab('existing');
    if(action==='add_custom'){

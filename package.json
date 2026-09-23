@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node server.mjs",
-    "test": "node test-grammar.mjs && node test-learning-insights.mjs && node test-learning-path.mjs"
+    "test": "node test-grammar.mjs && node test-learning-insights.mjs && node test-learning-path.mjs && node test-sentence-quality.mjs"
   },
   "engines": {
     "node": ">=18"
