@@ -21,7 +21,7 @@ if(!hasStoredSession())try{localStorage.removeItem(STORE);}catch{}
 const REPORT_CATEGORIES={translation:'Übersetzung falsch',unnatural:'Unnatürlich formuliert',outdated:'Veraltet oder ungebräuchlich',inappropriate:'Ungeeignet oder anstößig',duplicate:'Doppelter Satz',grammar:'Grammatikhilfe',audio:'Aufnahme',level:'Falsches Level',other:'Sonstiges'};
 let memory={reviews:{},favorites:[],daily:{},prefs:{},reports:{},writingRatings:{},verbProgress:{},performanceEvents:[]};
 try{const saved=hasStoredSession()?JSON.parse(localStorage.getItem(STORE)):null;if(saved&&typeof saved==='object'){for(const k of ['reviews','daily','prefs'])if(saved[k]&&typeof saved[k]==='object'&&!Array.isArray(saved[k]))memory[k]=saved[k];if(Array.isArray(saved.favorites))memory.favorites=saved.favorites.filter(Number.isInteger);if(saved.verbProgress)try{memory.verbProgress=validateVerbProgress(saved.verbProgress);}catch{}if(saved.performanceEvents)try{memory.performanceEvents=validatePerformanceEvents(saved.performanceEvents);}catch{}if(saved.writingRatings)try{memory.writingRatings=validateWritingRatings(saved.writingRatings);}catch{}if(saved.reports)try{memory.reports=validateReports(saved.reports);}catch{}}}catch{}
-let grammar={},grammarAvailable=false;
+let grammar={},grammarAvailable=false,loadedSentenceIds=new Set();
 const qualityExclusions={sentences:new Set(),translations:new Set()};
 const qualityTranslationKey=(sentenceId,translationId)=>`${sentenceId}:${translationId}`;
 const qualitySourceKind=item=>['english_bridge','finnish_adaptation'].includes(item?.origin)?'app_generated':item?.origin==='tatoeba_via_english'?'indirect_tatoeba':item?.origin==='teacher_created'?'editorial':item?.id?'direct_tatoeba':'unknown';
@@ -86,13 +86,14 @@ function prepareAudio(url){
  while(audioCache.size>AUDIO_CACHE_LIMIT){const [oldURL,oldAudio]=audioCache.entries().next().value;oldAudio.pause();oldAudio.removeAttribute('src');oldAudio.load();audioCache.delete(oldURL);}
  return audio;
 }
-function preloadQueueAudio(){const urls=queue.slice(0,3).map(s=>s.audios?.[0]?.download_url).filter(Boolean);for(const url of new Set(urls))prepareAudio(url);}
+// Audio comes from api.tatoeba.org; load it only while the practice view is open (privacy, data use).
+function preloadQueueAudio(){if($('practice-view')?.hidden)return;const urls=queue.slice(0,3).map(s=>s.audios?.[0]?.download_url).filter(Boolean);for(const url of new Set(urls))prepareAudio(url);}
 function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function dailyPlan(){
  return reviewPlan(homeReviewPool([...data,...archived],level),memory.reviews,null,{translationOffset:reviewTranslationCount});
 }
 let reviewTranslationCount=0,guidedNew=false,pathSession=null;
-const pathState=()=>everydayPathState([...data,...archived],memory.reviews,level);
+const pathState=()=>{const cards=[...data,...archived],available=new Set(cards.filter(s=>s.translations?.length).map(s=>s.id));return everydayPathState(cards,memory.reviews,level,new Set([...loadedSentenceIds].filter(id=>!available.has(id))));};
 function renderLearningPath(){
  const state=pathState(),active=guidedNew&&pathSession?.level===level&&queue.length;
  const topic=active?pathSession.topic:state.topic,lesson=active?pathSession.lesson:state.lesson;
@@ -601,14 +602,14 @@ $('close-report').onclick=()=>$('report-dialog').close();$('report-category').on
 $('report-form').onsubmit=async e=>{e.preventDefault();if(!reportSentence)return;const submit=e.submitter||$('report-form').querySelector('[type="submit"]'),category=$('report-category').value;if(!Object.hasOwn(REPORT_CATEGORIES,category))return;const note=$('report-note').value.trim();if(note.length>2000)return;const id=`${reportSentence.id}:${category}`,old=memory.reports[id],now=Math.max(Date.now(),(old?.updatedAt||0)+1);const r={sentenceId:reportSentence.id,category,note,sentenceText:reportSentence.text,translationText:reportSentence.translations.map(t=>t.text).join(' / '),createdAt:old?.createdAt||now,updatedAt:now};
  try{
   commitLearning({...memory,reports:{...memory.reports,[id]:r}});if($('report-error'))$('report-error').textContent='Hinweis bearbeiten';
-  if(!accountActive()||typeof window.suomiAccountRequest!=='function'){$('report-status').textContent='Hinweis nur für diese Sitzung vorgemerkt. Melde dich an, damit der Satz zentral geprüft und vorläufig ausgeschlossen wird.';return;}
+  if(!accountActive()||typeof window.suomiAccountRequest!=='function'){$('report-status').textContent='Hinweis nur für diese Sitzung vorgemerkt. Melde dich an, damit der Satz zentral geprüft wird.';return;}
   submit.disabled=true;$('report-status').textContent='Hinweis wird eingereicht …';
   const translation=reportSentence.translations[0];
   const response=await window.suomiAccountRequest('/rest/v1/rpc/sentence_quality_api',{method:'POST',body:JSON.stringify({action:'report',payload:{sentence_id:reportSentence.id,translation_id:category==='translation'&&Number.isSafeInteger(Number(translation?.id))?Number(translation.id):null,category,note,sentence_text:reportSentence.text,translation_text:r.translationText,source_kind:qualitySourceKind(category==='translation'?translation:reportSentence),activity}})});
   const value=await response.json().catch(()=>({}));if(!response.ok||value.error)throw new Error(value.error||value.message||'Der Hinweis konnte nicht eingereicht werden.');
   if(value.target==='translation'&&translation?.id)qualityExclusions.translations.add(qualityTranslationKey(Number(reportSentence.id),Number(translation.id)));else qualityExclusions.sentences.add(Number(reportSentence.id));
   data=qualityFilteredCards(data);archived=qualityFilteredCards(archived);renderStats();
-  $('report-status').textContent=value.target==='translation'?'Danke. Diese Übersetzungsverbindung ist bis zur Prüfung aus normalen Runden ausgeschlossen.':'Danke. Dieser Satz ist bis zur Prüfung aus normalen Runden ausgeschlossen.';
+  $('report-status').textContent=value.target==='translation'?'Danke. Diese Übersetzung ist für dich ausgeblendet und wird geprüft.':'Danke. Dieser Satz ist für dich ausgeblendet und wird geprüft.';
   submit.disabled=false;
  }catch(err){submit.disabled=false;$('report-status').textContent=`Der Hinweis bleibt in deinem Konto gespeichert, konnte aber noch nicht zentral eingereicht werden: ${err.message}`;}
 };
@@ -626,7 +627,7 @@ function showView(name,openSettings=false){
  document.querySelectorAll('.header-nav [data-view]').forEach(b=>{const selected=b.dataset.view===name;b.classList.toggle('selected',selected);if(selected)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
  const headerPractice=$('header-practice');headerPractice.classList.toggle('selected',name==='practice');if(name==='practice')headerPractice.setAttribute('aria-current','page');else headerPractice.removeAttribute('aria-current');
  if(name!=='practice')stopAudio();
- if(name==='practice'){applyDailyCard();$('practice-settings').open=openSettings;}
+ if(name==='practice'){applyDailyCard();$('practice-settings').open=openSettings;preloadQueueAudio();}
  window.scrollTo({top:0,behavior:'smooth'});
 }
 $('continue-practice').onclick=()=>{
@@ -704,4 +705,4 @@ $('audio-only').onchange=e=>{audioOnly=e.target.checked;start();};document.query
 $('about').onclick=()=>$('about-dialog').showModal();$('close-about').onclick=()=>$('about-dialog').close();$('about-dialog').onclick=e=>{if(e.target===$('about-dialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}};
 document.addEventListener('keydown',e=>{if($('practice-view').hidden||document.querySelector('dialog[open]')||(!$('classrooms-view')?.hidden)||!ready||['writing','verbs','suchsel'].includes(activity)||$('about-dialog').open||$('report-dialog').open||$('manage-dialog').open||e.ctrlKey||e.metaKey||e.altKey||e.repeat||['INPUT','SELECT','TEXTAREA'].includes(e.target.tagName))return;if(e.code==='Space'&&e.target.tagName!=='BUTTON'&&!revealed&&queue.length&&isTranslation()){e.preventDefault();$('reveal').click();}else if(revealed&&['1','2','3'].includes(e.key)){e.preventDefault();grade({1:'again',2:'hard',3:'easy'}[e.key]);}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stopAudio();else if(ready)renderStats();});
-try{const response=await fetch('sentences.json');if(!response.ok)throw new Error('load');const payload=await response.json();await loadQualityExclusions();data=qualityFilteredCards(payload.sentences);if(Array.isArray(payload.levels))levels=payload.levels.map(l=>l.id).filter(Number.isInteger);if(!levels.includes(level))level=levels[0]||1;archived=qualityFilteredCards(Array.isArray(payload.archived_sentences)?payload.archived_sentences:[]);if(!Array.isArray(data)||!data.length)throw new Error('empty');try{const g=await fetch('grammar.json');if(g.ok){const payload=await g.json();grammar=payload.sentences||{};grammarAvailable=true;}}catch{}ready=true;start();if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});}catch{$('card').className='card empty';$('card').innerHTML='<h2>Die Sätze konnten nicht geladen werden.</h2><p>Prüfe deine Verbindung und lade die Seite erneut.</p>';$('actions').innerHTML='<button class="primary" id="retry">Erneut versuchen</button>';$('retry').onclick=()=>location.reload();$('total').textContent='Sätze nicht verfügbar';}
+try{const response=await fetch('sentences.json');if(!response.ok)throw new Error('load');const payload=await response.json();await loadQualityExclusions();loadedSentenceIds=new Set([...(payload.sentences||[]),...(Array.isArray(payload.archived_sentences)?payload.archived_sentences:[])].filter(s=>s?.translations?.length).map(s=>s.id));data=qualityFilteredCards(payload.sentences);if(Array.isArray(payload.levels))levels=payload.levels.map(l=>l.id).filter(Number.isInteger);if(!levels.includes(level))level=levels[0]||1;archived=qualityFilteredCards(Array.isArray(payload.archived_sentences)?payload.archived_sentences:[]);if(!Array.isArray(data)||!data.length)throw new Error('empty');try{const g=await fetch('grammar.json');if(g.ok){const payload=await g.json();grammar=payload.sentences||{};grammarAvailable=true;}}catch{}ready=true;start();if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});}catch{$('card').className='card empty';$('card').innerHTML='<h2>Die Sätze konnten nicht geladen werden.</h2><p>Prüfe deine Verbindung und lade die Seite erneut.</p>';$('actions').innerHTML='<button class="primary" id="retry">Erneut versuchen</button>';$('retry').onclick=()=>location.reload();$('total').textContent='Sätze nicht verfügbar';}

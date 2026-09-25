@@ -11,14 +11,17 @@ function completeLevelPath(sentences,level){
  for(let i=0;i<extraIds.length;i+=5)lessons.push({id:`more-${i/5+1}`,title:`Zusatzrunde ${i/5+1}`,ids:extraIds.slice(i,i+5)});
  return [...configured,{id:'more',title:'Weitere Sätze',goal:'Lerne auch die übrigen Sätze dieses Levels kennen.',lessons}];
 }
-export function everydayPathState(sentences,reviews={},level=1){
+// skipped: IDs, die bewusst ausgeblendet sind (z. B. gemeldet oder in Prüfung). Sie zählen weder als offen
+// noch in die Gesamtzahl. Fehlende IDs, die nicht in skipped stehen, blockieren weiter (Schutz vor Teil-Ladefehlern).
+export function everydayPathState(sentences,reviews={},level=1,skipped=new Set()){
  const byId=new Map(sentences.filter(s=>s.level===level).map(s=>[s.id,s]));
  const seen=id=>REVIEW_KINDS.some(kind=>Number(reviews[`${id}:${kind}`]?.repetitions)>0);
  const topics=completeLevelPath(sentences,level).map(topic=>{
   const lessons=topic.lessons.map((lesson,index)=>{
    const cards=lesson.ids.map(id=>byId.get(id)).filter(s=>s?.translations?.length);
    const remaining=cards.filter(s=>!seen(s.id));
-   return {...lesson,index,cards,remaining,seen:cards.length-remaining.length,total:lesson.ids.length,complete:cards.length===lesson.ids.length&&!remaining.length};
+   const total=lesson.ids.filter(id=>!skipped.has(id)).length;
+   return {...lesson,index,cards,remaining,seen:cards.length-remaining.length,total,complete:cards.length>=total&&!remaining.length};
   });
   const total=lessons.reduce((n,l)=>n+l.total,0);
   return {...topic,lessons,seen:lessons.reduce((n,l)=>n+l.seen,0),total,available:total>0,complete:total>0&&lessons.every(l=>l.complete)};

@@ -1,4 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&display=swap');
+/* Schriften lokal ausgeliefert (SIL OFL 1.1, siehe fonts/), keine Verbindung zu Google. */
+@font-face{font-family:'DM Sans';font-style:normal;font-weight:100 1000;font-display:swap;src:url(fonts/dm-sans-latin-wght-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'DM Sans';font-style:normal;font-weight:100 1000;font-display:swap;src:url(fonts/dm-sans-latin-ext-wght-normal.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Fraunces';font-style:normal;font-weight:100 900;font-display:swap;src:url(fonts/fraunces-latin-standard-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Fraunces';font-style:normal;font-weight:100 900;font-display:swap;src:url(fonts/fraunces-latin-ext-standard-normal.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
 :root{color-scheme:light;--ink:#172c38;--muted:#52616a;--bg:#faf7f0;--paper:#fffdf8;--mint:#ace0d4;--orange:#ff935c;--purple:#65478b;--lavender:#e9dff6;--line:#172c38;--blue:#65478b;--lime:#ace0d4;--heading:'Fraunces',Georgia,serif}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 'DM Sans',sans-serif}
@@ -190,3 +194,4 @@ header .header-nav button:hover,header .header-nav button.selected{background:va
 .quality-duplicate-pair{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
 .quality-duplicate-pair p{background:#f7f3ea;border-radius:10px;padding:.65rem}
 @media(max-width:600px){.quality-duplicate-pair{grid-template-columns:1fr}.quality-review-actions button{width:100%}}
+

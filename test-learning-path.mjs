@@ -25,6 +25,14 @@ for(let level=1;level<=6;level++){
  assert(state.topics.filter(t=>!t.available).every(t=>!t.complete));
  // Existing review keys count; missing data must never produce false completion.
  assert(!everydayPathState(sentences.filter(s=>s.id!==ids[0]),reviews,level).complete);
+ // Deliberately hidden sentences (reported, quarantined) are skipped instead of blocking the path.
+ const hidden=new Set([ids[0]]),withoutHidden=sentences.filter(s=>s.id!==ids[0]);
+ state=everydayPathState(withoutHidden,reviews,level,hidden);assert(state.complete,'hidden sentence must not block the path');
+ const lessonOf=topics.flatMap(t=>t.lessons).find(l=>l.ids.includes(ids[0]));
+ const hiddenLesson=new Set(lessonOf.ids),freshReviews={};
+ state=everydayPathState(sentences.filter(s=>!hiddenLesson.has(s.id)),freshReviews,level,hiddenLesson);
+ assert(!state.topics.flatMap(t=>t.lessons).find(l=>l.id===lessonOf.id&&l.ids[0]===lessonOf.ids[0]).total,'fully hidden lesson has nothing to do');
+ assert.notDeepEqual(state.lesson?.ids,lessonOf.ids,'fully hidden lesson is not offered');
  const other=sentences.find(s=>s.level!==level);mark(other.id);
  const plan=reviewPlan(homeReviewPool(sentences,level),reviews,null);assert(plan.length);assert(plan.every(s=>s.level===level));
  for(const id of levelIds)reviews[id+':fi-de'].due=Date.now()+86400000;

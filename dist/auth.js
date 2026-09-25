@@ -33,11 +33,20 @@ const currentLearning=()=>window.suomiLearningState?.snapshot?.()||localLearning
 function saveSession(v){session=v;if(v)localStorage.setItem(SESSION,JSON.stringify(v));else localStorage.removeItem(SESSION);renderAccount();}
 function loadSession(){try{const v=JSON.parse(localStorage.getItem(SESSION));if(v?.access_token&&v?.refresh_token)session=v}catch{}}
 
+// Only an explicitly rejected refresh token ends the session. Server errors (5xx),
+// rate limits (429) and network failures keep the session and the local learning
+// state, so answers that are not synchronized yet are never thrown away.
+let refreshInFlight=null;
 async function refreshSession(){
   if(!session?.refresh_token)return false;
-  const r=await api('/auth/v1/token?grant_type=refresh_token',{method:'POST',body:JSON.stringify({refresh_token:session.refresh_token})});
-  if(!r.ok){localStorage.removeItem(STORE);saveSession(null);location.reload();return false}
-  saveSession(await r.json());return true;
+  if(refreshInFlight)return refreshInFlight;
+  refreshInFlight=(async()=>{
+    const r=await api('/auth/v1/token?grant_type=refresh_token',{method:'POST',body:JSON.stringify({refresh_token:session.refresh_token})});
+    if(r.status===400||r.status===401){localStorage.removeItem(STORE);saveSession(null);location.reload();return false}
+    if(!r.ok){syncState('Server gerade nicht erreichbar. Dein Lernstand bleibt auf diesem Gerät gespeichert.',true);return false}
+    saveSession(await r.json());return true;
+  })();
+  try{return await refreshInFlight}finally{refreshInFlight=null}
 }
 async function request(path,options={}){
   let r=await api(path,{...options,headers:{...authHeaders(),...(options.headers||{})}});
@@ -173,6 +182,12 @@ async function deleteAccount(username,password,decisions){
 }
 async function logout(){
   clearTimeout(timer);
+  // Send pending answers before the local copy is removed (at most 5 seconds).
+  const current=currentLearning();
+  if(session?.user&&current&&stableJSON(current)!==lastSnapshot){
+    syncState('Letzte Änderungen werden gespeichert …');
+    await Promise.race([(syncInFlight||Promise.resolve()).then(()=>synchronizeLearning(currentLearning(),false,true)).catch(()=>{}),new Promise(r=>setTimeout(r,5000))]);
+  }
   if(session?.access_token)await api('/auth/v1/logout',{method:'POST',headers:authHeaders()}).catch(()=>{});
   localStorage.removeItem(STORE);
   saveSession(null);
@@ -217,7 +232,7 @@ export const accountUser=()=>session?.user||null;
 export {request as accountRequest};
 window.suomiAccountUser=()=>session?.user||null;
 window.suomiAccountRequest=request;
-import('./classrooms.js?v=71').catch(()=>{});
+import('./classrooms.js?v=72').catch(()=>{});
 import('./quality-review.js?v=1').catch(()=>{});
 if(session?.user&&configured())refreshSession().then(async ok=>{if(!ok)return;try{await pullAndMerge();}catch(err){syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true);status(err.message,true);}}).catch(syncError).finally(()=>{syncReady=true;if(syncQueued)scheduleSync()});
 else syncReady=true;

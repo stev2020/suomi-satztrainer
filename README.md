@@ -215,3 +215,13 @@ Jedes der sechs vorhandenen Levels hat einen eigenen Pfad mit 13 Themen in derse
 `dist/learning-path-data.mjs` hält feste Satz-IDs pro Level/Thema fest. Satztexte, Einstufungen, Quellen, Aufnahmen und bestehende Review-Schlüssel bleiben unverändert. Bereits geübte Sätze zählen im zugehörigen Level mit; die Startseiten-Wiederholungsrunde verwendet nur das gewählte Level. Fehlende Themeninhalte werden sichtbar gekennzeichnet, automatisch übersprungen und niemals als gelernt gezählt. Insbesondere Level 6 hat im Ausgangsbestand nur 19 Sätze; die Pfade sind daher noch kein vollständig ausgearbeiteter Kurs für jede Themen-/Level-Kombination.
 
 Prüfung: `node test-learning-path.mjs` sowie `node test-home-browser.mjs` (Playwright) für Levelwechsel, Fortsetzung, importierten Fortschritt und mobile Darstellung.
+
+
+## Audit-Korrekturen (25. September 2026)
+
+- **Lernpfad:** Gemeldete oder in Prüfung befindliche Sätze werden übersprungen und blockieren keine Etappe mehr. Fehlende Satzdaten ohne Meldung blockieren weiterhin (Schutz vor unvollständigem Laden).
+- **Anmeldung:** Nur ein abgelehnter Refresh-Token (HTTP 400/401) beendet die Sitzung. Serverfehler, 429 und Netzfehler behalten Sitzung und lokalen Lernstand. Parallele Refreshes laufen gebündelt. Beim Abmelden werden offene Änderungen vorher (höchstens 5 s) synchronisiert.
+- **Meldungen:** Eine Meldung blendet den Inhalt sofort nur für die meldende Person aus. Global in Prüfung geht er erst, wenn ein Prüfer meldet oder drei verschiedene Konten, die älter als 24 Stunden sind, ihn gemeldet haben (`20260925080000_sentence_quality_report_threshold.sql`).
+- **Datenschutz:** Schriften lokal in `dist/fonts/` statt Google Fonts; kein Preconnect zu Tatoeba; Audio wird erst in der Übungsansicht geladen; Rate-Limit-Zähler werden nach zwei Tagen gelöscht (`20260925080100_abuse_rate_limits_cleanup.sql`).
+- **Datenbank:** Beide Migrationen müssen auf das Supabase-Projekt angewendet sein (SQL-Editor).
+- **Tests:** `npm test` enthält jetzt auch `test-auth-sync.mjs` und `test-auth-refresh.mjs`. Die Datenbanktests laufen mit `node test-classroom-db.mjs` (benötigt `@electric-sql/pglite`) und prüfen jetzt auch die Qualitätsmeldungen.
