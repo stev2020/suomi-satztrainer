@@ -309,3 +309,7 @@ Jeder dieser 1.454 Kandidaten wurde von KI geprüft (`sources/level-fill-instruc
 - `sources/level-fill-2026-09-25.json` hält die übernommenen Sätze fest (mit Prüfstatistik); `build_full_deck.py` fügt sie deterministisch hinzu und bricht bei ID- oder Textdubletten ab. `build_level_fill.py` (`check`/`assemble`) dokumentiert die Auswahl; die Rohdaten der Prüfung liegen nicht im Repository.
 - **Lernpfade:** Dünne Themen wurden mit thematisch passenden neuen Sätzen auf bis zu 10 Sätze aufgefüllt (`scripts/extend-paths.mjs`), nur durch angehängte Etappen, z. B. Level 2 Reisen 4 → 10, Gesundheit 5 → 10, Liebe 5 → 10; Level 6 von 0–2 auf 3–10 je Thema. Alle übrigen neuen Sätze erscheinen wie bisher in „Weitere Sätze“.
 - Rebuild: `python build_full_deck.py`, `python build_import_grammar.py`, `python build_lexicon.py build`.
+
+## Dialoge für Level 6 (25. September 2026)
+
+Nach dem Auffüllen von Level 6 gibt es auch dort zu allen 13 Themen einen Dialog (125 Zeilen, 28 Lernpfad-Sätze wörtlich), jetzt 78 Dialoge. Level 6 nutzt anspruchsvolle, aber gesprochen plausible Konstruktionen (*herättyäni, pimeän tultua*, Referativ nach *luulla/nähdä*, *jotta/ettei*); zu schriftliche Partizipkonstruktionen wurden beim Gegenlesen ersetzt (`review-level-6.md`). Die Abschlusskarte bietet den Dialog nun auch in Level 6 an. Temporalkonstruktionen auf -tua/-tyä heißen in der Wortanalyse jetzt „Temporalkonstruktion „nachdem …““ statt nur „Partizip Perfekt passiv · Partitiv“.

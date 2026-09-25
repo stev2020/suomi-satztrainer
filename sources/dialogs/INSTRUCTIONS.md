@@ -48,6 +48,7 @@ Die Aimo-Wortkontingente, Stationen, Figuren (Aimo, Marja, Lumi) und Datenformat
   - Level 3: dazu Imperfekt, Perfekt, längere Sätze, *että*-Sätze.
   - Level 4: dazu Konditional, Nebensätze (*kun, jos, koska*), Passiv, Infinitivkonstruktionen.
   - Level 5: dazu abstrakterer Wortschatz, Meinungen, Umgangssprache.
+  - Level 6: anspruchsvolle, dichte Sprache: Partizip- und Infinitivkonstruktionen (*tultuaan, tehdessään, jotta*), mehrteilige Sätze, gehobener oder fachnaher Wortschatz, Argumentieren und Erzählen; trotzdem gesprochen und natürlich. Puhekieli wie Level 5 nur in lockeren Szenen, dann durchgehend.
 - Wortschatz überwiegend aus den Lernpfad-Sätzen dieses und der niedrigeren Level; höchstens etwa fünf neue, gut erschließbare Wörter pro Dialog.
 - **Sprachlage: puhuttu yleiskieli** (Standardformen, gesprochene Syntax): duzen, *joo* als Ja, Kurzantwort mit dem Verb (*– Onko teillä…? – On.*), Ellipse, 1–3 Partikeln (*no, joo, ai, niin, okei, no niin*), Klitika (*-kin, -han, -pa, mitäs*) sparsam, *minä/sinä* nicht in jedem Satz. Keine Konditionalketten beim Bestellen (*kiitos* genügt), kein *Kyllä.* als bloßes Ja.
 - **Ausnahme Thema `slang` (Umgangssprache):** Ab Level 3 bewusst Puhekieli (*mä, sä, oon, mun, -ks, se* für Personen, *mennään*), konsistent im ganzen Dialog, und die `de`-Zeile übersetzt normal. In Level 1–2 für `slang` nur die verbreitetsten lockeren Wörter (*moi, moikka, kiitti, heippa, joo, okei, jees*), sonst Standardformen. Auf Level 5 dürfen auch andere lockere Situationen (Freunde) Puhekieli nutzen – dann durchgehend.
