@@ -1,0 +1,8 @@
+# Zeilenenden im Repository immer als LF (Unix) speichern und auschecken,
+# damit Windows-Editoren keine Scheinänderungen erzeugen.
+* text=auto eol=lf
+
+# Binärdateien nie anfassen
+*.png binary
+*.woff2 binary
+*.bz2 binary
