@@ -1,6 +1,6 @@
 # Quellen und Lizenzen
 
-Der Code von Vanamo steht unter der AGPL-3.0-or-later (siehe `LICENSE`). Eigene Lerninhalte – Grammatikhilfen, Dialoge, Wortanalysen, KI-gestützte eigene Übersetzungen und Wortlisten – stehen unter CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/deed.de), sofern unten nichts anderes angegeben ist. Die folgenden fremden Inhalte behalten ihre eigenen Lizenzen.
+Der Code von Vanamo steht unter der AGPL-3.0-or-later (siehe `LICENSE`). Eigene Lerninhalte – Grammatikhilfen, Dialoge, Wortanalysen, KI-gestützte eigene Übersetzungen und Wortlisten – stehen unter CC BY-NC-SA 4.0 (https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de), sofern unten nichts anderes angegeben ist. Die folgenden fremden Inhalte behalten ihre eigenen Lizenzen.
 
 ## Satztexte
 

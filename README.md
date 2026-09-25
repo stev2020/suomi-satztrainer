@@ -14,7 +14,7 @@ Aktuell ist Vanamo ein Finnisch-Deutsch-Satztrainer. Weitere Sprachen, eine mehr
 ## Lizenz
 
 - **Code:** GNU Affero General Public License v3.0 oder später (AGPL-3.0-or-later), siehe [`LICENSE`](LICENSE). Jede und jeder darf den Code nutzen, verändern und weitergeben. Wer eine veränderte Fassung als Website oder App anbietet, muss den eigenen Quellcode ebenfalls unter der AGPL offenlegen.
-- **Eigene Lerninhalte** (Grammatikhilfen, Dialoge, Wortanalysen, eigene Übersetzungen und Wortlisten): Creative Commons Namensnennung – Weitergabe unter gleichen Bedingungen 4.0 (CC BY-SA 4.0), soweit in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) nichts anderes steht.
+- **Eigene Lerninhalte** (Grammatikhilfen, Dialoge, Wortanalysen, eigene Übersetzungen und Wortlisten): Creative Commons Namensnennung – Nicht kommerziell – Weitergabe unter gleichen Bedingungen 4.0 (CC BY-NC-SA 4.0), soweit in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) nichts anderes steht.
 - **Fremde Inhalte** behalten ihre eigene Lizenz: Tatoeba-Satztexte (meist CC BY 2.0 FR), Tatoeba-Aufnahmen (CC BY-NC 4.0, nur nichtkommerziell), Schriften (SIL Open Font License), Phaser (MIT). Details in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
 - Der Name „Vanamo“ und das Logo sind von diesen Lizenzen nicht erfasst.
 
