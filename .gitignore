@@ -1,3 +1,5 @@
 node_modules/
 __pycache__/
 sources/lexicon-work/
+sources/level-fill-work/
+sources/tatoeba-export/
