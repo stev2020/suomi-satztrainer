@@ -5,7 +5,7 @@ import {createRequire} from 'node:module';
 const require=createRequire(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES+'/playwright/package.json');
 const {chromium}=require('playwright');
 const browser=await chromium.launch({headless:true,executablePath:process.env.PLAYWRIGHT_EXECUTABLE_PATH||undefined,args:['--no-sandbox','--disable-dev-shm-usage','--no-zygote','--single-process']});
-const page=await browser.newPage({viewport:{width:1280,height:900}});
+const page=await browser.newPage({viewport:{width:1280,height:900},locale:'de-DE'});
 const errors=[];page.on('pageerror',e=>errors.push(e.message));
 page.on('dialog',d=>d.accept());
 const base=process.env.TEST_BASE_URL||'http://localhost:4173';

@@ -9,7 +9,7 @@ await new Promise((resolve,reject)=>{server.stdout.once('data',resolve);server.o
 let browser;const errors=[];
 try{
  browser=await chromium.launch({headless:true,...(process.env.PW_CHROMIUM?{executablePath:process.env.PW_CHROMIUM}:{})});
- const context=await browser.newContext({viewport:{width:390,height:844},serviceWorkers:'block'});
+ const context=await browser.newContext({viewport:{width:390,height:844},serviceWorkers:'block',locale:'de-DE'});
  await context.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());
  const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
  await page.goto(origin);

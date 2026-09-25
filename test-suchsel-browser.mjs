@@ -4,8 +4,8 @@ import {chromium} from 'playwright';
 const server=spawn(process.execPath,['server.mjs'],{stdio:['ignore','pipe','inherit']});await new Promise(resolve=>server.stdout.once('data',resolve));let browser;
 const fixture={id:987654,text:'Juon tänään kahvia.',level:1,audios:[],translations:[{id:987655,text:'Ich trinke heute Kaffee.',license:'CC BY 2.0',owner:'test'}],license:'CC BY 2.0',owner:'test'};
 try{
- browser=await chromium.launch({headless:true});
- const context=await browser.newContext({viewport:{width:390,height:844},hasTouch:true,serviceWorkers:'block'});
+ browser=await chromium.launch({headless:true,...(process.env.PW_CHROMIUM?{executablePath:process.env.PW_CHROMIUM}:{})});
+ const context=await browser.newContext({viewport:{width:390,height:844},hasTouch:true,serviceWorkers:'block',locale:'de-DE'});
  await context.addInitScript(()=>sessionStorage.setItem('suomi-guest-exercise-accepted','1'));
  await context.route('**/*',route=>new URL(route.request().url()).origin==='http://localhost:4173'?route.continue():route.abort());
  await context.route('**/sentences.json',route=>route.fulfill({contentType:'application/json',body:JSON.stringify({sentences:[fixture],levels:[{id:1}]})}));

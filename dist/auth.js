@@ -1,3 +1,4 @@
+import {uiLocale} from './i18n.mjs?v=1';
 import {mergeVerbProgress} from './verb-practice.mjs';
 import {mergePerformanceEvents} from './learning-insights.mjs';
 import {mergeGames} from './games-progress.mjs';
@@ -93,7 +94,7 @@ async function synchronizeLearning(state=currentLearning(),reloadIfChanged=true,
     // The app can normalize fields/order when applying cloud data. Compare
     // future edits with that accepted app snapshot, not the raw cloud object.
     lastSnapshot=acceptedSnapshot;succeeded=true;
-    if(!silent)syncState(`Synchronisiert · ${new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})}`);
+    if(!silent)syncState(`Synchronisiert · ${new Date().toLocaleTimeString(uiLocale,{hour:'2-digit',minute:'2-digit'})}`);
     if(changed&&reloadIfChanged&&!applied)location.reload();
     return merged;
   })();
@@ -234,7 +235,7 @@ export const accountUser=()=>session?.user||null;
 export {request as accountRequest};
 window.suomiAccountUser=()=>session?.user||null;
 window.suomiAccountRequest=request;
-import('./classrooms.js?v=72').catch(()=>{});
-import('./quality-review.js?v=1').catch(()=>{});
+import('./classrooms.js?v=73').catch(()=>{});
+import('./quality-review.js?v=2').catch(()=>{});
 if(session?.user&&configured())refreshSession().then(async ok=>{if(!ok)return;try{await pullAndMerge();}catch(err){syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true);status(err.message,true);}}).catch(syncError).finally(()=>{syncReady=true;if(syncQueued)scheduleSync()});
 else syncReady=true;

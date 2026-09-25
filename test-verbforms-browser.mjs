@@ -5,14 +5,14 @@ import {VERBS} from './dist/verbs-data.mjs';
 import {PRONOUNS,markAsked,markAnswered} from './dist/verb-practice.mjs';
 const server=spawn(process.execPath,['server.mjs'],{stdio:['ignore','pipe','inherit']});
 await new Promise((resolve,reject)=>{server.stdout.once('data',resolve);server.once('error',reject);server.once('exit',code=>reject(new Error('Server exited: '+code)));});
-const browser=await chromium.launch({headless:true});
+const browser=await chromium.launch({headless:true,...(process.env.PW_CHROMIUM?{executablePath:process.env.PW_CHROMIUM}:{})});
 const errors=[];
 const origin='http://localhost:4173';
 const base={reviews:{},favorites:[],daily:{},reports:{},writingRatings:{},verbProgress:{},prefs:{level:1,direction:'fi-de',audioOnly:false,activity:'verbs',speed:1,grammarTopic:'negation'}};
 const session={access_token:'test-access',refresh_token:'test-refresh',user:{id:'00000000-0000-4000-8000-000000000001',user_metadata:{username:'verbtest'}}};
 let cloud=structuredClone(base),audioRequests=0;
 async function context(options={}){
- const c=await browser.newContext({serviceWorkers:'block',...options});
+ const c=await browser.newContext({serviceWorkers:'block',locale:'de-DE',...options});
  await c.addInitScript(()=>sessionStorage.setItem('suomi-guest-exercise-accepted','1'));
  await c.route('**/*',async route=>{
   const request=route.request(),url=new URL(request.url());

@@ -1,5 +1,6 @@
+import {tc} from './i18n.mjs?v=1';
 import {canSearch,createSearch} from './wordsearch.mjs';
-import {mountSearch,searchInstructions} from './wordsearch-ui.mjs?v=62';
+import {mountSearch,searchInstructions} from './wordsearch-ui.mjs?v=63';
 import {createWordExercise,wordAnswerMatches,finnishSentenceMatches} from './word-practice.mjs?v=59';
 import {VERBS} from './verbs-data.mjs';
 import {PRONOUNS,validateVerbProgress,mergeVerbProgress,markAsked,markAnswered,answerMatches,createVerbSession,chooseCombination,verbSummary} from './verb-practice.mjs';
@@ -13,7 +14,7 @@ import {mountWordLookup,loadLexicon} from './word-lookup.mjs?v=2';
 import {buildDifficultDeck} from './difficult-words.mjs?v=2';
 import {buildEndingItems,indexLexicon,renderEndings} from './endings-practice.mjs?v=1';
 import {translationFeedbackMarkup} from './translation-feedback.mjs?v=1';
-import {loadDialogs,renderDialogs,dialogForTopic,createDialogSession} from './dialogs.mjs?v=1';
+import {loadDialogs,renderDialogs,dialogForTopic,createDialogSession} from './dialogs.mjs?v=2';
 import {LEVEL_PATHS} from './learning-path-data.mjs';
 const $=id=>document.getElementById(id);
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -85,7 +86,7 @@ function persist(){const saved=dailySession?.previous||{};memory.prefs={level,di
 let guestSaveNoticeShown=false;
 function guestSaveHint(){if(accountActive()||guestExerciseAccepted||guestSaveNoticeShown)return;guestSaveNoticeShown=true;const n=$('notice');if(n)n.textContent='Du übst ohne Konto. Dein Fortschritt wird nicht gespeichert. Registriere dich kostenlos, um ihn zu behalten.';}
 const restingAudioLabel=b=>b?.dataset.played==='true'?'Wiederholen':'Anhören';
-function setAudioButtonLabel(b,label){if(!b)return;b.querySelector('span').textContent=label;b.setAttribute('aria-label',label==='Wiederholen'?'Aufnahme wiederholen':label==='Anhalten'?'Wiedergabe anhalten':'Finnischen Satz anhören');}
+function setAudioButtonLabel(b,label){if(!b)return;b.querySelector('span').textContent=tc('Audio',label);b.setAttribute('aria-label',label==='Wiederholen'?'Aufnahme wiederholen':label==='Anhalten'?'Wiedergabe anhalten':'Finnischen Satz anhören');}
 function stopAudio(){if(player){player.pause();player=null;}const b=$('play-audio');if(b)setAudioButtonLabel(b,restingAudioLabel(b));}
 const AUDIO_CACHE_LIMIT=8,audioCache=new Map();
 function prepareAudio(url){
@@ -253,7 +254,7 @@ function sourceIcon(s){
  if(!s||!/^\d+$/.test(String(s.id))||['english_bridge','finnish_adaptation','teacher_created'].includes(s.origin))return '';
  const id=Number(s.id),owner=s.owner||'Tatoeba',license=s.license||'CC BY 2.0 FR';
  const label=`Quelle: Tatoeba-Satz #${id} von ${owner}, Lizenz ${license}. Auf Tatoeba öffnen.`;
- return `<button type="button" class="sentence-source-icon" data-source-url="https://tatoeba.org/en/sentences/show/${id}" data-source-label="${escape(label)}" aria-label="${escape(label)}" aria-expanded="false" title="${escape(label)}"></button>`;
+ return `<button type="button" class="sentence-source-icon" data-i18n-attrs data-source-url="https://tatoeba.org/en/sentences/show/${id}" data-source-label="${escape(label)}" aria-label="${escape(label)}" aria-expanded="false" title="${escape(label)}"></button>`;
 }
 let sourcePopover=null,sourcePopoverTrigger=null;
 function closeSourcePopover(){
@@ -351,7 +352,7 @@ function compareAnswer(typed,expected){
 }
 function dictationMarkup(s){
  if(activity!=='dictation')return '';
- if(!revealed)return `<div class="dictation"><label for="dictation-input">Deine Eingabe auf Finnisch</label><textarea id="dictation-input" lang="fi" rows="3" maxlength="500" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off" aria-describedby="dictation-hint" placeholder="Schreibe hier, was du hörst …"></textarea><div class="letter-buttons"><button type="button" data-letter="ä" aria-label="ä einfügen">ä</button><button type="button" data-letter="ö" aria-label="ö einfügen">ö</button></div><p id="dictation-hint">Achte auf ä, ö und doppelte Buchstaben. Du kannst die Aufnahme beliebig oft wiederholen.</p></div>`;
+ if(!revealed)return `<div class="dictation"><label for="dictation-input">Deine Eingabe auf Finnisch</label><textarea id="dictation-input" lang="fi" rows="3" maxlength="500" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off" aria-describedby="dictation-hint" data-i18n-attrs placeholder="Schreibe hier, was du hörst …"></textarea><div class="letter-buttons"><button type="button" data-letter="ä" aria-label="ä einfügen">ä</button><button type="button" data-letter="ö" aria-label="ö einfügen">ö</button></div><p id="dictation-hint">Achte auf ä, ö und doppelte Buchstaben. Du kannst die Aufnahme beliebig oft wiederholen.</p></div>`;
  const c=compareAnswer(draft,s.text);
  return `<div class="dictation comparison result-feedback-card ${c.same?'correct':'incorrect'}"><h3>${c.same?'Richtig gehört und geschrieben!':'Noch nicht ganz.'}</h3><span>Deine Eingabe</span><p lang="fi">${c.typed||'—'}</p>${c.same?'':`<span>Richtige Lösung</span><p class="correct-solution" lang="fi">${c.expected}${sourceIcon(s)}</p>`}<small>Großschreibung, Satzzeichen und zusätzliche Leerzeichen werden beim Vergleich ignoriert.</small></div>`;
 }
@@ -406,13 +407,13 @@ function wordPracticeMarkup(s){
  if(!wordExercise)wordExercise=createWordExercise(s,language,data);
  const w=wordExercise;
  if(revealed){const correct=wordAnswerMatches(w),solution=language==='de'?s.translations[0]:s;return `<div class="word-result ${correct?'correct':'incorrect'}"><strong>${correct?'Richtig!':'Noch nicht ganz.'}</strong><p class="word-attempt" lang="${language}">${escape(draft)}${correct?sourceIcon(solution):''}</p>${correct?'':`<div class="word-correction"><span class="card-label">Richtige Lösung</span><p lang="${language}">${escape(solution.text)}${sourceIcon(solution)}</p></div>`}<small>${correct?'Perfekt zusammengesetzt.':'Mit „Nochmal“ übst du die richtige Wortfolge direkt erneut.'}</small></div>`;}
- return `<div class="word-practice"><p id="word-hint">Bilde die Übersetzung auf ${language==='de'?'Deutsch':'Finnisch'}. ${w.tokens.length-w.expected.length===1?'1 Wort gehört':'2 Wörter gehören'} nicht dazu. Klicke ein Wort im Antwortsatz an, um es zurückzulegen.</p><div id="word-answer" class="word-answer" role="group" aria-label="Dein Antwortsatz" lang="${language}"></div><div id="word-bank" class="word-bank" role="group" aria-label="Verfügbare Wörter" lang="${language}" aria-describedby="word-hint"></div></div>`;
+ return `<div class="word-practice"><p id="word-hint">Bilde die Übersetzung auf ${language==='de'?'Deutsch':'Finnisch'}. ${w.tokens.length-w.expected.length===1?'1 Wort gehört':'2 Wörter gehören'} nicht dazu. Klicke ein Wort im Antwortsatz an, um es zurückzulegen.</p><div id="word-answer" class="word-answer" role="group" aria-label="Dein Antwortsatz" lang="${language}"></div><div id="word-bank" class="word-bank" role="group" aria-label="Verfügbare Wörter" data-i18n-attrs lang="${language}" aria-describedby="word-hint"></div></div>`;
 }
 function bindWordPractice(){
  if(revealed)return;
  const w=wordExercise;
  const update=()=>{
-  $('word-answer').innerHTML=w.selected.length?w.selected.map(id=>{const t=w.tokens.find(t=>t.id===id);return `<button type="button" data-return-word="${id}" aria-label="${escape(t.text)} zurücklegen">${escape(t.text)}</button>`;}).join(''):'<span class="word-placeholder">Dein Satz erscheint hier …</span>';
+  $('word-answer').innerHTML=w.selected.length?w.selected.map(id=>{const t=w.tokens.find(t=>t.id===id);return `<button type="button" data-return-word="${id}" data-i18n-attrs aria-label="${escape(t.text)} zurücklegen">${escape(t.text)}</button>`;}).join(''):'<span class="word-placeholder" data-i18n>Dein Satz erscheint hier …</span>';
   $('word-bank').innerHTML=w.tokens.map(t=>`<button type="button" data-pick-word="${t.id}" ${w.selected.includes(t.id)?'disabled':''}>${escape(t.text)}</button>`).join('');
   document.querySelectorAll('[data-pick-word]').forEach(b=>b.onclick=()=>{const id=Number(b.dataset.pickWord);if(w.selected.includes(id))return;w.selected.push(id);$('notice').textContent='';update();const next=document.querySelector('#word-bank button:not(:disabled)');(next||$('reveal'))?.focus({preventScroll:true});});
   document.querySelectorAll('[data-return-word]').forEach(b=>b.onclick=()=>{const id=Number(b.dataset.returnWord);w.selected=w.selected.filter(value=>value!==id);update();document.querySelector(`[data-pick-word="${id}"]`)?.focus({preventScroll:true});});
@@ -461,7 +462,7 @@ function grammarMarkup(s,writingAnswer=null){
  if(!notes?.length)return `<details class="grammar"><summary>Grammatik verstehen und Hinweise <span>0</span></summary><p>${grammarAvailable?'Für diesen Satz ist noch keine Grammatikhilfe hinterlegt.':'Die Grammatikhilfe ist gerade nicht verfügbar. Lade die Seite bei bestehender Verbindung neu.'}</p></details>`;
  const answer=writingAnswer!==null?writingAnswer:activity==='dictation'||(isTranslation()&&cardDirection(s)==='de-fi')?draft:'';
  const relevant=answerGrammarNotes(s,notes,answer),other=notes.filter(n=>!relevant.includes(n));
- const noteMarkup=n=>`<article><h3>${escape(n.title)}</h3><p class="grammar-focus" lang="fi">${escape(n.focus)}</p><p>${escape(n.text)}</p></article>`;
+ const noteMarkup=n=>`<article lang="de"><h3>${escape(n.title)}</h3><p class="grammar-focus" lang="fi">${escape(n.focus)}</p><p>${escape(n.text)}</p></article>`;
  return `<details class="grammar" ${activity==='grammar'&&!relevant.length?'open':''}><summary>Grammatik verstehen und Hinweise <span>${relevant.length||notes.length}</span></summary>${relevant.length?`<p class="grammar-answer-intro">Diese Stellen weichen von der Vorlage ab. Die Hinweise erklären die Form in der Vorlage – andere Formulierungen können ebenfalls richtig sein.</p><div class="grammar-notes grammar-answer-notes">${relevant.map(noteMarkup).join('')}</div>${other.length?`<details class="grammar-more"><summary>Alle weiteren Satzhinweise (${other.length})</summary><div class="grammar-notes">${other.map(noteMarkup).join('')}</div></details>`:''}`:`<div class="grammar-notes">${notes.map(noteMarkup).join('')}</div>`}<p class="grammar-credit">Mit KI formulierte Lernhilfe zu ausgewählten Stellen im Satz. <a href="https://uusikielemme.fi/finnish-grammar" target="_blank" rel="noopener">Grammatik zum Nachlesen (Englisch) ↗</a></p></details>`;
 }
 function audioMarkup(s){if(!s.audios.length)return revealed&&s.audio_status==='license_missing'?'<p class="audio-license-note">Auf Tatoeba gibt es eine Aufnahme. Da keine Wiederverwendungsfreigabe angegeben ist, wird sie hier nicht eingebunden.</p>':'';if(isTranslation()&&cardDirection(s)==='de-fi'&&!revealed)return '';const a=s.audios[0],played=playedAudioCard===s;return `<div class="audio-row"><button class="audio-button" id="play-audio" data-played="${played}" aria-label="${played?'Aufnahme wiederholen':'Finnischen Satz anhören'}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M11 4 5 9H2v6h3l6 5V4Z"/><path d="M15 8a6 6 0 0 1 0 8M18 4a11 11 0 0 1 0 16"/></svg><span>${played?'Wiederholen':'Anhören'}</span></button><label class="speed-label">Tempo<select id="speed" aria-label="Wiedergabegeschwindigkeit"><option value="1" ${speed===1?'selected':''}>Normal</option><option value="0.75" ${speed===0.75?'selected':''}>Langsam · 0,75×</option><option value="0.5" ${speed===0.5?'selected':''}>Sehr langsam · 0,5×</option></select></label><a href="${safeURL(a.download_url)}" target="_blank" rel="noopener">Audiodatei ↗</a></div>`;}
