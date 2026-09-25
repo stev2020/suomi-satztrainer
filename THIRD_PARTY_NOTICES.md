@@ -37,5 +37,3 @@ Die Schriften werden lokal aus `dist/fonts/` ausgeliefert (keine Verbindung zu G
 - Hosting: GitHub Pages
 - Konten, Synchronisierung, Klassenräume: Supabase
 - Passwortprüfung: Have I Been Pwned (k-Anonymität, nur serverseitig)
-
-Details stehen in `dist/datenschutz.html`.
