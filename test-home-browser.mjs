@@ -20,7 +20,7 @@ try{
  await page.goto(origin);
  await page.locator('#start-new-sentences:not([disabled])').waitFor();
  assert.equal(await page.locator('#account-dialog').count(),1);
- assert.equal(await page.locator('#progress-nav').isVisible(),false);
+ assert.equal(await page.locator('#progress-nav').count(),0);
  assert.equal(await page.locator('#header-practice').isDisabled(),true);
  assert.equal(await page.locator('#account-button').textContent(),'Anmelden / Registrieren');
  assert.ok(await page.locator('#storage-account-link').isVisible());

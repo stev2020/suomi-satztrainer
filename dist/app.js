@@ -732,6 +732,7 @@ document.querySelectorAll('[data-guest-account]').forEach(button=>button.onclick
  else{$('account-button')?.click();setTimeout(()=>document.querySelector(`[data-account-tab="${button.dataset.guestAccount}"]`)?.click(),0);}
 });
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>showView(b.dataset.view));
+window.addEventListener('vanamo:view',e=>showView(e.detail));
 document.querySelectorAll('[data-home-activity]').forEach(b=>b.onclick=()=>{if(!ready||activity===b.dataset.homeActivity)return;activity=b.dataset.homeActivity;mode='new';start();});
 document.querySelectorAll('[data-home-direction]').forEach(b=>b.onclick=()=>{if(!ready||direction===b.dataset.homeDirection)return;direction=b.dataset.homeDirection;mode='new';start();});
 document.querySelectorAll('[data-activity]').forEach(b=>b.onclick=()=>{if(b.dataset.activity==='writing'&&!syncWritingAvailability())return;if(activity!==b.dataset.activity){activity=b.dataset.activity;mode='new';start();}});
