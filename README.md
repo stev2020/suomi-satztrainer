@@ -287,17 +287,16 @@ Neue Übungsart **Dialoge**: 65 kurze Alltagsdialoge (6–10 Zeilen), je einer p
 - Daten: `sources/dialogs/level-N.json` → `python build_dialogs.py build` → `dist/dialogs.json`. Die Wortanalyse der 601 Zeilen steht in `sources/lexicon-annotations.tsv` (IDs `d:<dialog>:<zeile>`).
 - Code: `dist/dialogs.mjs`. Prüfen: `python build_dialogs.py check N`, `node test-word-lookup.mjs` (auch Dialogzeilen), `node test-dialogs-browser.mjs`.
 
-## Hyppy: Meine schwierigen Wörter (25. September 2026)
+## Hyppy: schwierige Wörter im Grundwortschatz (25. September 2026)
 
-Mustikka Hyppy hat eine dritte Wortliste, **Meine schwierigen Wörter**. Sie entsteht aus dem eigenen Lernstand, nicht aus einer festen Liste:
+Die eigenen schwierigen Wörter werden in die Hyppy-Liste **Grundwortschatz** eingemischt (keine eigene Liste, damit die Auswahl übersichtlich bleibt):
 
-- **Sätze**, die zuletzt mit „Nochmal“ (Gewicht 1) oder „Schwer“ (0,45) bewertet wurden, aus dem gespeicherten Lernstand und den letzten Bewertungen. Jedes Inhaltswort des Satzes zählt; Allerweltswörter (*olla, ei, minä, ja* …), Namen und Zahlen nicht.
-- **Nachgeschlagene Wörter** (Wort antippen): je Nachschlagen 0,8, höchstens dreimal je Wort. Gespeichert werden sie nur in diesem Browser (`suomi-word-lookups`, höchstens 300).
-- **Verpasste Lücken** aus „Endungen“ in dieser Sitzung.
+- **Schwierig** sind Inhaltswörter aus Sätzen, die zuletzt mit „Nochmal“ (Gewicht 1) oder „Schwer“ (0,45) bewertet wurden, und aus verpassten Lücken in „Endungen“ dieser Sitzung. Allerweltswörter (*olla, ei, minä, ja* …), Namen und Zahlen zählen nicht. **Nachschlagen (Wort antippen) zählt bewusst nicht** – man tippt Wörter auch an, um die Grammatik anzusehen.
+- Gespielt wird die Grundform mit ihrer häufigsten Bedeutung, höchstens 40 Wörter. Steht das Wort schon im Grundwortschatz, wird kein Duplikat angelegt, sondern der vorhandene Eintrag hervorgehoben.
+- Hyppy gewichtet neue Wörter mit 2,5 und falsch beantwortete mit 6 und mehr. Schwierige Wörter ohne eigenen Spielstand starten deshalb wie „einmal falsch beantwortet“ (`box 0, wrong 1`) und kommen unter den 669 Wörtern deutlich öfter dran; danach entscheidet der Spielverlauf wie bei jedem Wort. Der gespeicherte Spielstand wird nie überschrieben.
+- Die Karte zeigt „669 Wörter · N schwierige aus deinen Übungen kommen öfter dran“.
 
-Gespielt wird die Grundform mit ihrer häufigsten deutschen Bedeutung aus der Wortanalyse, höchstens 40 Wörter, zuerst die schwierigsten und zuletzt geübten. Deutsche Bedeutungen kommen nur einmal vor, damit die Aufgabe eindeutig bleibt. Unter 10 Wörtern ist der Start gesperrt, mit einem Hinweis, wie die Liste wächst. Der Spiel-Lernstand liegt wie bei den anderen Listen unter `games.hyppy.schwer` (mit Konto synchronisiert).
-
-Code: `dist/difficult-words.mjs`, eingebunden über `window.suomiDifficultDeck` in `app.js` und den Deck-Eintrag in `dist/games.mjs`. Prüfen: `node test-difficult-words.mjs`, `node test-difficult-words-browser.mjs`.
+Code: `dist/difficult-words.mjs` (`buildDifficultDeck`, `mixDifficultWords`, `seededProgress`), eingebunden in `dist/games.mjs`. Prüfen: `node test-difficult-words.mjs`, `node test-difficult-words-browser.mjs`.
 
 ## Levels aufgefüllt (25. September 2026)
 

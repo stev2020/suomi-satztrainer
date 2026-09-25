@@ -1,9 +1,11 @@
-// "Meine schwierigen Wörter": a Hyppy word list from the learner's own difficulties.
-// Evidence: sentences graded "Nochmal"/"Schwer" (reviews and recent events), words looked
-// up by tapping, and missed gaps in "Endungen". Words are played as base forms with
-// their most frequent German meaning from the word lookup data.
-export const MIN_DIFFICULT_WORDS=10;
-const LIMIT=40,LOOKUP_KEY='suomi-word-lookups',MAX_LOOKUPS=300;
+// Difficult words for Hyppy, mixed into the basic vocabulary list.
+// Evidence: sentences graded "Nochmal"/"Schwer" (reviews and recent events) and missed
+// gaps in "Endungen". Looking a word up is NOT evidence (people also tap to read grammar).
+// Words are played as base forms with their most frequent German meaning.
+const LIMIT=40;
+// Hyppy weights unseen words with 2.5 and missed ones (box 0) with 6+: difficult words start
+// like a word answered wrong once, so they come up often among the basic vocabulary.
+export const DIFFICULT_SEED={box:0,right:0,wrong:1,last:0};
 const STOP=new Set(['olla','ei','ja','minä','sinä','hän','me','te','he','se','tämä','tuo','ne','että','kun','mutta','tai','niin','myös','vain','nyt','jo','vielä','kuin','jos','mikä','kuka','joka','kiitos','hei','joo','no']);
 const SKIP_FORM=/^(Name|Ortsname|Abkürzung)\b/u;
 
@@ -22,15 +24,8 @@ function commonMeanings(lexicon){
  return meaningCache;
 }
 
-export function readLookups(storage=globalThis.localStorage){
- try{const list=JSON.parse(storage?.getItem(LOOKUP_KEY)||'[]');return Array.isArray(list)?list.filter(x=>x&&typeof x.lemma==='string'&&Number.isFinite(x.at)):[];}catch{return [];}
-}
-export function saveLookup(lemma,storage=globalThis.localStorage,now=Date.now()){
- if(!lemma)return;
- try{const list=[...readLookups(storage),{lemma,at:now}].slice(-MAX_LOOKUPS);storage?.setItem(LOOKUP_KEY,JSON.stringify(list));}catch{}
-}
 
-export function buildDifficultDeck({lexicon,reviews={},events=[],lookups=[],missed=[]}){
+export function buildDifficultDeck({lexicon,reviews={},events=[],missed=[]}){
  const weights=new Map(),recency=new Map();
  const add=(lemma,weight,at=0)=>{if(!lemma||STOP.has(lemma.toLocaleLowerCase('fi'))||/\d/u.test(lemma))return;weights.set(lemma,(weights.get(lemma)||0)+weight);recency.set(lemma,Math.max(recency.get(lemma)||0,at));};
  const sentenceWeight=new Map(),sentenceAt=new Map();
@@ -45,8 +40,6 @@ export function buildDifficultDeck({lexicon,reviews={},events=[],lookups=[],miss
   const seen=new Set();
   for(const [li,fi] of entry.w){const [lemma]=lexicon.lemmas[li];if(seen.has(lemma)||SKIP_FORM.test(lexicon.forms[fi]))continue;seen.add(lemma);add(lemma,w,sentenceAt.get(id));}
  }
- const perLemma=new Map();
- for(const {lemma,at} of lookups){const n=perLemma.get(lemma)||0;if(n>=3)continue;perLemma.set(lemma,n+1);add(lemma,.8,at);}
  for(const key of missed){
   const [id,index]=String(key).split(/:(?=\d+$)/);const item=lexicon.sentences?.[id]?.w?.[Number(index)];
   if(item)add(lexicon.lemmas[item[0]][0],1,Date.now());
@@ -60,4 +53,26 @@ export function buildDifficultDeck({lexicon,reviews={},events=[],lookups=[],miss
   if(entries.length>=LIMIT)break;
  }
  return {meta:{title:'Meine schwierigen Wörter',sourceLang:'de',targetLang:'fi'},entries};
+}
+
+const plain=text=>String(text??'').toLocaleLowerCase('fi').replace(/[!?.,…]+/gu,'').trim();
+
+// Add difficult words to a Hyppy list. Words already in the list are not duplicated;
+// their existing entry is marked instead. Returns the list and the IDs to prioritise.
+export function mixDifficultWords(base,difficult){
+ const byTarget=new Map(base.entries.map(e=>[plain(e.target),e]));
+ const entries=[...base.entries],ids=[];
+ for(const e of difficult.entries){
+  const existing=byTarget.get(plain(e.target));
+  if(existing){ids.push(existing.id);continue;}
+  entries.push({...e,category:'Deine schwierigen Wörter'});ids.push(e.id);
+ }
+ return {words:{...base,entries},ids:[...new Set(ids)]};
+}
+
+// Progress seen by the game: difficult words without own progress start as "missed once".
+export function seededProgress(stored,ids){
+ const map={...(stored||{})};
+ for(const id of ids)if(!map[id])map[id]={...DIFFICULT_SEED};
+ return map;
 }

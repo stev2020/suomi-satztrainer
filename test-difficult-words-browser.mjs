@@ -14,25 +14,26 @@ try{
  const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
  await page.goto(origin);
  await page.locator('#start-new-sentences:not([disabled])').waitFor();
+ // Looking words up in an exercise must not create difficult words.
+ await page.locator('#start-new-sentences').click();
+ if(await page.locator('#guest-continue').isVisible())await page.locator('#guest-continue').click();
+ await page.locator('#card .fi-word').first().click();
+ await page.locator('.word-popover:not([hidden])').waitFor();
+ assert.equal((await page.evaluate(()=>window.suomiDifficultDeck())).entries.length,0,'Nachschlagen zählt nicht');
  await page.locator('#games-nav').click();
- await page.locator('[data-hyppy-deck="schwer"]').click();
- await page.waitForFunction(()=>/Noch 0 von 10/.test(document.getElementById('hyppy-difficult-count').textContent));
- assert.equal(await page.locator('#hyppy-start').isDisabled(),true,'zu wenige Wörter: Start gesperrt');
- // Grade twelve sentences with "Nochmal" (as cloud state) and tap-lookups count too.
+ assert.equal(await page.locator('[data-hyppy-deck]').count(),2,'keine eigene dritte Liste mehr');
+ await page.waitForFunction(()=>document.getElementById('hyppy-grund-info').textContent==='669 Wörter und Wendungen');
+ // Twelve sentences graded "Nochmal": their words are mixed into the basic list.
  await page.evaluate(ids=>{const state=window.suomiLearningState.snapshot();ids.forEach((id,i)=>{state.reviews[`${id}:fi-de`]={due:Date.now(),interval:i<12?1:30,repetitions:2,updatedAt:Date.now()-i};});window.suomiLearningState.applyCloud(state);},level3.map(s=>s.id));
+ await page.locator('[data-hyppy-deck="verben"]').click();
  await page.locator('[data-hyppy-deck="grund"]').click();
- await page.locator('[data-hyppy-deck="schwer"]').click();
- await page.waitForFunction(()=>/^\d+ Wörter aus deinen Fehlern/.test(document.getElementById('hyppy-difficult-count').textContent));
- assert.equal(await page.locator('#hyppy-start').isDisabled(),false);
- if(shots)await page.screenshot({path:`${shots}/hyppy-schwer.png`,fullPage:true});
+ await page.waitForFunction(()=>/^669 Wörter · \d+ schwierige aus deinen Übungen kommen öfter dran$/.test(document.getElementById('hyppy-grund-info').textContent));
+ if(shots)await page.screenshot({path:`${shots}/hyppy-grund-mix.png`,fullPage:true});
  await page.locator('#hyppy-start').click();
  await page.locator('#game-stage canvas').waitFor({timeout:20000});
  assert.equal(await page.locator('#game-overlay').isHidden(),false);
- // Switching back to another deck re-enables start.
  await page.goBack();
  await page.locator('#game-overlay').waitFor({state:'hidden'});
- await page.locator('[data-hyppy-deck="verben"]').click();
- assert.equal(await page.locator('#hyppy-start').isDisabled(),false);
  assert.deepEqual(errors,[]);
- console.log('Hyppy „Meine schwierigen Wörter“: Sperre, Befüllung aus Bewertungen, Spielstart und Deckwechsel bestanden.');
+ console.log('Hyppy: schwierige Wörter im Grundwortschatz, Nachschlagen zählt nicht, Spielstart bestanden.');
 }finally{await browser?.close();server.kill();}
