@@ -33,4 +33,12 @@ check('Minulla on kysymys.',0,{lemma:'minä'});
 assert.match(wordInfo('Minulla on kysymys.',0).form,/Adessiv/);
 assert.equal(lookupForSentence('Kein finnischer Satz.'),null);
 assert.equal(wordInfo('Kein finnischer Satz.',0),null);
+const dialogs=JSON.parse(readFileSync(new URL('./dist/dialogs.json',import.meta.url),'utf8')).dialogs;
+let dialogLines=0;
+for(const d of dialogs)for(const line of d.lines){
+ const info=lookupForSentence(line.fi);
+ assert.ok(info&&info.length===sentenceWords(line.fi).length&&info.every(Boolean),`Dialogzeile ohne Wortanalyse: ${d.id} ${line.fi}`);
+ dialogLines++;
+}
+console.log(`Wortanalyse: ${dialogLines} Dialogzeilen geprüft.`);
 console.log(`Wortanalyse: ${cards.length} Sätze, ${tokens} Wörter geprüft.`);
