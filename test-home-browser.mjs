@@ -11,8 +11,8 @@ await new Promise((resolve,reject)=>{server.stdout.once('data',resolve);server.o
 let browser;
 const errors=[];
 try{
- browser=await chromium.launch({headless:true});
- const context=await browser.newContext({viewport:{width:1280,height:1000},serviceWorkers:'block'});
+ browser=await chromium.launch({headless:true,...(process.env.PW_CHROMIUM?{executablePath:process.env.PW_CHROMIUM}:{})});
+ const context=await browser.newContext({viewport:{width:1280,height:1000},serviceWorkers:'block',locale:'de-DE'});
  await context.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());
  const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
  const home=()=>page.locator('.app-view:not([hidden]) .back-link[data-view="home"]').click();

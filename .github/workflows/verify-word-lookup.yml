@@ -24,4 +24,4 @@ jobs:
           npm install --no-save --package-lock=false playwright@1.55.0
           npx playwright install --with-deps chromium
       - name: Check tapping words on desktop and mobile
-        run: node test-word-lookup-browser.mjs && node test-endings-browser.mjs && node test-translation-feedback-browser.mjs && node test-dialogs-browser.mjs && node test-difficult-words-browser.mjs
+        run: node test-word-lookup-browser.mjs && node test-endings-browser.mjs && node test-translation-feedback-browser.mjs && node test-dialogs-browser.mjs && node test-difficult-words-browser.mjs && node test-i18n-browser.mjs

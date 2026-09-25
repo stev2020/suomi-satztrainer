@@ -18,6 +18,16 @@ Aktuell ist Vanamo ein Finnisch-Deutsch-Satztrainer. Weitere Sprachen, eine mehr
 - **Fremde Inhalte** behalten ihre eigene Lizenz: Tatoeba-Satztexte (meist CC BY 2.0 FR), Tatoeba-Aufnahmen (CC BY-NC 4.0, nur nichtkommerziell), Schriften (SIL Open Font License), Phaser (MIT). Details in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
 - Der Name „Vanamo“ und das Logo sind von diesen Lizenzen nicht erfasst.
 
+## Oberflächensprachen
+
+Die Oberfläche gibt es auf Deutsch und Englisch; unten auf der Seite lässt sich die Sprache wechseln. Ohne Auswahl richtet sie sich nach der Browsersprache (Deutsch, sonst Englisch). Lerninhalte – finnische Sätze, deutsche Übersetzungen, Grammatikhilfen, Dialoge – bleiben vorerst deutsch.
+
+- Deutsch ist die Ausgangssprache: Die Texte stehen wie bisher im HTML und im Code.
+- `dist/locales/en.mjs` ist ein Wörterbuch „deutscher Text → englischer Text“. Werte, die im Code eingesetzt werden, sind Platzhalter: `"{0} von {1} geübt": "{0} of {1} practiced"`.
+- `dist/i18n.mjs` übersetzt alles, was in die Seite geschrieben wird. Elemente mit `lang="fi"` oder `lang="de"` gelten als Lerninhalt und werden nicht übersetzt; `data-i18n` bzw. `data-i18n-attrs` markieren Oberflächentexte innerhalb solcher Inhalte.
+- **Neue Sprache:** `dist/locales/<code>.mjs` anlegen und den Code in `LANGUAGES` (`dist/i18n.mjs`) sowie im kleinen Skript im `<head>` von `index.html` ergänzen.
+- **Neue Texte finden:** `python3 scripts/extract-ui-texts.py` sammelt Kandidaten, `node scripts/check-ui-language.mjs en` klickt die App auf Englisch durch und listet, was noch deutsch ist.
+
 `dist/` enthält die fertige Website. Ein Build-Schritt ist nicht erforderlich.
 
 ## Auf GitHub Pages veröffentlichen

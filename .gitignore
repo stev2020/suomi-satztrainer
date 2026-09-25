@@ -3,3 +3,4 @@ __pycache__/
 sources/lexicon-work/
 sources/level-fill-work/
 sources/tatoeba-export/
+scripts/ui-texts.json

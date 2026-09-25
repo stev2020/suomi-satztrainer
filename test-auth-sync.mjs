@@ -42,7 +42,7 @@ function harness(){
   let remote=structuredClone(current),postGate=null,getGate=null,fail=false;
   const calls=[],timers=new Map(),storage=new Map();let timerId=0;
   const elements=new Map();
-  const sandbox={mergeVerbProgress,mergePerformanceEvents,mergeGames,console,URL,TextEncoder,
+  const sandbox={uiLocale:'de-DE',mergeVerbProgress,mergePerformanceEvents,mergeGames,console,URL,TextEncoder,
     SUPABASE_URL:'https://test.supabase.co',SUPABASE_PUBLISHABLE_KEY:'test-public-key',
     document:{hidden:false,getElementById:id=>{if(!elements.has(id))elements.set(id,{textContent:'',classList:{toggle(){}}});return elements.get(id)}},
     localStorage:{getItem:key=>storage.get(key)||null,setItem:(key,value)=>storage.set(key,value),removeItem:key=>storage.delete(key)},

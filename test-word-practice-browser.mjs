@@ -5,8 +5,8 @@ const server=spawn(process.execPath,['server.mjs'],{stdio:['ignore','pipe','inhe
 await new Promise(resolve=>server.stdout.once('data',resolve));
 let browser;
 try{
- browser=await chromium.launch({headless:true});
- const context=await browser.newContext({viewport:{width:390,height:844},serviceWorkers:'block'});
+ browser=await chromium.launch({headless:true,...(process.env.PW_CHROMIUM?{executablePath:process.env.PW_CHROMIUM}:{})});
+ const context=await browser.newContext({viewport:{width:390,height:844},serviceWorkers:'block',locale:'de-DE'});
  await context.addInitScript(()=>sessionStorage.setItem('suomi-guest-exercise-accepted','1'));
  await context.route('**/*',route=>new URL(route.request().url()).origin==='http://localhost:4173'?route.continue():route.abort());
  const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
