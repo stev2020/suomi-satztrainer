@@ -234,9 +234,9 @@ Alle 4.467 aktiven Satzpaare wurden inhaltlich geprüft (Person/Anrede, Bedeutun
 - `sources/sentence-archive.tsv`: 13 Sätze mit Fehlern im finnischen Text (z. B. *pystyn lukea* statt *pystyn lukemaan*, Tippfehler *OIet*) werden archiviert statt verändert, weil Text und Aufnahme aus Tatoeba stammen. Bestehende Wiederholungen und Favoriten bleiben erhalten. Ein betroffener Satz wurde aus dem Lernpfad „Reisen und Orientierung“ entfernt.
 - Beides wird von `python build_full_deck.py` angewendet. Danach: 4.454 aktive und 239 archivierte Sätze; Grammatikhilfen unverändert.
 
-## Games: Mustikka Hyppy (25. September 2026)
+## Spiele: Mustikka Hyppy (25. September 2026)
 
-Der Header hat einen eigenen Button **Games**. Die Ansicht `#games-view` zeigt die verfügbaren Spiele; weitere lassen sich als zusätzliche Karte ergänzen.
+Der Header hat einen eigenen Button **Spiele**. Die Ansicht `#games-view` zeigt die verfügbaren Spiele; weitere lassen sich als zusätzliche Karte ergänzen.
 
 - **Mustikka Hyppy** ist das Vokabel-Sprungspiel im Kritzel-Look (Heidelbeere, Holzplanken, Karopapier). Es wird erst beim Klick auf „Spielen“ geladen (`dist/games/hyppy/mustikka-hyppy.js`, rund 400 KB gzip plus Grafiken) und läuft im Vollbild-Overlay. „← Zurück“ im Spielmenü oder die Zurück-Taste des Browsers/Handys schließt es.
 - **Wortlisten:** Grundwortschatz (669 Wörter, CC0, `games/hyppy/words-de-fi.json`) oder **Verbformen** – aus `verbs-data.mjs` erzeugt: „ich (wohnen)“ → *asun*, falsche Planken sind die anderen Formen desselben Verbs (`verbDeck()` in `dist/games.mjs`).

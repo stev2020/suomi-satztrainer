@@ -32,7 +32,7 @@ Die Schriften werden lokal aus `dist/fonts/` ausgeliefert (keine Verbindung zu G
 - Fraunces – Copyright 2020 The Fraunces Project Authors (https://github.com/undercasetype/Fraunces), `dist/fonts/OFL-Fraunces.txt`
 - Bezogen über Fontsource (`@fontsource-variable/dm-sans`, `@fontsource-variable/fraunces`, Version 5).
 
-## Spiel Mustikka Hyppy (Bereich „Games“)
+## Spiel Mustikka Hyppy (Bereich „Spiele“)
 
 `dist/games/hyppy/` enthält den Einbettungs-Build des eigenen Spiels Mustikka Hyppy (github.com/stev2020/mustikka-hyppy).
 
