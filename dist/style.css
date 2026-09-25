@@ -207,7 +207,7 @@ header .header-nav button:hover,header .header-nav button.selected{background:va
 .fi-words{display:inline}
 .fi-word{display:inline;margin:0;padding:0 1px;border:0;border-radius:4px;background:none;color:inherit;font:inherit;letter-spacing:inherit;line-height:inherit;cursor:pointer;text-decoration:underline dotted color-mix(in srgb,var(--purple) 45%,transparent);text-decoration-thickness:1.5px;text-underline-offset:.22em;box-shadow:none;min-height:0;min-width:0;transform:none}
 .fi-word:hover,.fi-word:focus-visible,.fi-word.active{background:var(--lavender);text-decoration-color:var(--purple);outline:none}
-.word-lookup-hint{margin:6px 0 0;color:var(--muted);font:13px/1.4 'DM Sans',sans-serif;text-align:center}
+.word-lookup-hint,.card p.word-lookup-hint,.translation p.word-lookup-hint{margin:6px 0 0;color:var(--muted);font:400 13px/1.4 'DM Sans',sans-serif;letter-spacing:0;text-align:center}
 .word-popover{position:fixed;z-index:1000;width:min(300px,calc(100vw - 24px));padding:12px 14px;border:2px solid var(--ink);border-radius:12px;background:var(--paper);color:var(--ink);box-shadow:4px 4px 0 var(--purple);font:14px/1.45 'DM Sans',sans-serif;text-align:left}
 .word-popover[hidden]{display:none}
 .word-popover p{margin:0 0 6px;overflow-wrap:anywhere}
