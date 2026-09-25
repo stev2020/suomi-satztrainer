@@ -30,7 +30,7 @@ export const uiLocale=locale;
 let exact=new Map(),patterns=[];
 if(uiLanguage!==DEFAULT_LANGUAGE){
  try{
-  const dict=(await import(`./locales/${uiLanguage}.mjs?v=1`)).default;
+  const dict=(await import(`./locales/${uiLanguage}.mjs?v=2`)).default;
   for(const [source,target] of Object.entries(dict)){
    if(/\{\d+\}/.test(source)){
     const parts=source.split(/(\{\d+\})/);

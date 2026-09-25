@@ -74,7 +74,7 @@ try{
   await page.goto(origin);
   await step('angemeldet-start',()=>page.locator('#start-new-sentences:not([disabled])').waitFor());
   await step('angemeldet-konto',()=>click('#account-button'));
-  await step('angemeldet-fortschritt',async()=>{await page.keyboard.press('Escape');await click('#progress-nav');});
+  await step('angemeldet-fortschritt',async()=>{await click('#account-progress');});
   await step('angemeldet-klassenräume',async()=>{const b=page.locator('button:visible',{hasText:/Klassenr|classroom/i});if(await b.count())await b.first().click();});
   await context.close();
  }

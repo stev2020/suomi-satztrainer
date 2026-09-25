@@ -88,7 +88,7 @@ try {
  const p=await logged.newPage();p.on('pageerror',e=>errors.push(e.message));
  await p.goto(origin);
  await p.waitForFunction(()=>document.querySelector('[data-verb-count="5"]'));
- assert.ok(await p.locator('#progress-nav').isVisible());assert.equal(await p.locator('#account-button').textContent(),'Konto');
+ assert.equal(await p.evaluate(()=>document.getElementById('account-logged-in').hidden),false);assert.equal(await p.locator('#account-button').textContent(),'Konto');
  if(!await p.locator('#continue-practice').isVisible())await p.locator('#more-exercises > summary').click();
  await p.locator('#continue-practice').click();
  await p.locator('[data-verb-count="5"]').click();
