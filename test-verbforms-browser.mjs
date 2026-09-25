@@ -31,6 +31,7 @@ async function context(options={}){
  return c;
 }
 async function choose(page,count){
+ if(!await page.locator('#home-choose').isVisible())await page.locator('#more-exercises > summary').click();
  await page.locator('#home-choose').click();
  await page.locator('[data-activity="verbs"]').click();
  await page.locator('[data-verb-count="'+count+'"]').click();
@@ -38,7 +39,7 @@ async function choose(page,count){
 }
 async function answer(page,wrong=false){
  const question=(await page.locator('.verb-question').textContent()).split(' · ');
- const p=PRONOUNS.indexOf(question[0]),v=VERBS.find(v=>v.id===question[1]);
+ const p=PRONOUNS.indexOf(question[0]),id=question[1].replace(/\s*\(.*\)\s*$/,''),v=VERBS.find(v=>v.id===id);
  await page.locator('#verb-input').fill(wrong?'falsch':PRONOUNS[p]+' '+v.forms[p]);
  await page.locator('#verb-input').press('Enter');
  await page.locator('#verb-next').waitFor();
@@ -88,6 +89,7 @@ try {
  await p.goto(origin);
  await p.waitForFunction(()=>document.querySelector('[data-verb-count="5"]'));
  assert.ok(await p.locator('#progress-nav').isVisible());assert.equal(await p.locator('#account-button').textContent(),'Konto');
+ if(!await p.locator('#continue-practice').isVisible())await p.locator('#more-exercises > summary').click();
  await p.locator('#continue-practice').click();
  await p.locator('[data-verb-count="5"]').click();
  const key=await answer(p);
