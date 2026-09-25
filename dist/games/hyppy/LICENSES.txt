@@ -1,4 +1,4 @@
-Mustikka Hyppy – eingebettet im Suomi-Satztrainer
+Mustikka Hyppy – eingebettet in Vanamo
 
 Phaser (https://phaser.io) – MIT License:
 The MIT License (MIT)
