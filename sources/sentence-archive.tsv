@@ -1,0 +1,15 @@
+# Aktive Sätze, deren finnischer Text fehlerhaft ist. Sie werden archiviert statt geändert, weil Text und Aufnahme aus Tatoeba stammen.
+sentence_id	text	reason
+3525262	En pysty suojella Tomia.	pystyä verlangt „suojelemaan“
+3553420	Pystytkö korjata sen?	pystyä verlangt 3. Infinitiv: Pystytkö korjaamaan sen?
+4259093	Tomi ei pystynyt estää sitä.	pystyä verlangt 3. Infinitiv: Tomi ei pystynyt estämään sitä.
+4260371	Me ollaan valmiita taistelemaa.	Tippfehler: „taistelemaan“ statt „taistelemaa“
+6581761	En pysty auttaa teitä.	pystyä verlangt 3. Infinitiv: En pysty auttamaan teitä
+6637258	OIet unelmieni nainen.	Tippfehler: „OIet“ mit großem I statt „Olet“
+6682609	Pystyn tehdä sen ilman sinun apuasi.	pystyä verlangt 3. Infinitiv: Pystyn tekemään sen
+6733688	Pystyn lukea englantia.	pystyä verlangt 3. Infinitiv: Pystyn lukemaan englantia
+6733689	Minä pystyn lukea englanninkielistä tekstiä.	pystyä verlangt 3. Infinitiv Illativ: „pystyn lukemaan“
+6915867	Mari asui muutama kuukautta luostarissa.	falscher Kasus: „muutaman kuukauden“ statt „muutama kuukautta“
+6936111	Tomi sanoi, että hänellä ei ole jano.	Negation verlangt Partitiv: „hänellä ei ole janoa“
+6955764	Minun pitää ottaa muutama rokotusta ennen matkaa.	falscher Kasus: „muutaman rokotuksen“ statt „muutama rokotusta“
+7074843	Pystytkö lukea tätä?	pystyä verlangt 3. Infinitiv: Pystytkö lukemaan tätä?

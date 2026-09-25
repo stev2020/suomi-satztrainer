@@ -2,7 +2,7 @@
 
 Ein Finnisch-Deutsch-Satztrainer als statische Website, ohne Konto und ohne Server-Datenbank.
 
-- 4.467 aktive Sätze in sechs geschätzten Schwierigkeitsstufen, darunter 300 Sätze in Level 1.
+- 4.454 aktive Sätze in sechs geschätzten Schwierigkeitsstufen, darunter 300 Sätze in Level 1.
 - Übersetzen in beide Richtungen, Hörmodus, Diktat und Schreibtest.
 - Grammatik nach Themen sowie satzgebundene Grammatikhilfen.
 - Favoriten, Wiederholungsplanung und Sicherung des lokalen Lernstands.
@@ -225,3 +225,11 @@ Prüfung: `node test-learning-path.mjs` sowie `node test-home-browser.mjs` (Play
 - **Datenschutz:** Schriften lokal in `dist/fonts/` statt Google Fonts; kein Preconnect zu Tatoeba; Audio wird erst in der Übungsansicht geladen; Impressum und Datenschutzerklärung (`dist/impressum.html`, `dist/datenschutz.html`); Rate-Limit-Zähler werden nach zwei Tagen gelöscht (`20260925080100_abuse_rate_limits_cleanup.sql`).
 - **Vor dem Veröffentlichen:** Platzhalter in eckigen Klammern im Impressum und in der Datenschutzerklärung ausfüllen und beide Migrationen auf das Supabase-Projekt anwenden (`supabase db push`).
 - **Tests:** `npm test` enthält jetzt auch `test-auth-sync.mjs` und `test-auth-refresh.mjs`. Die Datenbanktests laufen mit `node test-classroom-db.mjs` (benötigt `@electric-sql/pglite`) und prüfen jetzt auch die Qualitätsmeldungen.
+
+## Übersetzungskorrekturen (25. September 2026)
+
+Alle 4.467 aktiven Satzpaare wurden inhaltlich geprüft (Person/Anrede, Bedeutung, deutsche Grammatik, finnische Fehler).
+
+- `sources/translation-corrections.tsv`: 168 korrigierte deutsche Übersetzungen, davon 89 Anrede-Fehler (du/ihr/Sie, meist über englisch „you“ entstanden), 62 Bedeutungsfehler (z. B. „Nouse ylös!“ = „Steh auf!“, nicht „Wach auf!“) und 17 deutsche Grammatik-/Stilfehler (z. B. „Sers!“). Die Korrektur ersetzt die jeweilige Übersetzung durch eine als KI-Fassung gekennzeichnete Übertragung aus dem Finnischen (`origin: finnish_adaptation`, `adapted_by: Claude`); die ersetzte Fassung steht unter `corrects`. Jede Zeile enthält den bisherigen Text als Prüfwert, damit eine Korrektur nie eine geänderte Quelle trifft.
+- `sources/sentence-archive.tsv`: 13 Sätze mit Fehlern im finnischen Text (z. B. *pystyn lukea* statt *pystyn lukemaan*, Tippfehler *OIet*) werden archiviert statt verändert, weil Text und Aufnahme aus Tatoeba stammen. Bestehende Wiederholungen und Favoriten bleiben erhalten. Ein betroffener Satz wurde aus dem Lernpfad „Reisen und Orientierung“ entfernt.
+- Beides wird von `python build_full_deck.py` angewendet. Danach: 4.454 aktive und 239 archivierte Sätze; Grammatikhilfen unverändert.

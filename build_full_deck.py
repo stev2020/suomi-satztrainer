@@ -7,6 +7,24 @@ from pathlib import Path
 from level_import import assign
 ROOT=Path(__file__).parent
 FIELDS=('id','text','lang','owner','license')
+def _tsv(name):
+ lines=[l for l in (ROOT/'sources'/name).read_text().splitlines() if l and not l.startswith('#')]
+ head=lines[0].split('\t')
+ return [dict(zip(head,l.split('\t'))) for l in lines[1:]]
+def apply_corrections(cards,archived):
+ """Reviewed fixes (2026-09-25): wrong German translations are replaced by app adaptations
+ from the Finnish sentence; Finnish sentences with errors are archived (text and audio stay unchanged)."""
+ byid={s['id']:s for s in cards}
+ for row in _tsv('translation-corrections.tsv'):
+  s=byid[int(row['sentence_id'])];i=int(row['index']);old=s['translations'][i]
+  assert old['text']==row['current'],(s['id'],old['text'],row['current'])
+  s['translations'][i]={'id':None,'text':row['corrected'],'lang':'deu','owner':None,'license':'CC BY 2.0 FR','origin':'finnish_adaptation',
+   'source':{k:s[k] for k in FIELDS},'adapted_by':'Claude','adapted_on':'2026-09-25','corrects':{k:old.get(k) for k in ('id','text','owner','origin')}}
+ remove={int(r['sentence_id']):r['reason'] for r in _tsv('sentence-archive.tsv')}
+ for sid,reason in remove.items():
+  assert sid in byid,sid
+  byid[sid]['archive_reason']='Fehler im finnischen Satz: '+reason
+ return [s for s in cards if s['id'] not in remove],archived+[byid[sid] for sid in sorted(remove)]
 def main():
  rows=json.loads((ROOT/'sources/full-audio-candidates.json').read_text())
  previous=json.loads((ROOT/'sources/pre-full-import-deck.json').read_text())
@@ -53,6 +71,7 @@ def main():
   assert s['level']==1 and s['lang']=='fin'
   existing_ids.add(s['id']);existing_texts.add(normalize(s['text']))
   cards.append(copy.deepcopy(s))
+ cards,archived=apply_corrections(cards,archived)
  cards.sort(key=lambda s:(s['level'],s['id']))
  out={'source':'https://tatoeba.org/en/downloads','retrieved':'2026-09-11','export_date':'2026-09-05','level_method':'Previous editorial levels retained; new levels provisionally estimated from vocabulary and grammar. Not certified CEFR.','levels':[{'id':n,'title':f'Level {n}'} for n in range(1,7)],'import_summary':{'audio_source_sentences':len(rows),'licensed_audio_sentences':sum(bool(s['audios']) for s in cards),'unlicensed_audio_sentences':sum(s.get('audio_status')=='license_missing' for s in cards),'previous_active_sentences':len(previous['sentences'])},'sentences':cards,'archived_sentences':archived}
  assert len(rows)==4253 and len(imported)==4253

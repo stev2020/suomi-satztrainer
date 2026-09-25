@@ -1,0 +1,170 @@
+# Korrekturen deutscher Übersetzungen (geprüft 2026-09-25). Spalten: Satz-ID, Index der Übersetzung, bisheriger Text (muss exakt passen), neuer Text, Kategorie, Grund.
+sentence_id	index	current	corrected	category	reason
+335649	0	Dieses Kleid steht Ihnen sehr gut.	Dieses Kleid steht dir sehr gut.	person	sinulle = du, nicht Sie
+822647	0	Es ist die Wahrheit.	Das ist eine Tatsache.	meaning	fakta = Tatsache, nicht Wahrheit
+2114945	0	Du hast dich verändert.	Ihr habt euch verändert.	person	te olette muuttuneet = Plural (ihr/Sie)
+2522354	0	Tom atmet nicht mehr.	Tom atmet nicht.	meaning	nicht mehr (enää) steht nicht im finnischen Satz
+2552826	0	Wach auf!	Steh auf!	meaning	Nouse ylös = aufstehen, nicht aufwachen
+2586079	0	Ich brauche Ihre Hilfe.	Ich brauche deine Hilfe.	person	apuasi = deine Hilfe (sinä), nicht Ihre
+3229520	0	Halte dort an.	Bleib auf der Stelle stehen!	meaning	Seis siihen paikkaan = Stehen bleiben!, nicht „dort anhalten“
+3241948	0	Hilf!	Helft!	person	Imperativ Plural -kaa → ihr
+3241949	0	Hilf mir!	Helft mir!	person	Imperativ Plural -kaa → ihr
+3261457	0	Runter von mir!	Fass mich nicht an!	meaning	Älä koske minuun = Fass mich nicht an, nicht „Runter von mir“
+3363467	0	Spring runter!	Springt runter!	person	Hypätkää = Imperativ Plural → ihr
+3366217	0	Ich bin zu Hause.	Wir sind zu Hause!	person	ollaan = wir (Passiv/Umgangssprache), nicht ich
+3373619	1	Kommt schnell!	Komm schnell!	person	Tule = Imperativ Singular → du, nicht ihr
+3374073	0	Ich bin dafür.	Wir sind dafür.	person	Kannatetaan = wir, nicht ich
+3381343	0	He!	Hallo!	meaning	Hei = Hallo (Gruß), nicht Ausruf „He!“
+3381344	0	Sers!	Hallo!	german	„Sers“ ist Dialekt, kein Standarddeutsch
+3381346	0	Sers!	Hallo!	german	„Sers“ ist Dialekt, kein Standarddeutsch
+3381348	0	Sers!	Tschüss!	german	Sers ist stark regionaler Slang; neutrale Grußformel nötig
+3381349	0	Sers!	Hallo!	german	Sers ist stark regionaler Slang; neutrale Grußformel nötig
+3381350	0	Sers!	Hallo!	german	Sers ist stark regionaler Slang; neutrale Grußformel nötig
+3464363	0	Du wohnst zu weit weg.	Ihr wohnt zu weit weg.	person	Asutte = ihr, nicht du
+3464367	0	Du musst dich verstecken.	Ihr müsst euch verstecken.	person	teidän = ihr, nicht du
+3464381	0	Du legtest ein Versprechen ab.	Du hast es versprochen.	german	ein Versprechen ablegen im Präteritum klar unidiomatisch
+3464401	0	Ich bin fett.	Ich bin übergewichtig.	meaning	ylipainoinen = übergewichtig, nicht fett (lihava)
+3553431	0	Ihre Tasche ist offen!	Deine Tasche ist offen!	person	Laukkusi (sinä) → du, nicht Sie
+3553432	0	Ihre Tasche ist offen!	Dein Rucksack ist offen!	person	Reppusi = dein Rucksack (sinä), nicht Ihre Tasche
+3571579	0	Ihr Englisch ist perfekt.	Du sprichst perfekt Englisch.	person	Puhut = du, nicht Sie
+3573530	0	Eure Füße sind schmutzig.	Deine Füße sind schmutzig.	person	Jalkasi = deine (sinä), nicht eure
+3594973	0	Ich würde Sie gerne küssen.	Ich würde dich gerne küssen.	person	sinua = dich, nicht Sie
+3594974	0	Ich würde Sie gerne küssen.	Ich würde dich gerne küssen.	person	sinua = dich, nicht Sie
+3596201	0	Wohnen Sie hier in der Nähe?	Wohnst du in diesem Stadtteil?	person	Asutko = du, nicht Sie
+3830099	0	Bleib unten!	Bleibt unten!	person	Imperativ Plural -kaa = ihr
+3968375	0	Ihr seht europäisch aus.	Du siehst europäisch aus.	person	Näytät = du, nicht ihr
+4087599	0	Morgen ist Feiertag.	Morgen ist ein freier Tag.	meaning	vapaapäivä = freier Tag, nicht Feiertag (pyhäpäivä)
+4099588	0	Tom verband Marias Schnittwunde.	Tom klebte ein Pflaster auf Marias Wunde.	meaning	laastari = Pflaster; „verband“ und „Schnittwunde“ weichen ab
+4149773	0	Hör auf zu rufen.	Hör auf zu schreien.	meaning	huutaa = schreien, nicht rufen
+4178430	0	Wie war eure Reise?	Wie war die Reise?	person	kein Possessiv im Finnischen; eure = Plural falsch hinzugefügt
+4181811	0	Warst du schon mal im Ausland?	Wart ihr schon mal im Ausland?	person	Oletteko käyneet = ihr/Sie, nicht du
+4181821	0	Reist du oft ins Ausland?	Reist ihr oft ins Ausland?	person	Matkustatteko = ihr/Sie, nicht du
+4181824	0	Reist du oft ins Ausland?	Reist ihr oft ins Ausland?	person	Matkustattekste (ugs.) = ihr, nicht du
+4183307	0	Die Ergebnisse waren nicht vorhersagbar.	Die Folgen waren nicht vorhersagbar.	meaning	seuraukset = Folgen, nicht Ergebnisse
+4183309	0	Ich kann kaum aufstehen.	Ich kann mich kaum auf den Beinen halten.	meaning	pysyä pystyssä = aufrecht bleiben, nicht aufstehen
+4183311	0	Ich kann kaum aufstehen.	Ich kann mich gerade noch so auf den Beinen halten.	meaning	pysyä pystyssä = aufrecht bleiben, nicht aufstehen
+4183313	0	Zeit aufzustehen!	Zeit aufzuwachen!	meaning	herätä = aufwachen, nicht aufstehen
+4186314	0	Bitte senkt eure Stimme.	Sprich leiser.	person	Imperativ Singular (puhu) = du, nicht ihr
+4191590	0	Habe ich Sie in Verlegenheit gebracht?	Habe ich dich in Verlegenheit gebracht?	person	sinut = dich, nicht Sie
+4211485	0	Hört sehr genau zu!	Hör sehr genau zu!	person	Kuuntele = Imperativ Singular → du, nicht ihr
+4215412	0	Ich bin für eure Hilfe dankbar.	Ich bin für deine Hilfe dankbar.	person	avustasi = deine Hilfe, nicht eure
+4234894	0	Was lachst du?	Worüber lachst du?	german	„Was lachst du?“ unidiomatisch
+4237791	0	Tom lebte dort.	Tom lebte hier.	meaning	täällä = hier, nicht dort
+4240243	0	Tomi hat das Theaterstück nicht gefallen.	Tomi hat das Theaterstück nicht genossen.	german	ungrammatisch (Kasus); nauttia = genießen
+4298795	0	Wir brauchen Ihre Hilfe.	Wir brauchen deine Hilfe.	person	apuasi = deine Hilfe (sinä), nicht Ihre
+4340675	0	Ich muss mich konzentrieren.	Lass mich mich konzentrieren.	meaning	Anna minun = lass mich (Bitte), nicht ich muss
+4340823	0	Pferde fressen Gras.	Pferde fressen Heu.	meaning	heinä = Heu, nicht Gras
+4365691	0	Tom und Maria sind Freunde meiner Familie.	Tom und Maria sind Freunde der Familie.	meaning	perhetuttu = Familienfreund; 'meiner' ist Zusatzinformation
+4366417	0	Es gibt keine Alternativen.	Es gab keine Alternativen.	meaning	ei ollut = Vergangenheit
+4391213	0	Du schuldest mir Geld.	Du schuldest mir etwas.	meaning	Geld steht nicht im finnischen Satz
+4416861	0	Wie war eure Reise?	Wie war deine Reise?	person	matkasi = deine Reise (sinä), nicht eure
+4416864	0	Wie war eure Reise?	Wie war deine Reise?	person	sun = dein (du), nicht euer
+4423276	0	Wie war der Film?	War der Film gut?	meaning	Ja/Nein-Frage (War der Film gut?) als W-Frage übersetzt
+4424177	0	Das ist, was ich denke.	So sehe ich das.	german	'Das ist, was ich denke' ist unidiomatisch (Anglizismus); näen asian = sehe die Sache
+4434646	0	Habe ich Sie erschreckt?	Habe ich dich erschreckt?	person	sinut = dich, nicht Sie
+4434651	0	Habe ich Sie erschreckt?	Habe ich dich erschreckt?	person	sut = dich, nicht Sie
+4444781	0	Tun Sie, was immer notwendig ist.	Tu alles, was nötig ist.	person	Tee (Imperativ Singular) → du, nicht Sie
+4881772	0	Die Ampel wurde grün.	Grünes Licht!	meaning	Ausruf 'Grünes Licht!', keine Aussage im Präteritum
+4900882	0	Du musst dich nicht beeilen.	Ihr müsst euch nicht beeilen.	person	teidän = ihr/Sie, nicht du
+4934059	0	Ich habe dazu beigetragen.	Ich habe an der Arbeit mitgewirkt.	meaning	Objekt työhön (an der Arbeit) fehlt
+4949426	0	Ich liebe es, euch kochen zu sehen.	Ich liebe es, dich kochen zu sehen.	person	sun = du, nicht ihr
+4960439	0	Hast du das von Tom erfahren?	Hast du das von Tom gelernt?	meaning	oppia = lernen, nicht erfahren
+4998090	0	Wir wohnten Tür an Tür.	Wir wohnen Tür an Tür.	meaning	Präsens asumme als Präteritum übersetzt
+5001449	0	Wir haben die Nase voll mit deiner Klagerei.	Wir haben die Nase voll von deiner Klagerei.	german	'die Nase voll von', nicht 'mit'
+5002561	0	Möchten Sie eine Tasse Kaffee?	Möchtest du eine Tasse Kaffee?	person	haluatko = du, nicht Sie
+5008868	0	Nur Mut.	Seid mutig.	person	Imperativ Plural (olkaa) -> ihr
+5008882	0	Lies dieses Buch.	Lest dieses Buch.	person	Lukekaa = Imperativ Plural → ihr
+5025746	0	Necke Tom nicht.	Neckt Tom nicht.	person	Älkää = Imperativ Plural (ihr)
+5039998	0	Könnten Sie mir noch einmal Ihren Namen nennen?	Könntest du mir noch einmal deinen Namen nennen?	person	Voisitko/nimesi = du, nicht Sie
+5048850	0	Lass mich versuchen.	Lass es mich versuchen.	german	versuchen braucht Objekt: Lass es mich versuchen
+5050995	0	Dieser Sack ist zu schwer.	Diese Tasche ist zu schwer.	meaning	laukku = Tasche, nicht Sack
+5068365	0	Sie arbeiteten hart.	Sie arbeiten hart.	meaning	Präsens työskentelevät als Präteritum übersetzt
+5074546	0	Schäl bitte die Kartoffeln.	Könntest du die Kartoffeln schälen?	meaning	Frage mit Konditional, kein Imperativ
+5075151	0	Ich brauche Ihren Schutz nicht.	Ich brauche deinen Schutz nicht.	person	suojeluasi = dein, nicht Ihr
+5086580	0	Lauf nicht hierher.	Renn hier nicht herum.	meaning	täällä = hier (Ort), nicht hierher (Richtung)
+5089290	0	Tom setzte sich auf den Fußboden.	Tom saß auf dem Fußboden.	meaning	istui lattialla = saß, nicht setzte sich
+5093248	0	Haben Sie Husten?	Hast du Husten?	person	sinulla = du, nicht Sie
+5121107	0	Du wirst dir es anders überlegen.	Du wirst es dir anders überlegen.	german	Wortstellung: es dir
+5121109	0	Du wirst dir es anders überlegen.	Du wirst es dir anders überlegen.	german	falsche Pronomenstellung (dir es)
+5133903	0	Lügt nie!	Lüg nie!	person	älä = du, nicht ihr
+5141332	0	Sie haben geschlafen.	Du hast geschlafen.	person	sinä = du, nicht Sie
+5196743	0	Ich will mit Ihrem Geschäftsführer reden.	Ich will mit deinem Vorgesetzten reden.	person	esimiehesi = dein (sinun), nicht Ihr
+5200765	0	Ich möchte dich küssen.	Ich möchte euch küssen.	person	teitä = euch/Sie, nicht dich
+5201957	0	Danke für Ihr Verständnis!	Danke für dein Verständnis!	person	ymmärrät = du
+5204488	0	Ihr habt eure Glaubwürdigkeit verloren.	Du hast deine Glaubwürdigkeit verloren.	person	olet = du, nicht ihr
+5206266	0	Das ist keine Antwort auf die Frage.	Du beantwortest die Frage nicht.	meaning	Et vastaa = du antwortest nicht; Subjekt fehlt
+5207573	0	Ich habe Ihre Nachricht erhalten.	Ich habe deine Nachricht erhalten.	person	viestisi = deine
+5207574	0	Ich habe Ihre Nachricht erhalten.	Ich habe deine Nachricht erhalten.	person	sun = du, nicht Sie
+5236847	0	Ich denke, dass du Tom unterschätzt.	Ich denke, dass ihr Tom unterschätzt.	person	aliarvioitte = ihr, nicht du
+5369283	0	Ich mag eure Freunde nicht.	Ich mag deine Freunde nicht.	person	ystävistäsi = deine, nicht eure
+5369284	0	Ich mag eure Freunde nicht.	Ich mag deine Freunde nicht.	person	sun = du, nicht ihr
+5381386	0	Du hast echt ’n Knall!	Du bist so seltsam.	meaning	outo = seltsam, nicht verrückt
+5492787	0	Tom klang glücklich.	Tom wirkte glücklich.	meaning	vaikutti = wirkte, nicht klang
+5501675	0	Wann wollen wir uns morgen treffen?	Um wie viel Uhr willst du dich morgen treffen?	person	haluat = du willst, nicht wir
+5528821	0	Er verfolgte den Einbrecher.	Er verfolgte den Dieb.	meaning	varas = Dieb, nicht Einbrecher
+5612040	0	Bitte bediene dich!	Bitte bedient euch!	person	Käykää = Imperativ Plural → ihr
+5612041	0	Bitte bediene dich!	Bitte bedient euch!	person	Imperativ käykää = ihr/Sie, nicht du
+5641145	0	Ich liebe dieses Foto.	Das ist ein wunderschönes Bild.	meaning	Aussage über das Bild, nicht 'ich liebe'
+5642920	0	Es wurde ein Grab ausgehoben.	Sie hoben ein Grab aus.	meaning	Subjekt he fehlt (Passiv)
+5671233	0	Ihre Antwort ist richtig.	Du hast richtig geantwortet.	person	vastasit = du
+5671236	0	Ihre Antwort ist richtig.	Du hast richtig geantwortet.	person	sinä vastasit = du
+5729222	0	Bleib ruhig!	Sei still!	meaning	hiljaa = still; 'ruhig bleiben' = gelassen bleiben
+5729227	0	Eintritt verboten!	Bleibt weg!	person	Imperativ Plural pysykää; 'Eintritt verboten' Bedeutung verändert
+5729300	0	Beruhige dich!	Beruhigt euch!	person	Imperativ rauhoittukaa = ihr, nicht du
+5730358	0	Schau nach hinten!	Erinnere dich!	meaning	muistele = erinnere dich, nicht schau nach hinten
+5732574	0	Vorsicht!	Seid vorsichtig!	person	Imperativ Plural olkaa -> ihr
+5758910	0	Tom wurde unruhig.	Tom wurde verlegen.	meaning	vaivaantua = verlegen/befangen werden, nicht unruhig
+5807965	0	Könnten Sie langsamer sprechen?	Könntest du langsamer sprechen?	person	sinä = du, nicht Sie
+6100629	0	Die Bettlaken sind rein.	Die Bettlaken sind sauber.	german	'rein' für Wäsche unidiomatisch
+6143354	0	Tom wirkte leicht verärgert.	Tom klang leicht verärgert.	meaning	kuulosti = klang, nicht wirkte
+6144056	0	Tom aß einen Orange.	Tom aß eine Orange.	german	Orange ist feminin: eine Orange
+6144076	0	Du bist jetzt sicher.	Ihr seid jetzt in Sicherheit.	person	olette = ihr/Sie, nicht du
+6568203	0	Nicht schießen!	Schießt nicht!	person	Imperativ Plural älkää -> ihr
+6569699	0	Du bist jung.	Ihr seid jung.	person	te olette nuoria (Plural) = ihr seid jung
+6574929	0	Ihr Vater ist groß.	Dein Vater ist groß.	person	sinun = dein, nicht Ihr
+6575020	0	Isst du Fleisch?	Esst ihr Fleisch?	person	Syöttekö = ihr, nicht du
+6575509	0	Ich habe früher hier gewohnt.	Ich habe früher dort gewohnt.	meaning	siellä = dort, nicht hier
+6581909	0	Trinkst du Wein?	Trinkt ihr Wein?	person	Juotteko = ihr, nicht du
+6584418	0	Beißt Ihr Hund?	Beißt dein Hund?	person	sinun = dein, nicht Ihr
+6589375	0	Bitte nicht füttern!	Füttere die Tiere nicht.	meaning	Person (du) und Objekt eläimiä fehlen
+6594165	0	Ich will reich sein.	Ich will reich werden.	meaning	rikastua = reich werden, nicht reich sein
+6604409	0	Wir standen alle sofort auf.	Wir standen alle gleichzeitig auf.	meaning	yhtä aikaa = gleichzeitig, nicht sofort
+6629779	0	Sehen Sie den Unterschied?	Siehst du den Unterschied?	person	näetkö = du, nicht Sie
+6629993	0	Schaue auf diesen Berg.	Schaut auf diesen Berg.	person	katsokaa = Imperativ Plural (ihr)
+6631297	0	Ich stehe um sechs auf.	Ich wache um sechs auf.	meaning	herätä = aufwachen, nicht aufstehen
+6631610	0	Ich kann mich nicht erinnern, das versprochen zu haben.	Ich kann mich nicht erinnern, dir so etwas versprochen zu haben.	meaning	sinulle (dir) fehlt
+6633701	0	Wie lange bist du schon in Japan?	Wie lange seid ihr schon in Japan?	person	te olette olleet = ihr, nicht du
+6669718	0	Bist du Tom?	Sind Sie Tom?	person	Oletteko te + Singular-Prädikat = höfliches Sie, nicht du
+6677874	0	Heute Morgen bin ich sehr früh aufgestanden.	Heute Morgen bin ich sehr früh aufgewacht.	meaning	heräsin = aufwachen, nicht aufstehen
+6690541	0	Vielen Dank für eure Hilfe.	Vielen Dank für deine Hilfe.	person	avustasi = deine, nicht eure
+6690720	0	Ihr Buch ist hier.	Dein Buch ist hier.	person	sun = du, nicht Sie
+6692910	0	Mach die Augen zu.	Macht die Augen zu.	person	sulkekaa = Imperativ Plural (ihr)
+6698919	0	Kochen Sie den Reis.	Koch den Reis.	person	Keitä = Imperativ Singular (du), nicht Sie
+6705896	0	Sei respektvoll.	Seid respektvoll.	person	Olkaa = Imperativ Plural (ihr)
+6728101	0	Tomi ist kalt und er ist müde.	Tomi friert, und er ist müde.	meaning	Tomilla on kylmä = ihm ist kalt; „Tomi ist kalt“ bedeutet etwas anderes
+6729695	0	Ich habe Sie nicht belogen.	Ich habe dich nicht belogen.	person	sinulle = du, nicht Sie
+6732337	0	Warne Tom.	Warnt Tom.	person	Varoittakaa = Imperativ Plural (ihr)
+6736750	0	Sing nicht.	Singt nicht.	person	älkää = Imperativ Plural (ihr)
+6771673	0	Hilfst du mir, diesen Schreibtisch zu verschieben?	Hilfst du mir, diesen Tisch zu verschieben?	meaning	pöytä = Tisch, Schreibtisch wäre kirjoituspöytä
+6793834	0	Tom versuchte mich zu küssen, aber ich habe ihn nicht gelassen.	Tom versuchte mich zu küssen, aber ich bin ausgewichen.	meaning	väistin = ich wich aus
+6800420	0	Vergeude nicht damit deine Zeit.	Vergeude deine Zeit nicht mit so etwas.	german	falsche Wortstellung
+6855063	0	Wir gehen zusammen aus.	Wir sind ein Paar.	meaning	seurustella = eine Beziehung haben, nicht zusammen ausgehen
+6855065	0	Wir gehen zusammen aus.	Wir sind ein Paar.	meaning	seurustella = eine Beziehung haben, nicht zusammen ausgehen
+6877958	0	Ich kann Knoblauch nicht riechen.	Ich hasse den Geruch von Knoblauch.	meaning	nicht riechen können ist irreführend (kann ihn nicht wahrnehmen)
+6886644	0	Ist Tom noch immer Kapitän eures Schiffes?	Ist Tom noch immer Kapitän deines Schiffes?	person	laivasi = du, nicht ihr
+6897030	0	Kennt ihr diesen Mann?	Kennst du diesen Mann?	person	Tunnetko = du, nicht ihr
+6924759	0	Ich muss Ihnen etwas zeigen.	Ich muss dir etwas zeigen.	person	sulle = du, nicht Sie
+6944692	0	Wir sprechen am Morgen.	Sprechen wir morgen früh.	meaning	Puhutaan = Aufforderung (lass uns); am Morgen unidiomatisch
+6946879	0	Ich hätte gerne ein eigenes Zimmer.	Ich hätte gerne ein eigenes Bett.	meaning	sänky = Bett, nicht Zimmer
+6955774	0	Bleiben Sie in Ihrem Wagen!	Bleib in deinem Auto!	person	pysy/autossasi = du, nicht Sie
+6955780	0	Warum nehmen die Tom?	Wohin bringen sie Tom?	meaning	Minne = wohin, nicht warum
+6989226	0	Drohst du mir?	Droht ihr mir?	person	uhkailetteko = ihr/Sie, nicht du
+7003143	0	Wir wollen morgen abreisen.	Wir reisen morgen ab.	meaning	wollen (Absicht) steht nicht im finnischen Satz
+7024305	0	Lebt Tom jetzt in Boston?	Lebt Tom in Boston?	meaning	jetzt steht nicht im finnischen Satz
+7033846	0	Ist das eine Tatsache?	Ist das wahr?	meaning	totta = wahr; „Tatsache“ ist Fehlübersetzung aus dem Englischen
+7072212	0	Triffst du dich nicht mit jemandem?	Triffst du dich mit niemandem?	meaning	Etkö tapaile ketään = mit niemandem; „nicht mit jemandem“ verkehrt die Aussage
+7089252	0	Ich frage mich, ob ihr es versteht.	Ich frage mich, ob du es verstehst.	person	sinä = du, nicht ihr
+7249009	0	Das ist ein beklemmender Gedanke.	Das ist ein deprimierender Gedanke.	meaning	masentava = deprimierend, nicht beklemmend
+7263413	0	Wer ißt den Rest?	Wer isst den Rest?	german	veraltete Rechtschreibung „ißt“
+7581974	0	Tom ist ein Prominenter.	Tom ist berühmt.	meaning	kuuluisa = berühmt (Adjektiv), nicht Prominenter
+7584848	0	Ich liebe Sie.	Ich liebe dich.	person	sua = du, nicht Sie
