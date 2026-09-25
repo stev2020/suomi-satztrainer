@@ -95,6 +95,18 @@ function popoverMarkup(word,info){
   '<p class="word-popover-note">Automatisch analysiert, mit KI erklärt.</p>';
 }
 
+// Follow the word while scrolling; close only when it leaves the screen.
+function placePopover(){
+ if(!popover||popover.hidden||!activeButton)return;
+ const rect=activeButton.getBoundingClientRect();
+ if(!activeButton.isConnected||rect.bottom<0||rect.top>window.innerHeight){closeWordPopover();return;}
+ const box=popover.getBoundingClientRect(),gap=8;
+ let top=rect.bottom+gap;
+ if(top+box.height>window.innerHeight-12)top=Math.max(12,rect.top-box.height-gap);
+ const left=Math.min(Math.max(12,rect.left+rect.width/2-box.width/2),window.innerWidth-box.width-12);
+ popover.style.top=`${top}px`;popover.style.left=`${left}px`;
+}
+
 export function closeWordPopover(){
  if(!popover||popover.hidden)return;
  popover.hidden=true;
@@ -116,11 +128,7 @@ function openWordPopover(button){
  popover.innerHTML=popoverMarkup(button.textContent,info);
  popover.hidden=false;activeButton=button;
  button.setAttribute('aria-expanded','true');button.classList.add('active');
- const rect=button.getBoundingClientRect(),box=popover.getBoundingClientRect(),gap=8;
- let top=rect.bottom+gap;
- if(top+box.height>window.innerHeight-12)top=Math.max(12,rect.top-box.height-gap);
- const left=Math.min(Math.max(12,rect.left+rect.width/2-box.width/2),window.innerWidth-box.width-12);
- popover.style.top=`${top}px`;popover.style.left=`${left}px`;
+ placePopover();
  if(info)for(const listener of lookupListeners){try{listener({...info,word:button.textContent});}catch{}}
 }
 
@@ -136,7 +144,7 @@ export function mountWordLookup(roots){
   if(popover&&!popover.contains(event.target))closeWordPopover();
  });
  document.addEventListener('keydown',event=>{if(event.key==='Escape')closeWordPopover();});
- window.addEventListener('resize',closeWordPopover);
- window.addEventListener('scroll',closeWordPopover,true);
+ window.addEventListener('resize',placePopover);
+ window.addEventListener('scroll',placePopover,true);
  return observer;
 }
