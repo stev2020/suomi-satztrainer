@@ -2,7 +2,7 @@ name: Verify verb practice
 on:
   pull_request:
   push:
-    branches: [codex/verbforms-practice]
+    branches: [main]
 permissions:
   contents: read
 jobs:
