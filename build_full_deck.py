@@ -71,6 +71,13 @@ def main():
   assert s['level']==1 and s['lang']=='fin'
   existing_ids.add(s['id']);existing_texts.add(normalize(s['text']))
   cards.append(copy.deepcopy(s))
+ # Level fill (2026-09-25): AI-reviewed Tatoeba sentences with direct German links for Level 1/2 and 6.
+ fill=json.loads((ROOT/'sources/level-fill-2026-09-25.json').read_text())['sentences']
+ for s in fill:
+  assert s['id'] not in existing_ids and normalize(s['text']) not in existing_texts, s['id']
+  assert s['level'] in (1,2,6) and s['lang']=='fin' and s['translations']
+  existing_ids.add(s['id']);existing_texts.add(normalize(s['text']))
+  card=copy.deepcopy(s);card.pop('topic',None);cards.append(card)
  cards,archived=apply_corrections(cards,archived)
  cards.sort(key=lambda s:(s['level'],s['id']))
  out={'source':'https://tatoeba.org/en/downloads','retrieved':'2026-09-11','export_date':'2026-09-05','level_method':'Previous editorial levels retained; new levels provisionally estimated from vocabulary and grammar. Not certified CEFR.','levels':[{'id':n,'title':f'Level {n}'} for n in range(1,7)],'import_summary':{'audio_source_sentences':len(rows),'licensed_audio_sentences':sum(bool(s['audios']) for s in cards),'unlicensed_audio_sentences':sum(s.get('audio_status')=='license_missing' for s in cards),'previous_active_sentences':len(previous['sentences'])},'sentences':cards,'archived_sentences':archived}

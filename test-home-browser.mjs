@@ -211,7 +211,10 @@ try{
  assert.match(await focused.locator('#path-progress-text').textContent(),/Level 2 · 0 von/);
  await focused.locator('#path-level').selectOption('6');
  assert.equal(await focused.locator('.path-stop').count(),14);
+ // Level 6 was topped up (level fill 2026-09-25); Level 1 still has empty topics (slang, emergency).
+ await focused.locator('#path-level').selectOption('1');
  assert.ok(await focused.locator('.path-stop').getByText('Noch keine passenden Sätze in diesem Level',{exact:true}).count()>0);
+ await focused.locator('#path-level').selectOption('6');
  await focused.locator('#start-new-sentences').click();
  assert.match(await focused.locator('.card-top .card-label').textContent(),/Level 6/);
  await focused.locator('#practice-view [data-view="home"]').click();
