@@ -139,7 +139,7 @@ try{
  const expected=[reviewSentences[0],reviewSentences[1],reviewSentences[2],reviewSentences[0]];
  const difficulties=['easy','easy','hard','easy'];
  for(let i=0;i<expected.length;i++){
-  assert.equal(await focused.locator('.sentence').evaluate(el=>{const copy=el.cloneNode(true);copy.querySelectorAll('button').forEach(b=>b.remove());return copy.textContent;}),expected[i].text);
+  assert.equal(await focused.locator('.sentence').evaluate(el=>{const copy=el.cloneNode(true);copy.querySelectorAll('.sentence-source-icon').forEach(b=>b.remove());return copy.textContent;}),expected[i].text);
   assert.equal(await focused.locator('#word-bank').isVisible(),difficulties[i]==='easy');
   if(i===0){
    await focused.locator('#practice-view [data-view="home"]').click();
