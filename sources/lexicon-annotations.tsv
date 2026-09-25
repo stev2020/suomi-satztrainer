@@ -20024,7 +20024,7 @@ sentence_id	index	token	lemma	meaning	form	here	parts	pos	case	number
 13614070	4	sokerista	sokeri	Zucker	Nomen · Elativ „aus“ Singular	Zucker (pitää + Elativ)		nimisana	sisaeronto	singular
 13615315	0	Pitkän	pitkä	lang	Adjektiv · Genitiv Singular	(einer) langen		nimisana_laatusana	omanto	singular
 13615315	1	ajan	aika	Zeit	Nomen · Genitiv Singular	(einer) Zeit		nimisana	omanto	singular
-13615315	2	kuluttua	kulua	vergehen	Verbform · Partizip Perfekt passiv (-tu/-ty) · Partitiv Singular	nach (ajan kuluttua = nach … Zeit)		laatusana	osanto	singular
+13615315	2	kuluttua	kulua	vergehen	Postposition (mit Genitiv) „nach (Ablauf von)“	nach (ajan kuluttua = nach … Zeit)		laatusana	osanto	singular
 13615315	3	huomaat	huomata	bemerken	Verb · 2. Person Sg. (sinä) · Präsens	(du) bemerkst		teonsana		singular
 13615315	4	että	että	dass	Konjunktion			sidesana		
 13615315	5	sinun	sinä	du	Pronomen · Genitiv Singular	du (Genitiv: sinun olisi syytä = du solltest)		asemosana	omanto	singular
@@ -22693,7 +22693,7 @@ d:l4-health:7	4	kun	kun	wenn, als	Konjunktion	sobald (heti kun)		sidesana
 d:l4-health:7	5	saan	saada	bekommen	Verb · 1. Person Sg. (minä) · Präsens	(ich) bekomme → schaffe		teonsana		singular
 d:l4-health:7	6	tämän	tämä	dieser	Pronomen · Genitiv Singular	diese		asemosana	omanto	singular
 d:l4-health:7	7	sähköpostin	sähköposti	E-Mail	Nomen · Genitiv Singular	Mail	sähkö+posti	nimisana	omanto	singular
-d:l4-health:7	8	lähetettyä	lähettää	schicken	Verbform · Partizip Perfekt passiv (-tu/-ty) · Partitiv Singular	abgeschickt		laatusana	osanto	singular
+d:l4-health:7	8	lähetettyä	lähettää	schicken	Verbform · Partizip Perfekt passiv · Partitiv (saada + Partizip: etwas fertig bekommen)	abgeschickt		laatusana	osanto	singular
 d:l4-health:8	0	Lähetä	lähettää	schicken	Verb · Imperativ · 2. Person Sg. (sinä) · auch Verneinungsform nach ei	schick		teonsana		singular
 d:l4-health:8	1	se	se	es, das	Pronomen · Nominativ Singular	sie (die Mail)		asemosana	nimento	singular
 d:l4-health:8	2	kotoa	kotoa	von zu Hause	Adverb · (Ablativ/Partitiv von koti)					
@@ -24441,3 +24441,1559 @@ d:l5-work:8	2	vai	vai	oder (in Fragen)	Konjunktion			sidesana
 d:l5-work:8	3	kanaa	kana	Huhn, Hähnchen	Nomen · Partitiv Singular	Hähnchen (Partitiv)		nimisana	osanto	singular
 d:l5-work:9	0	Kanaa	kana	Huhn, Hähnchen	Nomen · Partitiv Singular	Hähnchen (Partitiv: etwas davon)		nimisana	osanto	singular
 d:l5-work:9	1	Kiitti	kiitos	danke	Ausruf · umgangssprachlich für kiitos	danke! (ugs.)				
+d:l6-cafe:0	0	Huomenta	huomenta	guten Morgen	Ausruf · (Partitiv von huomen)					
+d:l6-cafe:0	1	Mitä	mikä	was	Pronomen · Partitiv Singular			asemosana	osanto	singular
+d:l6-cafe:0	2	teille	te	ihr	Pronomen · Allativ „auf … zu, an“ Plural	euch → für euch		asemosana	ulkotulento	plural
+d:l6-cafe:0	3	saa	saada	bekommen; dürfen	Verb · 3. Person Sg. (hän) · Präsens	darf (es)		teonsana		singular
+d:l6-cafe:0	4	olla	olla	sein	Verb · Grundform (Infinitiv)			teonsana		
+d:l6-cafe:1	0	Minulle	minä	ich	Pronomen · Allativ „auf … zu, an“ Singular	mir → für mich		asemosana	ulkotulento	singular
+d:l6-cafe:1	1	kaurapuuro	kaurapuuro	Haferbrei	Nomen · Nominativ Singular		kaura+puuro	nimisana	nimento	singular
+d:l6-cafe:1	2	ja	ja	und	Konjunktion			sidesana		
+d:l6-cafe:1	3	iso	iso	groß	Adjektiv · Nominativ Singular	großer		nimisana_laatusana	nimento	singular
+d:l6-cafe:1	4	kahvi	kahvi	Kaffee	Nomen · Nominativ Singular			nimisana	nimento	singular
+d:l6-cafe:1	5	kiitos	kiitos	danke	Ausruf	bitte		nimisana	nimento	singular
+d:l6-cafe:2	0	Taas	taas	wieder	Adverb	schon wieder		seikkasana		
+d:l6-cafe:2	1	kahvia	kahvi	Kaffee	Nomen · Partitiv Singular	Kaffee (Partitiv)		nimisana	osanto	singular
+d:l6-cafe:2	2	Etkö	ei	nicht (Verneinungsverb)	Verneinungsverb · et = du nicht · + Frageendung -ko/-kö	(hast) du nicht …?		kieltosana		singular
+d:l6-cafe:2	3	sinä	sinä	du	Pronomen · Nominativ Singular			asemosana	nimento	singular
+d:l6-cafe:2	4	juonut	juoda	trinken	Verbform · Partizip Perfekt aktiv · verneinte Vergangenheit	getrunken		laatusana	nimento	singular
+d:l6-cafe:2	5	jo	jo	schon	Adverb			seikkasana		
+d:l6-cafe:2	6	kotona	kotona	zu Hause	Adverb · (Essiv von koti)					
+d:l6-cafe:3	0	Join	juoda	trinken	Verb · 1. Person Sg. (minä) · Imperfekt (Vergangenheit)	(ich) trank → doch (habe getrunken)		teonsana		singular
+d:l6-cafe:3	1	Olen	olla	sein	Verb · 1. Person Sg. (minä) · Präsens	(ich) bin		teonsana		singular
+d:l6-cafe:3	2	niin	niin	so	Adverb			seikkasana		
+d:l6-cafe:3	3	tottunut	tottua	sich gewöhnen	Verbform · Partizip Perfekt aktiv (-nut/-nyt)	gewöhnt (olen tottunut = ich bin gewöhnt)		laatusana	nimento	singular
+d:l6-cafe:3	4	juomaan	juoda	trinken	Verb · 3. Infinitiv -maan/-mään „(um) zu“	zu trinken (tottua + -maan)		teonsana	sisatulento	singular
+d:l6-cafe:3	5	kahvia	kahvi	Kaffee	Nomen · Partitiv Singular	Kaffee (Partitiv)		nimisana	osanto	singular
+d:l6-cafe:3	6	aamulla	aamu	Morgen	Nomen · Adessiv „auf, bei“ Singular	morgens		nimisana	ulkoolento	singular
+d:l6-cafe:3	7	etten	ettei	dass nicht (Verneinungsverb)	Verneinungsverb · en = ich nicht	dass ich … nicht	ett+ei	kieltosana		singular
+d:l6-cafe:3	8	enää	enää	mehr (verneint: nicht mehr)	Adverb	(nicht) mehr		seikkasana		
+d:l6-cafe:3	9	osaa	osata	können (gelernt)	Verb · Verneinungsform (nach ei)	kann		teonsana		singular
+d:l6-cafe:3	10	olla	olla	sein	Verb · Grundform (Infinitiv)	(ohne) sein → auskommen		teonsana		
+d:l6-cafe:3	11	sitä	se	es	Pronomen · Partitiv Singular	ihn (den Kaffee)		asemosana	osanto	singular
+d:l6-cafe:3	12	ilman	ilman	ohne	Postposition	ohne (nachgestellt)		suhdesana		
+d:l6-cafe:3	13	Mutta	mutta	aber	Konjunktion			sidesana		
+d:l6-cafe:3	14	sinä	sinä	du	Pronomen · Nominativ Singular			asemosana	nimento	singular
+d:l6-cafe:3	15	otat	ottaa	nehmen	Verb · 2. Person Sg. (sinä) · Präsens	(du) nimmst		teonsana		singular
+d:l6-cafe:3	16	varmaan	varmaan	bestimmt, wohl	Adverb					
+d:l6-cafe:3	17	teetä	tee	Tee	Nomen · Partitiv Singular	Tee (Partitiv)		nimisana	osanto	singular
+d:l6-cafe:4	0	En	ei	nicht (Verneinungsverb)	Verneinungsverb · en = ich nicht	ich … nicht → nein		kieltosana		singular
+d:l6-cafe:4	1	ota	ottaa	nehmen	Verb · Verneinungsform (nach ei)	nehme		teonsana		singular
+d:l6-cafe:4	2	Kahvia	kahvi	Kaffee	Nomen · Partitiv Singular	Kaffee (Partitiv)		nimisana	osanto	singular
+d:l6-cafe:4	3	minullekin	minä	ich	Pronomen · Allativ „auf … zu, an“ Singular · + -kin „auch“	auch für mich		asemosana	ulkotulento	singular
+d:l6-cafe:4	4	kiitos	kiitos	danke	Ausruf	bitte		nimisana	nimento	singular
+d:l6-cafe:5	0	Isä	isä	Vater	Nomen · Nominativ Singular	Papa		nimisana	nimento	singular
+d:l6-cafe:5	1	Eihän	ei	nicht (Verneinungsverb)	Verneinungsverb · ei = er/sie/es nicht · + -hän „doch“	doch nicht		kieltosana		singular
+d:l6-cafe:5	2	sinun	sinä	du	Pronomen · Genitiv Singular	(du) (sinun pitää = du sollst)		asemosana	omanto	singular
+d:l6-cafe:5	3	pitänyt	pitää	müssen, sollen	Verbform · Partizip Perfekt aktiv · verneinte Vergangenheit	solltest (… nicht)		laatusana	nimento	singular
+d:l6-cafe:5	4	enää	enää	mehr (verneint: nicht mehr)	Adverb	(nicht) mehr		seikkasana		
+d:l6-cafe:5	5	juoda	juoda	trinken	Verb · Grundform (Infinitiv)			teonsana		
+d:l6-cafe:5	6	kahvia	kahvi	Kaffee	Nomen · Partitiv Singular	Kaffee (Partitiv)		nimisana	osanto	singular
+d:l6-cafe:6	0	Kaikki	kaikki	alle, alles	Nomen · Nominativ Singular	alle		nimisana	nimento	singular
+d:l6-cafe:6	1	lääkärit	lääkäri	Arzt	Nomen · Nominativ Plural	Ärzte		nimisana	nimento	plural
+d:l6-cafe:6	2	sanovat	sanoa	sagen	Verb · 3. Person Pl. (he) · Präsens	(sie) sagen		teonsana		plural
+d:l6-cafe:6	3	että	että	dass	Konjunktion			sidesana		
+d:l6-cafe:6	4	minä	minä	ich	Pronomen · Nominativ Singular			asemosana	nimento	singular
+d:l6-cafe:6	5	en	ei	nicht (Verneinungsverb)	Verneinungsverb · en = ich nicht	ich … nicht		kieltosana		singular
+d:l6-cafe:6	6	saa	saada	bekommen; dürfen	Verb · Verneinungsform (nach ei)	darf		teonsana		singular
+d:l6-cafe:6	7	juoda	juoda	trinken	Verb · Grundform (Infinitiv)			teonsana		
+d:l6-cafe:6	8	kahvia	kahvi	Kaffee	Nomen · Partitiv Singular	Kaffee (Partitiv)		nimisana	osanto	singular
+d:l6-cafe:6	9	mutta	mutta	aber	Konjunktion			sidesana		
+d:l6-cafe:6	10	minä	minä	ich	Pronomen · Nominativ Singular			asemosana	nimento	singular
+d:l6-cafe:6	11	juon	juoda	trinken	Verb · 1. Person Sg. (minä) · Präsens	(ich) trinke		teonsana		singular
+d:l6-cafe:6	12	kuitenkin	kuitenkin	trotzdem, jedoch	Adverb			seikkasana		
+d:l6-cafe:6	13	vähän	vähän	ein wenig	Adverb			seikkasana		
+d:l6-cafe:6	14	silloin	silloin	dann, damals	Adverb	(silloin tällöin) ab und zu		seikkasana		
+d:l6-cafe:6	15	tällöin	tällöin	dann, in diesem Fall	Adverb	(silloin tällöin) ab und zu		seikkasana		
+d:l6-cafe:6	16	mukavassa	mukava	nett, angenehm	Adjektiv · Inessiv „in“ Singular	in netter		nimisana_laatusana	sisaolento	singular
+d:l6-cafe:6	17	seurassa	seura	Gesellschaft	Nomen · Inessiv „in“ Singular	in Gesellschaft		nimisana	sisaolento	singular
+d:l6-cafe:6	18	Ja	ja	und	Konjunktion			sidesana		
+d:l6-cafe:6	19	tämä	tämä	dieser	Pronomen · Nominativ Singular	das (hier)		asemosana	nimento	singular
+d:l6-cafe:6	20	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist		teonsana		singular
+d:l6-cafe:6	21	hyvin	hyvin	sehr; gut	Adverb	sehr		seikkasana		
+d:l6-cafe:6	22	mukavaa	mukava	nett, angenehm	Adjektiv · Partitiv Singular	nette (Partitiv)		nimisana_laatusana	osanto	singular
+d:l6-cafe:6	23	seuraa	seura	Gesellschaft	Nomen · Partitiv Singular	Gesellschaft (Partitiv)		nimisana	osanto	singular
+d:l6-cafe:7	0	Meiltä	me	wir	Pronomen · Ablativ „von … weg“ Plural	von uns → bei uns		asemosana	ulkoeronto	plural
+d:l6-cafe:7	1	saa	saada	bekommen	Verb · 3. Person Sg. (hän) · Präsens	(man) bekommt		teonsana		singular
+d:l6-cafe:7	2	kofeiinitontakin	kofeiiniton	koffeinfrei	Adjektiv · Partitiv Singular · + -kin „auch“	auch entkoffeinierten		laatusana	osanto	singular
+d:l6-cafe:7	3	Sitä	se	es	Pronomen · Partitiv Singular	ihn (Partitiv)		asemosana	osanto	singular
+d:l6-cafe:7	4	ei	ei	nicht (Verneinungsverb)	Verneinungsverb · ei = er/sie/es nicht	(man) … nicht		kieltosana		singular
+d:l6-cafe:7	5	maistamalla	maistaa	schmecken, kosten	Verb · 3. Infinitiv -malla/-mällä „indem, durch“	durch Schmecken		teonsana	ulkoolento	singular
+d:l6-cafe:7	6	erota	erottaa	unterscheiden	Verb · Verneinungsform (nach ei)	unterscheidet		teonsana		singular
+d:l6-cafe:7	7	tavallisesta	tavallinen	normal, gewöhnlich	Adjektiv · Elativ „aus“ Singular	vom normalen		laatusana	sisaeronto	singular
+d:l6-cafe:8	0	No	no	na, nun	Adverb	na		seikkasana		
+d:l6-cafe:8	1	olkoon	olla	sein	Verb · Imperativ · 3. Person Sg. (hän)	sei es → dann eben		teonsana		singular
+d:l6-cafe:8	2	sitten	sitten	dann	Adverb			seikkasana		
+d:l6-cafe:8	3	kofeiiniton	kofeiiniton	koffeinfrei	Adjektiv · Nominativ Singular	entkoffeiniert		laatusana	nimento	singular
+d:l6-cafe:8	4	Ja	ja	und	Konjunktion			sidesana		
+d:l6-cafe:8	5	karjalanpiirakka	karjalanpiirakka	Karelische Pirogge	Nomen · Nominativ Singular		karjala+piirakka	nimisana	nimento	singular
+d:l6-cafe:8	6	munavoilla	munavoi	Eierbutter	Nomen · Adessiv „auf, bei“ Singular	mit Eierbutter	muna+voi	nimisana	ulkoolento	singular
+d:l6-cafe:9	0	Selvä	selvä	klar	Adjektiv · Nominativ Singular	alles klar		laatusana	nimento	singular
+d:l6-cafe:9	1	Tuon	tuoda	bringen	Verb · 1. Person Sg. (minä) · Präsens	(ich) bringe		teonsana		singular
+d:l6-cafe:9	2	kaiken	kaikki	alle, alles	Nomen · Genitiv Singular	alles		nimisana	omanto	singular
+d:l6-cafe:9	3	pöytään	pöytä	Tisch	Nomen · Illativ „in … hinein“ Singular	an den Tisch		nimisana	sisatulento	singular
+d:l6-cafe:9	4	parin	pari	Paar; ein paar	Nomen · Genitiv Singular	(in) ein paar		nimisana	omanto	singular
+d:l6-cafe:9	5	minuutin	minuutti	Minute	Nomen · Genitiv Singular	Minuten		nimisana	omanto	singular
+d:l6-cafe:9	6	päästä	päästä	in, nach (zeitlich)	Postposition · (Elativ von pää)	in (… Minuten)				
+d:l6-emergency:0	0	Sari	Sari	Sari (Name)	Name · Nominativ Singular			etunimi	nimento	singular
+d:l6-emergency:0	1	Mitä	mikä	was	Pronomen · Partitiv Singular			asemosana	osanto	singular
+d:l6-emergency:0	2	täällä	täällä	hier	Adverb			seikkasana		
+d:l6-emergency:0	3	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist (… passiert)		teonsana		singular
+d:l6-emergency:0	4	tapahtunut	tapahtua	passieren, geschehen	Verbform · Partizip Perfekt aktiv (-nut/-nyt)	passiert		laatusana	nimento	singular
+d:l6-emergency:0	5	Pihalla	piha	Hof	Nomen · Adessiv „auf, bei“ Singular	im Hof		nimisana	ulkoolento	singular
+d:l6-emergency:0	6	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist → steht		teonsana		singular
+d:l6-emergency:0	7	paloauto	paloauto	Feuerwehrauto	Nomen · Nominativ Singular		palo+auto	nimisana	nimento	singular
+d:l6-emergency:0	8	ja	ja	und	Konjunktion			sidesana		
+d:l6-emergency:0	9	poliisi	poliisi	Polizei	Nomen · Nominativ Singular			nimisana	nimento	singular
+d:l6-emergency:0	10	ja	ja	und	Konjunktion			sidesana		
+d:l6-emergency:0	11	ovien	ovi	Tür	Nomen · Genitiv Plural	der Türen		nimisana	omanto	plural
+d:l6-emergency:0	12	edessä	edessä	vor	Postposition	vor (+ Genitiv)		seikkasana	sisaolento	singular
+d:l6-emergency:0	13	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist		teonsana		singular
+d:l6-emergency:0	14	eristysnauhaa	eristysnauha	Absperrband	Nomen · Partitiv Singular	Absperrband (Partitiv)	eristää+nauha	nimisana	osanto	singular
+d:l6-emergency:1	0	Kellarissa	kellari	Keller	Nomen · Inessiv „in“ Singular	im Keller		nimisana	sisaolento	singular
+d:l6-emergency:1	1	syttyi	syttyä	sich entzünden, ausbrechen	Verb · 3. Person Sg. (hän) · Imperfekt (Vergangenheit)	brach aus		teonsana		singular
+d:l6-emergency:1	2	yöllä	yö	Nacht	Nomen · Adessiv „auf, bei“ Singular	nachts		nimisana	ulkoolento	singular
+d:l6-emergency:1	3	tulipalo	tulipalo	Brand, Feuer	Nomen · Nominativ Singular		tuli+palo	nimisana	nimento	singular
+d:l6-emergency:1	4	Palokunta	palokunta	Feuerwehr	Nomen · Nominativ Singular		palo+kunta	nimisana	nimento	singular
+d:l6-emergency:1	5	sammutti	sammuttaa	löschen	Verb · 3. Person Sg. (hän) · Imperfekt (Vergangenheit)	löschte		teonsana		singular
+d:l6-emergency:1	6	sen	se	es	Pronomen · Genitiv Singular	es (Objekt)		asemosana	omanto	singular
+d:l6-emergency:1	7	nopeasti	nopea	schnell	Adjektiv · Adverbform (-sti) „auf … Weise“			laatusana	kerrontosti	
+d:l6-emergency:1	8	ja	ja	und	Konjunktion			sidesana		
+d:l6-emergency:1	9	kaikki	kaikki	alle, alles	Nomen · Nominativ Singular	alle		nimisana	nimento	singular
+d:l6-emergency:1	10	asukkaat	asukas	Bewohner	Nomen · Nominativ Plural	Bewohner (Pl.)		nimisana	nimento	plural
+d:l6-emergency:1	11	saatiin	saada	bekommen; dazu bringen	Verb · Passiv (Umgangssprache auch: wir-Form) · Imperfekt (Vergangenheit)	wurden (herausgebracht)		teonsana		
+d:l6-emergency:1	12	ulos	ulos	hinaus, raus	Adverb	heraus		seikkasana		
+d:l6-emergency:1	13	ajoissa	ajoissa	rechtzeitig	Adverb			seikkasana		
+d:l6-emergency:1	14	Kukaan	kukaan	(irgend)jemand; (mit ei) niemand	Pronomen · Nominativ Singular	niemand		asemosana	nimento	singular
+d:l6-emergency:1	15	ei	ei	nicht (Verneinungsverb)	Verneinungsverb · ei = er/sie/es nicht	(niemand) … nicht		kieltosana		singular
+d:l6-emergency:1	16	loukkaantunut	loukkaantua	sich verletzen	Verbform · Partizip Perfekt aktiv · verneinte Vergangenheit	wurde verletzt		laatusana	nimento	singular
+d:l6-emergency:2	0	Onneksi	onneksi	zum Glück	Adverb · (Translativ von onni)					
+d:l6-emergency:2	1	Olin	olla	sein	Verb · 1. Person Sg. (minä) · Imperfekt (Vergangenheit)	(ich) war → hatte		teonsana		singular
+d:l6-emergency:2	2	yövuorossa	yövuoro	Nachtschicht	Nomen · Inessiv „in“ Singular	in der Nachtschicht	yö+vuoro	nimisana	sisaolento	singular
+d:l6-emergency:2	3	joten	joten	deshalb, also	Konjunktion			sidesana		
+d:l6-emergency:2	4	en	ei	nicht (Verneinungsverb)	Verneinungsverb · en = ich nicht	ich … nicht		kieltosana		singular
+d:l6-emergency:2	5	tiennyt	tietää	wissen	Verbform · Partizip Perfekt aktiv · verneinte Vergangenheit	wusste		laatusana	nimento	singular
+d:l6-emergency:2	6	mitään	mikään	(irgend)etwas; nichts (verneint)	Pronomen · Partitiv Singular	nichts		asemosana	osanto	singular
+d:l6-emergency:2	7	Voinko	voida	können	Verb · 1. Person Sg. (minä) · Präsens · + Frageendung -ko/-kö	kann ich …?		teonsana		singular
+d:l6-emergency:2	8	mennä	mennä	gehen	Verb · Grundform (Infinitiv)			teonsana		
+d:l6-emergency:2	9	hakemaan	hakea	holen	Verb · 3. Infinitiv -maan/-mään „(um) zu“	(um) zu holen		teonsana	sisatulento	singular
+d:l6-emergency:2	10	tavaroitani	tavara	Sache, Ware	Nomen · Partitiv Plural · + Possessivendung „mein“	meine Sachen (Partitiv Pl.)		nimisana	osanto	plural
+d:l6-emergency:3	0	Et	ei	nicht (Verneinungsverb)	Verneinungsverb · et = du nicht	du … nicht		kieltosana		singular
+d:l6-emergency:3	1	voi	voida	können	Verb · Verneinungsform (nach ei)	kannst → nein		teonsana		singular
+d:l6-emergency:3	2	Poliisi	poliisi	Polizei	Nomen · Nominativ Singular			nimisana	nimento	singular
+d:l6-emergency:3	3	sanoo	sanoa	sagen	Verb · 3. Person Sg. (hän) · Präsens	sagt		teonsana		singular
+d:l6-emergency:3	4	ettei	ettei	dass nicht (Verneinungsverb)	Verneinungsverb · ei = er/sie/es nicht	dass … nicht	ett+ei	kieltosana		singular
+d:l6-emergency:3	5	taloon	talo	Haus	Nomen · Illativ „in … hinein“ Singular	ins Haus		nimisana	sisatulento	singular
+d:l6-emergency:3	6	saa	saada	bekommen; dürfen	Verb · Verneinungsform (nach ei)	darf (man)		teonsana		singular
+d:l6-emergency:3	7	mennä	mennä	gehen	Verb · Grundform (Infinitiv)			teonsana		
+d:l6-emergency:3	8	ennen	ennen	vor, bevor	Adverb	(ennen kuin) bevor		seikkasana		
+d:l6-emergency:3	9	kuin	kuin	als, wie	Konjunktion	(ennen kuin) bevor		sidesana		
+d:l6-emergency:3	10	tutkinta	tutkinta	Ermittlung, Untersuchung	Nomen · Nominativ Singular	die Ermittlungen		nimisana	nimento	singular
+d:l6-emergency:3	11	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist		teonsana		singular
+d:l6-emergency:3	12	päättynyt	päättyä	enden	Verbform · Partizip Perfekt aktiv (-nut/-nyt)	beendet → abgeschlossen		laatusana	nimento	singular
+d:l6-emergency:3	13	Savua	savu	Rauch	Nomen · Partitiv Singular	Rauch (Partitiv)		nimisana	osanto	singular
+d:l6-emergency:3	14	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist (… ausgebreitet) → hat sich		teonsana		singular
+d:l6-emergency:3	15	kuulemma	kuulemma	angeblich, wie man hört	Adverb	soll (angeblich)		seikkasana		
+d:l6-emergency:3	16	levinnyt	levitä	sich ausbreiten	Verbform · Partizip Perfekt aktiv (-nut/-nyt)	ausgebreitet		laatusana	nimento	singular
+d:l6-emergency:3	17	porraskäytävään	porraskäytävä	Treppenhaus	Nomen · Illativ „in … hinein“ Singular	ins Treppenhaus	porras+käytävä	nimisana	sisatulento	singular
+d:l6-emergency:4	0	Entä	entä	und (was ist mit) …?	Adverb	und …?		seikkasana		
+d:l6-emergency:4	1	Miuku	Miuku	Miuku (Name der Katze)	Name · Nominativ Singular					
+d:l6-emergency:4	2	Kissa	kissa	Katze	Nomen · Nominativ Singular	die Katze		nimisana	nimento	singular
+d:l6-emergency:4	3	jäi	jäädä	bleiben	Verb · 3. Person Sg. (hän) · Imperfekt (Vergangenheit)	blieb		teonsana		singular
+d:l6-emergency:4	4	eteiseen	eteinen	Flur, Diele	Nomen · Illativ „in … hinein“ Singular	im Flur (Illativ: dorthin geblieben)		nimisana	sisatulento	singular
+d:l6-emergency:4	5	kun	kun	als, wenn	Konjunktion	als		sidesana		
+d:l6-emergency:4	6	lähdin	lähteä	weggehen, losgehen	Verb · 1. Person Sg. (minä) · Imperfekt (Vergangenheit)	(ich) ging los		teonsana		singular
+d:l6-emergency:4	7	töihin	työ	Arbeit	Nomen · Illativ „in … hinein“ Plural	zur Arbeit		nimisana	sisatulento	plural
+d:l6-emergency:5	0	Palomiehet	palomies	Feuerwehrmann	Nomen · Nominativ Plural	Feuerwehrleute	palo+mies	nimisana	nimento	plural
+d:l6-emergency:5	1	kävivät	käydä	gehen, besuchen	Verb · 3. Person Pl. (he) · Imperfekt (Vergangenheit)	(käydä läpi) gingen … durch		teonsana		plural
+d:l6-emergency:5	2	asunnot	asunto	Wohnung	Nomen · Nominativ Plural	die Wohnungen		nimisana	nimento	plural
+d:l6-emergency:5	3	läpi	läpi	durch	Adverb	(käydä läpi) durchgehen				
+d:l6-emergency:5	4	ja	ja	und	Konjunktion			sidesana		
+d:l6-emergency:5	5	toivat	tuoda	bringen	Verb · 3. Person Pl. (he) · Imperfekt (Vergangenheit)	brachten		teonsana		plural
+d:l6-emergency:5	6	ulos	ulos	hinaus, raus	Adverb	heraus		seikkasana		
+d:l6-emergency:5	7	kaksi	kaksi	zwei	Zahlwort · Nominativ Singular			lukusana	nimento	singular
+d:l6-emergency:5	8	kissaa	kissa	Katze	Nomen · Partitiv Singular	Katzen (nach Zahlwort: Partitiv Sg.)		nimisana	osanto	singular
+d:l6-emergency:5	9	Toinen	toinen	zweiter; (der) andere	Zahlwort · Nominativ Singular	eine (toinen niistä = eine davon)		lukusana	nimento	singular
+d:l6-emergency:5	10	niistä	ne	sie (Pl., nicht-menschlich)	Pronomen · Elativ „aus“ Plural	davon		asemosana	sisaeronto	plural
+d:l6-emergency:5	11	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist		teonsana		singular
+d:l6-emergency:5	12	tuolla	tuolla	dort (drüben)	Adverb	da drüben				
+d:l6-emergency:5	13	Punaisen	punainen	rot	Adjektiv · Genitiv Singular	(des) Roten		laatusana	omanto	singular
+d:l6-emergency:5	14	Ristin	risti	Kreuz	Nomen · Genitiv Singular	(des) Kreuzes		nimisana	omanto	singular
+d:l6-emergency:5	15	autossa	auto	Auto, Wagen	Nomen · Inessiv „in“ Singular	im Wagen		nimisana	sisaolento	singular
+d:l6-emergency:5	16	harmaa	harmaa	grau	Adjektiv · Nominativ Singular			nimisana_laatusana	nimento	singular
+d:l6-emergency:5	17	ja	ja	und	Konjunktion			sidesana		
+d:l6-emergency:5	18	kiukkuinen	kiukkuinen	grantig, schlecht gelaunt	Adjektiv · Nominativ Singular			laatusana	nimento	singular
+d:l6-emergency:6	0	Harmaa	harmaa	grau	Adjektiv · Nominativ Singular			nimisana_laatusana	nimento	singular
+d:l6-emergency:6	1	ja	ja	und	Konjunktion			sidesana		
+d:l6-emergency:6	2	kiukkuinen	kiukkuinen	grantig, schlecht gelaunt	Adjektiv · Nominativ Singular			laatusana	nimento	singular
+d:l6-emergency:6	3	se	se	es, das	Pronomen · Nominativ Singular	das		asemosana	nimento	singular
+d:l6-emergency:6	4	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist		teonsana		singular
+d:l6-emergency:6	5	Miuku	Miuku	Miuku (Name der Katze)	Name · Nominativ Singular					
+d:l6-emergency:6	6	Missä	missä	wo	Fragewort · (Inessiv von mikä)					
+d:l6-emergency:6	7	se	se	es, das	Pronomen · Nominativ Singular	der (Wagen)		asemosana	nimento	singular
+d:l6-emergency:6	8	auto	auto	Auto, Wagen	Nomen · Nominativ Singular	Wagen		nimisana	nimento	singular
+d:l6-emergency:6	9	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist → steht		teonsana		singular
+d:l6-emergency:7	0	Portin	portti	Tor	Nomen · Genitiv Singular	(neben dem) Tor		nimisana	omanto	singular
+d:l6-emergency:7	1	vieressä	vieressä	neben	Postposition · (Inessiv von vieri)	neben (+ Genitiv)				
+d:l6-emergency:7	2	He	he	sie (Pl.)	Pronomen · Nominativ Plural			asemosana	nimento	plural
+d:l6-emergency:7	3	järjestävät	järjestää	organisieren	Verb · 3. Person Pl. (he) · Präsens	(sie) organisieren		teonsana		plural
+d:l6-emergency:7	4	myös	myös	auch	Adverb			seikkasana		
+d:l6-emergency:7	5	tilapäisen	tilapäinen	vorübergehend	Adjektiv · Genitiv Singular	vorübergehende (Genitiv-Objekt)		laatusana	omanto	singular
+d:l6-emergency:7	6	majoituksen	majoitus	Unterkunft	Nomen · Genitiv Singular	Unterkunft (Genitiv-Objekt)		nimisana	omanto	singular
+d:l6-emergency:7	7	niille	ne	sie (Pl., nicht-menschlich)	Pronomen · Allativ „auf … zu, an“ Plural	für die(jenigen)		asemosana	ulkotulento	plural
+d:l6-emergency:7	8	joilla	joka	der, welcher (Relativpronomen)	Pronomen · Adessiv „auf, bei“ Plural	bei denen → die … haben		asemosana	ulkoolento	plural
+d:l6-emergency:7	9	ei	ei	nicht (Verneinungsverb)	Verneinungsverb · ei = er/sie/es nicht	(es) … nicht → keinen		kieltosana		singular
+d:l6-emergency:7	10	ole	olla	sein	Verb · Verneinungsform (nach ei)	(haben) … nicht		teonsana		singular
+d:l6-emergency:7	11	muuta	muu	anderer	Pronomen · Partitiv Singular	anderen (Partitiv)		asemosana	osanto	singular
+d:l6-emergency:7	12	yöpaikkaa	yöpaikka	Schlafplatz	Nomen · Partitiv Singular	Schlafplatz (Partitiv)	yö+paikka	nimisana	osanto	singular
+d:l6-emergency:7	13	Kannattaa	kannattaa	sich lohnen	Verb · 3. Person Sg. (hän) · Präsens	es lohnt sich → du solltest		teonsana		singular
+d:l6-emergency:7	14	ilmoittautua	ilmoittautua	sich (an)melden	Verb · Grundform (Infinitiv)			teonsana		
+d:l6-emergency:7	15	saman	sama	gleich, derselbe	Nomen · Genitiv Singular	(saman tien) sofort		nimisana	omanto	singular
+d:l6-emergency:7	16	tien	tie	Weg	Nomen · Genitiv Singular	(saman tien) sofort, gleich		nimisana	omanto	singular
+d:l6-emergency:8	0	Menen	mennä	gehen	Verb · 1. Person Sg. (minä) · Präsens	(ich) gehe		teonsana		singular
+d:l6-emergency:8	1	heti	heti	sofort	Adverb			seikkasana		
+d:l6-emergency:8	2	Ja	ja	und	Konjunktion			sidesana		
+d:l6-emergency:8	3	kun	kun	als, wenn	Konjunktion	wenn		sidesana		
+d:l6-emergency:8	4	olen	olla	sein	Verb · 1. Person Sg. (minä) · Präsens	(ich) habe (olen saanut)		teonsana		singular
+d:l6-emergency:8	5	saanut	saada	bekommen	Verbform · Partizip Perfekt aktiv (-nut/-nyt)	bekommen → (auf dem Arm) habe		laatusana	nimento	singular
+d:l6-emergency:8	6	kissan	kissa	Katze	Nomen · Genitiv Singular	die Katze (Genitiv-Objekt)		nimisana	omanto	singular
+d:l6-emergency:8	7	syliini	syli	Schoß, Arme	Nomen · Illativ „in … hinein“ Singular · + Possessivendung „mein“	in meine Arme		nimisana	sisatulento	singular
+d:l6-emergency:8	8	soitan	soittaa	anrufen	Verb · 1. Person Sg. (minä) · Präsens	(ich) rufe an		teonsana		singular
+d:l6-emergency:8	9	vakuutusyhtiöön	vakuutusyhtiö	Versicherungsgesellschaft	Nomen · Illativ „in … hinein“ Singular	bei der Versicherung (soittaa + Illativ)	vakuuttaa+yhtiö	nimisana	sisatulento	singular
+d:l6-emergency:9	0	Hyvä	hyvä	gut	Adjektiv · Nominativ Singular			laatusana	nimento	singular
+d:l6-emergency:9	1	Soita	soittaa	anrufen	Verb · Imperativ · 2. Person Sg. (sinä) · auch Verneinungsform nach ei	ruf an		teonsana		singular
+d:l6-emergency:9	2	minulle	minä	ich	Pronomen · Allativ „auf … zu, an“ Singular	mich (soittaa + Allativ)		asemosana	ulkotulento	singular
+d:l6-emergency:9	3	jos	jos	wenn, falls	Konjunktion			sidesana		
+d:l6-emergency:9	4	tarvitset	tarvita	brauchen	Verb · 2. Person Sg. (sinä) · Präsens	(du) brauchst		teonsana		singular
+d:l6-emergency:9	5	jotain	jokin	etwas	Pronomen · Partitiv Singular			asemosana	osanto	singular
+d:l6-emergency:9	6	Olen	olla	sein	Verb · 1. Person Sg. (minä) · Präsens	(ich) bin		teonsana		singular
+d:l6-emergency:9	7	siskoni	sisko	Schwester	Nomen · Nominativ Singular · + Possessivendung „mein“	meine(r) Schwester		nimisana	nimento	singular
+d:l6-emergency:9	8	luona	luona	bei	Postposition	bei (+ Genitiv)				
+d:l6-emergency:9	9	pari	pari	Paar; ein paar	Nomen · Nominativ Singular	ein paar		nimisana	nimento	singular
+d:l6-emergency:9	10	yötä	yö	Nacht	Nomen · Partitiv Singular	Nächte (nach pari: Partitiv Sg.)		nimisana	osanto	singular
+d:l6-family:0	0	Hei	hei	hallo	Ausruf			huudahdussana		
+d:l6-family:0	1	Juha	Juha	Juha (Name)	Name · Nominativ Singular			etunimi	nimento	singular
+d:l6-family:0	2	Miten	miten	wie	Fragewort					
+d:l6-family:0	3	mummon	mummo	Oma	Nomen · Genitiv Singular	Omas		nimisana	omanto	singular
+d:l6-family:0	4	syntymäpäivät	syntymäpäivä	Geburtstag	Nomen · Nominativ Plural	Geburtstag(sfeier) (Pl.)	syntymä+päivä	nimisana	nimento	plural
+d:l6-family:0	5	menivät	mennä	gehen	Verb · 3. Person Pl. (he) · Imperfekt (Vergangenheit)	liefen → war (wie war …?)		teonsana		plural
+d:l6-family:0	6	Harmittaa	harmittaa	ärgern	Verb · 3. Person Sg. (hän) · Präsens	(es) ärgert (mich)		teonsana		singular
+d:l6-family:0	7	vieläkin	vielä	noch	Adverb · + -kin „auch“	immer noch		seikkasana		
+d:l6-family:0	8	etten	ettei	dass nicht (Verneinungsverb)	Verneinungsverb · en = ich nicht	dass ich … nicht	ett+ei	kieltosana		singular
+d:l6-family:0	9	päässyt	päästä	gelangen, (hin)kommen	Verbform · Partizip Perfekt aktiv · verneinte Vergangenheit	kommen konnte		laatusana	nimento	singular
+d:l6-family:1	0	Hyvin	hyvin	gut	Adverb			seikkasana		
+d:l6-family:1	1	vaikka	vaikka	obwohl	Konjunktion	auch wenn		sidesana		
+d:l6-family:1	2	alku	alku	Anfang	Nomen · Nominativ Singular	der Anfang		nimisana	nimento	singular
+d:l6-family:1	3	oli	olla	sein	Verb · 3. Person Sg. (hän) · Imperfekt (Vergangenheit)	war		teonsana		singular
+d:l6-family:1	4	vähän	vähän	ein wenig	Adverb	etwas		seikkasana		
+d:l6-family:1	5	hiljainen	hiljainen	still, ruhig	Adjektiv · Nominativ Singular	ruhig		laatusana	nimento	singular
+d:l6-family:1	6	Menin	mennä	gehen	Verb · 1. Person Sg. (minä) · Imperfekt (Vergangenheit)	(ich) ging		teonsana		singular
+d:l6-family:1	7	jo	jo	schon	Adverb			seikkasana		
+d:l6-family:1	8	kahdelta	kaksi	zwei	Zahlwort · Ablativ „von … weg“ Singular	um zwei (Uhr)		lukusana	ulkoeronto	singular
+d:l6-family:1	9	auttamaan	auttaa	helfen	Verb · 3. Infinitiv -maan/-mään „(um) zu“	(um) zu helfen		teonsana	sisatulento	singular
+d:l6-family:1	10	Olin	olla	sein	Verb · 1. Person Sg. (minä) · Imperfekt (Vergangenheit)	(ich) war		teonsana		singular
+d:l6-family:1	11	siellä	siellä	dort	Adverb			seikkasana		
+d:l6-family:1	12	ensin	ensin	zuerst	Adverb			seikkasana		
+d:l6-family:1	13	ihan	ihan	ganz	Adverb			seikkasana		
+d:l6-family:1	14	yksin	yksin	allein	Adverb			seikkasana		
+d:l6-family:1	15	mutta	mutta	aber	Konjunktion			sidesana		
+d:l6-family:1	16	sitten	sitten	dann	Adverb			seikkasana		
+d:l6-family:1	17	sinne	sinne	dorthin	Adverb					
+d:l6-family:1	18	tulivat	tulla	kommen	Verb · 3. Person Pl. (he) · Imperfekt (Vergangenheit)	kamen		teonsana		plural
+d:l6-family:1	19	Liisa	Liisa	Liisa (Name)	Name · Nominativ Singular			etunimi	nimento	singular
+d:l6-family:1	20	ja	ja	und	Konjunktion			sidesana		
+d:l6-family:1	21	Liisan	Liisa	Liisa (Name)	Name · Genitiv Singular	Liisas		etunimi	omanto	singular
+d:l6-family:1	22	uusi	uusi	neu	Adjektiv · Nominativ Singular	neuer		laatusana	nimento	singular
+d:l6-family:1	23	poikaystävä	poikaystävä	Freund (Partner)	Nomen · Nominativ Singular		poika+ystävä	nimisana	nimento	singular
+d:l6-family:2	0	Ai	ai	ach	Ausruf			huudahdussana		
+d:l6-family:2	1	Liisalla	Liisa	Liisa (Name)	Name · Adessiv „auf, bei“ Singular	bei Liisa → Liisa hat		etunimi	ulkoolento	singular
+d:l6-family:2	2	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist → hat		teonsana		singular
+d:l6-family:2	3	uusi	uusi	neu	Adjektiv · Nominativ Singular	neuen		laatusana	nimento	singular
+d:l6-family:2	4	poikaystävä	poikaystävä	Freund (Partner)	Nomen · Nominativ Singular		poika+ystävä	nimisana	nimento	singular
+d:l6-family:2	5	Millainen	millainen	was für ein, wie	Adjektiv · Nominativ Singular	wie (ist er so)		laatusana	nimento	singular
+d:l6-family:2	6	hän	hän	er, sie	Pronomen · Nominativ Singular	er		asemosana	nimento	singular
+d:l6-family:2	7	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist		teonsana		singular
+d:l6-family:3	0	Ihan	ihan	ganz	Adverb			seikkasana		
+d:l6-family:3	1	mukava	mukava	nett, angenehm	Adjektiv · Nominativ Singular	nett		nimisana_laatusana	nimento	singular
+d:l6-family:3	2	mutta	mutta	aber	Konjunktion			sidesana		
+d:l6-family:3	3	hän	hän	er, sie	Pronomen · Nominativ Singular	er		asemosana	nimento	singular
+d:l6-family:3	4	puhui	puhua	sprechen, reden	Verb · 3. Person Sg. (hän) · Imperfekt (Vergangenheit)	redete		teonsana		singular
+d:l6-family:3	5	koko	koko	ganz	Nomen · Nominativ Singular	(den) ganzen		nimisana	nimento	singular
+d:l6-family:3	6	illan	ilta	Abend	Nomen · Genitiv Singular	Abend (Genitiv-Objekt: den ganzen Abend)		nimisana	omanto	singular
+d:l6-family:3	7	isästään	isä	Vater	Nomen · Elativ „aus“ Singular · + Possessivendung „sein/ihr“	von seinem Vater		nimisana	sisaeronto	singular
+d:l6-family:3	8	Hän	hän	er, sie	Pronomen · Nominativ Singular	er		asemosana	nimento	singular
+d:l6-family:3	9	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist		teonsana		singular
+d:l6-family:3	10	ylpeä	ylpeä	stolz	Adjektiv · Nominativ Singular			laatusana	nimento	singular
+d:l6-family:3	11	siitä	se	es	Pronomen · Elativ „aus“ Singular	davon → darauf (ylpeä + Elativ)		asemosana	sisaeronto	singular
+d:l6-family:3	12	että	että	dass	Konjunktion			sidesana		
+d:l6-family:3	13	hänen	hän	er, sie	Pronomen · Genitiv Singular	sein		asemosana	omanto	singular
+d:l6-family:3	14	isänsä	isä	Vater	Nomen · Nominativ Singular · + Possessivendung „sein/ihr“	sein Vater		nimisana	nimento	singular
+d:l6-family:3	15	oli	olla	sein	Verb · 3. Person Sg. (hän) · Imperfekt (Vergangenheit)	war		teonsana		singular
+d:l6-family:3	16	merkittävä	merkittävä	bedeutend	Adjektiv · Nominativ Singular					
+d:l6-family:3	17	tiedemies	tiedemies	Wissenschaftler	Nomen · Nominativ Singular		tiede+mies	nimisana	nimento	singular
+d:l6-family:3	18	Kun	kun	als, wenn	Konjunktion	als		sidesana		
+d:l6-family:3	19	hän	hän	er, sie	Pronomen · Nominativ Singular	er		asemosana	nimento	singular
+d:l6-family:3	20	aloitti	aloittaa	anfangen, beginnen	Verb · 3. Person Sg. (hän) · Imperfekt (Vergangenheit)	begann		teonsana		singular
+d:l6-family:3	21	kolmannen	kolmas	dritter	Zahlwort · Genitiv Singular	(die) dritte		lukusana	omanto	singular
+d:l6-family:3	22	tarinan	tarina	Geschichte	Nomen · Genitiv Singular	Geschichte (Genitiv-Objekt)		nimisana	omanto	singular
+d:l6-family:3	23	isänsä	isä	Vater	Nomen · Genitiv Singular · + Possessivendung „sein/ihr“	seines Vaters		nimisana	nimento	singular
+d:l6-family:3	24	palkinnoista	palkinto	Preis, Auszeichnung	Nomen · Elativ „aus“ Plural	über die Preise		nimisana	sisaeronto	plural
+d:l6-family:3	25	mummo	mummo	Oma	Nomen · Nominativ Singular			nimisana	nimento	singular
+d:l6-family:3	26	nukahti	nukahtaa	einschlafen	Verb · 3. Person Sg. (hän) · Imperfekt (Vergangenheit)	schlief ein		teonsana		singular
+d:l6-family:3	27	tuoliinsa	tuoli	Stuhl, Sessel	Nomen · Illativ „in … hinein“ Singular · + Possessivendung „sein/ihr“	in ihrem Sessel (Illativ)		nimisana	sisatulento	singular
+d:l6-family:4	0	Voi	voi	oh, ach	Ausruf	(voi ei) oje		huudahdussana		
+d:l6-family:4	1	ei	ei	nicht (Verneinungsverb)	Verneinungsverb · ei = er/sie/es nicht	nein (voi ei = oje)		kieltosana		singular
+d:l6-family:4	2	Sinun	sinä	du	Pronomen · Genitiv Singular	(du) (sinun on … = du musst)		asemosana	omanto	singular
+d:l6-family:4	3	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist (… zu) → musst		teonsana		singular
+d:l6-family:4	4	pidettävä	pitää	halten	Verbform · Partizip Präsens passiv (-tava/-tävä)	(zu) halten (on pidettävä = muss halten)		laatusana	nimento	singular
+d:l6-family:4	5	mielessäsi	mieli	Sinn, Gemüt	Nomen · Inessiv „in“ Singular · + Possessivendung „dein“	in deinem Sinn (pitää mielessä = bedenken)		nimisana	sisaolento	singular
+d:l6-family:4	6	että	että	dass	Konjunktion			sidesana		
+d:l6-family:4	7	hän	hän	er, sie	Pronomen · Nominativ Singular	er		asemosana	nimento	singular
+d:l6-family:4	8	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist		teonsana		singular
+d:l6-family:4	9	paljon	paljon	viel	Adverb					
+d:l6-family:4	10	sinua	sinä	du	Pronomen · Partitiv Singular	als du (Partitiv beim Komparativ)		asemosana	osanto	singular
+d:l6-family:4	11	nuorempi	nuori	jung	Adjektiv · Nominativ Singular · Komparativ	jünger		laatusana	nimento	singular
+d:l6-family:4	12	Kaksikymppisenä	kaksikymppinen	zwanzigjährig	Adjektiv · Essiv „als“ Singular	als Zwanzigjähriger → mit zwanzig	kaksi+kymppi	laatusana	olento	singular
+d:l6-family:4	13	haluaa	haluta	wollen	Verb · 3. Person Sg. (hän) · Präsens	(man) will		teonsana		singular
+d:l6-family:4	14	tehdä	tehdä	machen, tun	Verb · Grundform (Infinitiv)			teonsana		
+d:l6-family:4	15	vaikutuksen	vaikutus	Eindruck; Wirkung	Nomen · Genitiv Singular	Eindruck (Genitiv-Objekt)		nimisana	omanto	singular
+d:l6-family:5	0	Niin	niin	so; ja	Adverb	(niin kai) wahrscheinlich		seikkasana		
+d:l6-family:5	1	kai	kai	wohl, vermutlich	Adverb			seikkasana		
+d:l6-family:5	2	Ja	ja	und	Konjunktion			sidesana		
+d:l6-family:5	3	kahdestaan	kahdestaan	zu zweit	Adverb					
+d:l6-family:5	4	jutellessa	jutella	plaudern	Verb · 2. Infinitiv -en „indem, …end“	beim Plaudern		teonsana		
+d:l6-family:5	5	hän	hän	er, sie	Pronomen · Nominativ Singular	er		asemosana	nimento	singular
+d:l6-family:5	6	olikin	olla	sein	Verb · 3. Person Sg. (hän) · Imperfekt (Vergangenheit) · + -kin „auch“	war (dann) doch		teonsana		singular
+d:l6-family:5	7	ihan	ihan	ganz	Adverb			seikkasana		
+d:l6-family:5	8	fiksu	fiksu	klug	Adjektiv · Nominativ Singular			laatusana	nimento	singular
+d:l6-family:5	9	ja	ja	und	Konjunktion			sidesana		
+d:l6-family:5	10	hauska	hauska	lustig, witzig	Adjektiv · Nominativ Singular			nimisana_laatusana	nimento	singular
+d:l6-family:6	0	Kuulostaa	kuulostaa	klingen	Verb · 3. Person Sg. (hän) · Präsens	klingt		teonsana		singular
+d:l6-family:6	1	paremmalta	hyvä	gut	Adjektiv · Ablativ „von … weg“ Singular · Komparativ	besser (kuulostaa + Ablativ)		laatusana	ulkoeronto	singular
+d:l6-family:6	2	Pitäisikö	pitää	müssen, sollen	Verb · 3. Person Sg. (hän) · Konditional „würde“ · + Frageendung -ko/-kö	sollte man …?		teonsana		singular
+d:l6-family:6	3	heidät	he	sie (Pl.)	Pronomen · Akkusativ Plural	sie (Objekt)		asemosana	kohdanto	plural
+d:l6-family:6	4	kutsua	kutsua	einladen	Verb · Grundform (Infinitiv)			teonsana		
+d:l6-family:6	5	meille	me	wir	Pronomen · Allativ „auf … zu, an“ Plural	zu uns		asemosana	ulkotulento	plural
+d:l6-family:6	6	sunnuntaina	sunnuntai	Sonntag	Nomen · Essiv „als“ Singular	am Sonntag		nimisana	olento	singular
+d:l6-family:6	7	jotta	jotta	damit	Konjunktion			sidesana		
+d:l6-family:6	8	minäkin	minä	ich	Pronomen · Nominativ Singular · + -kin „auch“	auch ich		asemosana	nimento	singular
+d:l6-family:6	9	pääsisin	päästä	gelangen, (hin)kommen	Verb · 1. Person Sg. (minä) · Konditional „würde“	(ich) könnte (päästä + -maan = die Gelegenheit bekommen)		teonsana		singular
+d:l6-family:6	10	tutustumaan	tutustua	kennenlernen	Verb · 3. Infinitiv -maan/-mään „(um) zu“	kennenzulernen		teonsana	sisatulento	singular
+d:l6-family:6	11	häneen	hän	er, sie	Pronomen · Illativ „in … hinein“ Singular	ihn (tutustua + Illativ)		asemosana	sisatulento	singular
+d:l6-family:7	0	Kutsu	kutsua	einladen	Verb · Imperativ · 2. Person Sg. (sinä) · auch Verneinungsform nach ei	lad (sie) ein		teonsana		singular
+d:l6-family:7	1	vain	vain	nur	Adverb	ruhig		seikkasana		
+d:l6-family:7	2	Minä	minä	ich	Pronomen · Nominativ Singular			asemosana	nimento	singular
+d:l6-family:7	3	tuon	tuoda	bringen	Verb · 1. Person Sg. (minä) · Präsens	(ich) bringe (mit)		teonsana		singular
+d:l6-family:7	4	jälkiruoan	jälkiruoka	Nachtisch	Nomen · Genitiv Singular	den Nachtisch (Genitiv-Objekt)	jälki+ruoka	nimisana	omanto	singular
+d:l6-family:7	5	jos	jos	wenn, falls	Konjunktion			sidesana		
+d:l6-family:7	6	lupaat	luvata	versprechen	Verb · 2. Person Sg. (sinä) · Präsens	(du) versprichst		teonsana		singular
+d:l6-family:7	7	ettei	ettei	dass nicht (Verneinungsverb)	Verneinungsverb · ei = er/sie/es nicht	dass … nicht	ett+ei	kieltosana		singular
+d:l6-family:7	8	tiedemiehistä	tiedemies	Wissenschaftler	Nomen · Elativ „aus“ Plural	über Wissenschaftler	tiede+mies	nimisana	sisaeronto	plural
+d:l6-family:7	9	puhuta	puhua	sprechen, reden	Verb · Passiv · Verneinungsform (nach ei)	(wird) geredet		teonsana		
+d:l6-family:7	10	ruokapöydässä	ruokapöytä	Esstisch	Nomen · Inessiv „in“ Singular	am Esstisch	ruoka+pöytä	nimisana	sisaolento	singular
+d:l6-family:8	0	En	ei	nicht (Verneinungsverb)	Verneinungsverb · en = ich nicht	ich … nicht		kieltosana		singular
+d:l6-family:8	1	lupaa	luvata	versprechen	Verb · Verneinungsform (nach ei)	verspreche		teonsana		singular
+d:l6-family:8	2	mitään	mikään	(irgend)etwas; nichts (verneint)	Pronomen · Partitiv Singular	nichts		asemosana	osanto	singular
+d:l6-family:8	3	mutta	mutta	aber	Konjunktion			sidesana		
+d:l6-family:8	4	yritän	yrittää	versuchen	Verb · 1. Person Sg. (minä) · Präsens	(ich) versuche		teonsana		singular
+d:l6-family:8	5	Soitan	soittaa	anrufen	Verb · 1. Person Sg. (minä) · Präsens	(ich) rufe an		teonsana		singular
+d:l6-family:8	6	Liisalle	Liisa	Liisa (Name)	Name · Allativ „auf … zu, an“ Singular	Liisa (soittaa + Allativ)		etunimi	ulkotulento	singular
+d:l6-family:8	7	heti	heti	sofort	Adverb	gleich		seikkasana		
+d:l6-feelings:0	0	Kysyin	kysyä	fragen	Verb · 1. Person Sg. (minä) · Imperfekt (Vergangenheit)	(ich) fragte		teonsana		singular
+d:l6-feelings:0	1	Liisalta	Liisa	Liisa (Name)	Name · Ablativ „von … weg“ Singular	Liisa (kysyä + Ablativ)		etunimi	ulkoeronto	singular
+d:l6-feelings:0	2	kolme	kolme	drei	Zahlwort · Nominativ Singular			lukusana	nimento	singular
+d:l6-feelings:0	3	kertaa	kerta	Mal	Nomen · Partitiv Singular	Mal (nach Zahlwort: Partitiv Sg.)		nimisana	osanto	singular
+d:l6-feelings:0	4	lähteekö	lähteä	weggehen, losgehen	Verb · 3. Person Sg. (hän) · Präsens · + Frageendung -ko/-kö	ob (sie) mitkommt		teonsana		singular
+d:l6-feelings:0	5	hän	hän	er, sie	Pronomen · Nominativ Singular	sie		asemosana	nimento	singular
+d:l6-feelings:0	6	pelaamaan	pelata	spielen	Verb · 3. Infinitiv -maan/-mään „(um) zu“	(um) zu spielen		teonsana	sisatulento	singular
+d:l6-feelings:0	7	sulkapalloa	sulkapallo	Badminton	Nomen · Partitiv Singular	Badminton (Partitiv)	sulka+pallo	nimisana	osanto	singular
+d:l6-feelings:0	8	Ei	ei	nicht (Verneinungsverb)	Verneinungsverb · ei = er/sie/es nicht	keine		kieltosana		singular
+d:l6-feelings:0	9	vastausta	vastaus	Antwort	Nomen · Partitiv Singular	Antwort (Partitiv)		nimisana	osanto	singular
+d:l6-feelings:0	10	Liisa	Liisa	Liisa (Name)	Name · Nominativ Singular			etunimi	nimento	singular
+d:l6-feelings:0	11	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist		teonsana		singular
+d:l6-feelings:0	12	niin	niin	so	Adverb			seikkasana		
+d:l6-feelings:0	13	uppoutunut	uppoutua	sich vertiefen, versinken	Verbform · Partizip Perfekt aktiv (-nut/-nyt)	vertieft		laatusana	nimento	singular
+d:l6-feelings:0	14	kirjaansa	kirja	Buch	Nomen · Illativ „in … hinein“ Singular · + Possessivendung „sein/ihr“	in ihr Buch		nimisana	sisatulento	singular
+d:l6-feelings:0	15	ettei	ettei	dass nicht (Verneinungsverb)	Verneinungsverb · ei = er/sie/es nicht	dass … nicht	ett+ei	kieltosana		singular
+d:l6-feelings:0	16	näe	nähdä	sehen	Verb · Verneinungsform (nach ei)	sieht		teonsana		singular
+d:l6-feelings:0	17	eikä	ei	nicht (Verneinungsverb)	Verneinungsverb · ei = er/sie/es nicht · + -kä „und“	und … nicht (noch)		kieltosana		singular
+d:l6-feelings:0	18	kuule	kuulla	hören	Verb · Verneinungsform (nach ei)	hört		teonsana		singular
+d:l6-feelings:0	19	mitään	mikään	(irgend)etwas; nichts (verneint)	Pronomen · Partitiv Singular	nichts		asemosana	osanto	singular
+d:l6-feelings:0	20	muuta	muu	anderer	Pronomen · Partitiv Singular	anderes		asemosana	osanto	singular
+d:l6-feelings:1	0	Se	se	es, das	Pronomen · Nominativ Singular	das		asemosana	nimento	singular
+d:l6-feelings:1	1	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist		teonsana		singular
+d:l6-feelings:1	2	jo	jo	schon	Adverb			seikkasana		
+d:l6-feelings:1	3	kolmas	kolmas	dritter	Zahlwort · Nominativ Singular	(das) dritte		lukusana	nimento	singular
+d:l6-feelings:1	4	kirja	kirja	Buch	Nomen · Nominativ Singular			nimisana	nimento	singular
+d:l6-feelings:1	5	tällä	tämä	dieser	Pronomen · Adessiv „auf, bei“ Singular	(in) dieser		asemosana	ulkoolento	singular
+d:l6-feelings:1	6	viikolla	viikko	Woche	Nomen · Adessiv „auf, bei“ Singular	(in dieser) Woche		nimisana	ulkoolento	singular
+d:l6-feelings:1	7	En	ei	nicht (Verneinungsverb)	Verneinungsverb · en = ich nicht	ich … nicht		kieltosana		singular
+d:l6-feelings:1	8	voi	voida	können	Verb · Verneinungsform (nach ei)	kann		teonsana		singular
+d:l6-feelings:1	9	kieltää	kieltää	leugnen; verbieten	Verb · Grundform (Infinitiv)	abstreiten		teonsana		
+d:l6-feelings:1	10	ettenkö	ettei	dass nicht (Verneinungsverb)	Verneinungsverb · en = ich nicht · + Frageendung -ko/-kö	dass ich (nach „nicht abstreiten“: ohne Verneinung)	ett+ei	kieltosana		singular
+d:l6-feelings:1	11	aina	aina	immer	Adverb	(aina silloin tällöin) hin und wieder		seikkasana		
+d:l6-feelings:1	12	silloin	silloin	dann, damals	Adverb	(silloin tällöin) ab und zu		seikkasana		
+d:l6-feelings:1	13	tällöin	tällöin	dann, in diesem Fall	Adverb	(silloin tällöin) ab und zu		seikkasana		
+d:l6-feelings:1	14	olisi	olla	sein	Verb · Konditional · Verneinungsform	(Sorgen) mache (olla huolissaan = sich sorgen)		teonsana		singular
+d:l6-feelings:1	15	huolissani	huoli	Sorge	Nomen · Inessiv „in“ Plural · + Possessivendung „mein“	in Sorge → mir Sorgen (mache)		nimisana	sisaolento	plural
+d:l6-feelings:1	16	Liisasta	Liisa	Liisa (Name)	Name · Elativ „aus“ Singular	um Liisa		etunimi	sisaeronto	singular
+d:l6-feelings:1	17	Kavereitaan	kaveri	Kumpel, Freund	Nomen · Partitiv Plural · + Possessivendung „sein/ihr“	ihre Freundinnen (Partitiv Pl.)		nimisana	osanto	plural
+d:l6-feelings:1	18	hän	hän	er, sie	Pronomen · Nominativ Singular	sie		asemosana	nimento	singular
+d:l6-feelings:1	19	ei	ei	nicht (Verneinungsverb)	Verneinungsverb · ei = er/sie/es nicht	sie … nicht		kieltosana		singular
+d:l6-feelings:1	20	ole	olla	sein	Verb · Verneinungsform (nach ei)	hat (… nicht gesehen)		teonsana		singular
+d:l6-feelings:1	21	nähnyt	nähdä	sehen	Verbform · Partizip Perfekt aktiv (-nut/-nyt)	gesehen		laatusana	nimento	singular
+d:l6-feelings:1	22	koko	koko	ganz	Nomen · Nominativ Singular	die ganzen		nimisana	nimento	singular
+d:l6-feelings:1	23	lomana	loma	Urlaub, Ferien	Nomen · Essiv „als“ Singular	(während der) Ferien		nimisana	olento	singular
+d:l6-feelings:2	0	Minusta	minä	ich	Pronomen · Elativ „aus“ Singular	von mir aus → ich finde		asemosana	sisaeronto	singular
+d:l6-feelings:2	1	huolehdit	huolehtia	sich kümmern, sich sorgen	Verb · 2. Person Sg. (sinä) · Präsens	(du) machst dir Sorgen		teonsana		singular
+d:l6-feelings:2	2	turhaan	turhaan	umsonst, unnötig	Adverb · (Illativ von turha)					
+d:l6-feelings:2	3	Lukemalla	lukea	lesen	Verb · 3. Infinitiv -malla/-mällä „indem, durch“	durch Lesen → beim Lesen		teonsana	ulkoolento	singular
+d:l6-feelings:2	4	oppii	oppia	lernen	Verb · 3. Person Sg. (hän) · Präsens	(man) lernt		teonsana		singular
+d:l6-feelings:2	5	enemmän	enemmän	mehr	Adverb			seikkasana		
+d:l6-feelings:2	6	kuin	kuin	als, wie	Konjunktion	als		sidesana		
+d:l6-feelings:2	7	puhelinta	puhelin	Telefon, Handy	Nomen · Partitiv Singular	Handy (Partitiv)		nimisana	osanto	singular
+d:l6-feelings:2	8	selaamalla	selata	blättern, scrollen	Verb · 3. Infinitiv -malla/-mällä „indem, durch“	durch Scrollen → beim Scrollen		teonsana	ulkoolento	singular
+d:l6-feelings:3	0	Oppii	oppia	lernen	Verb · 3. Person Sg. (hän) · Präsens	(man) lernt		teonsana		singular
+d:l6-feelings:3	1	kyllä	kyllä	ja, schon	Adverb	schon		seikkasana		
+d:l6-feelings:3	2	mutta	mutta	aber	Konjunktion			sidesana		
+d:l6-feelings:3	3	ihminen	ihminen	Mensch	Nomen · Nominativ Singular	der Mensch		nimisana	nimento	singular
+d:l6-feelings:3	4	tarvitsee	tarvita	brauchen	Verb · 3. Person Sg. (hän) · Präsens	braucht		teonsana		singular
+d:l6-feelings:3	5	muitakin	muu	anderer	Pronomen · Partitiv Plural · + -kin „auch“	auch andere		asemosana	osanto	plural
+d:l6-feelings:3	6	ihmisiä	ihminen	Mensch	Nomen · Partitiv Plural	Menschen (Partitiv Pl.)		nimisana	osanto	plural
+d:l6-feelings:3	7	Ja	ja	und	Konjunktion			sidesana		
+d:l6-feelings:3	8	sinua	sinä	du	Pronomen · Partitiv Singular	dich		asemosana	osanto	singular
+d:l6-feelings:3	9	taitaa	taitaa	können; wohl (+ Infinitiv)	Verb · 3. Person Sg. (hän) · Präsens	(es) … wohl		teonsana		singular
+d:l6-feelings:3	10	lähinnä	lähinnä	vor allem, hauptsächlich	Adverb · (Essiv von lähin)					
+d:l6-feelings:3	11	harmittaa	harmittaa	ärgern	Verb · Grundform (Infinitiv)			teonsana		
+d:l6-feelings:3	12	ettei	ettei	dass nicht (Verneinungsverb)	Verneinungsverb · ei = er/sie/es nicht	dass … nicht	ett+ei	kieltosana		singular
+d:l6-feelings:3	13	sinulla	sinä	du	Pronomen · Adessiv „auf, bei“ Singular	bei dir → du hast		asemosana	ulkoolento	singular
+d:l6-feelings:3	14	ole	olla	sein	Verb · Verneinungsform (nach ei)	(hast) … nicht → keinen		teonsana		singular
+d:l6-feelings:3	15	pelikaveria	pelikaveri	Spielpartner	Nomen · Partitiv Singular	Spielpartner (Partitiv)	peli+kaveri	nimisana	osanto	singular
+d:l6-feelings:4	0	No	no	na, nun	Adverb	na gut		seikkasana		
+d:l6-feelings:4	1	myönnän	myöntää	zugeben; gewähren	Verb · 1. Person Sg. (minä) · Präsens	(ich) gebe zu		teonsana		singular
+d:l6-feelings:4	2	Minulla	minä	ich	Pronomen · Adessiv „auf, bei“ Singular	bei mir → mir (ist)		asemosana	ulkoolento	singular
+d:l6-feelings:4	3	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist		teonsana		singular
+d:l6-feelings:4	4	tylsää	tylsä	langweilig	Adjektiv · Partitiv Singular	langweilig (Partitiv)		laatusana	osanto	singular
+d:l6-feelings:5	0	Jos	jos	wenn, falls	Konjunktion			sidesana		
+d:l6-feelings:5	1	sinulla	sinä	du	Pronomen · Adessiv „auf, bei“ Singular	bei dir → dir (ist)		asemosana	ulkoolento	singular
+d:l6-feelings:5	2	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist		teonsana		singular
+d:l6-feelings:5	3	tylsää	tylsä	langweilig	Adjektiv · Partitiv Singular	langweilig (Partitiv)		laatusana	osanto	singular
+d:l6-feelings:5	4	ehdotan	ehdottaa	vorschlagen	Verb · 1. Person Sg. (minä) · Präsens	(ich) schlage vor		teonsana		singular
+d:l6-feelings:5	5	että	että	dass	Konjunktion			sidesana		
+d:l6-feelings:5	6	menet	mennä	gehen	Verb · 2. Person Sg. (sinä) · Präsens	(du) gehst		teonsana		singular
+d:l6-feelings:5	7	elokuviin	elokuva	Film	Nomen · Illativ „in … hinein“ Plural	ins Kino (elokuviin = ins Kino)	elää+kuva	nimisana	sisatulento	plural
+d:l6-feelings:5	8	Siitä	se	es	Pronomen · Elativ „aus“ Singular	(aus) dem → zu dem		asemosana	sisaeronto	singular
+d:l6-feelings:5	9	kirjasta	kirja	Buch	Nomen · Elativ „aus“ Singular	(aus dem) Buch → zu dem Buch		nimisana	sisaeronto	singular
+d:l6-feelings:5	10	jota	joka	der, welcher (Relativpronomen)	Pronomen · Partitiv Singular	das (Partitiv-Objekt)		asemosana	osanto	singular
+d:l6-feelings:5	11	Liisa	Liisa	Liisa (Name)	Name · Nominativ Singular			etunimi	nimento	singular
+d:l6-feelings:5	12	lukee	lukea	lesen	Verb · 3. Person Sg. (hän) · Präsens	liest		teonsana		singular
+d:l6-feelings:5	13	tuli	tulla	kommen	Verb · 3. Person Sg. (hän) · Imperfekt (Vergangenheit)	kam		teonsana		singular
+d:l6-feelings:5	14	juuri	juuri	gerade, genau	Adverb	gerade		seikkasana		
+d:l6-feelings:5	15	elokuva	elokuva	Film	Nomen · Nominativ Singular		elää+kuva	nimisana	nimento	singular
+d:l6-feelings:5	16	teattereihin	teatteri	Theater, Kino	Nomen · Illativ „in … hinein“ Plural	in die Kinos		nimisana	sisatulento	plural
+d:l6-feelings:5	17	Ota	ottaa	nehmen	Verb · Imperativ · 2. Person Sg. (sinä) · auch Verneinungsform nach ei	nimm		teonsana		singular
+d:l6-feelings:5	18	hänet	hän	er, sie	Pronomen · Akkusativ Singular	sie (Objekt)		asemosana	kohdanto	singular
+d:l6-feelings:5	19	mukaan	mukaan	mit	Adverb	(ottaa mukaan) mitnehmen		seikkasana		
+d:l6-feelings:6	0	Ai	ai	ach	Ausruf			huudahdussana		
+d:l6-feelings:6	1	se	se	es, das	Pronomen · Nominativ Singular	die (… Reihe)		asemosana	nimento	singular
+d:l6-feelings:6	2	lohikäärmesarja	lohikäärmesarja	Drachenreihe	Nomen · Nominativ Singular		lohi+käärme+sarja	nimisana	nimento	singular
+d:l6-feelings:6	3	Tuskin	tuskin	kaum	Adverb			seikkasana		
+d:l6-feelings:6	4	hän	hän	er, sie	Pronomen · Nominativ Singular	sie		asemosana	nimento	singular
+d:l6-feelings:6	5	suostuu	suostua	einwilligen, zustimmen	Verb · 3. Person Sg. (hän) · Präsens	willigt ein		teonsana		singular
+d:l6-feelings:6	6	lähtemään	lähteä	weggehen, losgehen	Verb · 3. Infinitiv -maan/-mään „(um) zu“	mitzukommen (suostua + -maan)		teonsana	sisatulento	singular
+d:l6-feelings:6	7	ennen	ennen	vor, bevor	Adverb	(ennen kuin) bevor		seikkasana		
+d:l6-feelings:6	8	kuin	kuin	als, wie	Konjunktion	(ennen kuin) bevor		sidesana		
+d:l6-feelings:6	9	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	(sie) hat (on lukenut)		teonsana		singular
+d:l6-feelings:6	10	lukenut	lukea	lesen	Verbform · Partizip Perfekt aktiv (-nut/-nyt)	gelesen		laatusana	nimento	singular
+d:l6-feelings:6	11	kirjan	kirja	Buch	Nomen · Genitiv Singular	das Buch (Genitiv-Objekt)		nimisana	omanto	singular
+d:l6-feelings:6	12	loppuun	loppu	Ende	Nomen · Illativ „in … hinein“ Singular	zu Ende		nimisana	sisatulento	singular
+d:l6-feelings:7	0	Kysy	kysyä	fragen	Verb · Imperativ · 2. Person Sg. (sinä) · auch Verneinungsform nach ei	frag		teonsana		singular
+d:l6-feelings:7	1	nyt	nyt	jetzt	Adverb	(Aufforderung) doch		seikkasana		
+d:l6-feelings:7	2	kuitenkin	kuitenkin	trotzdem, jedoch	Adverb	trotzdem		seikkasana		
+d:l6-feelings:7	3	Veikkaan	veikata	wetten, tippen	Verb · 1. Person Sg. (minä) · Präsens	(ich) wette		teonsana		singular
+d:l6-feelings:7	4	että	että	dass	Konjunktion			sidesana		
+d:l6-feelings:7	5	hän	hän	er, sie	Pronomen · Nominativ Singular	sie		asemosana	nimento	singular
+d:l6-feelings:7	6	suostuu	suostua	einwilligen, zustimmen	Verb · 3. Person Sg. (hän) · Präsens	willigt ein → sagt ja		teonsana		singular
+d:l6-feelings:8	0	Hän	hän	er, sie	Pronomen · Nominativ Singular	sie		asemosana	nimento	singular
+d:l6-feelings:8	1	sanoi	sanoa	sagen	Verb · 3. Person Sg. (hän) · Imperfekt (Vergangenheit)	sagte		teonsana		singular
+d:l6-feelings:8	2	joo	joo	ja	Ausruf			huudahdussana		
+d:l6-feelings:8	3	Kello	kello	Uhr	Nomen · Nominativ Singular	(um) … Uhr		nimisana	nimento	singular
+d:l6-feelings:8	4	seitsemän	seitsemän	sieben	Zahlwort · Nominativ Singular			lukusana	nimento	singular
+d:l6-feelings:8	5	näytökseen	näytös	Vorstellung	Nomen · Illativ „in … hinein“ Singular	in die Vorstellung		nimisana	sisatulento	singular
+d:l6-feelings:8	6	Tuletko	tulla	kommen	Verb · 2. Person Sg. (sinä) · Präsens · + Frageendung -ko/-kö	kommst du …?		teonsana		singular
+d:l6-feelings:8	7	sinäkin	sinä	du	Pronomen · Nominativ Singular · + -kin „auch“	du auch		asemosana	nimento	singular
+d:l6-feelings:9	0	Tulen	tulla	kommen	Verb · 1. Person Sg. (minä) · Präsens	(ich) komme → klar		teonsana		singular
+d:l6-feelings:9	1	Ja	ja	und	Konjunktion			sidesana		
+d:l6-feelings:9	2	minä	minä	ich	Pronomen · Nominativ Singular			asemosana	nimento	singular
+d:l6-feelings:9	3	ostan	ostaa	kaufen	Verb · 1. Person Sg. (minä) · Präsens	(ich) kaufe		teonsana		singular
+d:l6-feelings:9	4	popcornit	popcorn	Popcorn	Nomen · Nominativ Plural	das Popcorn (Pl.)		nimisana	nimento	plural
+d:l6-health:0	0	Huomenta	huomenta	guten Morgen	Ausruf · (Partitiv von huomen)	Morgen				
+d:l6-health:0	1	Näytät	näyttää	aussehen; zeigen	Verb · 2. Person Sg. (sinä) · Präsens	(du) siehst aus		teonsana		singular
+d:l6-health:0	2	kalpealta	kalpea	blass	Adjektiv · Ablativ „von … weg“ Singular	blass (näyttää + Ablativ)		laatusana	ulkoeronto	singular
+d:l6-health:0	3	oletko	olla	sein	Verb · 2. Person Sg. (sinä) · Präsens · + Frageendung -ko/-kö	bist du …?		teonsana		singular
+d:l6-health:0	4	ihan	ihan	ganz	Adverb			seikkasana		
+d:l6-health:0	5	kunnossa	kunto	Zustand, Form	Nomen · Inessiv „in“ Singular	in Ordnung		nimisana	sisaolento	singular
+d:l6-health:0	6	Olisiko	olla	sein	Verb · 3. Person Sg. (hän) · Konditional „würde“ · + Frageendung -ko/-kö	wäre (es) …?		teonsana		singular
+d:l6-health:0	7	sinun	sinä	du	Pronomen · Genitiv Singular	für dich (Genitiv: sinun olisi parempi = du solltest besser)		asemosana	omanto	singular
+d:l6-health:0	8	parempi	hyvä	gut	Adjektiv · Nominativ Singular · Komparativ	besser		laatusana	nimento	singular
+d:l6-health:0	9	käydä	käydä	gehen, besuchen	Verb · Grundform (Infinitiv)	(hin)gehen		teonsana		
+d:l6-health:0	10	sairaalassa	sairaala	Krankenhaus	Nomen · Inessiv „in“ Singular	im Krankenhaus (käydä + Inessiv: ins Krankenhaus gehen)		nimisana	sisaolento	singular
+d:l6-health:1	0	Sairaalassa	sairaala	Krankenhaus	Nomen · Inessiv „in“ Singular	im Krankenhaus		nimisana	sisaolento	singular
+d:l6-health:1	1	Ei	ei	nicht (Verneinungsverb)	Verneinungsverb · ei = er/sie/es nicht	nicht (ei sentään = nun übertreib mal nicht)		kieltosana		singular
+d:l6-health:1	2	sentään	sentään	doch, immerhin	Adverb	(ei sentään) so weit nun doch nicht		seikkasana		
+d:l6-health:1	3	Nenäni	nenä	Nase	Nomen · Nominativ Singular · + Possessivendung „mein“	meine Nase		nimisana	nimento	singular
+d:l6-health:1	4	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	hat (on vuotanut)		teonsana		singular
+d:l6-health:1	5	vuotanut	vuotaa	laufen, lecken (Flüssigkeit)	Verbform · Partizip Perfekt aktiv (-nut/-nyt)	gelaufen		laatusana	nimento	singular
+d:l6-health:1	6	toissapäivästä	toissapäivä	vorgestern	Nomen · Elativ „aus“ Singular	(seit) vorgestern				
+d:l6-health:1	7	lähtien	lähtien	seit, ab (+ Elativ)	Postposition · (2. Infinitiv von lähteä)	seit				
+d:l6-health:1	8	ja	ja	und	Konjunktion			sidesana		
+d:l6-health:1	9	kurkussani	kurkku	Hals, Kehle; Gurke	Nomen · Inessiv „in“ Singular · + Possessivendung „mein“	in meinem Hals		nimisana	sisaolento	singular
+d:l6-health:1	10	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist → habe		teonsana		singular
+d:l6-health:1	11	epämiellyttävä	epämiellyttävä	unangenehm	Adjektiv · Nominativ Singular					
+d:l6-health:1	12	tunne	tunne	Gefühl	Nomen · Nominativ Singular			nimisana	nimento	singular
+d:l6-health:1	13	Tavallinen	tavallinen	normal, gewöhnlich	Adjektiv · Nominativ Singular			laatusana	nimento	singular
+d:l6-health:1	14	flunssa	flunssa	Erkältung, Grippe	Nomen · Nominativ Singular			nimisana	nimento	singular
+d:l6-health:2	0	Onko	olla	sein	Verb · 3. Person Sg. (hän) · Präsens · + Frageendung -ko/-kö	ist …? → hast (du) …?		teonsana		singular
+d:l6-health:2	1	sinulla	sinä	du	Pronomen · Adessiv „auf, bei“ Singular	bei dir → du (hast)		asemosana	ulkoolento	singular
+d:l6-health:2	2	kuumetta	kuume	Fieber	Nomen · Partitiv Singular	Fieber (Partitiv)		nimisana	osanto	singular
+d:l6-health:3	0	Mittasin	mitata	messen	Verb · 1. Person Sg. (minä) · Imperfekt (Vergangenheit)	(ich) maß		teonsana		singular
+d:l6-health:3	1	herättyäni	herätä	aufwachen	Verbform · Temporalkonstruktion (-tua/-tyä) „nachdem …“ · + Possessivendung	nach meinem Aufwachen		laatusana	osanto	singular
+d:l6-health:3	2	vähän	vähän	ein wenig	Adverb	etwas		seikkasana		
+d:l6-health:3	3	yli	yli	über	Postposition			suhdesana		
+d:l6-health:3	4	kolmekymmentäkahdeksan	kolmekymmentäkahdeksan	achtunddreißig	Zahlwort · Nominativ Singular		kolme+kahdeksan	lukusana	nimento	singular
+d:l6-health:3	5	Mutta	mutta	aber	Konjunktion			sidesana		
+d:l6-health:3	6	minulla	minä	ich	Pronomen · Adessiv „auf, bei“ Singular	bei mir → ich habe		asemosana	ulkoolento	singular
+d:l6-health:3	7	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist → habe		teonsana		singular
+d:l6-health:3	8	tänään	tänään	heute	Adverb			seikkasana		
+d:l6-health:3	9	tärkeä	tärkeä	wichtig	Adjektiv · Nominativ Singular			laatusana	nimento	singular
+d:l6-health:3	10	palaveri	palaveri	Besprechung	Nomen · Nominativ Singular		pala+veri	nimisana	nimento	singular
+d:l6-health:3	11	joten	joten	deshalb, also	Konjunktion	also		sidesana		
+d:l6-health:3	12	lähden	lähteä	weggehen, losgehen	Verb · 1. Person Sg. (minä) · Präsens	(ich) gehe		teonsana		singular
+d:l6-health:3	13	silti	silti	trotzdem	Adverb			seikkasana		
+d:l6-health:3	14	töihin	työ	Arbeit	Nomen · Illativ „in … hinein“ Plural	zur Arbeit		nimisana	sisatulento	plural
+d:l6-health:4	0	Kuumeisena	kuumeinen	fiebrig	Adjektiv · Essiv „als“ Singular	mit Fieber (als Fiebernder)		laatusana	olento	singular
+d:l6-health:4	1	et	ei	nicht (Verneinungsverb)	Verneinungsverb · et = du nicht	du … nicht		kieltosana		singular
+d:l6-health:4	2	lähde	lähteä	weggehen, losgehen	Verb · Verneinungsform (nach ei)	gehst		teonsana		singular
+d:l6-health:4	3	mihinkään	mikään	(irgend)etwas; nichts (verneint)	Pronomen · Illativ „in … hinein“ Singular	(nicht) irgendwohin → nirgendwohin				
+d:l6-health:4	4	Tartuttaisit	tartuttaa	anstecken	Verb · 2. Person Sg. (sinä) · Konditional „würde“	(du) würdest anstecken		teonsana		singular
+d:l6-health:4	5	vain	vain	nur	Adverb			seikkasana		
+d:l6-health:4	6	koko	koko	ganz	Nomen · Nominativ Singular	das ganze		nimisana	nimento	singular
+d:l6-health:4	7	toimiston	toimisto	Büro	Nomen · Genitiv Singular	Büro (Genitiv-Objekt)		nimisana	omanto	singular
+d:l6-health:4	8	Etkö	ei	nicht (Verneinungsverb)	Verneinungsverb · et = du nicht · + Frageendung -ko/-kö	(könntest) du nicht …?		kieltosana		singular
+d:l6-health:4	9	voisi	voida	können	Verb · Konditional · Verneinungsform	könntest		teonsana		singular
+d:l6-health:4	10	osallistua	osallistua	teilnehmen	Verb · Grundform (Infinitiv)			teonsana		
+d:l6-health:4	11	palaveriin	palaveri	Besprechung	Nomen · Illativ „in … hinein“ Singular	an der Besprechung (osallistua + Illativ)		nimisana	sisatulento	singular
+d:l6-health:4	12	etänä	etänä	aus der Ferne, remote	Adverb	online		seikkasana		
+d:l6-health:5	0	Voisin	voida	können	Verb · 1. Person Sg. (minä) · Konditional „würde“	(ich) könnte		teonsana		singular
+d:l6-health:5	1	kai	kai	wohl, vermutlich	Adverb			seikkasana		
+d:l6-health:5	2	Pomo	pomo	Chef, Chefin	Nomen · Nominativ Singular	die Chefin		nimisana	nimento	singular
+d:l6-health:5	3	tuskin	tuskin	kaum	Adverb			seikkasana		
+d:l6-health:5	4	pahastuu	pahastua	übelnehmen, sich ärgern	Verb · 3. Person Sg. (hän) · Präsens	wird sauer		teonsana		singular
+d:l6-health:5	5	kun	kun	als, wenn	Konjunktion	wenn		sidesana		
+d:l6-health:5	6	kuulee	kuulla	hören	Verb · 3. Person Sg. (hän) · Präsens	(sie) hört		teonsana		singular
+d:l6-health:5	7	ääneni	ääni	Stimme	Nomen · Nominativ Singular · + Possessivendung „mein“	meine Stimme		nimisana	nimento	singular
+d:l6-health:6	0	Tuskinpa	tuskin	kaum	Adverb · + -pa (Verstärkung)	wohl kaum		seikkasana		
+d:l6-health:6	1	Keitän	keittää	kochen	Verb · 1. Person Sg. (minä) · Präsens	(ich) koche		teonsana		singular
+d:l6-health:6	2	sinulle	sinä	du	Pronomen · Allativ „auf … zu, an“ Singular	dir		asemosana	ulkotulento	singular
+d:l6-health:6	3	teetä	tee	Tee	Nomen · Partitiv Singular	Tee (Partitiv)		nimisana	osanto	singular
+d:l6-health:6	4	ja	ja	und	Konjunktion			sidesana		
+d:l6-health:6	5	puuroa	puuro	Brei	Nomen · Partitiv Singular	Brei (Partitiv)		nimisana	osanto	singular
+d:l6-health:6	6	ennen	ennen	vor, bevor	Adverb	(ennen kuin) bevor		seikkasana		
+d:l6-health:6	7	kuin	kuin	als, wie	Konjunktion	(ennen kuin) bevor		sidesana		
+d:l6-health:6	8	lähden	lähteä	weggehen, losgehen	Verb · 1. Person Sg. (minä) · Präsens	(ich) gehe		teonsana		singular
+d:l6-health:7	0	Kiitos	kiitos	danke	Ausruf	danke (kiitos + Elativ = danke für)		nimisana	nimento	singular
+d:l6-health:7	1	teestä	tee	Tee	Nomen · Elativ „aus“ Singular	für den Tee		nimisana	sisaeronto	singular
+d:l6-health:7	2	mutta	mutta	aber	Konjunktion			sidesana		
+d:l6-health:7	3	puuroa	puuro	Brei	Nomen · Partitiv Singular	Brei (Partitiv)		nimisana	osanto	singular
+d:l6-health:7	4	en	ei	nicht (Verneinungsverb)	Verneinungsverb · en = ich nicht	ich … nicht		kieltosana		singular
+d:l6-health:7	5	tarvitse	tarvita	brauchen	Verb · Verneinungsform (nach ei)	brauche		teonsana		singular
+d:l6-health:7	6	Minä	minä	ich	Pronomen · Nominativ Singular			asemosana	nimento	singular
+d:l6-health:7	7	voin	voida	können	Verb · 1. Person Sg. (minä) · Präsens	(ich) kann		teonsana		singular
+d:l6-health:7	8	aivan	aivan	ganz, völlig	Adverb	ganz		seikkasana		
+d:l6-health:7	9	hyvin	hyvin	gut	Adverb			seikkasana		
+d:l6-health:7	10	olla	olla	sein	Verb · Grundform (Infinitiv)	(ilman … olla) auskommen ohne		teonsana		
+d:l6-health:7	11	ilman	ilman	ohne	Postposition			suhdesana		
+d:l6-health:7	12	aamiaista	aamiainen	Frühstück	Nomen · Partitiv Singular	Frühstück (Partitiv nach ilman)		nimisana	osanto	singular
+d:l6-health:7	13	se	se	es, das	Pronomen · Nominativ Singular	das		asemosana	nimento	singular
+d:l6-health:7	14	tekee	tehdä	machen, tun	Verb · 3. Person Sg. (hän) · Präsens	tut		teonsana		singular
+d:l6-health:7	15	vain	vain	nur	Adverb	sogar (nur)		seikkasana		
+d:l6-health:7	16	hyvää	hyvä	gut	Adjektiv · Partitiv Singular	gut (tehdä hyvää = guttun)		laatusana	osanto	singular
+d:l6-health:7	17	silloin	silloin	dann, damals	Adverb	(silloin tällöin) ab und zu		seikkasana		
+d:l6-health:7	18	tällöin	tällöin	dann, in diesem Fall	Adverb	(silloin tällöin) ab und zu		seikkasana		
+d:l6-health:8	0	Syö	syödä	essen	Verb · Imperativ · 2. Person Sg. (sinä) · auch Verneinungsform nach ei	iss		teonsana		singular
+d:l6-health:8	1	nyt	nyt	jetzt	Adverb	(Aufforderung) doch		seikkasana		
+d:l6-health:8	2	kuitenkin	kuitenkin	trotzdem, jedoch	Adverb	trotzdem		seikkasana		
+d:l6-health:8	3	jotain	jokin	etwas	Pronomen · Partitiv Singular			asemosana	osanto	singular
+d:l6-health:8	4	jotta	jotta	damit	Konjunktion			sidesana		
+d:l6-health:8	5	jaksat	jaksaa	schaffen, durchhalten	Verb · 2. Person Sg. (sinä) · Präsens	(du) hältst durch		teonsana		singular
+d:l6-health:8	6	sen	se	es, das	Pronomen · Genitiv Singular	die (Genitiv-Objekt)		asemosana	omanto	singular
+d:l6-health:8	7	palaverin	palaveri	Besprechung	Nomen · Genitiv Singular	Besprechung (Genitiv-Objekt)		nimisana	omanto	singular
+d:l6-health:8	8	Ja	ja	und	Konjunktion			sidesana		
+d:l6-health:8	9	jos	jos	wenn, falls	Konjunktion			sidesana		
+d:l6-health:8	10	kuume	kuume	Fieber	Nomen · Nominativ Singular	das Fieber		nimisana	nimento	singular
+d:l6-health:8	11	nousee	nousta	steigen, aufstehen	Verb · 3. Person Sg. (hän) · Präsens	steigt		teonsana		singular
+d:l6-health:8	12	yli	yli	über	Postposition			suhdesana		
+d:l6-health:8	13	neljänkymmenen	neljäkymmentä	vierzig	Zahlwort · Genitiv Singular	vierzig (Genitiv nach yli)	neljä+kymmentä	lukusana	omanto	singular
+d:l6-health:8	14	soitat	soittaa	anrufen	Verb · 2. Person Sg. (sinä) · Präsens	(du) rufst an		teonsana		singular
+d:l6-health:8	15	päivystykseen	päivystys	Notdienst, Bereitschaft	Nomen · Illativ „in … hinein“ Singular	beim Notdienst (soittaa + Illativ)		nimisana	sisatulento	singular
+d:l6-health:8	16	Sovittu	sopia	vereinbaren; passen	Verbform · Partizip Perfekt passiv (-tu/-ty)	abgemacht		laatusana	nimento	singular
+d:l6-health:9	0	Sovittu	sopia	vereinbaren; passen	Verbform · Partizip Perfekt passiv (-tu/-ty)	abgemacht		laatusana	nimento	singular
+d:l6-health:9	1	äiti	äiti	Mutter	Nomen · Nominativ Singular	Mama		nimisana	nimento	singular
+d:l6-hello:0	0	Anteeksi	anteeksi	Entschuldigung	Ausruf	entschuldige		seikkasana		
+d:l6-hello:0	1	tämä	tämä	dieser	Pronomen · Nominativ Singular	das		asemosana	nimento	singular
+d:l6-hello:0	2	taitaa	taitaa	können; wohl (+ Infinitiv)	Verb · 3. Person Sg. (hän) · Präsens	(ist) wohl		teonsana		singular
+d:l6-hello:0	3	olla	olla	sein	Verb · Grundform (Infinitiv)			teonsana		
+d:l6-hello:0	4	minun	minä	ich	Pronomen · Genitiv Singular	mein		asemosana	omanto	singular
+d:l6-hello:0	5	paikkani	paikka	Platz, Ort	Nomen · Nominativ Singular · + Possessivendung „mein“	mein Platz		nimisana	nimento	singular
+d:l6-hello:0	6	Kortissa	kortti	Karte	Nomen · Inessiv „in“ Singular	auf der Karte		nimisana	sisaolento	singular
+d:l6-hello:0	7	lukee	lukea	lesen; (geschrieben) stehen	Verb · 3. Person Sg. (hän) · Präsens	steht		teonsana		singular
+d:l6-hello:0	8	Ville	Ville	Ville (Name)	Name · Nominativ Singular			etunimi	nimento	singular
+d:l6-hello:1	0	Taitaa	taitaa	können; wohl (+ Infinitiv)	Verb · 3. Person Sg. (hän) · Präsens	(es ist) wohl		teonsana		singular
+d:l6-hello:1	1	olla	olla	sein	Verb · Grundform (Infinitiv)			teonsana		
+d:l6-hello:1	2	jos	jos	wenn, falls	Konjunktion			sidesana		
+d:l6-hello:1	3	olet	olla	sein	Verb · 2. Person Sg. (sinä) · Präsens	(du) bist		teonsana		singular
+d:l6-hello:1	4	Ville	Ville	Ville (Name)	Name · Nominativ Singular			etunimi	nimento	singular
+d:l6-hello:1	5	Minä	minä	ich	Pronomen · Nominativ Singular			asemosana	nimento	singular
+d:l6-hello:1	6	olen	olla	sein	Verb · 1. Person Sg. (minä) · Präsens	(ich) bin		teonsana		singular
+d:l6-hello:1	7	Sanna	Sanna	Sanna (Name)	Name · Nominativ Singular			etunimi	nimento	singular
+d:l6-hello:1	8	morsiamen	morsian	Braut	Nomen · Genitiv Singular	der Braut		nimisana	omanto	singular
+d:l6-hello:1	9	serkku	serkku	Cousin, Cousine	Nomen · Nominativ Singular	Cousine		nimisana	nimento	singular
+d:l6-hello:1	10	Mistä	mistä	woher	Fragewort · (Elativ von mikä)					
+d:l6-hello:1	11	sinä	sinä	du	Pronomen · Nominativ Singular			asemosana	nimento	singular
+d:l6-hello:1	12	tunnet	tuntea	kennen; fühlen	Verb · 2. Person Sg. (sinä) · Präsens	(du) kennst		teonsana		singular
+d:l6-hello:1	13	hääparin	hääpari	Brautpaar	Nomen · Genitiv Singular	das Brautpaar (Genitiv-Objekt)	hää+pari	nimisana	omanto	singular
+d:l6-hello:2	0	Soitimme	soittaa	spielen (Instrument); anrufen	Verb · 1. Person Pl. (me) · Imperfekt (Vergangenheit)	(wir) spielten		teonsana		plural
+d:l6-hello:2	1	Jussin	Jussi	Jussi (Name)	Name · Genitiv Singular	(mit) Jussi → Jussi und ich		etunimi	omanto	singular
+d:l6-hello:2	2	kanssa	kanssa	mit	Postposition			suhdesana		
+d:l6-hello:2	3	samassa	sama	gleich, derselbe	Nomen · Inessiv „in“ Singular	in derselben		nimisana	sisaolento	singular
+d:l6-hello:2	4	bändissä	bändi	Band (Musik)	Nomen · Inessiv „in“ Singular	in einer Band		nimisana	sisaolento	singular
+d:l6-hello:2	5	lukioaikoina	lukioaika	Oberstufenzeit (Gymnasium)	Nomen · Essiv „als“ Plural	zur Oberstufenzeit	lukio+aika	nimisana	olento	plural
+d:l6-hello:2	6	Vasta	vasta	erst	Adverb			seikkasana		
+d:l6-hello:2	7	paikan	paikka	Platz, Ort	Nomen · Genitiv Singular	(paikan päällä) vor Ort		nimisana	omanto	singular
+d:l6-hello:2	8	päällä	päällä	auf, oben	Postposition · (Adessiv von pää)	(paikan päällä) vor Ort				
+d:l6-hello:2	9	tajusin	tajuta	begreifen, merken	Verb · 1. Person Sg. (minä) · Imperfekt (Vergangenheit)	(ich) merkte		teonsana		singular
+d:l6-hello:2	10	etten	ettei	dass nicht (Verneinungsverb)	Verneinungsverb · en = ich nicht	dass ich … nicht	ett+ei	kieltosana		singular
+d:l6-hello:2	11	tunne	tuntea	kennen; fühlen	Verb · Verneinungsform (nach ei)	kenne		teonsana		singular
+d:l6-hello:2	12	täältä	täältä	von hier	Adverb · (Ablativ zu täällä)	hier				
+d:l6-hello:2	13	ketään	kukaan	(irgend)jemand; (mit ei) niemand	Pronomen · Partitiv Singular	niemanden		asemosana	osanto	singular
+d:l6-hello:2	14	muuta	muu	anderer	Pronomen · Partitiv Singular	anderen		asemosana	osanto	singular
+d:l6-hello:2	15	kuin	kuin	als, wie	Konjunktion	(muuta kuin) außer		sidesana		
+d:l6-hello:2	16	sulhasen	sulhanen	Bräutigam	Nomen · Genitiv Singular	den Bräutigam (Genitiv-Objekt)		nimisana	omanto	singular
+d:l6-hello:3	0	Ai	ai	ach	Ausruf			huudahdussana		
+d:l6-hello:3	1	sinä	sinä	du	Pronomen · Nominativ Singular			asemosana	nimento	singular
+d:l6-hello:3	2	olet	olla	sein	Verb · 2. Person Sg. (sinä) · Präsens	(du) bist		teonsana		singular
+d:l6-hello:3	3	se	se	es, das	Pronomen · Nominativ Singular	der		asemosana	nimento	singular
+d:l6-hello:3	4	kitaristi	kitaristi	Gitarrist	Nomen · Nominativ Singular		kita+risti	nimisana	nimento	singular
+d:l6-hello:3	5	Jussi	Jussi	Jussi (Name)	Name · Nominativ Singular			etunimi	nimento	singular
+d:l6-hello:3	6	kertoi	kertoa	erzählen	Verb · 3. Person Sg. (hän) · Imperfekt (Vergangenheit)	erzählte		teonsana		singular
+d:l6-hello:3	7	teistä	te	ihr	Pronomen · Elativ „aus“ Plural	von euch		asemosana	sisaeronto	plural
+d:l6-hello:3	8	minulle	minä	ich	Pronomen · Allativ „auf … zu, an“ Singular	mir		asemosana	ulkotulento	singular
+d:l6-hello:3	9	kerran	kerran	einmal	Adverb · (Genitiv von kerta)	mal				
+d:l6-hello:3	10	niin	niin	so	Adverb			seikkasana		
+d:l6-hello:3	11	innoissaan	into	Begeisterung, Eifer	Nomen · Inessiv „in“ Plural · + Possessivendung „sein/ihr“	begeistert (innoissaan = voller Begeisterung)		nimisana	sisaolento	plural
+d:l6-hello:3	12	että	että	dass	Konjunktion			sidesana		
+d:l6-hello:3	13	luulin	luulla	glauben, meinen	Verb · 1. Person Sg. (minä) · Imperfekt (Vergangenheit)	(ich) dachte		teonsana		singular
+d:l6-hello:3	14	teidän	te	ihr	Pronomen · Genitiv Plural	ihr (Subjekt der Partizipialkonstruktion)		asemosana	omanto	plural
+d:l6-hello:3	15	olleen	olla	sein	Verbform · Partizip Perfekt aktiv (-nut/-nyt) · Genitiv Singular	gewesen (luulin teidän olleen = ich dachte, ihr wärt gewesen)		laatusana	omanto	singular
+d:l6-hello:3	16	jotenkin	jotenkin	irgendwie	Adverb			seikkasana		
+d:l6-hello:3	17	kuuluisia	kuuluisa	berühmt	Adjektiv · Partitiv Plural	berühmt (Partitiv Pl.)		laatusana	osanto	plural
+d:l6-hello:4	0	Kuuluisia	kuuluisa	berühmt	Adjektiv · Partitiv Plural	berühmt (Partitiv Pl.)		laatusana	osanto	plural
+d:l6-hello:4	1	emme	ei	nicht (Verneinungsverb)	Verneinungsverb · emme = wir nicht	wir … nicht		kieltosana		plural
+d:l6-hello:4	2	olleet	olla	sein	Verbform · Partizip Perfekt aktiv · Plural · verneinte Vergangenheit	waren		laatusana	nimento	plural
+d:l6-hello:4	3	koskaan	koskaan	jemals; (mit ei) nie	Adverb	nie		seikkasana		
+d:l6-hello:4	4	Keikkoja	keikka	Auftritt, Gig	Nomen · Partitiv Plural	Auftritte (Partitiv Pl.)		nimisana	osanto	plural
+d:l6-hello:4	5	oli	olla	sein	Verb · 3. Person Sg. (hän) · Imperfekt (Vergangenheit)	war(en) → (wir) hatten		teonsana		singular
+d:l6-hello:4	6	kolme	kolme	drei	Zahlwort · Nominativ Singular			lukusana	nimento	singular
+d:l6-hello:4	7	ja	ja	und	Konjunktion			sidesana		
+d:l6-hello:4	8	yhdellä	yksi	eins, ein	Zahlwort · Adessiv „auf, bei“ Singular	bei einem		lukusana	ulkoolento	singular
+d:l6-hello:4	9	niistä	ne	sie (Pl., nicht-menschlich)	Pronomen · Elativ „aus“ Plural	davon		asemosana	sisaeronto	plural
+d:l6-hello:4	10	yleisönä	yleisö	Publikum	Nomen · Essiv „als“ Singular	als Publikum		nimisana	olento	singular
+d:l6-hello:4	11	oli	olla	sein	Verb · 3. Person Sg. (hän) · Imperfekt (Vergangenheit)	war		teonsana		singular
+d:l6-hello:4	12	vain	vain	nur	Adverb			seikkasana		
+d:l6-hello:4	13	Jussin	Jussi	Jussi (Name)	Name · Genitiv Singular	Jussis		etunimi	omanto	singular
+d:l6-hello:4	14	äiti	äiti	Mutter	Nomen · Nominativ Singular			nimisana	nimento	singular
+d:l6-hello:5	0	No	no	na, nun	Adverb	na		seikkasana		
+d:l6-hello:5	1	hänen	hän	er, sie	Pronomen · Genitiv Singular	ihrer (hänen mielestään = ihrer Meinung nach)		asemosana	omanto	singular
+d:l6-hello:5	2	mielestään	mieli	Sinn, Meinung	Nomen · Elativ „aus“ Singular · + Possessivendung „sein/ihr“	nach ihrer Meinung		nimisana	sisaeronto	singular
+d:l6-hello:5	3	olitte	olla	sein	Verb · 2. Person Pl. (te) · Imperfekt (Vergangenheit)	(ihr) wart		teonsana		plural
+d:l6-hello:5	4	varmasti	varma	sicher	Adjektiv · Adverbform (-sti) „auf … Weise“	bestimmt		laatusana	kerrontosti	
+d:l6-hello:5	5	loistavia	loistava	großartig, glänzend	Adjektiv · Partitiv Plural	großartig				
+d:l6-hello:5	6	Kuule	kuulla	hören	Verb · Imperativ · 2. Person Sg. (sinä)	hör mal		teonsana		singular
+d:l6-hello:5	7	puheiden	puhe	Rede	Nomen · Genitiv Plural	der Reden		nimisana	omanto	plural
+d:l6-hello:5	8	jälkeen	jälkeen	nach	Postposition	nach (+ Genitiv)		seikkasana		
+d:l6-hello:5	9	alkaa	alkaa	anfangen, beginnen	Verb · 3. Person Sg. (hän) · Präsens	beginnt → geht los		teonsana		singular
+d:l6-hello:5	10	tanssi	tanssi	Tanz	Nomen · Nominativ Singular	der Tanz		nimisana	nimento	singular
+d:l6-hello:5	11	Tule	tulla	kommen	Verb · Imperativ · 2. Person Sg. (sinä)	komm		teonsana		singular
+d:l6-hello:5	12	silloin	silloin	dann, damals	Adverb	dann		seikkasana		
+d:l6-hello:5	13	serkkuporukkaan	serkkuporukka	Cousin-Runde, Cousins und Cousinen	Nomen · Illativ „in … hinein“ Singular	zu den Cousins und Cousinen	serkku+porukka	nimisana	sisatulento	singular
+d:l6-hello:5	14	niin	niin	so; dann	Adverb	dann		seikkasana		
+d:l6-hello:5	15	esittelen	esitellä	vorstellen	Verb · 1. Person Sg. (minä) · Präsens	(ich) stelle vor		teonsana		singular
+d:l6-hello:5	16	sinut	sinä	du	Pronomen · Akkusativ Singular	dich		asemosana	kohdanto	singular
+d:l6-hello:5	17	kaikille	kaikki	alle, alles	Nomen · Allativ „auf … zu, an“ Plural	allen		nimisana	ulkotulento	plural
+d:l6-hello:6	0	Mielelläni	mielellään	gern	Adverb · + Possessivendung „mein“	(ich) gern				
+d:l6-hello:6	1	Varoitan	varoittaa	warnen	Verb · 1. Person Sg. (minä) · Präsens	(ich) warne		teonsana		singular
+d:l6-hello:6	2	kuitenkin	kuitenkin	trotzdem, jedoch	Adverb	aber		seikkasana		
+d:l6-hello:6	3	etukäteen	etukäteen	im Voraus	Adverb	vorher				
+d:l6-hello:6	4	olen	olla	sein	Verb · 1. Person Sg. (minä) · Präsens	(ich) bin		teonsana		singular
+d:l6-hello:6	5	tosi	tosi	echt, wirklich	Adjektiv · Nominativ Singular	echt		nimisana_laatusana	nimento	singular
+d:l6-hello:6	6	huono	huono	schlecht	Adjektiv · Nominativ Singular			nimisana_laatusana	nimento	singular
+d:l6-hello:6	7	muistamaan	muistaa	sich erinnern, sich merken	Verb · 3. Infinitiv -maan/-mään „(um) zu“	(im) Merken (huono + -maan)		teonsana	sisatulento	singular
+d:l6-hello:6	8	nimiä	nimi	Name	Nomen · Partitiv Plural	Namen (Partitiv Pl.)		nimisana	osanto	plural
+d:l6-hello:7	0	Ei	ei	nicht (Verneinungsverb)	Verneinungsverb · ei = er/sie/es nicht	(es) … nicht		kieltosana		singular
+d:l6-hello:7	1	se	se	es, das	Pronomen · Nominativ Singular	das		asemosana	nimento	singular
+d:l6-hello:7	2	haittaa	haitata	stören, schaden	Verb · Verneinungsform (nach ei)	stört → macht nichts		teonsana		singular
+d:l6-hello:7	3	Minä	minä	ich	Pronomen · Nominativ Singular			asemosana	nimento	singular
+d:l6-hello:7	4	muistan	muistaa	sich erinnern, sich merken	Verb · 1. Person Sg. (minä) · Präsens	(ich) merke mir		teonsana		singular
+d:l6-hello:7	5	ne	ne	sie (Pl., nicht-menschlich)	Pronomen · Nominativ Plural	sie		asemosana	nimento	plural
+d:l6-hello:7	6	sinunkin	sinä	du	Pronomen · Genitiv Singular · + -kin „auch“	auch dich		asemosana	omanto	singular
+d:l6-hello:7	7	puolestasi	puoli	Hälfte; Seite	Nomen · Elativ „aus“ Singular · + Possessivendung „dein“	für dich (puolesta = an Stelle von)		nimisana	sisaeronto	singular
+d:l6-nature:0	0	Mikko	Mikko	Mikko (Name)	Name · Nominativ Singular			etunimi	nimento	singular
+d:l6-nature:0	1	tule	tulla	kommen	Verb · Imperativ · 2. Person Sg. (sinä)	komm		teonsana		singular
+d:l6-nature:0	2	katsomaan	katsoa	schauen, ansehen	Verb · 3. Infinitiv -maan/-mään „(um) zu“	schauen (tulla + -maan)		teonsana	sisatulento	singular
+d:l6-nature:0	3	Kiikareilla	kiikari	Fernglas	Nomen · Adessiv „auf, bei“ Plural	mit dem Fernglas		nimisana	ulkoolento	plural
+d:l6-nature:0	4	näkee	nähdä	sehen	Verb · 3. Person Sg. (hän) · Präsens	(man) sieht		teonsana		singular
+d:l6-nature:0	5	vielä	vielä	noch	Adverb			seikkasana		
+d:l6-nature:0	6	sen	se	es, das	Pronomen · Genitiv Singular	das (Genitiv-Objekt)		asemosana	omanto	singular
+d:l6-nature:0	7	laivan	laiva	Schiff	Nomen · Genitiv Singular	Schiff (Genitiv-Objekt)		nimisana	omanto	singular
+d:l6-nature:0	8	jolla	joka	der, welcher (Relativpronomen)	Pronomen · Adessiv „auf, bei“ Singular	mit dem		asemosana	ulkoolento	singular
+d:l6-nature:0	9	tulimme	tulla	kommen	Verb · 1. Person Pl. (me) · Imperfekt (Vergangenheit)	(wir) kamen		teonsana		plural
+d:l6-nature:0	10	saareen	saari	Insel	Nomen · Illativ „in … hinein“ Singular	auf die Insel		nimisana	sisatulento	singular
+d:l6-nature:0	11	aamulla	aamu	Morgen	Nomen · Adessiv „auf, bei“ Singular	am Morgen		nimisana	ulkoolento	singular
+d:l6-nature:1	0	Missä	missä	wo	Fragewort · (Inessiv von mikä)					
+d:l6-nature:1	1	Ai	ai	ach	Ausruf			huudahdussana		
+d:l6-nature:1	2	nyt	nyt	jetzt	Adverb			seikkasana		
+d:l6-nature:1	3	näen	nähdä	sehen	Verb · 1. Person Sg. (minä) · Präsens	(ich) sehe		teonsana		singular
+d:l6-nature:1	4	Laiva	laiva	Schiff	Nomen · Nominativ Singular	das Schiff		nimisana	nimento	singular
+d:l6-nature:1	5	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist		teonsana		singular
+d:l6-nature:1	6	jo	jo	schon	Adverb			seikkasana		
+d:l6-nature:1	7	niin	niin	so	Adverb			seikkasana		
+d:l6-nature:1	8	kaukana	kaukana	weit weg, fern	Adverb	weit				
+d:l6-nature:1	9	ulapalla	ulappa	offene See	Nomen · Adessiv „auf, bei“ Singular	auf offener See		nimisana	ulkoolento	singular
+d:l6-nature:1	10	että	että	dass	Konjunktion			sidesana		
+d:l6-nature:1	11	sitä	se	es	Pronomen · Partitiv Singular	es (Partitiv-Objekt)		asemosana	osanto	singular
+d:l6-nature:1	12	ei	ei	nicht (Verneinungsverb)	Verneinungsverb · ei = er/sie/es nicht	(man) … nicht		kieltosana		singular
+d:l6-nature:1	13	paljas	paljas	bloß, nackt	Adjektiv · Nominativ Singular	bloße		laatusana	nimento	singular
+d:l6-nature:1	14	silmä	silmä	Auge	Nomen · Nominativ Singular	(das) Auge		nimisana	nimento	singular
+d:l6-nature:1	15	erota	erottaa	unterscheiden	Verb · Verneinungsform (nach ei)	erkennt		teonsana		singular
+d:l6-nature:2	0	Ja	ja	und	Konjunktion			sidesana		
+d:l6-nature:2	1	katso	katsoa	schauen, ansehen	Verb · Imperativ · 2. Person Sg. (sinä)	schau		teonsana		singular
+d:l6-nature:2	2	tuonne	tuonne	dorthin (dort drüben)	Adverb · (Illativ zu tuo)	dort hinüber				
+d:l6-nature:2	3	lounaaseen	lounas	Südwesten; Mittagessen	Nomen · Illativ „in … hinein“ Singular	nach Südwesten		nimisana	sisatulento	singular
+d:l6-nature:2	4	Tähti	tähti	Stern	Nomen · Nominativ Singular	der Stern		nimisana	nimento	singular
+d:l6-nature:2	5	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist		teonsana		singular
+d:l6-nature:2	6	niin	niin	so	Adverb			seikkasana		
+d:l6-nature:2	7	kirkas	kirkas	hell, klar	Adjektiv · Nominativ Singular	hell		laatusana	nimento	singular
+d:l6-nature:2	8	että	että	dass	Konjunktion			sidesana		
+d:l6-nature:2	9	sen	se	es, das	Pronomen · Genitiv Singular	ihn (Genitiv-Objekt)		asemosana	omanto	singular
+d:l6-nature:2	10	voi	voida	können	Verb · 3. Person Sg. (hän) · Präsens	(man) kann		teonsana		singular
+d:l6-nature:2	11	nähdä	nähdä	sehen	Verb · Grundform (Infinitiv)			teonsana		
+d:l6-nature:2	12	paljain	paljas	bloß, nackt	Adjektiv · Instruktiv Plural	mit bloßen		laatusana	keinonto	plural
+d:l6-nature:2	13	silmin	silmä	Auge	Nomen · Instruktiv Plural	mit (bloßen) Augen		nimisana	keinonto	plural
+d:l6-nature:2	14	vaikka	vaikka	obwohl	Konjunktion			sidesana		
+d:l6-nature:2	15	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	(es) ist		teonsana		singular
+d:l6-nature:2	16	vielä	vielä	noch	Adverb			seikkasana		
+d:l6-nature:2	17	valoisaa	valoisa	hell (Licht)	Adjektiv · Partitiv Singular	hell (Partitiv)		nimisana_laatusana	osanto	singular
+d:l6-nature:3	0	Se	se	es, das	Pronomen · Nominativ Singular	das		asemosana	nimento	singular
+d:l6-nature:3	1	ei	ei	nicht (Verneinungsverb)	Verneinungsverb · ei = er/sie/es nicht	(es) … nicht → kein		kieltosana		singular
+d:l6-nature:3	2	ole	olla	sein	Verb · Verneinungsform (nach ei)	ist		teonsana		singular
+d:l6-nature:3	3	tähti	tähti	Stern	Nomen · Nominativ Singular			nimisana	nimento	singular
+d:l6-nature:3	4	vaan	vaan	sondern	Konjunktion			sidesana		
+d:l6-nature:3	5	Venus	Venus	Venus (Planet)	Name · Nominativ Singular			nimi	nimento	singular
+d:l6-nature:3	6	Planeetta	planeetta	Planet	Nomen · Nominativ Singular	der Planet		nimisana	nimento	singular
+d:l6-nature:3	7	heijastaa	heijastaa	reflektieren, spiegeln	Verb · 3. Person Sg. (hän) · Präsens	reflektiert		teonsana		singular
+d:l6-nature:3	8	auringon	aurinko	Sonne	Nomen · Genitiv Singular	der Sonne		nimisana	omanto	singular
+d:l6-nature:3	9	valoa	valo	Licht	Nomen · Partitiv Singular	Licht (Partitiv)		nimisana	osanto	singular
+d:l6-nature:3	10	siksi	siksi	deshalb	Adverb			seikkasana		
+d:l6-nature:3	11	se	se	es, das	Pronomen · Nominativ Singular	er (der Planet)		asemosana	nimento	singular
+d:l6-nature:3	12	loistaa	loistaa	leuchten, glänzen	Verb · 3. Person Sg. (hän) · Präsens	leuchtet		teonsana		singular
+d:l6-nature:3	13	noin	noin	so; etwa	Adverb	so		seikkasana		
+d:l6-nature:3	14	kirkkaasti	kirkas	hell, klar	Adjektiv · Adverbform (-sti) „auf … Weise“	hell (Adverb)		laatusana	kerrontosti	
+d:l6-nature:4	0	Kiitos	kiitos	danke	Ausruf			nimisana	nimento	singular
+d:l6-nature:4	1	professori	professori	Professor	Nomen · Nominativ Singular	Herr Professor		nimisana	nimento	singular
+d:l6-nature:4	2	Mutta	mutta	aber	Konjunktion			sidesana		
+d:l6-nature:4	3	nuo	nuo	jener, der da	Pronomen · Nominativ Plural	die (dort)		asemosana	nimento	plural
+d:l6-nature:4	4	pilvet	pilvi	Wolke	Nomen · Nominativ Plural	die Wolken		nimisana	nimento	plural
+d:l6-nature:4	5	lännessä	länsi	Westen	Nomen · Inessiv „in“ Singular	im Westen		nimisana	sisaolento	singular
+d:l6-nature:4	6	näyttävät	näyttää	aussehen; zeigen	Verb · 3. Person Pl. (he) · Präsens	sehen … aus		teonsana		plural
+d:l6-nature:4	7	pahalta	paha	schlecht, böse	Adjektiv · Ablativ „von … weg“ Singular	übel (näyttää + Ablativ)		nimisana_laatusana	ulkoeronto	singular
+d:l6-nature:4	8	Lähdetkö	lähteä	weggehen, losgehen	Verb · 2. Person Sg. (sinä) · Präsens · + Frageendung -ko/-kö	gehst du (los) …?		teonsana		singular
+d:l6-nature:4	9	silti	silti	trotzdem	Adverb			seikkasana		
+d:l6-nature:4	10	Eeron	Eero	Eero (Name)	Name · Genitiv Singular	Eeros → zu Eero		etunimi	omanto	singular
+d:l6-nature:4	11	saunaan	sauna	Sauna	Nomen · Illativ „in … hinein“ Singular	in die Sauna		nimisana	sisatulento	singular
+d:l6-nature:5	0	Lähden	lähteä	weggehen, losgehen	Verb · 1. Person Sg. (minä) · Präsens	(ich) gehe → ja		teonsana		singular
+d:l6-nature:5	1	Rantapolkua	rantapolku	Uferpfad	Nomen · Partitiv Singular	den Uferpfad (entlang) (Partitiv)	ranta+polku	nimisana	osanto	singular
+d:l6-nature:5	2	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist → sind es		teonsana		singular
+d:l6-nature:5	3	vain	vain	nur	Adverb			seikkasana		
+d:l6-nature:5	4	kilometri	kilometri	Kilometer	Nomen · Nominativ Singular		kilo+metri	nimisana	nimento	singular
+d:l6-nature:5	5	ja	ja	und	Konjunktion			sidesana		
+d:l6-nature:5	6	lupasin	luvata	versprechen	Verb · 1. Person Sg. (minä) · Imperfekt (Vergangenheit)	(ich) versprach		teonsana		singular
+d:l6-nature:5	7	palauttaa	palauttaa	zurückgeben, zurückbringen	Verb · Grundform (Infinitiv)	zurückzubringen		teonsana		
+d:l6-nature:5	8	verkon	verkko	Netz	Nomen · Genitiv Singular	das Netz (Genitiv-Objekt)		nimisana	omanto	singular
+d:l6-nature:5	9	jonka	joka	der, welcher (Relativpronomen)	Pronomen · Genitiv Singular	das (Objekt)		asemosana	omanto	singular
+d:l6-nature:5	10	lainasin	lainata	leihen	Verb · 1. Person Sg. (minä) · Imperfekt (Vergangenheit)	(ich) lieh (mir)		teonsana		singular
+d:l6-nature:5	11	häneltä	hän	er, sie	Pronomen · Ablativ „von … weg“ Singular	von ihm		asemosana	ulkoeronto	singular
+d:l6-nature:6	0	En	ei	nicht (Verneinungsverb)	Verneinungsverb · en = ich nicht	ich … nicht		kieltosana		singular
+d:l6-nature:6	1	halua	haluta	wollen	Verb · Verneinungsform (nach ei)	will		teonsana		singular
+d:l6-nature:6	2	että	että	dass	Konjunktion			sidesana		
+d:l6-nature:6	3	kastut	kastua	nass werden	Verb · 2. Person Sg. (sinä) · Präsens	(du) wirst nass		teonsana		singular
+d:l6-nature:6	4	ja	ja	und	Konjunktion			sidesana		
+d:l6-nature:6	5	vilustut	vilustua	sich erkälten	Verb · 2. Person Sg. (sinä) · Präsens	(du) erkältest dich		teonsana		singular
+d:l6-nature:6	6	joten	joten	deshalb, also	Konjunktion	also		sidesana		
+d:l6-nature:6	7	ota	ottaa	nehmen	Verb · Imperativ · 2. Person Sg. (sinä)	nimm		teonsana		singular
+d:l6-nature:6	8	tämä	tämä	dieser	Pronomen · Nominativ Singular	diesen		asemosana	nimento	singular
+d:l6-nature:6	9	sateenvarjo	sateenvarjo	Regenschirm	Nomen · Nominativ Singular		sade+varjo	nimisana	nimento	singular
+d:l6-nature:6	10	mukaasi	mukaan	mit	Adverb · + Possessivendung „dein“	mit dir (ottaa mukaan = mitnehmen)		seikkasana		
+d:l6-nature:7	0	Sateenvarjo	sateenvarjo	Regenschirm	Nomen · Nominativ Singular	ein Regenschirm	sade+varjo	nimisana	nimento	singular
+d:l6-nature:7	1	saunaan	sauna	Sauna	Nomen · Illativ „in … hinein“ Singular	in die Sauna → zur Sauna		nimisana	sisatulento	singular
+d:l6-nature:7	2	Märkähän	märkä	nass	Adjektiv · Nominativ Singular · + -hän „doch“	nass (doch)		nimisana_laatusana	nimento	singular
+d:l6-nature:7	3	minusta	minä	ich	Pronomen · Elativ „aus“ Singular	aus mir (minusta tulee = ich werde)		asemosana	sisaeronto	singular
+d:l6-nature:7	4	tulee	tulla	kommen; werden	Verb · 3. Person Sg. (hän) · Präsens	wird		teonsana		singular
+d:l6-nature:7	5	joka	joka	jeder	Pronomen · Nominativ Singular	(joka tapauksessa) sowieso		asemosana	nimento	singular
+d:l6-nature:7	6	tapauksessa	tapaus	Fall	Nomen · Inessiv „in“ Singular	(joka tapauksessa) auf jeden Fall, sowieso		nimisana	sisaolento	singular
+d:l6-nature:8	0	Saunassa	sauna	Sauna	Nomen · Inessiv „in“ Singular	in der Sauna		nimisana	sisaolento	singular
+d:l6-nature:8	1	ei	ei	nicht (Verneinungsverb)	Verneinungsverb · ei = er/sie/es nicht	nicht		kieltosana		singular
+d:l6-nature:8	2	matkalla	matka	Reise, Weg	Nomen · Adessiv „auf, bei“ Singular	unterwegs		nimisana	ulkoolento	singular
+d:l6-nature:8	3	Ota	ottaa	nehmen	Verb · Imperativ · 2. Person Sg. (sinä)	nimm		teonsana		singular
+d:l6-nature:8	4	otsalamppukin	otsalamppu	Stirnlampe	Nomen · Nominativ Singular · + -kin „auch“	auch die Stirnlampe	otsa+lamppu	nimisana	nimento	singular
+d:l6-nature:8	5	ettet	ettei	dass nicht (Verneinungsverb)	Verneinungsverb · et = du nicht	damit du nicht	ett+ei	kieltosana		singular
+d:l6-nature:8	6	kompastu	kompastua	stolpern	Verb · Verneinungsform (nach ei)	stolperst		teonsana		singular
+d:l6-nature:8	7	kallioilla	kallio	Fels	Nomen · Adessiv „auf, bei“ Plural	auf den Felsen		nimisana	ulkoolento	plural
+d:l6-nature:8	8	pimeän	pimeä	dunkel	Adjektiv · Genitiv Singular	(pimeän tultua) wenn es dunkel geworden ist		nimisana_laatusana	omanto	singular
+d:l6-nature:8	9	tultua	tulla	kommen	Verbform · Temporalkonstruktion (-tua/-tyä) „nachdem …“	(nach dem) Kommen → (wenn es dunkel) geworden ist		laatusana	osanto	singular
+d:l6-nature:9	0	Hyvä	hyvä	gut	Adjektiv · Nominativ Singular	(hyvä on) na gut		laatusana	nimento	singular
+d:l6-nature:9	1	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	(hyvä on) na gut		teonsana		singular
+d:l6-nature:9	2	otan	ottaa	nehmen	Verb · 1. Person Sg. (minä) · Präsens	(ich) nehme		teonsana		singular
+d:l6-nature:9	3	molemmat	molempi	beide	Nomen · Nominativ Plural			nimisana	nimento	plural
+d:l6-nature:9	4	Palaan	palata	zurückkehren	Verb · 1. Person Sg. (minä) · Präsens	(ich) komme zurück		teonsana		singular
+d:l6-nature:9	5	ennen	ennen	vor, bevor	Adverb	vor		seikkasana		
+d:l6-nature:9	6	puoltayötä	puoliyö	Mitternacht	Nomen · Partitiv Singular	Mitternacht (Partitiv nach ennen)		nimisana	osanto	singular
+d:l6-romance:0	0	Kalle	Kalle	Kalle (Name)	Name · Nominativ Singular			etunimi	nimento	singular
+d:l6-romance:0	1	olen	olla	sein	Verb · 1. Person Sg. (minä) · Präsens	(ich) habe (olen nähnyt)		teonsana		singular
+d:l6-romance:0	2	nähnyt	nähdä	sehen	Verbform · Partizip Perfekt aktiv (-nut/-nyt)	gesehen		laatusana	nimento	singular
+d:l6-romance:0	3	sinun	sinä	du	Pronomen · Genitiv Singular	dich (Subjekt der Partizipialkonstruktion)		asemosana	omanto	singular
+d:l6-romance:0	4	kuiskailevan	kuiskailla	(immer wieder) flüstern	Verbform · Partizip Präsens aktiv (-va/-vä) · Genitiv Singular	flüstern (nähdä + Partizip: dich flüstern sehen)				
+d:l6-romance:0	5	puhelimeen	puhelin	Telefon, Handy	Nomen · Illativ „in … hinein“ Singular	ins Telefon		nimisana	sisatulento	singular
+d:l6-romance:0	6	koko	koko	ganz	Nomen · Nominativ Singular	die ganze		nimisana	nimento	singular
+d:l6-romance:0	7	viikon	viikko	Woche	Nomen · Genitiv Singular	Woche (Genitiv: die ganze Woche lang)		nimisana	omanto	singular
+d:l6-romance:0	8	Mitä	mikä	was	Pronomen · Partitiv Singular			asemosana	osanto	singular
+d:l6-romance:0	9	sinä	sinä	du	Pronomen · Nominativ Singular			asemosana	nimento	singular
+d:l6-romance:0	10	oikein	oikein	richtig; sehr	Adverb	eigentlich		seikkasana		
+d:l6-romance:0	11	suunnittelet	suunnitella	planen	Verb · 2. Person Sg. (sinä) · Präsens	(du) planst		teonsana		singular
+d:l6-romance:1	0	En	ei	nicht (Verneinungsverb)	Verneinungsverb · en = ich nicht	ich … nicht → (ich plane) nichts		kieltosana		singular
+d:l6-romance:1	1	mitään	mikään	(irgend)etwas; nichts (verneint)	Pronomen · Partitiv Singular	nichts		asemosana	osanto	singular
+d:l6-romance:1	2	erityistä	erityinen	besonders	Adjektiv · Partitiv Singular	Besonderes (Partitiv)		nimisana_laatusana	osanto	singular
+d:l6-romance:1	3	Lauantaina	lauantai	Samstag	Nomen · Essiv „als“ Singular	am Samstag		nimisana	olento	singular
+d:l6-romance:1	4	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist		teonsana		singular
+d:l6-romance:1	5	vain	vain	nur	Adverb			seikkasana		
+d:l6-romance:1	6	kymmenes	kymmenes	zehnter	Zahlwort · Nominativ Singular			lukusana	nimento	singular
+d:l6-romance:1	7	hääpäivämme	hääpäivä	Hochzeitstag	Nomen · Nominativ Singular · + Possessivendung „unser“	unser Hochzeitstag	hää+päivä	nimisana	nimento	singular
+d:l6-romance:1	8	siinä	se	es	Pronomen · Inessiv „in“ Singular	darin (siinä kaikki = das ist alles)		asemosana	sisaolento	singular
+d:l6-romance:1	9	kaikki	kaikki	alle, alles	Nomen · Nominativ Singular	alles		nimisana	nimento	singular
+d:l6-romance:2	0	Juuri	juuri	gerade, genau	Adverb	genau		seikkasana		
+d:l6-romance:2	1	siksi	siksi	deshalb	Adverb			seikkasana		
+d:l6-romance:2	2	kysyn	kysyä	fragen	Verb · 1. Person Sg. (minä) · Präsens	(ich) frage		teonsana		singular
+d:l6-romance:2	3	Kerro	kertoa	erzählen	Verb · Imperativ · 2. Person Sg. (sinä) · auch Verneinungsform nach ei	erzähl → sag		teonsana		singular
+d:l6-romance:2	4	edes	edes	wenigstens; (verneint) nicht einmal	Adverb	wenigstens		seikkasana		
+d:l6-romance:2	5	minne	minne	wohin	Fragewort · (Illativ von mikä)					
+d:l6-romance:2	6	olemme	olla	sein	Verb · 1. Person Pl. (me) · Präsens	(wir) sind		teonsana		plural
+d:l6-romance:2	7	menossa	meno	Gehen, Fahrt	Nomen · Inessiv „in“ Singular	(olla menossa) unterwegs sein → hinfahren		nimisana	sisaolento	singular
+d:l6-romance:3	0	Rakkauteni	rakkaus	Liebe	Nomen · Nominativ Singular · + Possessivendung „mein“	meine Liebe		nimisana	nimento	singular
+d:l6-romance:3	1	sinuun	sinä	du	Pronomen · Illativ „in … hinein“ Singular	zu dir		asemosana	sisatulento	singular
+d:l6-romance:3	2	ei	ei	nicht (Verneinungsverb)	Verneinungsverb · ei = er/sie/es nicht	(sie) … nicht		kieltosana		singular
+d:l6-romance:3	3	anna	antaa	geben; lassen	Verb · Verneinungsform (nach ei)	lässt (zu)		teonsana		singular
+d:l6-romance:3	4	minun	minä	ich	Pronomen · Genitiv Singular	mich (antaa + Genitiv + Infinitiv = lassen)		asemosana	omanto	singular
+d:l6-romance:3	5	kertoa	kertoa	erzählen	Verb · Grundform (Infinitiv)			teonsana		
+d:l6-romance:3	6	sinulle	sinä	du	Pronomen · Allativ „auf … zu, an“ Singular	dir		asemosana	ulkotulento	singular
+d:l6-romance:3	7	kaikkea	kaikki	alle, alles	Nomen · Partitiv Singular	alles (Partitiv)		nimisana	osanto	singular
+d:l6-romance:3	8	Jotkin	jokin	(irgend)etwas; irgendein	Pronomen · Nominativ Plural	manche		asemosana	nimento	plural
+d:l6-romance:3	9	asiat	asia	Sache, Ding	Nomen · Nominativ Plural	Dinge		nimisana	nimento	plural
+d:l6-romance:3	10	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist		teonsana		singular
+d:l6-romance:3	11	parempi	hyvä	gut	Adjektiv · Nominativ Singular · Komparativ	besser		laatusana	nimento	singular
+d:l6-romance:3	12	jättää	jättää	lassen, zurücklassen	Verb · Grundform (Infinitiv)			teonsana		
+d:l6-romance:3	13	sanomatta	sanoa	sagen	Verb · 3. Infinitiv -matta/-mättä „ohne zu“	ungesagt (jättää sanomatta = nicht sagen)		teonsana	vajanto	singular
+d:l6-romance:4	0	Kuulostit	kuulostaa	klingen	Verb · 2. Person Sg. (sinä) · Imperfekt (Vergangenheit)	(du) klangst		teonsana		singular
+d:l6-romance:4	1	ihan	ihan	ganz	Adverb	ja (ganz)		seikkasana		
+d:l6-romance:4	2	runoilijalta	runoilija	Dichter	Nomen · Ablativ „von … weg“ Singular	wie ein Dichter (kuulostaa + Ablativ)		nimisana	ulkoeronto	singular
+d:l6-romance:4	3	Anna	antaa	geben; lassen	Verb · Imperativ · 2. Person Sg. (sinä) · auch Verneinungsform nach ei	gib		teonsana		singular
+d:l6-romance:4	4	edes	edes	wenigstens; (verneint) nicht einmal	Adverb	wenigstens		seikkasana		
+d:l6-romance:4	5	vihje	vihje	Hinweis, Tipp	Nomen · Nominativ Singular	einen Tipp		nimisana	nimento	singular
+d:l6-romance:4	6	jotta	jotta	damit	Konjunktion			sidesana		
+d:l6-romance:4	7	osaan	osata	können (gelernt)	Verb · 1. Person Sg. (minä) · Präsens	(ich) kann → weiß, wie		teonsana		singular
+d:l6-romance:4	8	pakata	pakata	packen	Verb · Grundform (Infinitiv)			teonsana		
+d:l6-romance:4	9	oikeat	oikea	richtig	Adjektiv · Nominativ Plural	die richtigen		nimisana_laatusana	nimento	plural
+d:l6-romance:4	10	vaatteet	vaate	Kleidungsstück	Nomen · Nominativ Plural	Kleidung (Pl.) → Sachen		nimisana	nimento	plural
+d:l6-romance:5	0	Hyvä	hyvä	gut	Adjektiv · Nominativ Singular	(hyvä on) na gut		laatusana	nimento	singular
+d:l6-romance:5	1	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	(hyvä on) na gut		teonsana		singular
+d:l6-romance:5	2	yksi	yksi	eins, ein	Zahlwort · Nominativ Singular	ein		lukusana	nimento	singular
+d:l6-romance:5	3	vihje	vihje	Hinweis, Tipp	Nomen · Nominativ Singular	Tipp		nimisana	nimento	singular
+d:l6-romance:5	4	ota	ottaa	nehmen	Verb · Imperativ · 2. Person Sg. (sinä) · auch Verneinungsform nach ei	nimm		teonsana		singular
+d:l6-romance:5	5	mukaan	mukaan	mit	Adverb	(ottaa mukaan) mitnehmen → einpacken		seikkasana		
+d:l6-romance:5	6	villasukat	villasukka	Wollsocke	Nomen · Nominativ Plural	Wollsocken	villa+sukka	nimisana	nimento	plural
+d:l6-romance:5	7	ja	ja	und	Konjunktion			sidesana		
+d:l6-romance:5	8	uimapuku	uimapuku	Badeanzug	Nomen · Nominativ Singular	einen Badeanzug		nimisana	nimento	singular
+d:l6-romance:6	0	Villasukat	villasukka	Wollsocke	Nomen · Nominativ Plural	Wollsocken	villa+sukka	nimisana	nimento	plural
+d:l6-romance:6	1	ja	ja	und	Konjunktion			sidesana		
+d:l6-romance:6	2	uimapuku	uimapuku	Badeanzug	Nomen · Nominativ Singular			nimisana	nimento	singular
+d:l6-romance:6	3	Tammikuussa	tammikuu	Januar	Nomen · Inessiv „in“ Singular	im Januar	tammi+kuu	nimisana	sisaolento	singular
+d:l6-romance:6	4	Hetkinen	hetkinen	Moment (mal)	Ausruf · (Verkleinerungsform von hetki)					
+d:l6-romance:6	5	se	se	es, das	Pronomen · Nominativ Singular	das		asemosana	nimento	singular
+d:l6-romance:6	6	järvenrantahotelli	järvenrantahotelli	Hotel am Seeufer	Nomen · Nominativ Singular	Hotel am See	järvi+ranta+hotelli	nimisana	nimento	singular
+d:l6-romance:6	7	jossa	joka	der, welcher (Relativpronomen)	Pronomen · Inessiv „in“ Singular	in dem → wo		asemosana	sisaolento	singular
+d:l6-romance:6	8	olimme	olla	sein	Verb · 1. Person Pl. (me) · Imperfekt (Vergangenheit)	(wir) waren		teonsana		plural
+d:l6-romance:6	9	häämatkalla	häämatka	Hochzeitsreise	Nomen · Adessiv „auf, bei“ Singular	auf Hochzeitsreise	hää+matka	nimisana	ulkoolento	singular
+d:l6-romance:6	10	Siellä	siellä	dort	Adverb	da		seikkasana		
+d:l6-romance:6	11	oli	olla	sein	Verb · 3. Person Sg. (hän) · Imperfekt (Vergangenheit)	war → gab es		teonsana		singular
+d:l6-romance:6	12	savusauna	savusauna	Rauchsauna	Nomen · Nominativ Singular	eine Rauchsauna	savu+sauna	nimisana	nimento	singular
+d:l6-romance:6	13	ja	ja	und	Konjunktion			sidesana		
+d:l6-romance:6	14	avanto	avanto	Eisloch	Nomen · Nominativ Singular	ein Eisloch		nimisana	nimento	singular
+d:l6-romance:7	0	En	ei	nicht (Verneinungsverb)	Verneinungsverb · en = ich nicht	ich … nicht		kieltosana		singular
+d:l6-romance:7	1	sano	sanoa	sagen	Verb · Verneinungsform (nach ei)	sage		teonsana		singular
+d:l6-romance:7	2	mitään	mikään	(irgend)etwas; nichts (verneint)	Pronomen · Partitiv Singular	nichts		asemosana	osanto	singular
+d:l6-romance:7	3	Mutta	mutta	aber	Konjunktion			sidesana		
+d:l6-romance:7	4	junaliput	junalippu	Zugticket	Nomen · Nominativ Plural	die Zugtickets	juna+lippu	nimisana	nimento	plural
+d:l6-romance:7	5	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	sind (on ostettu = sind gekauft)		teonsana		singular
+d:l6-romance:7	6	jo	jo	schon	Adverb			seikkasana		
+d:l6-romance:7	7	ostettu	ostaa	kaufen	Verbform · Partizip Perfekt passiv (-tu/-ty)	gekauft		laatusana	nimento	singular
+d:l6-romance:7	8	joten	joten	deshalb, also	Konjunktion	also		sidesana		
+d:l6-romance:7	9	lauantaina	lauantai	Samstag	Nomen · Essiv „als“ Singular	am Samstag		nimisana	olento	singular
+d:l6-romance:7	10	pitää	pitää	müssen	Verb · 3. Person Sg. (hän) · Präsens	muss (man) → müssen (wir)		teonsana		singular
+d:l6-romance:7	11	herätä	herätä	aufwachen	Verb · Grundform (Infinitiv)	aufstehen		teonsana		
+d:l6-romance:7	12	aikaisin	aikaisin	früh	Adverb			seikkasana		
+d:l6-romance:8	0	Arvasin	arvata	raten, erraten	Verb · 1. Person Sg. (minä) · Imperfekt (Vergangenheit)	(ich) habe geraten		teonsana		singular
+d:l6-romance:8	1	siis	siis	also	Adverb			seikkasana		
+d:l6-romance:8	2	oikein	oikein	richtig	Adverb			seikkasana		
+d:l6-romance:8	3	Kymmenen	kymmenen	zehn	Zahlwort · Nominativ Singular			lukusana	nimento	singular
+d:l6-romance:8	4	vuotta	vuosi	Jahr	Nomen · Partitiv Singular	Jahre (nach Zahlwort: Partitiv Sg.)		nimisana	osanto	singular
+d:l6-romance:8	5	ja	ja	und	Konjunktion			sidesana		
+d:l6-romance:8	6	osaat	osata	können (gelernt)	Verb · 2. Person Sg. (sinä) · Präsens	(du) kannst → schaffst es		teonsana		singular
+d:l6-romance:8	7	vieläkin	vielä	noch	Adverb · + -kin „auch“	immer noch		seikkasana		
+d:l6-romance:8	8	yllättää	yllättää	überraschen	Verb · Grundform (Infinitiv)			teonsana		
+d:l6-romance:8	9	minut	minä	ich	Pronomen · Akkusativ Singular	mich		asemosana	kohdanto	singular
+d:l6-romance:9	0	Puoliksi	puoliksi	zur Hälfte	Adverb · (Translativ von puoli)					
+d:l6-romance:9	1	oikein	oikein	richtig	Adverb			seikkasana		
+d:l6-romance:9	2	Loput	loppu	Ende; Rest	Nomen · Nominativ Plural	der Rest (Pl.)		nimisana	nimento	plural
+d:l6-romance:9	3	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist		teonsana		singular
+d:l6-romance:9	4	parempi	hyvä	gut	Adjektiv · Nominativ Singular · Komparativ	besser		laatusana	nimento	singular
+d:l6-romance:9	5	jättää	jättää	lassen, zurücklassen	Verb · Grundform (Infinitiv)			teonsana		
+d:l6-romance:9	6	sanomatta	sanoa	sagen	Verb · 3. Infinitiv -matta/-mättä „ohne zu“	ungesagt (jättää sanomatta = nicht sagen)		teonsana	vajanto	singular
+d:l6-shopping:0	0	Hei	hei	hallo	Ausruf			huudahdussana		
+d:l6-shopping:0	1	Paljonko	paljonko	wie viel	Fragewort · (paljon + Frageendung -ko)					
+d:l6-shopping:0	2	tuo	tuo	jener, der da	Pronomen · Nominativ Singular	das … da		asemosana	nimento	singular
+d:l6-shopping:0	3	punainen	punainen	rot	Adjektiv · Nominativ Singular	rote		laatusana	nimento	singular
+d:l6-shopping:0	4	maantiepyörä	maantiepyörä	Rennrad	Nomen · Nominativ Singular		maa+tie+pyörä	nimisana	nimento	singular
+d:l6-shopping:0	5	maksaa	maksaa	kosten; bezahlen	Verb · 3. Person Sg. (hän) · Präsens	kostet		teonsana		singular
+d:l6-shopping:1	0	Kolmesataa	kolmesataa	dreihundert	Zahlwort · Nominativ Singular			lukusana	nimento	singular
+d:l6-shopping:1	1	euroa	euro	Euro	Nomen · Partitiv Singular	Euro (nach Zahlwort: Partitiv Sg.)		nimisana	osanto	singular
+d:l6-shopping:1	2	Se	se	es, das	Pronomen · Nominativ Singular	es		asemosana	nimento	singular
+d:l6-shopping:1	3	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist		teonsana		singular
+d:l6-shopping:1	4	käytännössä	käytännössä	praktisch, in der Praxis	Adverb · (Inessiv von käytäntö)					
+d:l6-shopping:1	5	uusi	uusi	neu	Adjektiv · Nominativ Singular			laatusana	nimento	singular
+d:l6-shopping:1	6	edellinen	edellinen	vorherig, vorig	Adjektiv · Nominativ Singular	der vorige		nimisana_laatusana	nimento	singular
+d:l6-shopping:1	7	omistaja	omistaja	Besitzer	Nomen · Nominativ Singular			nimisana	nimento	singular
+d:l6-shopping:1	8	ehti	ehtiä	Zeit haben, schaffen	Verb · 3. Person Sg. (hän) · Imperfekt (Vergangenheit)	kam dazu		teonsana		singular
+d:l6-shopping:1	9	ajaa	ajaa	fahren	Verb · Grundform (Infinitiv)			teonsana		
+d:l6-shopping:1	10	sillä	se	es	Pronomen · Adessiv „auf, bei“ Singular	damit		asemosana	ulkoolento	singular
+d:l6-shopping:1	11	vain	vain	nur	Adverb			seikkasana		
+d:l6-shopping:1	12	pari	pari	Paar; ein paar	Nomen · Nominativ Singular	ein paar		nimisana	nimento	singular
+d:l6-shopping:1	13	kertaa	kerta	Mal	Nomen · Partitiv Singular	Mal (nach pari: Partitiv Sg.)		nimisana	osanto	singular
+d:l6-shopping:1	14	ennen	ennen	vor, bevor	Adverb	(ennen kuin) bevor		seikkasana		
+d:l6-shopping:1	15	kuin	kuin	als, wie	Konjunktion	(ennen kuin) bevor		sidesana		
+d:l6-shopping:1	16	muutti	muuttaa	umziehen; ändern	Verb · 3. Person Sg. (hän) · Imperfekt (Vergangenheit)	zog (um)		teonsana		singular
+d:l6-shopping:1	17	ulkomaille	ulkomaa	Ausland	Nomen · Allativ „auf … zu, an“ Plural	ins Ausland		nimisana	ulkotulento	plural
+d:l6-shopping:2	0	Liikaa	liikaa	zu viel	Adverb · (Partitiv von liika)					
+d:l6-shopping:2	1	minulle	minä	ich	Pronomen · Allativ „auf … zu, an“ Singular	für mich		asemosana	ulkotulento	singular
+d:l6-shopping:2	2	Näin	nähdä	sehen	Verb · 1. Person Sg. (minä) · Imperfekt (Vergangenheit)	(ich) sah		teonsana		singular
+d:l6-shopping:2	3	viime	viime	letzt, vorig	Adjektiv · Nominativ Singular	letzte		laatusana	nimento	singular
+d:l6-shopping:2	4	viikolla	viikko	Woche	Nomen · Adessiv „auf, bei“ Singular	(letzte) Woche		nimisana	ulkoolento	singular
+d:l6-shopping:2	5	netissä	netti	Internet, Netz	Nomen · Inessiv „in“ Singular	im Netz		nimisana	sisaolento	singular
+d:l6-shopping:2	6	samanlaisen	samanlainen	gleichartig, ähnlich	Adjektiv · Genitiv Singular	so eins (Genitiv-Objekt)		laatusana	omanto	singular
+d:l6-shopping:2	7	vielä	vielä	noch	Adverb			seikkasana		
+d:l6-shopping:2	8	halvemmalla	halpa	billig	Adjektiv · Adessiv „auf, bei“ Singular · Komparativ	billiger (Adessiv: zum Preis)		laatusana	ulkoolento	singular
+d:l6-shopping:2	9	Jos	jos	wenn, falls	Konjunktion			sidesana		
+d:l6-shopping:2	10	minulla	minä	ich	Pronomen · Adessiv „auf, bei“ Singular	bei mir → ich (hätte)		asemosana	ulkoolento	singular
+d:l6-shopping:2	11	olisi	olla	sein	Verb · 3. Person Sg. (hän) · Konditional „würde“	wäre (olisi ollut = hätte gehabt)		teonsana		singular
+d:l6-shopping:2	12	ollut	olla	sein	Verbform · Partizip Perfekt aktiv (-nut/-nyt)	gewesen → gehabt		laatusana	nimento	singular
+d:l6-shopping:2	13	hieman	hieman	ein wenig	Adverb	ein bisschen		seikkasana		
+d:l6-shopping:2	14	enemmän	enemmän	mehr	Adverb			seikkasana		
+d:l6-shopping:2	15	rahaa	raha	Geld	Nomen · Partitiv Singular	Geld (Partitiv)		nimisana	osanto	singular
+d:l6-shopping:2	16	olisin	olla	sein	Verb · 1. Person Sg. (minä) · Konditional „würde“	(ich) hätte (olisin ostanut)		teonsana		singular
+d:l6-shopping:2	17	ostanut	ostaa	kaufen	Verbform · Partizip Perfekt aktiv (-nut/-nyt)	gekauft		laatusana	nimento	singular
+d:l6-shopping:2	18	sen	se	es	Pronomen · Genitiv Singular	es (Objekt)		asemosana	omanto	singular
+d:l6-shopping:3	0	Mihin	mihin	wohin; wofür	Fragewort · (Illativ von mikä)	wofür				
+d:l6-shopping:3	1	sinä	sinä	du	Pronomen · Nominativ Singular			asemosana	nimento	singular
+d:l6-shopping:3	2	pyörää	pyörä	Rad, Fahrrad	Nomen · Partitiv Singular	das Rad (Partitiv)		nimisana	osanto	singular
+d:l6-shopping:3	3	oikeastaan	oikeastaan	eigentlich	Adverb					
+d:l6-shopping:3	4	tarvitset	tarvita	brauchen	Verb · 2. Person Sg. (sinä) · Präsens	(du) brauchst		teonsana		singular
+d:l6-shopping:4	0	Lähinnä	lähinnä	vor allem, hauptsächlich	Adverb · (Essiv von lähin)	hauptsächlich				
+d:l6-shopping:4	1	kouluun	koulu	Schule	Nomen · Illativ „in … hinein“ Singular	in die Schule → für die Schule		nimisana	sisatulento	singular
+d:l6-shopping:4	2	Matkaa	matka	Reise, Weg, Strecke	Nomen · Partitiv Singular	Strecke (Partitiv) → es sind		nimisana	osanto	singular
+d:l6-shopping:4	3	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist → sind		teonsana		singular
+d:l6-shopping:4	4	neljä	neljä	vier	Zahlwort · Nominativ Singular			lukusana	nimento	singular
+d:l6-shopping:4	5	kilometriä	kilometri	Kilometer	Nomen · Partitiv Singular	Kilometer (nach Zahlwort: Partitiv Sg.)	kilo+metri	nimisana	osanto	singular
+d:l6-shopping:4	6	ja	ja	und	Konjunktion			sidesana		
+d:l6-shopping:4	7	bussikortti	bussikortti	Buskarte	Nomen · Nominativ Singular	die Buskarte	bussi+kortti	nimisana	nimento	singular
+d:l6-shopping:4	8	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist		teonsana		singular
+d:l6-shopping:4	9	kallis	kallis	teuer	Adjektiv · Nominativ Singular			laatusana	nimento	singular
+d:l6-shopping:5	0	Sitten	sitten	dann	Adverb			seikkasana		
+d:l6-shopping:5	1	sanon	sanoa	sagen	Verb · 1. Person Sg. (minä) · Präsens	(ich) sage		teonsana		singular
+d:l6-shopping:5	2	saman	sama	gleich, derselbe	Nomen · Genitiv Singular	dasselbe (Genitiv-Objekt)		nimisana	omanto	singular
+d:l6-shopping:5	3	kuin	kuin	als, wie	Konjunktion	wie		sidesana		
+d:l6-shopping:5	4	mummoni	mummo	Oma	Nomen · Nominativ Singular · + Possessivendung „mein“	meine Oma		nimisana	nimento	singular
+d:l6-shopping:5	5	aina	aina	immer	Adverb			seikkasana		
+d:l6-shopping:5	6	sanoi	sanoa	sagen	Verb · 3. Person Sg. (hän) · Imperfekt (Vergangenheit)	sagte		teonsana		singular
+d:l6-shopping:5	7	Älä	ei	nicht (Verneinungsverb)	Verneinungsverb · Imperativ · 2. Person Sg. (sinä) „tu nicht!“	(du sollst) nicht → kauf nicht		kieltosana		singular
+d:l6-shopping:5	8	osta	ostaa	kaufen	Verb · Verneinungsform (nach älä)	kauf		teonsana		singular
+d:l6-shopping:5	9	sitä	se	es	Pronomen · Partitiv Singular	das (Partitiv)		asemosana	osanto	singular
+d:l6-shopping:5	10	mikä	mikä	was	Pronomen · Nominativ Singular			asemosana	nimento	singular
+d:l6-shopping:5	11	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist		teonsana		singular
+d:l6-shopping:5	12	hyvää	hyvä	gut	Adjektiv · Partitiv Singular	gut (Partitiv)		laatusana	osanto	singular
+d:l6-shopping:5	13	vaan	vaan	sondern	Konjunktion			sidesana		
+d:l6-shopping:5	14	osta	ostaa	kaufen	Verb · Imperativ · 2. Person Sg. (sinä) · auch Verneinungsform nach ei	kauf		teonsana		singular
+d:l6-shopping:5	15	se	se	es, das	Pronomen · Nominativ Singular	das		asemosana	nimento	singular
+d:l6-shopping:5	16	mitä	mikä	was	Pronomen · Partitiv Singular	was (Partitiv)		asemosana	osanto	singular
+d:l6-shopping:5	17	tarvitset	tarvita	brauchen	Verb · 2. Person Sg. (sinä) · Präsens	(du) brauchst		teonsana		singular
+d:l6-shopping:5	18	Tuo	tuo	jener, der da	Pronomen · Nominativ Singular	das … da		asemosana	nimento	singular
+d:l6-shopping:5	19	sininen	sininen	blau	Adjektiv · Nominativ Singular	blaue		laatusana	nimento	singular
+d:l6-shopping:5	20	kolmivaihteinen	kolmivaihteinen	mit drei Gängen	Adjektiv · Nominativ Singular	Dreigang-(Rad)		laatusana	nimento	singular
+d:l6-shopping:5	21	kestää	kestää	aushalten; dauern	Verb · 3. Person Sg. (hän) · Präsens	hält aus		teonsana		singular
+d:l6-shopping:5	22	talvenkin	talvi	Winter	Nomen · Genitiv Singular · + -kin „auch“	auch den Winter		nimisana	omanto	singular
+d:l6-shopping:5	23	ja	ja	und	Konjunktion			sidesana		
+d:l6-shopping:5	24	se	se	es, das	Pronomen · Nominativ Singular	es		asemosana	nimento	singular
+d:l6-shopping:5	25	maksaa	maksaa	kosten; bezahlen	Verb · 3. Person Sg. (hän) · Präsens	kostet		teonsana		singular
+d:l6-shopping:5	26	kuusikymmentä	kuusikymmentä	sechzig	Zahlwort · Nominativ Singular			lukusana	nimento	singular
+d:l6-shopping:6	0	Kuusikymmentä	kuusikymmentä	sechzig	Zahlwort · Nominativ Singular			lukusana	nimento	singular
+d:l6-shopping:6	1	käy	käydä	gehen, besuchen; passen	Verb · 3. Person Sg. (hän) · Präsens	geht (in Ordnung)		teonsana		singular
+d:l6-shopping:6	2	Voinko	voida	können	Verb · 1. Person Sg. (minä) · Präsens · + Frageendung -ko/-kö	kann ich …?		teonsana		singular
+d:l6-shopping:6	3	maksaa	maksaa	kosten; bezahlen	Verb · Grundform (Infinitiv)	(be)zahlen		teonsana		
+d:l6-shopping:6	4	kolikoilla	kolikko	Münze	Nomen · Adessiv „auf, bei“ Plural	mit Münzen		nimisana	ulkoolento	plural
+d:l6-shopping:6	5	Otin	ottaa	nehmen	Verb · 1. Person Sg. (minä) · Imperfekt (Vergangenheit)	(ich) nahm		teonsana		singular
+d:l6-shopping:6	6	kaikki	kaikki	alle, alles	Nomen · Nominativ Singular	alle		nimisana	nimento	singular
+d:l6-shopping:6	7	kolikot	kolikko	Münze	Nomen · Nominativ Plural	Münzen		nimisana	nimento	plural
+d:l6-shopping:6	8	säästöpossustani	säästöpossu	Sparschwein	Nomen · Elativ „aus“ Singular · + Possessivendung „mein“	aus meinem Sparschwein	säästö+possu	nimisana	sisaeronto	singular
+d:l6-shopping:6	9	koska	koska	weil	Konjunktion			sidesana		
+d:l6-shopping:6	10	minulla	minä	ich	Pronomen · Adessiv „auf, bei“ Singular	bei mir → ich (habe)		asemosana	ulkoolento	singular
+d:l6-shopping:6	11	ei	ei	nicht (Verneinungsverb)	Verneinungsverb · ei = er/sie/es nicht	(es) … nicht → kein		kieltosana		singular
+d:l6-shopping:6	12	ole	olla	sein	Verb · Verneinungsform (nach ei)	(habe) … nicht		teonsana		singular
+d:l6-shopping:6	13	rahaa	raha	Geld	Nomen · Partitiv Singular	Geld (Partitiv)		nimisana	osanto	singular
+d:l6-shopping:6	14	ja	ja	und	Konjunktion			sidesana		
+d:l6-shopping:6	15	palkka	palkka	Lohn, Gehalt	Nomen · Nominativ Singular	(mein) Lohn		nimisana	nimento	singular
+d:l6-shopping:6	16	tulee	tulla	kommen	Verb · 3. Person Sg. (hän) · Präsens	kommt		teonsana		singular
+d:l6-shopping:6	17	vasta	vasta	erst	Adverb			seikkasana		
+d:l6-shopping:6	18	ensi	ensi	nächst	Adverb	nächste		seikkasana		
+d:l6-shopping:6	19	viikolla	viikko	Woche	Nomen · Adessiv „auf, bei“ Singular	(nächste) Woche		nimisana	ulkoolento	singular
+d:l6-shopping:7	0	Kolikot	kolikko	Münze	Nomen · Nominativ Plural	Münzen		nimisana	nimento	plural
+d:l6-shopping:7	1	kelpaavat	kelvata	taugen, recht sein	Verb · 3. Person Pl. (he) · Präsens	sind in Ordnung		teonsana		plural
+d:l6-shopping:7	2	Kaada	kaataa	gießen, schütten	Verb · Imperativ · 2. Person Sg. (sinä) · auch Verneinungsform nach ei	schütte		teonsana		singular
+d:l6-shopping:7	3	ne	ne	sie (Pl., nicht-menschlich)	Pronomen · Nominativ Plural	sie		asemosana	nimento	plural
+d:l6-shopping:7	4	tähän	tähän	hierher	Adverb · (Illativ von tämä)	hier				
+d:l6-shopping:7	5	pöydälle	pöytä	Tisch	Nomen · Allativ „auf … zu, an“ Singular	auf den Tisch		nimisana	ulkotulento	singular
+d:l6-shopping:7	6	niin	niin	so; dann	Adverb	dann		seikkasana		
+d:l6-shopping:7	7	lasketaan	laskea	zählen, rechnen	Verb · Passiv (Umgangssprache auch: wir-Form) · Präsens	zählen wir		teonsana		
+d:l6-shopping:7	8	yhdessä	yhdessä	zusammen	Adverb			seikkasana		
+d:l6-shopping:8	0	viisikymmentäkahdeksan	viisikymmentäkahdeksan	achtundfünfzig	Zahlwort · Nominativ Singular		viisi+kahdeksan	lukusana	nimento	singular
+d:l6-shopping:8	1	viisikymmentäyhdeksän	viisikymmentäyhdeksän	neunundfünfzig	Zahlwort · Nominativ Singular		viisi+yhdeksän	lukusana	nimento	singular
+d:l6-shopping:8	2	kuusikymmentä	kuusikymmentä	sechzig	Zahlwort · Nominativ Singular			lukusana	nimento	singular
+d:l6-shopping:8	3	euroa	euro	Euro	Nomen · Partitiv Singular	Euro (nach Zahlwort: Partitiv Sg.)		nimisana	osanto	singular
+d:l6-shopping:8	4	tasan	tasan	genau (Betrag)	Adverb	genau		seikkasana		
+d:l6-shopping:9	0	Ole	olla	sein	Verb · Imperativ · 2. Person Sg. (sinä)	(ole hyvä) bitte		teonsana		singular
+d:l6-shopping:9	1	hyvä	hyvä	gut	Adjektiv · Nominativ Singular	(ole hyvä) bitte		laatusana	nimento	singular
+d:l6-shopping:9	2	pyörä	pyörä	Rad, Fahrrad	Nomen · Nominativ Singular	das Rad		nimisana	nimento	singular
+d:l6-shopping:9	3	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist		teonsana		singular
+d:l6-shopping:9	4	sinun	sinä	du	Pronomen · Genitiv Singular	dein		asemosana	omanto	singular
+d:l6-shopping:9	5	Tässä	tässä	hier	Adverb · (Inessiv von tämä)	hier (ist)				
+d:l6-shopping:9	6	vielä	vielä	noch	Adverb			seikkasana		
+d:l6-shopping:9	7	lukko	lukko	Schloss (Verschluss)	Nomen · Nominativ Singular	ein Schloss		nimisana	nimento	singular
+d:l6-shopping:9	8	kaupanpäällisiksi	kaupanpäällinen	Zugabe (beim Kauf)	Nomen · Translativ „zu … (werden)“ Plural	als Zugabe				
+d:l6-shopping:9	9	ettei	ettei	dass nicht (Verneinungsverb)	Verneinungsverb · ei = er/sie/es nicht	damit … nicht	ett+ei	kieltosana		singular
+d:l6-shopping:9	10	pyörä	pyörä	Rad, Fahrrad	Nomen · Nominativ Singular	das Rad		nimisana	nimento	singular
+d:l6-shopping:9	11	katoa	kadota	verschwinden	Verb · Verneinungsform (nach ei)	verschwindet		teonsana		singular
+d:l6-shopping:9	12	heti	heti	sofort	Adverb	gleich		seikkasana		
+d:l6-shopping:9	13	ensimmäisellä	ensimmäinen	erster	Zahlwort · Adessiv „auf, bei“ Singular	in der ersten		lukusana	ulkoolento	singular
+d:l6-shopping:9	14	viikolla	viikko	Woche	Nomen · Adessiv „auf, bei“ Singular	(in der ersten) Woche		nimisana	ulkoolento	singular
+d:l6-slang:0	0	Hei	hei	hallo	Ausruf	hey		huudahdussana		
+d:l6-slang:0	1	pysähdytään	pysähtyä	anhalten	Verb · Passiv (Umgangssprache auch: wir-Form) · Präsens	halten wir (Passiv als wir-Form)		teonsana		
+d:l6-slang:0	2	tohon	tuo	jener, der da	Pronomen · Illativ „in … hinein“ Singular · umgangssprachlich für tuohon	(an den) da				
+d:l6-slang:0	3	kioskille	kioski	Kiosk	Nomen · Allativ „auf … zu, an“ Singular	am Kiosk		nimisana	ulkotulento	singular
+d:l6-slang:0	4	Miksköhän	miksi	warum	Fragewort · + -kö + -hän „wohl“ · umgangssprachlich für miksiköhän	warum wohl				
+d:l6-slang:0	5	mun	minä	ich	Pronomen · Genitiv Singular · umgangssprachlich für minun	(mir) → ich (habe Lust)				
+d:l6-slang:0	6	tekee	tehdä	machen, tun	Verb · 3. Person Sg. (hän) · Präsens	(tekee mieli) habe Lust		teonsana		singular
+d:l6-slang:0	7	mieli	mieli	Sinn, Lust	Nomen · Nominativ Singular	(tehdä mieli) Lust haben		nimisana	nimento	singular
+d:l6-slang:0	8	syödä	syödä	essen	Verb · Grundform (Infinitiv)			teonsana		
+d:l6-slang:0	9	jätskiä	jäätelö	Eis (Speiseeis)	Nomen · Partitiv Singular · umgangssprachlich für jäätelöä	Eis				
+d:l6-slang:0	10	vaikka	vaikka	obwohl	Konjunktion			sidesana		
+d:l6-slang:0	11	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	(es) ist		teonsana		singular
+d:l6-slang:0	12	näin	näin	so	Adverb			seikkasana		
+d:l6-slang:0	13	sikakylmä	sikakylmä	saukalt (umgangssprachlich)	Adjektiv · Nominativ Singular	saukalt	sika+kylmä	nimisana	nimento	singular
+d:l6-slang:1	0	Koska	koska	weil	Konjunktion			sidesana		
+d:l6-slang:1	1	sä	sinä	du	Pronomen · Nominativ Singular · umgangssprachlich für sinä					
+d:l6-slang:1	2	oot	olla	sein	Verb · 2. Person Sg. (sinä) · Präsens · umgangssprachlich für olet	(du) bist				
+d:l6-slang:1	3	outo	outo	seltsam, komisch	Adjektiv · Nominativ Singular	komisch		nimisana_laatusana	nimento	singular
+d:l6-slang:1	4	Pakkasta	pakkanen	Frost	Nomen · Partitiv Singular	Frost (Partitiv) → minus		nimisana	osanto	singular
+d:l6-slang:1	5	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist → sind (es)		teonsana		singular
+d:l6-slang:1	6	kakskyt	kaksikymmentä	zwanzig	Zahlwort · Nominativ Singular · umgangssprachlich für kaksikymmentä					
+d:l6-slang:1	7	astetta	aste	Grad	Nomen · Partitiv Singular	Grad (nach Zahlwort: Partitiv Sg.)		nimisana	osanto	singular
+d:l6-slang:1	8	ja	ja	und	Konjunktion			sidesana		
+d:l6-slang:1	9	sä	sinä	du	Pronomen · Nominativ Singular · umgangssprachlich für sinä					
+d:l6-slang:1	10	haluut	haluta	wollen	Verb · 2. Person Sg. (sinä) · Präsens · umgangssprachlich für haluat	(du) willst				
+d:l6-slang:1	11	jätskiä	jäätelö	Eis (Speiseeis)	Nomen · Partitiv Singular · umgangssprachlich für jäätelöä	Eis				
+d:l6-slang:2	0	Just	juuri	genau, gerade	Adverb · umgangssprachlich für juuri	gerade				
+d:l6-slang:2	1	siks	siksi	deshalb	Adverb · umgangssprachlich für siksi					
+d:l6-slang:2	2	kun	kun	als, wenn; weil	Konjunktion	weil (dann)		sidesana		
+d:l6-slang:2	3	se	se	es, das	Pronomen · Nominativ Singular	es		asemosana	nimento	singular
+d:l6-slang:2	4	ei	ei	nicht (Verneinungsverb)	Verneinungsverb · ei = er/sie/es nicht	(es) … nicht		kieltosana		singular
+d:l6-slang:2	5	sula	sulaa	schmelzen	Verb · Verneinungsform (nach ei)	schmilzt		teonsana		singular
+d:l6-slang:2	6	Mut	mutta	aber	Konjunktion · umgangssprachlich für mutta					
+d:l6-slang:2	7	miks	miksi	warum	Fragewort · (Translativ von mikä) · umgangssprachlich für miksi					
+d:l6-slang:2	8	sä	sinä	du	Pronomen · Nominativ Singular · umgangssprachlich für sinä					
+d:l6-slang:2	9	oot	olla	sein	Verb · 2. Person Sg. (sinä) · Präsens · umgangssprachlich für olet	(du) bist				
+d:l6-slang:2	10	tänään	tänään	heute	Adverb			seikkasana		
+d:l6-slang:2	11	noin	noin	so; etwa	Adverb	so		seikkasana		
+d:l6-slang:2	12	hiljanen	hiljainen	still, ruhig	Adjektiv · Nominativ Singular · umgangssprachlich für hiljainen	still				
+d:l6-slang:3	0	Mulla	minä	ich	Pronomen · Adessiv „auf, bei“ Singular · umgangssprachlich für minulla	bei mir → ich habe				
+d:l6-slang:3	1	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist → habe		teonsana		singular
+d:l6-slang:3	2	huomenna	huomenna	morgen	Adverb			seikkasana		
+d:l6-slang:3	3	työhaastattelu	työhaastattelu	Vorstellungsgespräch	Nomen · Nominativ Singular		työ+haastattaa	nimisana	nimento	singular
+d:l6-slang:3	4	englanniks	englanti	Englisch (Sprache)	Nomen · Translativ „zu … (werden)“ Singular · umgangssprachlich für englanniksi	auf Englisch				
+d:l6-slang:3	5	ja	ja	und	Konjunktion			sidesana		
+d:l6-slang:3	6	mua	minä	ich	Pronomen · Partitiv Singular · umgangssprachlich für minua	mich → ich (bin nervös)				
+d:l6-slang:3	7	jännittää	jännittää	nervös machen; spannen	Verb · 3. Person Sg. (hän) · Präsens	macht nervös		teonsana		singular
+d:l6-slang:3	8	ihan	ihan	ganz	Adverb	total		seikkasana		
+d:l6-slang:3	9	sikana	sika	Schwein	Nomen · Essiv „als“ Singular	(ugs. sikana = wie verrückt) total		nimisana	olento	singular
+d:l6-slang:3	10	Mun	minä	ich	Pronomen · Genitiv Singular · umgangssprachlich für minun	mein				
+d:l6-slang:3	11	kaveri	kaveri	Kumpel, Freund	Nomen · Nominativ Singular	Kumpel		nimisana	nimento	singular
+d:l6-slang:3	12	nauraa	nauraa	lachen	Verb · 3. Person Sg. (hän) · Präsens	lacht		teonsana		singular
+d:l6-slang:3	13	aina	aina	immer	Adverb			seikkasana		
+d:l6-slang:3	14	kun	kun	als, wenn	Konjunktion	wenn		sidesana		
+d:l6-slang:3	15	se	se	es, das	Pronomen · Nominativ Singular	er (ugs. se statt hän)		asemosana	nimento	singular
+d:l6-slang:3	16	kuulee	kuulla	hören	Verb · 3. Person Sg. (hän) · Präsens	hört		teonsana		singular
+d:l6-slang:3	17	mun	minä	ich	Pronomen · Genitiv Singular · umgangssprachlich für minun	mich (Subjekt der Partizipialkonstruktion)				
+d:l6-slang:3	18	puhuvan	puhua	sprechen	Verbform · Partizip Präsens aktiv (-va/-vä) · Genitiv Singular	sprechen (kuulla + Partizip: sprechen hören)		laatusana	omanto	singular
+d:l6-slang:3	19	englantia	englanti	Englisch (Sprache)	Nomen · Partitiv Singular	Englisch (Partitiv)		nimisana	osanto	singular
+d:l6-slang:4	0	Jere	Jere	Jere (Name)	Name · Nominativ Singular			etunimi	nimento	singular
+d:l6-slang:4	1	vai	vai	oder (in Fragen)	Konjunktion	oder?		sidesana		
+d:l6-slang:4	2	Se	se	es, das	Pronomen · Nominativ Singular	der (ugs. se statt hän)		asemosana	nimento	singular
+d:l6-slang:4	3	nauraa	nauraa	lachen	Verb · 3. Person Sg. (hän) · Präsens	lacht		teonsana		singular
+d:l6-slang:4	4	kaikelle	kaikki	alle, alles	Nomen · Allativ „auf … zu, an“ Singular	über alles (nauraa + Allativ)		nimisana	ulkotulento	singular
+d:l6-slang:4	5	ei	ei	nicht (Verneinungsverb)	Verneinungsverb · ei = er/sie/es nicht	(es) … nicht		kieltosana		singular
+d:l6-slang:4	6	se	se	es, das	Pronomen · Nominativ Singular	das		asemosana	nimento	singular
+d:l6-slang:4	7	tarkota	tarkoittaa	bedeuten, meinen	Verb · Verneinungsform (nach ei) · umgangssprachlich für tarkoita	heißt				
+d:l6-slang:4	8	mitään	mikään	(irgend)etwas; nichts (verneint)	Pronomen · Partitiv Singular	nichts		asemosana	osanto	singular
+d:l6-slang:4	9	Sun	sinä	du	Pronomen · Genitiv Singular · umgangssprachlich für sinun	dein				
+d:l6-slang:4	10	englanti	englanti	Englisch (Sprache)	Nomen · Nominativ Singular	Englisch		nimisana	nimento	singular
+d:l6-slang:4	11	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist		teonsana		singular
+d:l6-slang:4	12	ihan	ihan	ganz	Adverb			seikkasana		
+d:l6-slang:4	13	hyvää	hyvä	gut	Adjektiv · Partitiv Singular	gut (Partitiv)		laatusana	osanto	singular
+d:l6-slang:5	0	Helppo	helppo	leicht, einfach	Adjektiv · Nominativ Singular	leicht		laatusana	nimento	singular
+d:l6-slang:5	1	sun	sinä	du	Pronomen · Genitiv Singular · umgangssprachlich für sinun	(für) dich (sun on helppo sanoa = du hast leicht reden)				
+d:l6-slang:5	2	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist		teonsana		singular
+d:l6-slang:5	3	sanoo	sanoa	sagen	Verb · Grundform (Infinitiv) · umgangssprachlich für sanoa	sagen → reden				
+d:l6-slang:5	4	Sä	sinä	du	Pronomen · Nominativ Singular · umgangssprachlich für sinä					
+d:l6-slang:5	5	asuit	asua	wohnen	Verb · 2. Person Sg. (sinä) · Imperfekt (Vergangenheit)	(du) wohntest		teonsana		singular
+d:l6-slang:5	6	vuoden	vuosi	Jahr	Nomen · Genitiv Singular	ein Jahr (lang)		nimisana	omanto	singular
+d:l6-slang:5	7	Dublinissa	Dublin	Dublin	Ortsname · Inessiv „in“ Singular	in Dublin		paikannimi	sisaolento	singular
+d:l6-slang:6	0	No	no	na, nun	Adverb	na		seikkasana		
+d:l6-slang:6	1	just	juuri	genau, gerade	Adverb · umgangssprachlich für juuri	genau				
+d:l6-slang:6	2	siks	siksi	deshalb	Adverb · umgangssprachlich für siksi					
+d:l6-slang:6	3	mä	minä	ich	Pronomen · Nominativ Singular · umgangssprachlich für minä					
+d:l6-slang:6	4	voin	voida	können	Verb · 1. Person Sg. (minä) · Präsens	(ich) kann		teonsana		singular
+d:l6-slang:6	5	auttaa	auttaa	helfen	Verb · Grundform (Infinitiv)			teonsana		
+d:l6-slang:6	6	Ostetaan	ostaa	kaufen	Verb · Passiv (Umgangssprache auch: wir-Form) · Präsens	kaufen wir (Passiv als wir-Form)		teonsana		
+d:l6-slang:6	7	jätskit	jäätelö	Eis (Speiseeis)	Nomen · Nominativ Plural · umgangssprachlich für jäätelöt	(das) Eis (Pl.)				
+d:l6-slang:6	8	ja	ja	und	Konjunktion			sidesana		
+d:l6-slang:6	9	harjotellaan	harjoitella	üben	Verb · Passiv (Umgangssprache auch: wir-Form) · Präsens · umgangssprachlich für harjoitellaan	üben wir				
+d:l6-slang:6	10	tossa	tuo	jener, der da	Pronomen · Inessiv „in“ Singular · umgangssprachlich für tuossa	in dem … da				
+d:l6-slang:6	11	kahvilassa	kahvila	Café	Nomen · Inessiv „in“ Singular	im Café		nimisana	sisaolento	singular
+d:l6-slang:6	12	Mä	minä	ich	Pronomen · Nominativ Singular · umgangssprachlich für minä					
+d:l6-slang:6	13	oon	olla	sein	Verb · 1. Person Sg. (minä) · Präsens · umgangssprachlich für olen	(ich) bin				
+d:l6-slang:6	14	haastattelija	haastattelija	Interviewer, Interviewerin	Nomen · Nominativ Singular	die Interviewerin		nimisana	nimento	singular
+d:l6-slang:6	15	etkä	ei	nicht (Verneinungsverb)	Verneinungsverb · et = du nicht · + -kä „und“	und du … nicht		kieltosana		singular
+d:l6-slang:6	16	sä	sinä	du	Pronomen · Nominativ Singular · umgangssprachlich für sinä					
+d:l6-slang:6	17	saa	saada	bekommen; dürfen	Verb · Verneinungsform (nach ei)	darfst		teonsana		singular
+d:l6-slang:6	18	vaihtaa	vaihtaa	wechseln, tauschen	Verb · Grundform (Infinitiv)	umschalten		teonsana		
+d:l6-slang:6	19	suomeen	suomi	Finnisch (Sprache)	Nomen · Illativ „in … hinein“ Singular	auf Finnisch (Illativ)		nimisana	sisatulento	singular
+d:l6-slang:6	20	kesken	kesken	mitten; unfertig	Adverb	(kesken kaiken) mittendrin		seikkasana		
+d:l6-slang:6	21	kaiken	kaikki	alle, alles	Nomen · Genitiv Singular	(kesken kaiken) mittendrin		nimisana	omanto	singular
+d:l6-slang:7	0	Okei	okei	okay	Ausruf			huudahdussana		
+d:l6-slang:7	1	mut	mutta	aber	Konjunktion · umgangssprachlich für mutta					
+d:l6-slang:7	2	jos	jos	wenn, falls	Konjunktion			sidesana		
+d:l6-slang:7	3	sä	sinä	du	Pronomen · Nominativ Singular · umgangssprachlich für sinä					
+d:l6-slang:7	4	naurat	nauraa	lachen	Verb · 2. Person Sg. (sinä) · Präsens	(du) lachst		teonsana		singular
+d:l6-slang:7	5	mä	minä	ich	Pronomen · Nominativ Singular · umgangssprachlich für minä					
+d:l6-slang:7	6	lähen	lähteä	weggehen, losgehen	Verb · 1. Person Sg. (minä) · Präsens · umgangssprachlich für lähden	(ich) gehe				
+d:l6-slang:7	7	kotiin	kotiin	nach Hause	Adverb · (Illativ von koti)					
+d:l6-slang:8	0	En	ei	nicht (Verneinungsverb)	Verneinungsverb · en = ich nicht	ich … nicht		kieltosana		singular
+d:l6-slang:8	1	naura	nauraa	lachen	Verb · Verneinungsform (nach ei)	lache		teonsana		singular
+d:l6-slang:8	2	lupaan	luvata	versprechen	Verb · 1. Person Sg. (minä) · Präsens	(ich) verspreche → versprochen		teonsana		singular
+d:l6-slang:8	3	Ja	ja	und	Konjunktion			sidesana		
+d:l6-slang:8	4	jos	jos	wenn, falls	Konjunktion			sidesana		
+d:l6-slang:8	5	sä	sinä	du	Pronomen · Nominativ Singular · umgangssprachlich für sinä					
+d:l6-slang:8	6	saat	saada	bekommen	Verb · 2. Person Sg. (sinä) · Präsens	(du) bekommst		teonsana		singular
+d:l6-slang:8	7	sen	se	es, das	Pronomen · Genitiv Singular	die (Genitiv-Objekt)		asemosana	omanto	singular
+d:l6-slang:8	8	paikan	paikka	Platz, Stelle	Nomen · Genitiv Singular	Stelle (Genitiv-Objekt)		nimisana	omanto	singular
+d:l6-slang:8	9	sä	sinä	du	Pronomen · Nominativ Singular · umgangssprachlich für sinä					
+d:l6-slang:8	10	tarjoot	tarjota	anbieten; spendieren	Verb · 2. Person Sg. (sinä) · Präsens · umgangssprachlich für tarjoat	(du) gibst aus				
+d:l6-slang:8	11	seuraavat	seuraava	nächster, folgend	Adjektiv · Nominativ Plural	die nächsten				
+d:l6-slang:8	12	jätskit	jäätelö	Eis (Speiseeis)	Nomen · Nominativ Plural · umgangssprachlich für jäätelöt	Eis (Pl.)				
+d:l6-slang:9	0	Diili	diili	Deal, Abmachung (ugs.)	Nomen · Nominativ Singular · umgangssprachlich (von engl. deal)					
+d:l6-time:0	0	Joko	jo	schon	Adverb · + Frageendung -ko/-kö	schon …?		seikkasana		
+d:l6-time:0	1	olet	olla	sein	Verb · 2. Person Sg. (sinä) · Präsens	(du) bist		teonsana		singular
+d:l6-time:0	2	takaisin	takaisin	zurück	Adverb					
+d:l6-time:0	3	Miten	miten	wie	Fragewort					
+d:l6-time:0	4	tapaaminen	tavata	treffen	Verb · Verbalnomen (-minen) „das …“	das Treffen		teonsana	nimento	singular
+d:l6-time:0	5	Virtasen	Virtanen	Virtanen (Name)	Name · Genitiv Singular	(mit) Virtanen		sukunimi	omanto	singular
+d:l6-time:0	6	kanssa	kanssa	mit	Postposition			suhdesana		
+d:l6-time:0	7	meni	mennä	gehen	Verb · 3. Person Sg. (hän) · Imperfekt (Vergangenheit)	ging → lief		teonsana		singular
+d:l6-time:1	0	Ei	ei	nicht (Verneinungsverb)	Verneinungsverb · ei = er/sie/es nicht	(es ging) nicht → gar nicht		kieltosana		singular
+d:l6-time:1	1	mitenkään	mitenkään	irgendwie; (verneint) gar nicht	Adverb · (miten + -kään)	gar nicht				
+d:l6-time:1	2	Odotin	odottaa	warten	Verb · 1. Person Sg. (minä) · Imperfekt (Vergangenheit)	(ich) wartete		teonsana		singular
+d:l6-time:1	3	sovitussa	sopia	vereinbaren; passen	Verbform · Partizip Perfekt passiv (-tu/-ty) · Inessiv „in“ Singular	(an der) vereinbarten		laatusana	sisaolento	singular
+d:l6-time:1	4	paikassa	paikka	Platz, Ort	Nomen · Inessiv „in“ Singular	(an der) Stelle		nimisana	sisaolento	singular
+d:l6-time:1	5	yli	yli	über	Postposition			suhdesana		
+d:l6-time:1	6	vartin	vartti	Viertelstunde	Nomen · Genitiv Singular	Viertelstunde (Genitiv nach yli)		nimisana	omanto	singular
+d:l6-time:1	7	mutta	mutta	aber	Konjunktion			sidesana		
+d:l6-time:1	8	häntä	hän	er, sie	Pronomen · Partitiv Singular	ihn (Partitiv)		asemosana	osanto	singular
+d:l6-time:1	9	ei	ei	nicht (Verneinungsverb)	Verneinungsverb · ei = er/sie/es nicht	(es) … nicht		kieltosana		singular
+d:l6-time:1	10	vain	vain	nur	Adverb	einfach		seikkasana		
+d:l6-time:1	11	näkynyt	näkyä	sichtbar sein, zu sehen sein	Verbform · Partizip Perfekt aktiv · verneinte Vergangenheit	(ließ sich) blicken		laatusana	nimento	singular
+d:l6-time:1	12	Kahden	kaksi	zwei	Zahlwort · Genitiv Singular	(nach) zwei		lukusana	omanto	singular
+d:l6-time:1	13	turhan	turha	vergeblich, unnötig	Adjektiv · Genitiv Singular	vergeblichen		nimisana_laatusana	omanto	singular
+d:l6-time:1	14	soiton	soitto	Anruf	Nomen · Genitiv Singular	Anruf(en)		nimisana	omanto	singular
+d:l6-time:1	15	jälkeen	jälkeen	nach	Postposition	nach (+ Genitiv)		seikkasana		
+d:l6-time:1	16	luovutin	luovuttaa	aufgeben; übergeben	Verb · 1. Person Sg. (minä) · Imperfekt (Vergangenheit)	(ich) gab auf		teonsana		singular
+d:l6-time:2	0	Harmi	harmi	Ärger; schade	Nomen · Nominativ Singular	schade		nimisana	nimento	singular
+d:l6-time:2	1	Ehditkö	ehtiä	Zeit haben, schaffen	Verb · 2. Person Sg. (sinä) · Imperfekt (Vergangenheit) · + Frageendung -ko/-kö	hast du es geschafft …?		teonsana		singular
+d:l6-time:2	2	sitten	sitten	dann	Adverb	dann (noch)		seikkasana		
+d:l6-time:2	3	osastokokoukseen	osastokokous	Abteilungssitzung	Nomen · Illativ „in … hinein“ Singular	zur Abteilungssitzung	osasto+kokous	nimisana	sisatulento	singular
+d:l6-time:3	0	Ehdin	ehtiä	Zeit haben, schaffen	Verb · 1. Person Sg. (minä) · Imperfekt (Vergangenheit)	(ich) schaffte es → ja		teonsana		singular
+d:l6-time:3	1	valitettavasti	valitettavasti	leider	Adverb					
+d:l6-time:3	2	Johtaja	johtaja	Leiter, Chef	Nomen · Nominativ Singular	der Chef		nimisana	nimento	singular
+d:l6-time:3	3	puhui	puhua	sprechen, reden	Verb · 3. Person Sg. (hän) · Imperfekt (Vergangenheit)	redete		teonsana		singular
+d:l6-time:3	4	taas	taas	wieder	Adverb			seikkasana		
+d:l6-time:3	5	budjetista	budjetti	Budget	Nomen · Elativ „aus“ Singular	über das Budget		nimisana	sisaeronto	singular
+d:l6-time:3	6	Hän	hän	er, sie	Pronomen · Nominativ Singular	er		asemosana	nimento	singular
+d:l6-time:3	7	sanoi	sanoa	sagen	Verb · 3. Person Sg. (hän) · Imperfekt (Vergangenheit)	sagte		teonsana		singular
+d:l6-time:3	8	yli	yli	über	Postposition			suhdesana		
+d:l6-time:3	9	puolessa	puoli	Hälfte; halb	Nomen · Inessiv „in“ Singular	(in einer) halben		nimisana	sisaolento	singular
+d:l6-time:3	10	tunnissa	tunti	Stunde	Nomen · Inessiv „in“ Singular	(in einer) Stunde		nimisana	sisaolento	singular
+d:l6-time:3	11	sen	se	es, das	Pronomen · Genitiv Singular	das (Genitiv-Objekt)		asemosana	omanto	singular
+d:l6-time:3	12	mitä	mikä	was	Pronomen · Partitiv Singular			asemosana	osanto	singular
+d:l6-time:3	13	hän	hän	er, sie	Pronomen · Nominativ Singular	er		asemosana	nimento	singular
+d:l6-time:3	14	olisi	olla	sein	Verb · 3. Person Sg. (hän) · Konditional „würde“	hätte (olisi voinut = hätte können)		teonsana		singular
+d:l6-time:3	15	voinut	voida	können	Verbform · Partizip Perfekt aktiv (-nut/-nyt)	gekonnt		laatusana	nimento	singular
+d:l6-time:3	16	sanoa	sanoa	sagen	Verb · Grundform (Infinitiv)			teonsana		
+d:l6-time:3	17	viidessä	viisi	fünf	Zahlwort · Inessiv „in“ Singular	in fünf		lukusana	sisaolento	singular
+d:l6-time:3	18	minuutissa	minuutti	Minute	Nomen · Inessiv „in“ Singular	Minuten (in … Minuten)		nimisana	sisaolento	singular
+d:l6-time:4	0	Tuttua	tuttu	bekannt	Adjektiv · Partitiv Singular	bekannt (Partitiv) → kenn ich		nimisana_laatusana	osanto	singular
+d:l6-time:4	1	Sinulla	sinä	du	Pronomen · Adessiv „auf, bei“ Singular	bei dir → du (hast)		asemosana	ulkoolento	singular
+d:l6-time:4	2	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist → hast		teonsana		singular
+d:l6-time:4	3	varmaan	varmaan	bestimmt, wohl	Adverb					
+d:l6-time:4	4	nyt	nyt	jetzt	Adverb			seikkasana		
+d:l6-time:4	5	kiire	kiire	Eile, Stress	Nomen · Nominativ Singular	Stress		nimisana_laatusana	nimento	singular
+d:l6-time:5	0	On	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist (so) → ja		teonsana		singular
+d:l6-time:5	1	Minulla	minä	ich	Pronomen · Adessiv „auf, bei“ Singular	bei mir → ich habe		asemosana	ulkoolento	singular
+d:l6-time:5	2	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist → habe		teonsana		singular
+d:l6-time:5	3	paljon	paljon	viel	Adverb					
+d:l6-time:5	4	asioita	asia	Sache, Ding	Nomen · Partitiv Plural	Dinge (Partitiv Pl.)		nimisana	osanto	plural
+d:l6-time:5	5	jotka	joka	der, welcher (Relativpronomen)	Pronomen · Nominativ Plural	die		asemosana	nimento	plural
+d:l6-time:5	6	minun	minä	ich	Pronomen · Genitiv Singular	(ich) (Genitiv: minun täytyy = ich muss)		asemosana	omanto	singular
+d:l6-time:5	7	täytyy	täytyä	müssen	Verb · 3. Person Sg. (hän) · Präsens	muss		teonsana		singular
+d:l6-time:5	8	tehdä	tehdä	machen, tun	Verb · Grundform (Infinitiv)			teonsana		
+d:l6-time:5	9	huomiseen	huominen	morgiger Tag, morgen	Nomen · Illativ „in … hinein“ Singular	(bis) morgen		nimisana	sisatulento	singular
+d:l6-time:5	10	mennessä	mennessä	bis (+ Illativ)	Postposition · (2. Infinitiv von mennä)	bis				
+d:l6-time:5	11	Neljännesvuosiraportin	neljännesvuosiraportti	Quartalsbericht	Nomen · Genitiv Singular	der Quartalsbericht (Genitiv bei pitää)	neljännes+vuosi+raportti	nimisana	omanto	singular
+d:l6-time:5	12	pitää	pitää	müssen	Verb · 3. Person Sg. (hän) · Präsens	muss		teonsana		singular
+d:l6-time:5	13	olla	olla	sein	Verb · Grundform (Infinitiv)			teonsana		
+d:l6-time:5	14	johtajalla	johtaja	Leiter, Chef	Nomen · Adessiv „auf, bei“ Singular	beim Chef		nimisana	ulkoolento	singular
+d:l6-time:5	15	aamulla	aamu	Morgen	Nomen · Adessiv „auf, bei“ Singular	morgens → morgen früh		nimisana	ulkoolento	singular
+d:l6-time:5	16	yhdeksältä	yhdeksän	neun	Zahlwort · Ablativ „von … weg“ Singular	um neun		lukusana	ulkoeronto	singular
+d:l6-time:6	0	Anna	antaa	geben; lassen	Verb · Imperativ · 2. Person Sg. (sinä) · auch Verneinungsform nach ei	gib		teonsana		singular
+d:l6-time:6	1	minulle	minä	ich	Pronomen · Allativ „auf … zu, an“ Singular	mir		asemosana	ulkotulento	singular
+d:l6-time:6	2	ne	ne	sie (Pl., nicht-menschlich)	Pronomen · Nominativ Plural	die		asemosana	nimento	plural
+d:l6-time:6	3	myyntiluvut	myyntiluku	Verkaufszahl	Nomen · Nominativ Plural	Verkaufszahlen	myynti+luku	nimisana	nimento	plural
+d:l6-time:6	4	niin	niin	so; dann	Adverb	dann		seikkasana		
+d:l6-time:6	5	kokoan	koota	sammeln, zusammenstellen	Verb · 1. Person Sg. (minä) · Präsens	(ich) stelle zusammen → mache		teonsana		singular
+d:l6-time:6	6	taulukot	taulukko	Tabelle	Nomen · Nominativ Plural	die Tabellen		nimisana	nimento	plural
+d:l6-time:6	7	sillä	se	es	Pronomen · Adessiv „auf, bei“ Singular	(sillä aikaa, kun) während		asemosana	ulkoolento	singular
+d:l6-time:6	8	aikaa	aika	Zeit	Nomen · Partitiv Singular	(sillä aikaa, kun) während		nimisana	osanto	singular
+d:l6-time:6	9	kun	kun	als, wenn	Konjunktion	(sillä aikaa, kun) während		sidesana		
+d:l6-time:6	10	sinä	sinä	du	Pronomen · Nominativ Singular			asemosana	nimento	singular
+d:l6-time:6	11	kirjoitat	kirjoittaa	schreiben	Verb · 2. Person Sg. (sinä) · Präsens	(du) schreibst		teonsana		singular
+d:l6-time:6	12	tekstiä	teksti	Text	Nomen · Partitiv Singular	den Text (Partitiv)		nimisana	osanto	singular
+d:l6-time:6	13	Neljään	neljä	vier	Zahlwort · Illativ „in … hinein“ Singular	(bis) vier		lukusana	sisatulento	singular
+d:l6-time:6	14	mennessä	mennessä	bis (+ Illativ)	Postposition · (2. Infinitiv von mennä)	bis				
+d:l6-time:6	15	ne	ne	sie (Pl., nicht-menschlich)	Pronomen · Nominativ Plural	sie		asemosana	nimento	plural
+d:l6-time:6	16	ovat	olla	sein	Verb · 3. Person Pl. (he) · Präsens	sind		teonsana		plural
+d:l6-time:6	17	valmiina	valmis	fertig	Adjektiv · Essiv „als“ Plural			laatusana	olento	plural
+d:l6-time:7	0	Oikeasti	oikeasti	echt, wirklich	Adverb	echt?				
+d:l6-time:7	1	Kiitos	kiitos	danke	Ausruf			nimisana	nimento	singular
+d:l6-time:7	2	Jos	jos	wenn, falls	Konjunktion			sidesana		
+d:l6-time:7	3	saan	saada	bekommen	Verb · 1. Person Sg. (minä) · Präsens	(ich) bekomme → habe		teonsana		singular
+d:l6-time:7	4	ne	ne	sie (Pl., nicht-menschlich)	Pronomen · Nominativ Plural	sie		asemosana	nimento	plural
+d:l6-time:7	5	neljältä	neljä	vier	Zahlwort · Ablativ „von … weg“ Singular	um vier		lukusana	ulkoeronto	singular
+d:l6-time:7	6	ehdin	ehtiä	Zeit haben, schaffen	Verb · 1. Person Sg. (minä) · Präsens	(ich) schaffe es		teonsana		singular
+d:l6-time:7	7	lukea	lukea	lesen	Verb · Grundform (Infinitiv)			teonsana		
+d:l6-time:7	8	kaiken	kaikki	alle, alles	Nomen · Genitiv Singular	alles		nimisana	omanto	singular
+d:l6-time:7	9	läpi	läpi	durch	Adverb	(lukea läpi) durchlesen				
+d:l6-time:7	10	ennen	ennen	vor, bevor	Adverb	(ennen kuin) bevor		seikkasana		
+d:l6-time:7	11	kuin	kuin	als, wie	Konjunktion	(ennen kuin) bevor		sidesana		
+d:l6-time:7	12	lähden	lähteä	weggehen, losgehen	Verb · 1. Person Sg. (minä) · Präsens	(ich) gehe los		teonsana		singular
+d:l6-time:7	13	viideltä	viisi	fünf	Zahlwort · Ablativ „von … weg“ Singular	um fünf		lukusana	ulkoeronto	singular
+d:l6-time:7	14	hakemaan	hakea	holen	Verb · 3. Infinitiv -maan/-mään „(um) zu“	(um) abzuholen		teonsana	sisatulento	singular
+d:l6-time:7	15	lapsia	lapsi	Kind	Nomen · Partitiv Plural	die Kinder (Partitiv Pl.)		nimisana	osanto	plural
+d:l6-time:8	0	Sovittu	sopia	vereinbaren; passen	Verbform · Partizip Perfekt passiv (-tu/-ty)	abgemacht		laatusana	nimento	singular
+d:l6-time:8	1	Ja	ja	und	Konjunktion			sidesana		
+d:l6-time:8	2	Virtaselle	Virtanen	Virtanen (Name)	Name · Allativ „auf … zu, an“ Singular	(an) Virtanen		sukunimi	ulkotulento	singular
+d:l6-time:8	3	voit	voida	können	Verb · 2. Person Sg. (sinä) · Präsens	(du) kannst		teonsana		singular
+d:l6-time:8	4	laittaa	laittaa	legen, stellen; schicken	Verb · Grundform (Infinitiv)	schicken		teonsana		
+d:l6-time:8	5	viestin	viesti	Nachricht	Nomen · Genitiv Singular	eine Nachricht		nimisana	omanto	singular
+d:l6-time:8	6	huomenna	huomenna	morgen	Adverb			seikkasana		
+d:l6-time:8	7	kun	kun	als, wenn	Konjunktion	wenn		sidesana		
+d:l6-time:8	8	raportti	raportti	Bericht	Nomen · Nominativ Singular	der Bericht		nimisana	nimento	singular
+d:l6-time:8	9	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist		teonsana		singular
+d:l6-time:8	10	lähtenyt	lähteä	weggehen, losgehen	Verbform · Partizip Perfekt aktiv (-nut/-nyt)	losgegangen → raus		laatusana	nimento	singular
+d:l6-travel:0	0	No	no	na, nun	Adverb	na		seikkasana		
+d:l6-travel:0	1	miltä	mikä	was	Pronomen · Ablativ „von … weg“ Singular	wie (tuntua + Ablativ: miltä tuntuu = wie fühlt es sich an)		asemosana	ulkoeronto	singular
+d:l6-travel:0	2	tuntuu	tuntua	sich anfühlen	Verb · 3. Person Sg. (hän) · Präsens	fühlt sich an		teonsana		singular
+d:l6-travel:0	3	olla	olla	sein	Verb · Grundform (Infinitiv)			teonsana		
+d:l6-travel:0	4	kotona	kotona	zu Hause	Adverb · (Essiv von koti)					
+d:l6-travel:0	5	vuoden	vuosi	Jahr	Nomen · Genitiv Singular	(einem) Jahr		nimisana	omanto	singular
+d:l6-travel:0	6	jälkeen	jälkeen	nach	Postposition	nach (+ Genitiv)		seikkasana		
+d:l6-travel:1	0	Hiljaiselta	hiljainen	still, ruhig	Adjektiv · Ablativ „von … weg“ Singular	ruhig (tuntua + Ablativ)		laatusana	ulkoeronto	singular
+d:l6-travel:1	1	Japanin	Japani	Japan	Ortsname · Genitiv Singular	Japans		paikannimi	omanto	singular
+d:l6-travel:1	2	ja	ja	und	Konjunktion			sidesana		
+d:l6-travel:1	3	Suomen	Suomi	Finnland	Ortsname · Genitiv Singular	Finnlands		paikannimi	omanto	singular
+d:l6-travel:1	4	pinta-alat	pinta-ala	Fläche (Flächeninhalt)	Nomen · Nominativ Plural	Flächen	pinta+ala	nimisana	nimento	plural
+d:l6-travel:1	5	ovat	olla	sein	Verb · 3. Person Pl. (he) · Präsens	sind		teonsana		plural
+d:l6-travel:1	6	suunnilleen	suunnilleen	ungefähr	Adverb					
+d:l6-travel:1	7	samat	sama	gleich, derselbe	Nomen · Nominativ Plural	die gleichen		nimisana	nimento	plural
+d:l6-travel:1	8	mutta	mutta	aber	Konjunktion			sidesana		
+d:l6-travel:1	9	Japanin	Japani	Japan	Ortsname · Genitiv Singular	Japans		paikannimi	omanto	singular
+d:l6-travel:1	10	väkiluku	väkiluku	Einwohnerzahl	Nomen · Nominativ Singular		väki+luku	nimisana	nimento	singular
+d:l6-travel:1	11	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist		teonsana		singular
+d:l6-travel:1	12	paljon	paljon	viel	Adverb					
+d:l6-travel:1	13	suurempi	suuri	groß	Adjektiv · Nominativ Singular · Komparativ	größer		laatusana	nimento	singular
+d:l6-travel:1	14	Tokiossa	Tokio	Tokio	Ortsname · Inessiv „in“ Singular	in Tokio		paikannimi	sisaolento	singular
+d:l6-travel:1	15	tällaiseen	tällainen	so ein, solch	Adjektiv · Illativ „in … hinein“ Singular	in so einen		nimisana_laatusana	sisatulento	singular
+d:l6-travel:1	16	junaan	juna	Zug	Nomen · Illativ „in … hinein“ Singular	(in einen) Zug		nimisana	sisatulento	singular
+d:l6-travel:1	17	ei	ei	nicht (Verneinungsverb)	Verneinungsverb · ei = er/sie/es nicht	(man) … nicht		kieltosana		singular
+d:l6-travel:1	18	olisi	olla	sein	Verb · Konditional · Verneinungsform	hätte (… nicht)		teonsana		singular
+d:l6-travel:1	19	mahtunut	mahtua	Platz haben, hineinpassen	Verbform · Partizip Perfekt aktiv (-nut/-nyt)	Platz gefunden		laatusana	nimento	singular
+d:l6-travel:1	20	edes	edes	wenigstens; (verneint) nicht einmal	Adverb	nicht einmal		seikkasana		
+d:l6-travel:1	21	seisomaan	seisoa	stehen	Verb · 3. Infinitiv -maan/-mään „(um) zu“	(zum) Stehen		teonsana	sisatulento	singular
+d:l6-travel:2	0	Ja	ja	und	Konjunktion			sidesana		
+d:l6-travel:2	1	täällä	täällä	hier	Adverb			seikkasana		
+d:l6-travel:2	2	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist (es)		teonsana		singular
+d:l6-travel:2	3	puhdasta	puhdas	sauber	Adjektiv · Partitiv Singular	sauber (Partitiv)		nimisana_laatusana	osanto	singular
+d:l6-travel:2	4	ja	ja	und	Konjunktion			sidesana		
+d:l6-travel:2	5	luonto	luonto	Natur	Nomen · Nominativ Singular	die Natur		nimisana	nimento	singular
+d:l6-travel:2	6	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist		teonsana		singular
+d:l6-travel:2	7	ihan	ihan	ganz	Adverb	gleich		seikkasana		
+d:l6-travel:2	8	vieressä	vieressä	neben; nebenan	Adverb · (Inessiv von vieri)	nebenan				
+d:l6-travel:2	9	Myönnä	myöntää	zugeben; gewähren	Verb · Imperativ · 2. Person Sg. (sinä) · auch Verneinungsform nach ei	gib zu		teonsana		singular
+d:l6-travel:2	10	pois	pois	weg	Adverb	(myönnä pois) gib's schon zu		seikkasana		
+d:l6-travel:2	11	että	että	dass	Konjunktion			sidesana		
+d:l6-travel:2	12	Suomi	Suomi	Finnland	Ortsname · Nominativ Singular			paikannimi	nimento	singular
+d:l6-travel:2	13	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist		teonsana		singular
+d:l6-travel:2	14	paratiisi	paratiisi	Paradies	Nomen · Nominativ Singular	ein Paradies		nimisana	nimento	singular
+d:l6-travel:3	0	En	ei	nicht (Verneinungsverb)	Verneinungsverb · en = ich nicht	ich … nicht		kieltosana		singular
+d:l6-travel:3	1	nyt	nyt	jetzt	Adverb			seikkasana		
+d:l6-travel:3	2	menisi	mennä	gehen	Verb · Konditional · Verneinungsform	würde (… nicht) gehen		teonsana		singular
+d:l6-travel:3	3	ihan	ihan	ganz	Adverb			seikkasana		
+d:l6-travel:3	4	niin	niin	so	Adverb			seikkasana		
+d:l6-travel:3	5	pitkälle	pitkä	lang	Adjektiv · Allativ „auf … zu, an“ Singular	weit (niin pitkälle = so weit)		nimisana_laatusana	ulkotulento	singular
+d:l6-travel:3	6	että	että	dass	Konjunktion			sidesana		
+d:l6-travel:3	7	kutsuisin	kutsua	rufen; nennen; einladen	Verb · 1. Person Sg. (minä) · Konditional „würde“	(ich) würde nennen		teonsana		singular
+d:l6-travel:3	8	Suomea	Suomi	Finnland	Ortsname · Partitiv Singular	Finnland (Partitiv)		paikannimi	osanto	singular
+d:l6-travel:3	9	paratiisiksi	paratiisi	Paradies	Nomen · Translativ „zu … (werden)“ Singular	(ein) Paradies (kutsua + Translativ = nennen)		nimisana	tulento	singular
+d:l6-travel:3	10	Tokiossa	Tokio	Tokio	Ortsname · Inessiv „in“ Singular	in Tokio		paikannimi	sisaolento	singular
+d:l6-travel:3	11	junat	juna	Zug	Nomen · Nominativ Plural	die Züge		nimisana	nimento	plural
+d:l6-travel:3	12	sentään	sentään	doch, immerhin	Adverb	wenigstens		seikkasana		
+d:l6-travel:3	13	kulkivat	kulkea	gehen, fahren (verkehren)	Verb · 3. Person Pl. (he) · Imperfekt (Vergangenheit)	fuhren		teonsana		plural
+d:l6-travel:3	14	aina	aina	immer	Adverb			seikkasana		
+d:l6-travel:3	15	ajallaan	aika	Zeit	Nomen · Adessiv „auf, bei“ Singular · + Possessivendung „sein/ihr“	pünktlich (ajallaan = zu seiner Zeit)		nimisana	ulkoolento	singular
+d:l6-travel:4	0	Kyllä	kyllä	ja, schon	Adverb	doch		seikkasana		
+d:l6-travel:4	1	täälläkin	täällä	hier	Adverb · + -kin „auch“	hier auch		seikkasana		
+d:l6-travel:4	2	hetkinen	hetkinen	Moment (mal)	Ausruf · (Verkleinerungsform von hetki)					
+d:l6-travel:4	3	mitä	mikä	was	Pronomen · Partitiv Singular			asemosana	osanto	singular
+d:l6-travel:4	4	kuulutuksessa	kuulutus	Durchsage	Nomen · Inessiv „in“ Singular	in der Durchsage		nimisana	sisaolento	singular
+d:l6-travel:4	5	sanottiin	sanoa	sagen	Verb · Passiv (Umgangssprache auch: wir-Form) · Imperfekt (Vergangenheit)	wurde gesagt		teonsana		
+d:l6-travel:5	0	Että	että	dass	Konjunktion			sidesana		
+d:l6-travel:5	1	ratatöiden	ratatyö	Gleisarbeit	Nomen · Genitiv Plural	der Gleisarbeiten	rata+työ	nimisana	omanto	plural
+d:l6-travel:5	2	vuoksi	vuoksi	wegen	Postposition	wegen (+ Genitiv)		seikkasana		
+d:l6-travel:5	3	juna	juna	Zug	Nomen · Nominativ Singular	der Zug		nimisana	nimento	singular
+d:l6-travel:5	4	päättyy	päättyä	enden	Verb · 3. Person Sg. (hän) · Präsens	endet		teonsana		singular
+d:l6-travel:5	5	Tikkurilaan	Tikkurila	Tikkurila (Ort)	Ortsname · Illativ „in … hinein“ Singular	in Tikkurila (Illativ: bis nach Tikkurila)		paikannimi	sisatulento	singular
+d:l6-travel:5	6	ja	ja	und	Konjunktion			sidesana		
+d:l6-travel:5	7	matka	matka	Reise, Weg, Strecke	Nomen · Nominativ Singular	die Fahrt		nimisana	nimento	singular
+d:l6-travel:5	8	jatkuu	jatkua	weitergehen, andauern	Verb · 3. Person Sg. (hän) · Präsens	geht weiter		teonsana		singular
+d:l6-travel:5	9	korvaavilla	korvata	ersetzen	Verbform · Partizip Präsens aktiv (-va/-vä) · Adessiv „auf, bei“ Plural	ersetzenden → Ersatz-		laatusana	ulkoolento	plural
+d:l6-travel:5	10	busseilla	bussi	Bus	Nomen · Adessiv „auf, bei“ Plural	mit Bussen		nimisana	ulkoolento	plural
+d:l6-travel:5	11	Sanoinhan	sanoa	sagen	Verb · 1. Person Sg. (minä) · Imperfekt (Vergangenheit) · + -han „doch“	hab ich doch gesagt		teonsana		singular
+d:l6-travel:6	0	Voi	voi	oh, ach	Ausruf	(voi ei) oh nein		huudahdussana		
+d:l6-travel:6	1	ei	ei	nicht (Verneinungsverb)	Verneinungsverb · ei = er/sie/es nicht	nein (voi ei = oh nein)		kieltosana		singular
+d:l6-travel:6	2	Tiedätkö	tietää	wissen	Verb · 2. Person Sg. (sinä) · Präsens · + Frageendung -ko/-kö	weißt du …?		teonsana		singular
+d:l6-travel:6	3	mistä	mistä	woher	Fragewort · (Elativ von mikä)	wo (… ab)				
+d:l6-travel:6	4	ne	ne	sie (Pl., nicht-menschlich)	Pronomen · Nominativ Plural	die		asemosana	nimento	plural
+d:l6-travel:6	5	bussit	bussi	Bus	Nomen · Nominativ Plural	Busse		nimisana	nimento	plural
+d:l6-travel:6	6	lähtevät	lähteä	weggehen, losgehen	Verb · 3. Person Pl. (he) · Präsens	fahren ab		teonsana		plural
+d:l6-travel:7	0	Kuulutuksen	kuulutus	Durchsage	Nomen · Genitiv Singular	(laut) Durchsage		nimisana	omanto	singular
+d:l6-travel:7	1	mukaan	mukaan	laut, gemäß	Postposition	laut (+ Genitiv)		seikkasana		
+d:l6-travel:7	2	aseman	asema	Bahnhof; Stellung	Nomen · Genitiv Singular	(vor dem) Bahnhof		nimisana	omanto	singular
+d:l6-travel:7	3	edestä	edestä	vor (… weg)	Postposition · (Elativ zu edessä)	vor (… ab)				
+d:l6-travel:7	4	Seurataan	seurata	folgen	Verb · Passiv (Umgangssprache auch: wir-Form) · Präsens	folgen wir		teonsana		
+d:l6-travel:7	5	noita	nuo	jener, der da	Pronomen · Partitiv Plural	jenen (Partitiv Pl.)		asemosana	osanto	plural
+d:l6-travel:7	6	matkalaukkuja	matkalaukku	Koffer	Nomen · Partitiv Plural	Koffer (Partitiv Pl.)	matka+laukku	nimisana	osanto	plural
+d:l6-travel:7	7	vetäviä	vetää	ziehen	Verbform · Partizip Präsens aktiv (-va/-vä) · Partitiv Plural	(die) ziehenden → den Leuten, die … ziehen		laatusana	osanto	plural
+d:l6-travel:7	8	niin	niin	so; dann	Adverb	dann		seikkasana		
+d:l6-travel:7	9	tuskin	tuskin	kaum	Adverb			seikkasana		
+d:l6-travel:7	10	eksytään	eksyä	sich verirren	Verb · Passiv (Umgangssprache auch: wir-Form) · Präsens	verirren wir uns		teonsana		
+d:l6-travel:8	0	Hyvä	hyvä	gut	Adjektiv · Nominativ Singular	(hyvä on) na gut		laatusana	nimento	singular
+d:l6-travel:8	1	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	(hyvä on) na gut		teonsana		singular
+d:l6-travel:8	2	Ota	ottaa	nehmen	Verb · Imperativ · 2. Person Sg. (sinä) · auch Verneinungsform nach ei	nimm		teonsana		singular
+d:l6-travel:8	3	sinä	sinä	du	Pronomen · Nominativ Singular			asemosana	nimento	singular
+d:l6-travel:8	4	iso	iso	groß	Adjektiv · Nominativ Singular	den großen		nimisana_laatusana	nimento	singular
+d:l6-travel:8	5	laukku	laukku	Tasche, Koffer	Nomen · Nominativ Singular	Koffer		nimisana	nimento	singular
+d:l6-travel:8	6	minä	minä	ich	Pronomen · Nominativ Singular			asemosana	nimento	singular
+d:l6-travel:8	7	kannan	kantaa	tragen	Verb · 1. Person Sg. (minä) · Präsens	(ich) trage		teonsana		singular
+d:l6-travel:8	8	repun	reppu	Rucksack	Nomen · Genitiv Singular	den Rucksack (Genitiv-Objekt)		nimisana	omanto	singular
+d:l6-travel:8	9	Paratiisi	paratiisi	Paradies	Nomen · Nominativ Singular	das Paradies		nimisana	nimento	singular
+d:l6-travel:8	10	odottaa	odottaa	warten	Verb · 3. Person Sg. (hän) · Präsens	wartet		teonsana		singular
+d:l6-work:0	0	Tuomas	Tuomas	Tuomas (Name)	Name · Nominativ Singular			etunimi	nimento	singular
+d:l6-work:0	1	onko	olla	sein	Verb · 3. Person Sg. (hän) · Präsens · + Frageendung -ko/-kö	ist …? → hast (du) …?		teonsana		singular
+d:l6-work:0	2	sinulla	sinä	du	Pronomen · Adessiv „auf, bei“ Singular	bei dir → du (hast)		asemosana	ulkoolento	singular
+d:l6-work:0	3	hetki	hetki	Moment, Augenblick	Nomen · Nominativ Singular	einen Moment		nimisana	nimento	singular
+d:l6-work:0	4	Lähden	lähteä	weggehen, losgehen	Verb · 1. Person Sg. (minä) · Präsens	(ich) fahre		teonsana		singular
+d:l6-work:0	5	huomenna	huomenna	morgen	Adverb			seikkasana		
+d:l6-work:0	6	kahdeksi	kaksi	zwei	Zahlwort · Translativ „zu … (werden)“ Singular	für zwei		lukusana	tulento	singular
+d:l6-work:0	7	viikoksi	viikko	Woche	Nomen · Translativ „zu … (werden)“ Singular	(für) … Wochen		nimisana	tulento	singular
+d:l6-work:0	8	lomalle	loma	Urlaub, Ferien	Nomen · Allativ „auf … zu, an“ Singular	in den Urlaub		nimisana	ulkotulento	singular
+d:l6-work:0	9	ja	ja	und	Konjunktion			sidesana		
+d:l6-work:0	10	sinä	sinä	du	Pronomen · Nominativ Singular			asemosana	nimento	singular
+d:l6-work:0	11	hoidat	hoitaa	pflegen; sich kümmern um	Verb · 2. Person Sg. (sinä) · Präsens	(du) kümmerst dich um		teonsana		singular
+d:l6-work:0	12	toimiston	toimisto	Büro	Nomen · Genitiv Singular	das Büro (Genitiv-Objekt)		nimisana	omanto	singular
+d:l6-work:0	13	sillä	se	es	Pronomen · Adessiv „auf, bei“ Singular	(sillä aikaa) solange		asemosana	ulkoolento	singular
+d:l6-work:0	14	aikaa	aika	Zeit	Nomen · Partitiv Singular	(sillä aikaa) solange		nimisana	osanto	singular
+d:l6-work:1	0	Hoidan	hoitaa	pflegen; sich kümmern um	Verb · 1. Person Sg. (minä) · Präsens	(ich) kümmere mich → mach ich		teonsana		singular
+d:l6-work:1	1	mutta	mutta	aber	Konjunktion			sidesana		
+d:l6-work:1	2	miksi	miksi	warum	Fragewort · (Translativ von mikä)					
+d:l6-work:1	3	näytät	näyttää	aussehen; zeigen	Verb · 2. Person Sg. (sinä) · Präsens	(du) siehst aus		teonsana		singular
+d:l6-work:1	4	noin	noin	so; etwa	Adverb	so		seikkasana		
+d:l6-work:1	5	huolestuneelta	huolestua	sich Sorgen machen	Verbform · Partizip Perfekt aktiv (-nut/-nyt) · Ablativ „von … weg“ Singular	besorgt (näyttää + Ablativ)		laatusana	ulkoeronto	singular
+d:l6-work:2	0	Koska	koska	weil	Konjunktion			sidesana		
+d:l6-work:2	1	tunnen	tuntea	kennen; fühlen	Verb · 1. Person Sg. (minä) · Präsens	(ich) kenne		teonsana		singular
+d:l6-work:2	2	teidät	te	ihr	Pronomen · Akkusativ Plural	euch		asemosana	kohdanto	plural
+d:l6-work:2	3	Jos	jos	wenn, falls	Konjunktion			sidesana		
+d:l6-work:2	4	en	ei	nicht (Verneinungsverb)	Verneinungsverb · en = ich nicht	ich … nicht		kieltosana		singular
+d:l6-work:2	5	olisi	olla	sein	Verb · Konditional · Verneinungsform	wäre		teonsana		singular
+d:l6-work:2	6	täällä	täällä	hier	Adverb			seikkasana		
+d:l6-work:2	7	tämä	tämä	dieser	Pronomen · Nominativ Singular	dieses		asemosana	nimento	singular
+d:l6-work:2	8	toimisto	toimisto	Büro	Nomen · Nominativ Singular			nimisana	nimento	singular
+d:l6-work:2	9	vaipuisi	vaipua	versinken, sinken	Verb · 3. Person Sg. (hän) · Konditional „würde“	würde versinken		teonsana		singular
+d:l6-work:2	10	sekasortoon	sekasorto	Chaos	Nomen · Illativ „in … hinein“ Singular	ins Chaos		nimisana	sisatulento	singular
+d:l6-work:2	11	kolmessa	kolme	drei	Zahlwort · Inessiv „in“ Singular	in drei		lukusana	sisaolento	singular
+d:l6-work:2	12	päivässä	päivä	Tag	Nomen · Inessiv „in“ Singular	(in drei) Tagen		nimisana	sisaolento	singular
+d:l6-work:3	0	Liioittelet	liioitella	übertreiben	Verb · 2. Person Sg. (sinä) · Präsens	(du) übertreibst		teonsana		singular
+d:l6-work:3	1	Mutta	mutta	aber	Konjunktion			sidesana		
+d:l6-work:3	2	yksi	yksi	eins, ein	Zahlwort · Nominativ Singular	eine		lukusana	nimento	singular
+d:l6-work:3	3	asia	asia	Sache, Ding	Nomen · Nominativ Singular	Sache		nimisana	nimento	singular
+d:l6-work:3	4	vähän	vähän	ein wenig	Adverb	ein bisschen		seikkasana		
+d:l6-work:3	5	mietityttää	mietityttää	nachdenklich machen, beschäftigen	Verb · 3. Person Sg. (hän) · Präsens	beschäftigt (mich)		teonsana		singular
+d:l6-work:3	6	tämä	tämä	dieser	Pronomen · Nominativ Singular	diese		asemosana	nimento	singular
+d:l6-work:3	7	uusi	uusi	neu	Adjektiv · Nominativ Singular	neue		laatusana	nimento	singular
+d:l6-work:3	8	sähköinen	sähköinen	elektrisch	Adjektiv · Nominativ Singular			laatusana	nimento	singular
+d:l6-work:3	9	paperileikkuri	paperileikkuri	Papierschneidemaschine	Nomen · Nominativ Singular		paperi+leikkuri	nimisana	nimento	singular
+d:l6-work:3	10	Mistä	mistä	woher	Fragewort · (Elativ von mikä)					
+d:l6-work:3	11	sinä	sinä	du	Pronomen · Nominativ Singular			asemosana	nimento	singular
+d:l6-work:3	12	tiedät	tietää	wissen	Verb · 2. Person Sg. (sinä) · Präsens	(du) weißt		teonsana		singular
+d:l6-work:3	13	että	että	dass	Konjunktion			sidesana		
+d:l6-work:3	14	tämän	tämä	dieser	Pronomen · Genitiv Singular			asemosana	omanto	singular
+d:l6-work:3	15	koneen	kone	Maschine, Gerät	Nomen · Genitiv Singular	(der) Maschine		nimisana	omanto	singular
+d:l6-work:3	16	käyttäminen	käyttää	benutzen, bedienen	Verb · Verbalnomen (-minen) „das …“	das Bedienen		teonsana	nimento	singular
+d:l6-work:3	17	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist		teonsana		singular
+d:l6-work:3	18	oikeasti	oikeasti	echt, wirklich	Adverb	wirklich				
+d:l6-work:3	19	turvallista	turvallinen	sicher	Adjektiv · Partitiv Singular	sicher (Partitiv)		laatusana	osanto	singular
+d:l6-work:4	0	Siinä	se	es	Pronomen · Inessiv „in“ Singular	darin → (sie) hat		asemosana	sisaolento	singular
+d:l6-work:4	1	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist → hat		teonsana		singular
+d:l6-work:4	2	kaksi	kaksi	zwei	Zahlwort · Nominativ Singular			lukusana	nimento	singular
+d:l6-work:4	3	painiketta	painike	Knopf, Taste	Nomen · Partitiv Singular	Knöpfe (nach Zahlwort: Partitiv Sg.)		nimisana	osanto	singular
+d:l6-work:4	4	joita	joka	der, welcher (Relativpronomen)	Pronomen · Partitiv Plural	die (Partitiv Pl.)		asemosana	osanto	plural
+d:l6-work:4	5	pitää	pitää	müssen	Verb · 3. Person Sg. (hän) · Präsens	muss (man)		teonsana		singular
+d:l6-work:4	6	painaa	painaa	drücken	Verb · Grundform (Infinitiv)			teonsana		
+d:l6-work:4	7	yhtä	yhtä	gleich (so)	Adverb	(yhtä aikaa) gleichzeitig		seikkasana		
+d:l6-work:4	8	aikaa	aika	Zeit	Nomen · Partitiv Singular	(yhtä aikaa) gleichzeitig		nimisana	osanto	singular
+d:l6-work:4	9	Terä	terä	Klinge	Nomen · Nominativ Singular	die Klinge		nimisana	nimento	singular
+d:l6-work:4	10	liikkuu	liikkua	sich bewegen	Verb · 3. Person Sg. (hän) · Präsens	bewegt sich		teonsana		singular
+d:l6-work:4	11	vain	vain	nur	Adverb			seikkasana		
+d:l6-work:4	12	kun	kun	als, wenn	Konjunktion	wenn		sidesana		
+d:l6-work:4	13	molemmat	molempi	beide	Nomen · Nominativ Plural			nimisana	nimento	plural
+d:l6-work:4	14	kädet	käsi	Hand	Nomen · Nominativ Plural	Hände		nimisana	nimento	plural
+d:l6-work:4	15	ovat	olla	sein	Verb · 3. Person Pl. (he) · Präsens	sind		teonsana		plural
+d:l6-work:4	16	painikkeilla	painike	Knopf, Taste	Nomen · Adessiv „auf, bei“ Plural	auf den Knöpfen		nimisana	ulkoolento	plural
+d:l6-work:4	17	eli	eli	also, das heißt	Konjunktion	also		sidesana		
+d:l6-work:4	18	sormet	sormi	Finger	Nomen · Nominativ Plural	die Finger		nimisana	nimento	plural
+d:l6-work:4	19	eivät	ei	nicht (Verneinungsverb)	Verneinungsverb · eivät = sie nicht	sie … nicht		kieltosana		plural
+d:l6-work:4	20	voi	voida	können	Verb · Verneinungsform (nach ei)			teonsana		singular
+d:l6-work:4	21	jäädä	jäädä	bleiben	Verb · Grundform (Infinitiv)	geraten		teonsana		
+d:l6-work:4	22	sen	se	es, das	Pronomen · Genitiv Singular	(unter) sie		asemosana	omanto	singular
+d:l6-work:4	23	alle	alle	unter (… hin)	Postposition · (Allativ zu alla)	darunter				
+d:l6-work:5	0	Selvä	selvä	klar	Adjektiv · Nominativ Singular	verstehe		laatusana	nimento	singular
+d:l6-work:5	1	Entä	entä	und (was ist mit) …?	Adverb	und		seikkasana		
+d:l6-work:5	2	jos	jos	wenn, falls	Konjunktion			sidesana		
+d:l6-work:5	3	tulostin	tulostin	Drucker	Nomen · Nominativ Singular	der Drucker		nimisana	nimento	singular
+d:l6-work:5	4	taas	taas	wieder	Adverb			seikkasana		
+d:l6-work:5	5	jumittuu	jumittua	hängen bleiben, sich aufhängen	Verb · 3. Person Sg. (hän) · Präsens	hängt (sich auf)		teonsana		singular
+d:l6-work:5	6	kesken	kesken	mitten in	Postposition	mitten in (+ Genitiv)		seikkasana		
+d:l6-work:5	7	kuukausiraportin	kuukausiraportti	Monatsbericht	Nomen · Genitiv Singular	(des) Monatsberichts	kuu+kausi+raportti	nimisana	omanto	singular
+d:l6-work:6	0	Sammuta	sammuttaa	ausschalten, löschen	Verb · Imperativ · 2. Person Sg. (sinä) · auch Verneinungsform nach ei	schalt aus		teonsana		singular
+d:l6-work:6	1	se	se	es, das	Pronomen · Nominativ Singular	ihn		asemosana	nimento	singular
+d:l6-work:6	2	odota	odottaa	warten	Verb · Imperativ · 2. Person Sg. (sinä) · auch Verneinungsform nach ei	warte		teonsana		singular
+d:l6-work:6	3	minuutti	minuutti	Minute	Nomen · Nominativ Singular	eine Minute		nimisana	nimento	singular
+d:l6-work:6	4	ja	ja	und	Konjunktion			sidesana		
+d:l6-work:6	5	käynnistä	käynnistää	starten	Verb · Imperativ · 2. Person Sg. (sinä) · auch Verneinungsform nach ei	starte		teonsana		singular
+d:l6-work:6	6	uudelleen	uudelleen	erneut, wieder	Adverb	neu		seikkasana		
+d:l6-work:6	7	Jos	jos	wenn, falls	Konjunktion			sidesana		
+d:l6-work:6	8	sekään	se	es, das	Pronomen · Nominativ Singular · + -kaan/-kään „auch nicht, (nicht) einmal“	auch das (nicht)		asemosana	nimento	singular
+d:l6-work:6	9	ei	ei	nicht (Verneinungsverb)	Verneinungsverb · ei = er/sie/es nicht	(es) … nicht		kieltosana		singular
+d:l6-work:6	10	auta	auttaa	helfen	Verb · Verneinungsform (nach ei)	hilft		teonsana		singular
+d:l6-work:6	11	soita	soittaa	anrufen	Verb · Imperativ · 2. Person Sg. (sinä) · auch Verneinungsform nach ei	ruf an		teonsana		singular
+d:l6-work:6	12	huoltoon	huolto	Wartung, Service	Nomen · Illativ „in … hinein“ Singular	beim Service (soittaa + Illativ)		nimisana	sisatulento	singular
+d:l6-work:6	13	Numero	numero	Nummer	Nomen · Nominativ Singular	die Nummer		nimisana	nimento	singular
+d:l6-work:6	14	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist		teonsana		singular
+d:l6-work:6	15	teipattu	teipata	(mit Klebeband) kleben	Verbform · Partizip Perfekt passiv (-tu/-ty)	angeklebt		laatusana	nimento	singular
+d:l6-work:6	16	koneen	kone	Maschine, Gerät	Nomen · Genitiv Singular	(des) Geräts		nimisana	omanto	singular
+d:l6-work:6	17	kylkeen	kylki	Seite, Flanke	Nomen · Illativ „in … hinein“ Singular	an die Seite		nimisana	sisatulento	singular
+d:l6-work:7	0	Entä	entä	und (was ist mit) …?	Adverb	und		seikkasana		
+d:l6-work:7	1	jos	jos	wenn, falls	Konjunktion			sidesana		
+d:l6-work:7	2	jotain	jokin	etwas	Pronomen · Partitiv Singular			asemosana	osanto	singular
+d:l6-work:7	3	menee	mennä	gehen	Verb · 3. Person Sg. (hän) · Präsens	geht		teonsana		singular
+d:l6-work:7	4	pieleen	pieleen	schief (mennä pieleen = schiefgehen)	Adverb · (Illativ von pieli)	schief				
+d:l6-work:7	5	sillä	se	es	Pronomen · Adessiv „auf, bei“ Singular	(sillä aikaa, kun) während		asemosana	ulkoolento	singular
+d:l6-work:7	6	aikaa	aika	Zeit	Nomen · Partitiv Singular	(sillä aikaa, kun) während		nimisana	osanto	singular
+d:l6-work:7	7	kun	kun	als, wenn	Konjunktion	(sillä aikaa, kun) während		sidesana		
+d:l6-work:7	8	olet	olla	sein	Verb · 2. Person Sg. (sinä) · Präsens	(du) bist		teonsana		singular
+d:l6-work:7	9	mökillä	mökki	Hütte, Ferienhaus	Nomen · Adessiv „auf, bei“ Singular	im Ferienhaus		nimisana	ulkoolento	singular
+d:l6-work:7	10	Saanko	saada	bekommen; dürfen	Verb · 1. Person Sg. (minä) · Präsens · + Frageendung -ko/-kö	darf ich …?		teonsana		singular
+d:l6-work:7	11	soittaa	soittaa	anrufen	Verb · Grundform (Infinitiv)			teonsana		
+d:l6-work:8	0	Saat	saada	bekommen; dürfen	Verb · 2. Person Sg. (sinä) · Präsens	(du) darfst		teonsana		singular
+d:l6-work:8	1	mutta	mutta	aber	Konjunktion			sidesana		
+d:l6-work:8	2	vain	vain	nur	Adverb			seikkasana		
+d:l6-work:8	3	jos	jos	wenn, falls	Konjunktion			sidesana		
+d:l6-work:8	4	talo	talo	Haus	Nomen · Nominativ Singular	das Haus		nimisana	nimento	singular
+d:l6-work:8	5	palaa	palaa	brennen	Verb · 3. Person Sg. (hän) · Präsens	brennt		teonsana		singular
+d:l6-work:8	6	Aion	aikoa	vorhaben, beabsichtigen	Verb · 1. Person Sg. (minä) · Präsens	(ich) habe vor		teonsana		singular
+d:l6-work:8	7	viettää	viettää	verbringen	Verb · Grundform (Infinitiv)			teonsana		
+d:l6-work:8	8	kaksi	kaksi	zwei	Zahlwort · Nominativ Singular			lukusana	nimento	singular
+d:l6-work:8	9	viikkoa	viikko	Woche	Nomen · Partitiv Singular	Wochen (nach Zahlwort: Partitiv Sg.)		nimisana	osanto	singular
+d:l6-work:8	10	laiturilla	laituri	Steg, Bahnsteig	Nomen · Adessiv „auf, bei“ Singular	auf dem Steg		nimisana	ulkoolento	singular
+d:l6-work:8	11	puhelin	puhelin	Telefon, Handy	Nomen · Nominativ Singular	(mit dem) Handy		nimisana	nimento	singular
+d:l6-work:8	12	äänettömällä	äänetön	lautlos	Adjektiv · Adessiv „auf, bei“ Singular	auf lautlos		laatusana	ulkoolento	singular
+d:l6-work:9	0	Selvä	selvä	klar	Adjektiv · Nominativ Singular	alles klar		laatusana	nimento	singular
+d:l6-work:9	1	Nauti	nauttia	genießen	Verb · Imperativ · 2. Person Sg. (sinä) · auch Verneinungsform nach ei	genieß		teonsana		singular
+d:l6-work:9	2	lomasta	loma	Urlaub, Ferien	Nomen · Elativ „aus“ Singular	den Urlaub (nauttia + Elativ)		nimisana	sisaeronto	singular
+d:l6-work:9	3	katsotaan	katsoa	schauen, ansehen	Verb · Passiv (Umgangssprache auch: wir-Form) · Präsens	sehen wir (mal)		teonsana		
+d:l6-work:9	4	onko	olla	sein	Verb · 3. Person Sg. (hän) · Präsens · + Frageendung -ko/-kö	ob … ist		teonsana		singular
+d:l6-work:9	5	toimisto	toimisto	Büro	Nomen · Nominativ Singular	das Büro		nimisana	nimento	singular
+d:l6-work:9	6	vielä	vielä	noch	Adverb			seikkasana		
+d:l6-work:9	7	pystyssä	pystyssä	aufrecht, stehend	Adverb · (Inessiv von pysty)	(noch) steht				
+d:l6-work:9	8	kun	kun	als, wenn	Konjunktion	wenn		sidesana		
+d:l6-work:9	9	palaat	palata	zurückkehren	Verb · 2. Person Sg. (sinä) · Präsens	(du) zurückkommst		teonsana		singular
