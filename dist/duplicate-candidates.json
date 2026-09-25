@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "count": 14,
+  "count": 19,
   "candidates": [
     {
       "left": {
@@ -186,6 +186,62 @@
     },
     {
       "left": {
+        "id": 1186574,
+        "text": "Teidän ei tarvitse tulla huomenna.",
+        "level": 2
+      },
+      "right": {
+        "id": 13612608,
+        "text": "Teidän ei tarvitse tulla huomenna töihin.",
+        "level": 2
+      },
+      "match": "near",
+      "similarity": 0.8831
+    },
+    {
+      "left": {
+        "id": 1758807,
+        "text": "Minulla ei ole rahaa.",
+        "level": 2
+      },
+      "right": {
+        "id": 3216646,
+        "text": "Mutta minulla ei ole rahaa.",
+        "level": 2
+      },
+      "match": "near",
+      "similarity": 0.88
+    },
+    {
+      "left": {
+        "id": 3602225,
+        "text": "Kuinka paljon tämä maksaa?",
+        "level": 2
+      },
+      "right": {
+        "id": 3702079,
+        "text": "Kuinka paljon tämä kello maksaa?",
+        "level": 2
+      },
+      "match": "near",
+      "similarity": 0.8667
+    },
+    {
+      "left": {
+        "id": 3435664,
+        "text": "Hän ei ole kotona.",
+        "level": 1
+      },
+      "right": {
+        "id": 2603012,
+        "text": "Hän ei ole kotona nyt.",
+        "level": 2
+      },
+      "match": "near",
+      "similarity": 0.8571
+    },
+    {
+      "left": {
         "id": 5050765,
         "text": "Mari on todella kaunis.",
         "level": 1
@@ -197,6 +253,20 @@
       },
       "match": "near",
       "similarity": 0.8519
+    },
+    {
+      "left": {
+        "id": 2214694,
+        "text": "Minulla ei ole nälkä.",
+        "level": 2
+      },
+      "right": {
+        "id": 12422673,
+        "text": "Minulla ei vielä ole nälkä.",
+        "level": 2
+      },
+      "match": "near",
+      "similarity": 0.84
     }
   ]
 }

@@ -4,11 +4,11 @@
  "selected_on": "2026-09-25",
  "description": "Reviewed Finnish sentences with direct German Tatoeba links for Level 1/2 and Level 6, absent from the previous deck and archive. Text and attribution preserved; no audio. AI-reviewed classification, not certified CEFR.",
  "review_stats": {
-  "L2 keep": 749,
-  "L2 reject": 302,
+  "L2 keep": 745,
+  "L2 reject": 306,
   "L6 keep": 145,
   "L6 reject": 258,
-  "dup skip": 10
+  "dup skip": 8
  },
  "sentences": [
   {
@@ -12482,29 +12482,6 @@
    }
   },
   {
-   "id": 3742596,
-   "lang": "fin",
-   "text": "Hyvää yötä ja nuku hyvin!",
-   "owner": "Silja",
-   "license": "CC BY 2.0 FR",
-   "translations": [
-    {
-     "id": 2884959,
-     "lang": "deu",
-     "text": "Gute Nacht und schlafe gut!",
-     "owner": "al_ex_an_der",
-     "license": "CC BY 2.0 FR"
-    }
-   ],
-   "audios": [],
-   "level": 2,
-   "topic": "hello",
-   "level_assessment": {
-    "status": "estimated",
-    "method": "reviewed-level-fill-2026-09-25"
-   }
-  },
-  {
    "id": 3747957,
    "lang": "fin",
    "text": "Kello on kahdeksan aamulla.",
@@ -12645,29 +12622,6 @@
      "lang": "deu",
      "text": "Weißt du es nicht?",
      "owner": "mhr",
-     "license": "CC BY 2.0 FR"
-    }
-   ],
-   "audios": [],
-   "level": 2,
-   "topic": "-",
-   "level_assessment": {
-    "status": "estimated",
-    "method": "reviewed-level-fill-2026-09-25"
-   }
-  },
-  {
-   "id": 3781632,
-   "lang": "fin",
-   "text": "Tom haluaa puhua sinun kanssasi.",
-   "owner": "Silja",
-   "license": "CC BY 2.0 FR",
-   "translations": [
-    {
-     "id": 2132280,
-     "lang": "deu",
-     "text": "Tom will mit dir sprechen.",
-     "owner": "Pfirsichbaeumchen",
      "license": "CC BY 2.0 FR"
     }
    ],

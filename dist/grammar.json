@@ -11970,22 +11970,6 @@
       ],
       "method": "curated_exact_forms_and_sentence_notes"
     },
-    "3742596": {
-      "sentence": "Hyvää yötä ja nuku hyvin!",
-      "notes": [
-        {
-          "focus": "Hyvää yötä",
-          "title": "Gruß als selbstständiger Ausdruck",
-          "text": "yö („Nacht“) → yötä: Viele Gruß- und Wunschformeln stehen im Partitiv: hyvää yötä = „gute Nacht“."
-        },
-        {
-          "focus": "nuku hyvin",
-          "title": "Aufforderung",
-          "text": "nukkua → nuku!: Aufforderung an eine Person. hyvin ist das Adverb zu hyvä: „gut“."
-        }
-      ],
-      "method": "curated_exact_forms_and_sentence_notes"
-    },
     "3747957": {
       "sentence": "Kello on kahdeksan aamulla.",
       "notes": [
@@ -12073,22 +12057,6 @@
           "focus": "Etkö",
           "title": "Verneinte Frage",
           "text": "ei → et (du) + -ko → etkö: „… du nicht?“. Das Hauptverb steht ohne Endung: tiedä."
-        }
-      ],
-      "method": "curated_exact_forms_and_sentence_notes"
-    },
-    "3781632": {
-      "sentence": "Tom haluaa puhua sinun kanssasi.",
-      "notes": [
-        {
-          "focus": "sinun kanssasi",
-          "title": "Nachgestelltes Verhältniswort",
-          "text": "kanssa („mit“) steht nach dem Genitiv: sinun kanssasi = „mit dir“; -si wiederholt den Besitzer."
-        },
-        {
-          "focus": "haluaa puhua",
-          "title": "Verbform: haluta",
-          "text": "haluta → haluaa, danach die Grundform puhua („sprechen“)."
         }
       ],
       "method": "curated_exact_forms_and_sentence_notes"

@@ -4398,11 +4398,6 @@ sentence_id	index	token	lemma	meaning	form	here	parts	pos	case	number
 3710008	13	vanhaksi	vanha	alt	Adjektiv · Translativ „zu … (werden)“ Singular	(als) alt		nimisana_laatusana	tulento	singular
 3742575	0	Hyvää	hyvä	gut	Adjektiv · Partitiv Singular	gute		laatusana	osanto	singular
 3742575	1	yötä	yö	Nacht	Nomen · Partitiv Singular	(gute) Nacht		nimisana	osanto	singular
-3742596	0	Hyvää	hyvä	gut	Adjektiv · Partitiv Singular	gute (Partitiv: Hyvää yötä)		laatusana	osanto	singular
-3742596	1	yötä	yö	Nacht	Nomen · Partitiv Singular	(gute) Nacht		nimisana	osanto	singular
-3742596	2	ja	ja	und	Konjunktion			sidesana		
-3742596	3	nuku	nukkua	schlafen	Verb · Imperativ · 2. Person Sg. (sinä)	schlaf!		teonsana		singular
-3742596	4	hyvin	hyvin	gut; sehr	Adverb	gut		seikkasana		
 3747957	0	Kello	kello	Uhr	Nomen · Nominativ Singular	(die) Uhr → es ist … Uhr		nimisana	nimento	singular
 3747957	1	on	olla	sein	Verb · 3. Person Sg. (hän) · Präsens	ist		teonsana		singular
 3747957	2	kahdeksan	kahdeksan	acht	Zahlwort · Nominativ Singular			lukusana	nimento	singular
@@ -4449,11 +4444,6 @@ sentence_id	index	token	lemma	meaning	form	here	parts	pos	case	number
 3778283	0	Etkö	ei	nicht (Verneinungsverb)	Verneinungsverb · et = du nicht · + Frageendung -ko/-kö	(du) nicht …?		kieltosana		singular
 3778283	1	sinä	sinä	du	Pronomen · Nominativ Singular			asemosana	nimento	singular
 3778283	2	tiedä	tietää	wissen	Verb · Verneinungsform (nach ei)	weißt		teonsana		singular
-3781632	0	Tom	Tom	Tom (Name)	Name · Nominativ Singular			etunimi	nimento	singular
-3781632	1	haluaa	haluta	wollen, möchten	Verb · 3. Person Sg. (hän) · Präsens	will		teonsana		singular
-3781632	2	puhua	puhua	sprechen	Verb · Grundform (Infinitiv)			teonsana		
-3781632	3	sinun	sinä	du	Pronomen · Genitiv Singular	dein → (mit) dir		asemosana	omanto	singular
-3781632	4	kanssasi	kanssa	mit	Postposition · + Possessivendung „dein“	mit dir		suhdesana		
 3781681	0	Haluan	haluta	wollen, möchten	Verb · 1. Person Sg. (minä) · Präsens	(ich) will		teonsana		singular
 3781681	1	lukea	lukea	lesen	Verb · Grundform (Infinitiv)			teonsana		
 3781681	2	sen	se	es, das; dieser	Pronomen · Genitiv Singular	dieses (Objekt)		asemosana	omanto	singular
