@@ -41,6 +41,19 @@ try{
   await page.locator('#continue-practice').click();
   if(await page.locator('#guest-continue').isVisible())await page.locator('#guest-continue').click();
   await page.locator('[data-endings-count="5"]').click();
+  // Easy mode falls back to typing when fewer than three forms exist for a word
+  // (e.g. „huomen“). Answer such items correctly until one with choices appears.
+  let ambiguous=0,extra=0;
+  for(;;){
+   await page.locator('.endings-choices button, #endings-input').first().waitFor();
+   if(await page.locator('.endings-choices button').count()||extra>=2)break;
+   const w=await expectedWord(page);
+   await page.locator('#endings-input').fill(w[0]);
+   await page.keyboard.press('Enter');
+   if(w.length===1)await page.locator('.verb-feedback.verb-correct').waitFor();else{await page.locator('.verb-feedback').waitFor();ambiguous++;}
+   await page.locator('#endings-next').click();
+   extra++;
+  }
   // Easy: pick the right form.
   await page.locator('.endings-choices button').first().waitFor();
   assert.equal(await page.locator('.endings-choices button').count(),3);
@@ -66,8 +79,7 @@ try{
   await page.locator('.verb-feedback.verb-wrong').waitFor();
   if(shots)await page.screenshot({path:`${shots}/endings-hard-${viewport.width}.png`,fullPage:true});
   // Finish the round with Enter-driven typing.
-  let ambiguous=0;
-  for(let i=0;i<3;i++){
+  for(let i=0;i<3-extra;i++){
    await page.locator('#endings-next').click();
    await page.locator('#endings-input').waitFor();
    const w=await expectedWord(page);
