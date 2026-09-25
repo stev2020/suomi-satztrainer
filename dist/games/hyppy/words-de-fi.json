@@ -1,0 +1,4875 @@
+{
+ "meta": {
+  "title": "Finnisch Grundwortschatz",
+  "sourceLang": "de",
+  "targetLang": "fi",
+  "license": "CC0-1.0"
+ },
+ "entries": [
+  {
+   "id": "gw-hei",
+   "source": "Hallo!",
+   "target": "Hei!",
+   "category": "Begrüßung",
+   "level": 1,
+   "alternatives": [
+    "Moi!",
+    "Moikka!",
+    "Heippa!"
+   ]
+  },
+  {
+   "id": "gw-kiitos",
+   "source": "Danke!",
+   "target": "Kiitos!",
+   "category": "Begrüßung",
+   "level": 1
+  },
+  {
+   "id": "gw-kylla",
+   "source": "ja",
+   "target": "kyllä",
+   "category": "Begrüßung",
+   "level": 1
+  },
+  {
+   "id": "gw-ei",
+   "source": "nein",
+   "target": "ei",
+   "category": "Begrüßung",
+   "level": 1
+  },
+  {
+   "id": "gw-hyvaa-huomenta",
+   "source": "Guten Morgen!",
+   "target": "Hyvää huomenta!",
+   "category": "Begrüßung",
+   "level": 2
+  },
+  {
+   "id": "gw-hyvaa-paivaa",
+   "source": "Guten Tag!",
+   "target": "Hyvää päivää!",
+   "category": "Begrüßung",
+   "level": 2
+  },
+  {
+   "id": "gw-hyvaa-iltaa",
+   "source": "Guten Abend!",
+   "target": "Hyvää iltaa!",
+   "category": "Begrüßung",
+   "level": 2
+  },
+  {
+   "id": "gw-hyvaa-yota",
+   "source": "Gute Nacht!",
+   "target": "Hyvää yötä!",
+   "category": "Begrüßung",
+   "level": 2
+  },
+  {
+   "id": "gw-hei-hei",
+   "source": "Tschüss!",
+   "target": "Hei hei!",
+   "category": "Begrüßung",
+   "level": 2,
+   "alternatives": [
+    "Heippa!",
+    "Moikka!",
+    "Moi!",
+    "Näkemiin!",
+    "Nähdään!"
+   ]
+  },
+  {
+   "id": "gw-nakemiin",
+   "source": "Auf Wiedersehen!",
+   "target": "Näkemiin!",
+   "category": "Begrüßung",
+   "level": 2,
+   "alternatives": [
+    "Nähdään!",
+    "Hei hei!"
+   ]
+  },
+  {
+   "id": "gw-ole-hyva",
+   "source": "Bitte schön! (beim Geben)",
+   "target": "Ole hyvä!",
+   "category": "Begrüßung",
+   "level": 2
+  },
+  {
+   "id": "gw-anteeksi",
+   "source": "Entschuldigung!",
+   "target": "Anteeksi!",
+   "category": "Begrüßung",
+   "level": 2
+  },
+  {
+   "id": "gw-apua",
+   "source": "Hilfe!",
+   "target": "Apua!",
+   "category": "Begrüßung",
+   "level": 2
+  },
+  {
+   "id": "gw-onnea",
+   "source": "Viel Glück!",
+   "target": "Onnea!",
+   "category": "Begrüßung",
+   "level": 2
+  },
+  {
+   "id": "gw-tervetuloa",
+   "source": "Willkommen!",
+   "target": "Tervetuloa!",
+   "category": "Begrüßung",
+   "level": 3
+  },
+  {
+   "id": "gw-mita-kuuluu",
+   "source": "Wie geht's?",
+   "target": "Mitä kuuluu?",
+   "category": "Begrüßung",
+   "level": 3,
+   "alternatives": [
+    "Miten menee?"
+   ]
+  },
+  {
+   "id": "gw-kiitos-hyvaa",
+   "source": "Danke, gut.",
+   "target": "Kiitos hyvää.",
+   "category": "Begrüßung",
+   "level": 3
+  },
+  {
+   "id": "gw-hauska-tavata",
+   "source": "Freut mich!",
+   "target": "Hauska tavata!",
+   "category": "Begrüßung",
+   "level": 3
+  },
+  {
+   "id": "gw-nahdaan",
+   "source": "Bis dann!",
+   "target": "Nähdään!",
+   "category": "Begrüßung",
+   "level": 3,
+   "alternatives": [
+    "Hei hei!"
+   ]
+  },
+  {
+   "id": "gw-hyvaa-ruokahalua",
+   "source": "Guten Appetit!",
+   "target": "Hyvää ruokahalua!",
+   "category": "Begrüßung",
+   "level": 3
+  },
+  {
+   "id": "gw-kippis",
+   "source": "Prost!",
+   "target": "Kippis!",
+   "category": "Begrüßung",
+   "level": 3
+  },
+  {
+   "id": "gw-hyvaa-joulua",
+   "source": "Frohe Weihnachten!",
+   "target": "Hyvää joulua!",
+   "category": "Begrüßung",
+   "level": 3
+  },
+  {
+   "id": "gw-hyvaa-matkaa",
+   "source": "Gute Reise!",
+   "target": "Hyvää matkaa!",
+   "category": "Begrüßung",
+   "level": 3
+  },
+  {
+   "id": "gw-ei-kiitos",
+   "source": "Nein danke.",
+   "target": "Ei kiitos.",
+   "category": "Begrüßung",
+   "level": 3
+  },
+  {
+   "id": "gw-eipa-kesta",
+   "source": "Keine Ursache.",
+   "target": "Eipä kestä.",
+   "category": "Begrüßung",
+   "level": 3,
+   "alternatives": [
+    "Ei se mitään."
+   ]
+  },
+  {
+   "id": "gw-hyvaa-syntymapaivaa",
+   "source": "Alles Gute zum Geburtstag!",
+   "target": "Hyvää syntymäpäivää!",
+   "category": "Begrüßung",
+   "level": 4
+  },
+  {
+   "id": "gw-onneksi-olkoon",
+   "source": "Herzlichen Glückwunsch!",
+   "target": "Onneksi olkoon!",
+   "category": "Begrüßung",
+   "level": 4,
+   "alternatives": [
+    "Onnea!",
+    "Paljon onnea!"
+   ]
+  },
+  {
+   "id": "gw-en-ymmarra",
+   "source": "Ich verstehe nicht.",
+   "target": "En ymmärrä.",
+   "category": "Begrüßung",
+   "level": 4
+  },
+  {
+   "id": "gw-en-tieda",
+   "source": "Ich weiß nicht.",
+   "target": "En tiedä.",
+   "category": "Begrüßung",
+   "level": 4
+  },
+  {
+   "id": "gw-puhutko-englantia",
+   "source": "Sprichst du Englisch?",
+   "target": "Puhutko englantia?",
+   "category": "Begrüßung",
+   "level": 4
+  },
+  {
+   "id": "gw-mika-sinun-nimesi-on",
+   "source": "Wie heißt du?",
+   "target": "Mikä sinun nimesi on?",
+   "category": "Begrüßung",
+   "level": 4
+  },
+  {
+   "id": "gw-mista-sina-olet",
+   "source": "Woher kommst du?",
+   "target": "Mistä sinä olet?",
+   "category": "Begrüßung",
+   "level": 4
+  },
+  {
+   "id": "gw-missa-on-vessa",
+   "source": "Wo ist die Toilette?",
+   "target": "Missä on vessa?",
+   "category": "Begrüßung",
+   "level": 4
+  },
+  {
+   "id": "gw-ei-haittaa",
+   "source": "Das macht nichts.",
+   "target": "Ei haittaa.",
+   "category": "Begrüßung",
+   "level": 4,
+   "alternatives": [
+    "Ei se mitään."
+   ]
+  },
+  {
+   "id": "gw-rakastan-sinua",
+   "source": "Ich liebe dich.",
+   "target": "Rakastan sinua.",
+   "category": "Begrüßung",
+   "level": 4
+  },
+  {
+   "id": "gw-minun-nimeni-on",
+   "source": "Ich heiße …",
+   "target": "Minun nimeni on …",
+   "category": "Begrüßung",
+   "level": 5
+  },
+  {
+   "id": "gw-olen-saksasta",
+   "source": "Ich komme aus Deutschland.",
+   "target": "Olen Saksasta.",
+   "category": "Begrüßung",
+   "level": 5
+  },
+  {
+   "id": "gw-puhun-vahan-suomea",
+   "source": "Ich spreche ein bisschen Finnisch.",
+   "target": "Puhun vähän suomea.",
+   "category": "Begrüßung",
+   "level": 5
+  },
+  {
+   "id": "gw-voitko-puhua-hitaammin",
+   "source": "Kannst du langsamer sprechen?",
+   "target": "Voitko puhua hitaammin?",
+   "category": "Begrüßung",
+   "level": 5
+  },
+  {
+   "id": "gw-paljonko-se-maksaa",
+   "source": "Was kostet das?",
+   "target": "Paljonko se maksaa?",
+   "category": "Begrüßung",
+   "level": 5,
+   "alternatives": [
+    "Paljonko tämä maksaa?"
+   ]
+  },
+  {
+   "id": "gw-saisinko",
+   "source": "Könnte ich … bekommen?",
+   "target": "Saisinko …?",
+   "category": "Begrüßung",
+   "level": 5
+  },
+  {
+   "id": "gw-paljonko-kello-on",
+   "source": "Wie spät ist es?",
+   "target": "Paljonko kello on?",
+   "category": "Begrüßung",
+   "level": 5,
+   "alternatives": [
+    "Mitä kello on?"
+   ]
+  },
+  {
+   "id": "gw-nolla",
+   "source": "null",
+   "target": "nolla",
+   "category": "Zahlen",
+   "level": 1
+  },
+  {
+   "id": "gw-yksi",
+   "source": "eins",
+   "target": "yksi",
+   "category": "Zahlen",
+   "level": 1
+  },
+  {
+   "id": "gw-kaksi",
+   "source": "zwei",
+   "target": "kaksi",
+   "category": "Zahlen",
+   "level": 1
+  },
+  {
+   "id": "gw-kolme",
+   "source": "drei",
+   "target": "kolme",
+   "category": "Zahlen",
+   "level": 1
+  },
+  {
+   "id": "gw-nelja",
+   "source": "vier",
+   "target": "neljä",
+   "category": "Zahlen",
+   "level": 1
+  },
+  {
+   "id": "gw-viisi",
+   "source": "fünf",
+   "target": "viisi",
+   "category": "Zahlen",
+   "level": 1
+  },
+  {
+   "id": "gw-kuusi",
+   "source": "sechs",
+   "target": "kuusi",
+   "category": "Zahlen",
+   "level": 1
+  },
+  {
+   "id": "gw-seitseman",
+   "source": "sieben",
+   "target": "seitsemän",
+   "category": "Zahlen",
+   "level": 1
+  },
+  {
+   "id": "gw-kahdeksan",
+   "source": "acht",
+   "target": "kahdeksan",
+   "category": "Zahlen",
+   "level": 1
+  },
+  {
+   "id": "gw-yhdeksan",
+   "source": "neun",
+   "target": "yhdeksän",
+   "category": "Zahlen",
+   "level": 1
+  },
+  {
+   "id": "gw-kymmenen",
+   "source": "zehn",
+   "target": "kymmenen",
+   "category": "Zahlen",
+   "level": 1
+  },
+  {
+   "id": "gw-miljoona",
+   "source": "die Million",
+   "target": "miljoona",
+   "category": "Zahlen",
+   "level": 1
+  },
+  {
+   "id": "gw-yksitoista",
+   "source": "elf",
+   "target": "yksitoista",
+   "category": "Zahlen",
+   "level": 2
+  },
+  {
+   "id": "gw-kaksitoista",
+   "source": "zwölf",
+   "target": "kaksitoista",
+   "category": "Zahlen",
+   "level": 2
+  },
+  {
+   "id": "gw-sata",
+   "source": "hundert",
+   "target": "sata",
+   "category": "Zahlen",
+   "level": 2
+  },
+  {
+   "id": "gw-tuhat",
+   "source": "tausend",
+   "target": "tuhat",
+   "category": "Zahlen",
+   "level": 2
+  },
+  {
+   "id": "gw-numero",
+   "source": "die Zahl",
+   "target": "numero",
+   "category": "Zahlen",
+   "level": 2,
+   "alternatives": [
+    "luku"
+   ]
+  },
+  {
+   "id": "gw-kolmetoista",
+   "source": "dreizehn",
+   "target": "kolmetoista",
+   "category": "Zahlen",
+   "level": 3
+  },
+  {
+   "id": "gw-kaksikymmenta",
+   "source": "zwanzig",
+   "target": "kaksikymmentä",
+   "category": "Zahlen",
+   "level": 3
+  },
+  {
+   "id": "gw-viisikymmenta",
+   "source": "fünfzig",
+   "target": "viisikymmentä",
+   "category": "Zahlen",
+   "level": 3
+  },
+  {
+   "id": "gw-ensimmainen",
+   "source": "der erste",
+   "target": "ensimmäinen",
+   "category": "Zahlen",
+   "level": 3
+  },
+  {
+   "id": "gw-toinen",
+   "source": "der zweite",
+   "target": "toinen",
+   "category": "Zahlen",
+   "level": 3
+  },
+  {
+   "id": "gw-kolmas",
+   "source": "der dritte",
+   "target": "kolmas",
+   "category": "Zahlen",
+   "level": 3
+  },
+  {
+   "id": "gw-puoli",
+   "source": "halb",
+   "target": "puoli",
+   "category": "Zahlen",
+   "level": 3
+  },
+  {
+   "id": "gw-nyt",
+   "source": "jetzt",
+   "target": "nyt",
+   "category": "Zeit",
+   "level": 1
+  },
+  {
+   "id": "gw-minuutti",
+   "source": "die Minute",
+   "target": "minuutti",
+   "category": "Zeit",
+   "level": 1
+  },
+  {
+   "id": "gw-sekunti",
+   "source": "die Sekunde",
+   "target": "sekunti",
+   "category": "Zeit",
+   "level": 1
+  },
+  {
+   "id": "gw-kesa",
+   "source": "der Sommer",
+   "target": "kesä",
+   "category": "Zeit",
+   "level": 1
+  },
+  {
+   "id": "gw-talvi",
+   "source": "der Winter",
+   "target": "talvi",
+   "category": "Zeit",
+   "level": 1
+  },
+  {
+   "id": "gw-paiva",
+   "source": "der Tag",
+   "target": "päivä",
+   "category": "Zeit",
+   "level": 2
+  },
+  {
+   "id": "gw-yo",
+   "source": "die Nacht",
+   "target": "yö",
+   "category": "Zeit",
+   "level": 2
+  },
+  {
+   "id": "gw-aamu",
+   "source": "der Morgen",
+   "target": "aamu",
+   "category": "Zeit",
+   "level": 2
+  },
+  {
+   "id": "gw-ilta",
+   "source": "der Abend",
+   "target": "ilta",
+   "category": "Zeit",
+   "level": 2
+  },
+  {
+   "id": "gw-viikko",
+   "source": "die Woche",
+   "target": "viikko",
+   "category": "Zeit",
+   "level": 2
+  },
+  {
+   "id": "gw-vuosi",
+   "source": "das Jahr",
+   "target": "vuosi",
+   "category": "Zeit",
+   "level": 2
+  },
+  {
+   "id": "gw-tunti",
+   "source": "die Stunde",
+   "target": "tunti",
+   "category": "Zeit",
+   "level": 2
+  },
+  {
+   "id": "gw-kello",
+   "source": "die Uhr",
+   "target": "kello",
+   "category": "Zeit",
+   "level": 2
+  },
+  {
+   "id": "gw-tanaan",
+   "source": "heute",
+   "target": "tänään",
+   "category": "Zeit",
+   "level": 2
+  },
+  {
+   "id": "gw-eilen",
+   "source": "gestern",
+   "target": "eilen",
+   "category": "Zeit",
+   "level": 2
+  },
+  {
+   "id": "gw-aina",
+   "source": "immer",
+   "target": "aina",
+   "category": "Zeit",
+   "level": 2
+  },
+  {
+   "id": "gw-kevat",
+   "source": "der Frühling",
+   "target": "kevät",
+   "category": "Zeit",
+   "level": 2
+  },
+  {
+   "id": "gw-syksy",
+   "source": "der Herbst",
+   "target": "syksy",
+   "category": "Zeit",
+   "level": 2
+  },
+  {
+   "id": "gw-maanantai",
+   "source": "der Montag",
+   "target": "maanantai",
+   "category": "Zeit",
+   "level": 2
+  },
+  {
+   "id": "gw-tiistai",
+   "source": "der Dienstag",
+   "target": "tiistai",
+   "category": "Zeit",
+   "level": 2
+  },
+  {
+   "id": "gw-torstai",
+   "source": "der Donnerstag",
+   "target": "torstai",
+   "category": "Zeit",
+   "level": 2
+  },
+  {
+   "id": "gw-perjantai",
+   "source": "der Freitag",
+   "target": "perjantai",
+   "category": "Zeit",
+   "level": 2
+  },
+  {
+   "id": "gw-lauantai",
+   "source": "der Samstag",
+   "target": "lauantai",
+   "category": "Zeit",
+   "level": 2
+  },
+  {
+   "id": "gw-sunnuntai",
+   "source": "der Sonntag",
+   "target": "sunnuntai",
+   "category": "Zeit",
+   "level": 2
+  },
+  {
+   "id": "gw-keskiviikko",
+   "source": "der Mittwoch",
+   "target": "keskiviikko",
+   "category": "Zeit",
+   "level": 3
+  },
+  {
+   "id": "gw-huomenna",
+   "source": "morgen",
+   "target": "huomenna",
+   "category": "Zeit",
+   "level": 3
+  },
+  {
+   "id": "gw-usein",
+   "source": "oft",
+   "target": "usein",
+   "category": "Zeit",
+   "level": 3
+  },
+  {
+   "id": "gw-joskus",
+   "source": "manchmal",
+   "target": "joskus",
+   "category": "Zeit",
+   "level": 3
+  },
+  {
+   "id": "gw-pian",
+   "source": "bald",
+   "target": "pian",
+   "category": "Zeit",
+   "level": 3
+  },
+  {
+   "id": "gw-myohaan",
+   "source": "spät",
+   "target": "myöhään",
+   "category": "Zeit",
+   "level": 3
+  },
+  {
+   "id": "gw-aikaisin",
+   "source": "früh",
+   "target": "aikaisin",
+   "category": "Zeit",
+   "level": 3
+  },
+  {
+   "id": "gw-aamupaiva",
+   "source": "der Vormittag",
+   "target": "aamupäivä",
+   "category": "Zeit",
+   "level": 3
+  },
+  {
+   "id": "gw-iltapaiva",
+   "source": "der Nachmittag",
+   "target": "iltapäivä",
+   "category": "Zeit",
+   "level": 3
+  },
+  {
+   "id": "gw-viikonloppu",
+   "source": "das Wochenende",
+   "target": "viikonloppu",
+   "category": "Zeit",
+   "level": 3
+  },
+  {
+   "id": "gw-kuukausi",
+   "source": "der Monat",
+   "target": "kuukausi",
+   "category": "Zeit",
+   "level": 3
+  },
+  {
+   "id": "gw-tammikuu",
+   "source": "der Januar",
+   "target": "tammikuu",
+   "category": "Zeit",
+   "level": 3
+  },
+  {
+   "id": "gw-toukokuu",
+   "source": "der Mai",
+   "target": "toukokuu",
+   "category": "Zeit",
+   "level": 3
+  },
+  {
+   "id": "gw-kesakuu",
+   "source": "der Juni",
+   "target": "kesäkuu",
+   "category": "Zeit",
+   "level": 3
+  },
+  {
+   "id": "gw-heinakuu",
+   "source": "der Juli",
+   "target": "heinäkuu",
+   "category": "Zeit",
+   "level": 3
+  },
+  {
+   "id": "gw-joulukuu",
+   "source": "der Dezember",
+   "target": "joulukuu",
+   "category": "Zeit",
+   "level": 3
+  },
+  {
+   "id": "gw-helmikuu",
+   "source": "der Februar",
+   "target": "helmikuu",
+   "category": "Zeit",
+   "level": 4
+  },
+  {
+   "id": "gw-maaliskuu",
+   "source": "der März",
+   "target": "maaliskuu",
+   "category": "Zeit",
+   "level": 4
+  },
+  {
+   "id": "gw-huhtikuu",
+   "source": "der April",
+   "target": "huhtikuu",
+   "category": "Zeit",
+   "level": 4
+  },
+  {
+   "id": "gw-elokuu",
+   "source": "der August",
+   "target": "elokuu",
+   "category": "Zeit",
+   "level": 4
+  },
+  {
+   "id": "gw-syyskuu",
+   "source": "der September",
+   "target": "syyskuu",
+   "category": "Zeit",
+   "level": 4
+  },
+  {
+   "id": "gw-lokakuu",
+   "source": "der Oktober",
+   "target": "lokakuu",
+   "category": "Zeit",
+   "level": 4
+  },
+  {
+   "id": "gw-marraskuu",
+   "source": "der November",
+   "target": "marraskuu",
+   "category": "Zeit",
+   "level": 4
+  },
+  {
+   "id": "gw-ei-koskaan",
+   "source": "nie",
+   "target": "ei koskaan",
+   "category": "Zeit",
+   "level": 4
+  },
+  {
+   "id": "gw-keskiyo",
+   "source": "die Mitternacht",
+   "target": "keskiyö",
+   "category": "Zeit",
+   "level": 4
+  },
+  {
+   "id": "gw-ylihuomenna",
+   "source": "übermorgen",
+   "target": "ylihuomenna",
+   "category": "Zeit",
+   "level": 4
+  },
+  {
+   "id": "gw-toissapaivana",
+   "source": "vorgestern",
+   "target": "toissapäivänä",
+   "category": "Zeit",
+   "level": 4
+  },
+  {
+   "id": "gw-aiti",
+   "source": "die Mutter",
+   "target": "äiti",
+   "category": "Familie & Menschen",
+   "level": 1
+  },
+  {
+   "id": "gw-isa",
+   "source": "der Vater",
+   "target": "isä",
+   "category": "Familie & Menschen",
+   "level": 1
+  },
+  {
+   "id": "gw-mies",
+   "source": "der Mann (allgemein)",
+   "target": "mies",
+   "category": "Familie & Menschen",
+   "level": 1
+  },
+  {
+   "id": "gw-vauva",
+   "source": "das Baby",
+   "target": "vauva",
+   "category": "Familie & Menschen",
+   "level": 1
+  },
+  {
+   "id": "gw-nainen",
+   "source": "die Frau (allgemein)",
+   "target": "nainen",
+   "category": "Familie & Menschen",
+   "level": 2
+  },
+  {
+   "id": "gw-veli",
+   "source": "der Bruder",
+   "target": "veli",
+   "category": "Familie & Menschen",
+   "level": 2
+  },
+  {
+   "id": "gw-sisko",
+   "source": "die Schwester",
+   "target": "sisko",
+   "category": "Familie & Menschen",
+   "level": 2,
+   "alternatives": [
+    "sisar"
+   ]
+  },
+  {
+   "id": "gw-lapsi",
+   "source": "das Kind",
+   "target": "lapsi",
+   "category": "Familie & Menschen",
+   "level": 2
+  },
+  {
+   "id": "gw-poika",
+   "source": "der Sohn",
+   "target": "poika",
+   "category": "Familie & Menschen",
+   "level": 2
+  },
+  {
+   "id": "gw-tytto",
+   "source": "das Mädchen",
+   "target": "tyttö",
+   "category": "Familie & Menschen",
+   "level": 2
+  },
+  {
+   "id": "gw-perhe",
+   "source": "die Familie",
+   "target": "perhe",
+   "category": "Familie & Menschen",
+   "level": 2
+  },
+  {
+   "id": "gw-ystava",
+   "source": "der Freund (Kumpel)",
+   "target": "ystävä",
+   "category": "Familie & Menschen",
+   "level": 2,
+   "alternatives": [
+    "kaveri"
+   ]
+  },
+  {
+   "id": "gw-nimi",
+   "source": "der Name",
+   "target": "nimi",
+   "category": "Familie & Menschen",
+   "level": 2
+  },
+  {
+   "id": "gw-tytar",
+   "source": "die Tochter",
+   "target": "tytär",
+   "category": "Familie & Menschen",
+   "level": 3
+  },
+  {
+   "id": "gw-isoaiti",
+   "source": "die Großmutter",
+   "target": "isoäiti",
+   "category": "Familie & Menschen",
+   "level": 3,
+   "alternatives": [
+    "mummo"
+   ]
+  },
+  {
+   "id": "gw-isoisa",
+   "source": "der Großvater",
+   "target": "isoisä",
+   "category": "Familie & Menschen",
+   "level": 3,
+   "alternatives": [
+    "vaari",
+    "pappa"
+   ]
+  },
+  {
+   "id": "gw-vanhemmat",
+   "source": "die Eltern",
+   "target": "vanhemmat",
+   "category": "Familie & Menschen",
+   "level": 3
+  },
+  {
+   "id": "gw-naapuri",
+   "source": "der Nachbar",
+   "target": "naapuri",
+   "category": "Familie & Menschen",
+   "level": 3
+  },
+  {
+   "id": "gw-vaimo",
+   "source": "die Ehefrau",
+   "target": "vaimo",
+   "category": "Familie & Menschen",
+   "level": 3
+  },
+  {
+   "id": "gw-tati",
+   "source": "die Tante",
+   "target": "täti",
+   "category": "Familie & Menschen",
+   "level": 3
+  },
+  {
+   "id": "gw-ihminen",
+   "source": "der Mensch",
+   "target": "ihminen",
+   "category": "Familie & Menschen",
+   "level": 3
+  },
+  {
+   "id": "gw-ihmiset",
+   "source": "die Leute",
+   "target": "ihmiset",
+   "category": "Familie & Menschen",
+   "level": 3
+  },
+  {
+   "id": "gw-ika",
+   "source": "das Alter",
+   "target": "ikä",
+   "category": "Familie & Menschen",
+   "level": 3
+  },
+  {
+   "id": "gw-aviomies",
+   "source": "der Ehemann",
+   "target": "aviomies",
+   "category": "Familie & Menschen",
+   "level": 4
+  },
+  {
+   "id": "gw-seta",
+   "source": "der Onkel",
+   "target": "setä",
+   "category": "Familie & Menschen",
+   "level": 4,
+   "alternatives": [
+    "eno"
+   ]
+  },
+  {
+   "id": "gw-serkku",
+   "source": "der Cousin",
+   "target": "serkku",
+   "category": "Familie & Menschen",
+   "level": 4
+  },
+  {
+   "id": "gw-poikaystava",
+   "source": "der (feste) Freund",
+   "target": "poikaystävä",
+   "category": "Familie & Menschen",
+   "level": 4
+  },
+  {
+   "id": "gw-tyttoystava",
+   "source": "die (feste) Freundin",
+   "target": "tyttöystävä",
+   "category": "Familie & Menschen",
+   "level": 4
+  },
+  {
+   "id": "gw-sukunimi",
+   "source": "der Nachname",
+   "target": "sukunimi",
+   "category": "Familie & Menschen",
+   "level": 4
+  },
+  {
+   "id": "gw-paa",
+   "source": "der Kopf",
+   "target": "pää",
+   "category": "Körper & Gesundheit",
+   "level": 2
+  },
+  {
+   "id": "gw-silma",
+   "source": "das Auge",
+   "target": "silmä",
+   "category": "Körper & Gesundheit",
+   "level": 2
+  },
+  {
+   "id": "gw-korva",
+   "source": "das Ohr",
+   "target": "korva",
+   "category": "Körper & Gesundheit",
+   "level": 2
+  },
+  {
+   "id": "gw-nena",
+   "source": "die Nase",
+   "target": "nenä",
+   "category": "Körper & Gesundheit",
+   "level": 2
+  },
+  {
+   "id": "gw-suu",
+   "source": "der Mund",
+   "target": "suu",
+   "category": "Körper & Gesundheit",
+   "level": 2
+  },
+  {
+   "id": "gw-kasi",
+   "source": "die Hand",
+   "target": "käsi",
+   "category": "Körper & Gesundheit",
+   "level": 2
+  },
+  {
+   "id": "gw-jalka",
+   "source": "der Fuß, das Bein",
+   "target": "jalka",
+   "category": "Körper & Gesundheit",
+   "level": 2
+  },
+  {
+   "id": "gw-laakari",
+   "source": "der Arzt",
+   "target": "lääkäri",
+   "category": "Körper & Gesundheit",
+   "level": 2
+  },
+  {
+   "id": "gw-hammas",
+   "source": "der Zahn",
+   "target": "hammas",
+   "category": "Körper & Gesundheit",
+   "level": 3
+  },
+  {
+   "id": "gw-hiukset",
+   "source": "die Haare",
+   "target": "hiukset",
+   "category": "Körper & Gesundheit",
+   "level": 3
+  },
+  {
+   "id": "gw-sydan",
+   "source": "das Herz",
+   "target": "sydän",
+   "category": "Körper & Gesundheit",
+   "level": 3
+  },
+  {
+   "id": "gw-vatsa",
+   "source": "der Bauch",
+   "target": "vatsa",
+   "category": "Körper & Gesundheit",
+   "level": 3
+  },
+  {
+   "id": "gw-selka",
+   "source": "der Rücken",
+   "target": "selkä",
+   "category": "Körper & Gesundheit",
+   "level": 3
+  },
+  {
+   "id": "gw-sormi",
+   "source": "der Finger",
+   "target": "sormi",
+   "category": "Körper & Gesundheit",
+   "level": 3
+  },
+  {
+   "id": "gw-kaula",
+   "source": "der Hals",
+   "target": "kaula",
+   "category": "Körper & Gesundheit",
+   "level": 3,
+   "alternatives": [
+    "kurkku"
+   ]
+  },
+  {
+   "id": "gw-sairas",
+   "source": "krank",
+   "target": "sairas",
+   "category": "Körper & Gesundheit",
+   "level": 3,
+   "alternatives": [
+    "kipeä"
+   ]
+  },
+  {
+   "id": "gw-terve",
+   "source": "gesund",
+   "target": "terve",
+   "category": "Körper & Gesundheit",
+   "level": 3
+  },
+  {
+   "id": "gw-kipu",
+   "source": "der Schmerz",
+   "target": "kipu",
+   "category": "Körper & Gesundheit",
+   "level": 3
+  },
+  {
+   "id": "gw-laake",
+   "source": "das Medikament",
+   "target": "lääke",
+   "category": "Körper & Gesundheit",
+   "level": 3
+  },
+  {
+   "id": "gw-apteekki",
+   "source": "die Apotheke",
+   "target": "apteekki",
+   "category": "Körper & Gesundheit",
+   "level": 3
+  },
+  {
+   "id": "gw-sairaala",
+   "source": "das Krankenhaus",
+   "target": "sairaala",
+   "category": "Körper & Gesundheit",
+   "level": 3
+  },
+  {
+   "id": "gw-olkapaa",
+   "source": "die Schulter",
+   "target": "olkapää",
+   "category": "Körper & Gesundheit",
+   "level": 4
+  },
+  {
+   "id": "gw-polvi",
+   "source": "das Knie",
+   "target": "polvi",
+   "category": "Körper & Gesundheit",
+   "level": 4
+  },
+  {
+   "id": "gw-kasvot",
+   "source": "das Gesicht",
+   "target": "kasvot",
+   "category": "Körper & Gesundheit",
+   "level": 4
+  },
+  {
+   "id": "gw-kuume",
+   "source": "das Fieber",
+   "target": "kuume",
+   "category": "Körper & Gesundheit",
+   "level": 4
+  },
+  {
+   "id": "gw-flunssa",
+   "source": "die Erkältung",
+   "target": "flunssa",
+   "category": "Körper & Gesundheit",
+   "level": 4
+  },
+  {
+   "id": "gw-paansarky",
+   "source": "die Kopfschmerzen",
+   "target": "päänsärky",
+   "category": "Körper & Gesundheit",
+   "level": 4
+  },
+  {
+   "id": "gw-leipa",
+   "source": "das Brot",
+   "target": "leipä",
+   "category": "Essen & Trinken",
+   "level": 1
+  },
+  {
+   "id": "gw-maito",
+   "source": "die Milch",
+   "target": "maito",
+   "category": "Essen & Trinken",
+   "level": 1
+  },
+  {
+   "id": "gw-vesi",
+   "source": "das Wasser",
+   "target": "vesi",
+   "category": "Essen & Trinken",
+   "level": 1
+  },
+  {
+   "id": "gw-kahvi",
+   "source": "der Kaffee",
+   "target": "kahvi",
+   "category": "Essen & Trinken",
+   "level": 1
+  },
+  {
+   "id": "gw-tee",
+   "source": "der Tee",
+   "target": "tee",
+   "category": "Essen & Trinken",
+   "level": 1
+  },
+  {
+   "id": "gw-banaani",
+   "source": "die Banane",
+   "target": "banaani",
+   "category": "Essen & Trinken",
+   "level": 1
+  },
+  {
+   "id": "gw-appelsiini",
+   "source": "die Orange",
+   "target": "appelsiini",
+   "category": "Essen & Trinken",
+   "level": 1
+  },
+  {
+   "id": "gw-tomaatti",
+   "source": "die Tomate",
+   "target": "tomaatti",
+   "category": "Essen & Trinken",
+   "level": 1
+  },
+  {
+   "id": "gw-salaatti",
+   "source": "der Salat",
+   "target": "salaatti",
+   "category": "Essen & Trinken",
+   "level": 1
+  },
+  {
+   "id": "gw-kala",
+   "source": "der Fisch",
+   "target": "kala",
+   "category": "Essen & Trinken",
+   "level": 1
+  },
+  {
+   "id": "gw-riisi",
+   "source": "der Reis",
+   "target": "riisi",
+   "category": "Essen & Trinken",
+   "level": 1
+  },
+  {
+   "id": "gw-pasta",
+   "source": "die Nudeln",
+   "target": "pasta",
+   "category": "Essen & Trinken",
+   "level": 1
+  },
+  {
+   "id": "gw-sokeri",
+   "source": "der Zucker",
+   "target": "sokeri",
+   "category": "Essen & Trinken",
+   "level": 1
+  },
+  {
+   "id": "gw-pippuri",
+   "source": "der Pfeffer",
+   "target": "pippuri",
+   "category": "Essen & Trinken",
+   "level": 1
+  },
+  {
+   "id": "gw-kakku",
+   "source": "der Kuchen",
+   "target": "kakku",
+   "category": "Essen & Trinken",
+   "level": 1
+  },
+  {
+   "id": "gw-suklaa",
+   "source": "die Schokolade",
+   "target": "suklaa",
+   "category": "Essen & Trinken",
+   "level": 1
+  },
+  {
+   "id": "gw-viini",
+   "source": "der Wein",
+   "target": "viini",
+   "category": "Essen & Trinken",
+   "level": 1
+  },
+  {
+   "id": "gw-jogurtti",
+   "source": "der Joghurt",
+   "target": "jogurtti",
+   "category": "Essen & Trinken",
+   "level": 1
+  },
+  {
+   "id": "gw-kahvila",
+   "source": "das Café",
+   "target": "kahvila",
+   "category": "Essen & Trinken",
+   "level": 1
+  },
+  {
+   "id": "gw-lasi",
+   "source": "das Glas",
+   "target": "lasi",
+   "category": "Essen & Trinken",
+   "level": 1
+  },
+  {
+   "id": "gw-juusto",
+   "source": "der Käse",
+   "target": "juusto",
+   "category": "Essen & Trinken",
+   "level": 2
+  },
+  {
+   "id": "gw-voi",
+   "source": "die Butter",
+   "target": "voi",
+   "category": "Essen & Trinken",
+   "level": 2
+  },
+  {
+   "id": "gw-muna",
+   "source": "das Ei",
+   "target": "muna",
+   "category": "Essen & Trinken",
+   "level": 2
+  },
+  {
+   "id": "gw-omena",
+   "source": "der Apfel",
+   "target": "omena",
+   "category": "Essen & Trinken",
+   "level": 2
+  },
+  {
+   "id": "gw-peruna",
+   "source": "die Kartoffel",
+   "target": "peruna",
+   "category": "Essen & Trinken",
+   "level": 2
+  },
+  {
+   "id": "gw-porkkana",
+   "source": "die Möhre",
+   "target": "porkkana",
+   "category": "Essen & Trinken",
+   "level": 2
+  },
+  {
+   "id": "gw-kurkku",
+   "source": "die Gurke",
+   "target": "kurkku",
+   "category": "Essen & Trinken",
+   "level": 2
+  },
+  {
+   "id": "gw-sipuli",
+   "source": "die Zwiebel",
+   "target": "sipuli",
+   "category": "Essen & Trinken",
+   "level": 2
+  },
+  {
+   "id": "gw-liha",
+   "source": "das Fleisch",
+   "target": "liha",
+   "category": "Essen & Trinken",
+   "level": 2
+  },
+  {
+   "id": "gw-kana",
+   "source": "das Huhn (Fleisch)",
+   "target": "kana",
+   "category": "Essen & Trinken",
+   "level": 2
+  },
+  {
+   "id": "gw-makkara",
+   "source": "die Wurst",
+   "target": "makkara",
+   "category": "Essen & Trinken",
+   "level": 2
+  },
+  {
+   "id": "gw-keitto",
+   "source": "die Suppe",
+   "target": "keitto",
+   "category": "Essen & Trinken",
+   "level": 2
+  },
+  {
+   "id": "gw-suola",
+   "source": "das Salz",
+   "target": "suola",
+   "category": "Essen & Trinken",
+   "level": 2
+  },
+  {
+   "id": "gw-mehu",
+   "source": "der Saft",
+   "target": "mehu",
+   "category": "Essen & Trinken",
+   "level": 2
+  },
+  {
+   "id": "gw-olut",
+   "source": "das Bier",
+   "target": "olut",
+   "category": "Essen & Trinken",
+   "level": 2
+  },
+  {
+   "id": "gw-marja",
+   "source": "die Beere",
+   "target": "marja",
+   "category": "Essen & Trinken",
+   "level": 2
+  },
+  {
+   "id": "gw-mustikka",
+   "source": "die Heidelbeere",
+   "target": "mustikka",
+   "category": "Essen & Trinken",
+   "level": 2
+  },
+  {
+   "id": "gw-sieni",
+   "source": "der Pilz",
+   "target": "sieni",
+   "category": "Essen & Trinken",
+   "level": 2
+  },
+  {
+   "id": "gw-lohi",
+   "source": "der Lachs",
+   "target": "lohi",
+   "category": "Essen & Trinken",
+   "level": 2
+  },
+  {
+   "id": "gw-kaali",
+   "source": "der Kohl",
+   "target": "kaali",
+   "category": "Essen & Trinken",
+   "level": 2
+  },
+  {
+   "id": "gw-ruoka",
+   "source": "das Essen",
+   "target": "ruoka",
+   "category": "Essen & Trinken",
+   "level": 2
+  },
+  {
+   "id": "gw-kuppi",
+   "source": "die Tasse",
+   "target": "kuppi",
+   "category": "Essen & Trinken",
+   "level": 2
+  },
+  {
+   "id": "gw-pullo",
+   "source": "die Flasche",
+   "target": "pullo",
+   "category": "Essen & Trinken",
+   "level": 2
+  },
+  {
+   "id": "gw-jaatelo",
+   "source": "das Eis (zum Essen)",
+   "target": "jäätelö",
+   "category": "Essen & Trinken",
+   "level": 3
+  },
+  {
+   "id": "gw-pulla",
+   "source": "das Hefegebäck",
+   "target": "pulla",
+   "category": "Essen & Trinken",
+   "level": 3
+  },
+  {
+   "id": "gw-mansikka",
+   "source": "die Erdbeere",
+   "target": "mansikka",
+   "category": "Essen & Trinken",
+   "level": 3
+  },
+  {
+   "id": "gw-hunaja",
+   "source": "der Honig",
+   "target": "hunaja",
+   "category": "Essen & Trinken",
+   "level": 3
+  },
+  {
+   "id": "gw-herne",
+   "source": "die Erbse",
+   "target": "herne",
+   "category": "Essen & Trinken",
+   "level": 3
+  },
+  {
+   "id": "gw-aamiainen",
+   "source": "das Frühstück",
+   "target": "aamiainen",
+   "category": "Essen & Trinken",
+   "level": 3,
+   "alternatives": [
+    "aamupala"
+   ]
+  },
+  {
+   "id": "gw-lounas",
+   "source": "das Mittagessen",
+   "target": "lounas",
+   "category": "Essen & Trinken",
+   "level": 3
+  },
+  {
+   "id": "gw-ravintola",
+   "source": "das Restaurant",
+   "target": "ravintola",
+   "category": "Essen & Trinken",
+   "level": 3
+  },
+  {
+   "id": "gw-lautanen",
+   "source": "der Teller",
+   "target": "lautanen",
+   "category": "Essen & Trinken",
+   "level": 3
+  },
+  {
+   "id": "gw-haarukka",
+   "source": "die Gabel",
+   "target": "haarukka",
+   "category": "Essen & Trinken",
+   "level": 3
+  },
+  {
+   "id": "gw-veitsi",
+   "source": "das Messer",
+   "target": "veitsi",
+   "category": "Essen & Trinken",
+   "level": 3
+  },
+  {
+   "id": "gw-lusikka",
+   "source": "der Löffel",
+   "target": "lusikka",
+   "category": "Essen & Trinken",
+   "level": 3
+  },
+  {
+   "id": "gw-nalka",
+   "source": "der Hunger",
+   "target": "nälkä",
+   "category": "Essen & Trinken",
+   "level": 3
+  },
+  {
+   "id": "gw-jano",
+   "source": "der Durst",
+   "target": "jano",
+   "category": "Essen & Trinken",
+   "level": 3
+  },
+  {
+   "id": "gw-makea",
+   "source": "süß",
+   "target": "makea",
+   "category": "Essen & Trinken",
+   "level": 3
+  },
+  {
+   "id": "gw-puolukka",
+   "source": "die Preiselbeere",
+   "target": "puolukka",
+   "category": "Essen & Trinken",
+   "level": 4
+  },
+  {
+   "id": "gw-illallinen",
+   "source": "das Abendessen",
+   "target": "illallinen",
+   "category": "Essen & Trinken",
+   "level": 4,
+   "alternatives": [
+    "päivällinen"
+   ]
+  },
+  {
+   "id": "gw-ruisleipa",
+   "source": "das Roggenbrot",
+   "target": "ruisleipä",
+   "category": "Essen & Trinken",
+   "level": 4
+  },
+  {
+   "id": "gw-herkullinen",
+   "source": "lecker",
+   "target": "herkullinen",
+   "category": "Essen & Trinken",
+   "level": 4,
+   "alternatives": [
+    "maukas"
+   ]
+  },
+  {
+   "id": "gw-hapan",
+   "source": "sauer",
+   "target": "hapan",
+   "category": "Essen & Trinken",
+   "level": 4
+  },
+  {
+   "id": "gw-suolainen",
+   "source": "salzig",
+   "target": "suolainen",
+   "category": "Essen & Trinken",
+   "level": 4
+  },
+  {
+   "id": "gw-keittaa",
+   "source": "kochen (Kaffee, Suppe)",
+   "target": "keittää",
+   "category": "Essen & Trinken",
+   "level": 4
+  },
+  {
+   "id": "gw-paistaa",
+   "source": "braten",
+   "target": "paistaa",
+   "category": "Essen & Trinken",
+   "level": 4
+  },
+  {
+   "id": "gw-leikata",
+   "source": "schneiden",
+   "target": "leikata",
+   "category": "Essen & Trinken",
+   "level": 4
+  },
+  {
+   "id": "gw-karjalanpiirakka",
+   "source": "die karelische Pirogge",
+   "target": "karjalanpiirakka",
+   "category": "Essen & Trinken",
+   "level": 4
+  },
+  {
+   "id": "gw-laittaa-ruokaa",
+   "source": "Essen machen",
+   "target": "laittaa ruokaa",
+   "category": "Essen & Trinken",
+   "level": 5,
+   "alternatives": [
+    "tehdä ruokaa"
+   ]
+  },
+  {
+   "id": "gw-talo",
+   "source": "das Haus",
+   "target": "talo",
+   "category": "Wohnen",
+   "level": 1
+  },
+  {
+   "id": "gw-sauna",
+   "source": "die Sauna",
+   "target": "sauna",
+   "category": "Wohnen",
+   "level": 1
+  },
+  {
+   "id": "gw-sohva",
+   "source": "das Sofa",
+   "target": "sohva",
+   "category": "Wohnen",
+   "level": 1
+  },
+  {
+   "id": "gw-lamppu",
+   "source": "die Lampe",
+   "target": "lamppu",
+   "category": "Wohnen",
+   "level": 1
+  },
+  {
+   "id": "gw-koti",
+   "source": "das Zuhause",
+   "target": "koti",
+   "category": "Wohnen",
+   "level": 2
+  },
+  {
+   "id": "gw-huone",
+   "source": "das Zimmer",
+   "target": "huone",
+   "category": "Wohnen",
+   "level": 2
+  },
+  {
+   "id": "gw-vessa",
+   "source": "die Toilette",
+   "target": "vessa",
+   "category": "Wohnen",
+   "level": 2
+  },
+  {
+   "id": "gw-ovi",
+   "source": "die Tür",
+   "target": "ovi",
+   "category": "Wohnen",
+   "level": 2
+  },
+  {
+   "id": "gw-poyta",
+   "source": "der Tisch",
+   "target": "pöytä",
+   "category": "Wohnen",
+   "level": 2
+  },
+  {
+   "id": "gw-tuoli",
+   "source": "der Stuhl",
+   "target": "tuoli",
+   "category": "Wohnen",
+   "level": 2
+  },
+  {
+   "id": "gw-sanky",
+   "source": "das Bett",
+   "target": "sänky",
+   "category": "Wohnen",
+   "level": 2
+  },
+  {
+   "id": "gw-asunto",
+   "source": "die Wohnung",
+   "target": "asunto",
+   "category": "Wohnen",
+   "level": 3
+  },
+  {
+   "id": "gw-keittio",
+   "source": "die Küche",
+   "target": "keittiö",
+   "category": "Wohnen",
+   "level": 3
+  },
+  {
+   "id": "gw-ikkuna",
+   "source": "das Fenster",
+   "target": "ikkuna",
+   "category": "Wohnen",
+   "level": 3
+  },
+  {
+   "id": "gw-kaappi",
+   "source": "der Schrank",
+   "target": "kaappi",
+   "category": "Wohnen",
+   "level": 3
+  },
+  {
+   "id": "gw-avain",
+   "source": "der Schlüssel",
+   "target": "avain",
+   "category": "Wohnen",
+   "level": 3
+  },
+  {
+   "id": "gw-katto",
+   "source": "das Dach",
+   "target": "katto",
+   "category": "Wohnen",
+   "level": 3
+  },
+  {
+   "id": "gw-lattia",
+   "source": "der Fußboden",
+   "target": "lattia",
+   "category": "Wohnen",
+   "level": 3
+  },
+  {
+   "id": "gw-seina",
+   "source": "die Wand",
+   "target": "seinä",
+   "category": "Wohnen",
+   "level": 3
+  },
+  {
+   "id": "gw-piha",
+   "source": "der Hof",
+   "target": "piha",
+   "category": "Wohnen",
+   "level": 3
+  },
+  {
+   "id": "gw-puutarha",
+   "source": "der Garten",
+   "target": "puutarha",
+   "category": "Wohnen",
+   "level": 3,
+   "alternatives": [
+    "piha"
+   ]
+  },
+  {
+   "id": "gw-hissi",
+   "source": "der Aufzug",
+   "target": "hissi",
+   "category": "Wohnen",
+   "level": 3
+  },
+  {
+   "id": "gw-mokki",
+   "source": "das Ferienhäuschen",
+   "target": "mökki",
+   "category": "Wohnen",
+   "level": 3
+  },
+  {
+   "id": "gw-makuuhuone",
+   "source": "das Schlafzimmer",
+   "target": "makuuhuone",
+   "category": "Wohnen",
+   "level": 4
+  },
+  {
+   "id": "gw-olohuone",
+   "source": "das Wohnzimmer",
+   "target": "olohuone",
+   "category": "Wohnen",
+   "level": 4
+  },
+  {
+   "id": "gw-kylpyhuone",
+   "source": "das Badezimmer",
+   "target": "kylpyhuone",
+   "category": "Wohnen",
+   "level": 4
+  },
+  {
+   "id": "gw-jaakaappi",
+   "source": "der Kühlschrank",
+   "target": "jääkaappi",
+   "category": "Wohnen",
+   "level": 4
+  },
+  {
+   "id": "gw-liesi",
+   "source": "der Herd",
+   "target": "liesi",
+   "category": "Wohnen",
+   "level": 4,
+   "alternatives": [
+    "hella"
+   ]
+  },
+  {
+   "id": "gw-parveke",
+   "source": "der Balkon",
+   "target": "parveke",
+   "category": "Wohnen",
+   "level": 4
+  },
+  {
+   "id": "gw-portaat",
+   "source": "die Treppe",
+   "target": "portaat",
+   "category": "Wohnen",
+   "level": 4
+  },
+  {
+   "id": "gw-kerros",
+   "source": "das Stockwerk",
+   "target": "kerros",
+   "category": "Wohnen",
+   "level": 4
+  },
+  {
+   "id": "gw-vuokra",
+   "source": "die Miete",
+   "target": "vuokra",
+   "category": "Wohnen",
+   "level": 4
+  },
+  {
+   "id": "gw-pankki",
+   "source": "die Bank (Geld)",
+   "target": "pankki",
+   "category": "Stadt & Länder",
+   "level": 1
+  },
+  {
+   "id": "gw-posti",
+   "source": "die Post",
+   "target": "posti",
+   "category": "Stadt & Länder",
+   "level": 1
+  },
+  {
+   "id": "gw-museo",
+   "source": "das Museum",
+   "target": "museo",
+   "category": "Stadt & Länder",
+   "level": 1
+  },
+  {
+   "id": "gw-hotelli",
+   "source": "das Hotel",
+   "target": "hotelli",
+   "category": "Stadt & Länder",
+   "level": 1
+  },
+  {
+   "id": "gw-kioski",
+   "source": "der Kiosk",
+   "target": "kioski",
+   "category": "Stadt & Länder",
+   "level": 1
+  },
+  {
+   "id": "gw-teatteri",
+   "source": "das Theater",
+   "target": "teatteri",
+   "category": "Stadt & Länder",
+   "level": 1
+  },
+  {
+   "id": "gw-suomi",
+   "source": "Finnland",
+   "target": "Suomi",
+   "category": "Stadt & Länder",
+   "level": 1
+  },
+  {
+   "id": "gw-kaupunki",
+   "source": "die Stadt",
+   "target": "kaupunki",
+   "category": "Stadt & Länder",
+   "level": 2
+  },
+  {
+   "id": "gw-kyla",
+   "source": "das Dorf",
+   "target": "kylä",
+   "category": "Stadt & Länder",
+   "level": 2
+  },
+  {
+   "id": "gw-katu",
+   "source": "die Straße",
+   "target": "katu",
+   "category": "Stadt & Länder",
+   "level": 2,
+   "alternatives": [
+    "tie"
+   ]
+  },
+  {
+   "id": "gw-tie",
+   "source": "der Weg",
+   "target": "tie",
+   "category": "Stadt & Länder",
+   "level": 2
+  },
+  {
+   "id": "gw-kauppa",
+   "source": "der Laden",
+   "target": "kauppa",
+   "category": "Stadt & Länder",
+   "level": 2
+  },
+  {
+   "id": "gw-koulu",
+   "source": "die Schule",
+   "target": "koulu",
+   "category": "Stadt & Länder",
+   "level": 2
+  },
+  {
+   "id": "gw-puisto",
+   "source": "der Park",
+   "target": "puisto",
+   "category": "Stadt & Länder",
+   "level": 2
+  },
+  {
+   "id": "gw-poliisi",
+   "source": "die Polizei",
+   "target": "poliisi",
+   "category": "Stadt & Länder",
+   "level": 2
+  },
+  {
+   "id": "gw-maa",
+   "source": "das Land",
+   "target": "maa",
+   "category": "Stadt & Länder",
+   "level": 2
+  },
+  {
+   "id": "gw-saksa",
+   "source": "Deutschland",
+   "target": "Saksa",
+   "category": "Stadt & Länder",
+   "level": 2
+  },
+  {
+   "id": "gw-englanti",
+   "source": "England",
+   "target": "Englanti",
+   "category": "Stadt & Länder",
+   "level": 2
+  },
+  {
+   "id": "gw-espanja",
+   "source": "Spanien",
+   "target": "Espanja",
+   "category": "Stadt & Länder",
+   "level": 2
+  },
+  {
+   "id": "gw-tori",
+   "source": "der Marktplatz",
+   "target": "tori",
+   "category": "Stadt & Länder",
+   "level": 3
+  },
+  {
+   "id": "gw-kirjasto",
+   "source": "die Bibliothek",
+   "target": "kirjasto",
+   "category": "Stadt & Länder",
+   "level": 3
+  },
+  {
+   "id": "gw-kirkko",
+   "source": "die Kirche",
+   "target": "kirkko",
+   "category": "Stadt & Länder",
+   "level": 3
+  },
+  {
+   "id": "gw-rautatieasema",
+   "source": "der Bahnhof",
+   "target": "rautatieasema",
+   "category": "Stadt & Länder",
+   "level": 3,
+   "alternatives": [
+    "asema"
+   ]
+  },
+  {
+   "id": "gw-lentokentta",
+   "source": "der Flughafen",
+   "target": "lentokenttä",
+   "category": "Stadt & Länder",
+   "level": 3
+  },
+  {
+   "id": "gw-satama",
+   "source": "der Hafen",
+   "target": "satama",
+   "category": "Stadt & Länder",
+   "level": 3
+  },
+  {
+   "id": "gw-silta",
+   "source": "die Brücke",
+   "target": "silta",
+   "category": "Stadt & Länder",
+   "level": 3
+  },
+  {
+   "id": "gw-keskusta",
+   "source": "das Zentrum",
+   "target": "keskusta",
+   "category": "Stadt & Länder",
+   "level": 3
+  },
+  {
+   "id": "gw-toimisto",
+   "source": "das Büro",
+   "target": "toimisto",
+   "category": "Stadt & Länder",
+   "level": 3
+  },
+  {
+   "id": "gw-ruotsi",
+   "source": "Schweden",
+   "target": "Ruotsi",
+   "category": "Stadt & Länder",
+   "level": 3
+  },
+  {
+   "id": "gw-norja",
+   "source": "Norwegen",
+   "target": "Norja",
+   "category": "Stadt & Länder",
+   "level": 3
+  },
+  {
+   "id": "gw-ranska",
+   "source": "Frankreich",
+   "target": "Ranska",
+   "category": "Stadt & Länder",
+   "level": 3
+  },
+  {
+   "id": "gw-tavaratalo",
+   "source": "das Kaufhaus",
+   "target": "tavaratalo",
+   "category": "Stadt & Länder",
+   "level": 4
+  },
+  {
+   "id": "gw-ruokakauppa",
+   "source": "das Lebensmittelgeschäft",
+   "target": "ruokakauppa",
+   "category": "Stadt & Länder",
+   "level": 4
+  },
+  {
+   "id": "gw-elokuvateatteri",
+   "source": "das Kino",
+   "target": "elokuvateatteri",
+   "category": "Stadt & Länder",
+   "level": 4
+  },
+  {
+   "id": "gw-tehdas",
+   "source": "die Fabrik",
+   "target": "tehdas",
+   "category": "Stadt & Länder",
+   "level": 4
+  },
+  {
+   "id": "gw-uimahalli",
+   "source": "die Schwimmhalle",
+   "target": "uimahalli",
+   "category": "Stadt & Länder",
+   "level": 4
+  },
+  {
+   "id": "gw-kuntosali",
+   "source": "das Fitnessstudio",
+   "target": "kuntosali",
+   "category": "Stadt & Länder",
+   "level": 4
+  },
+  {
+   "id": "gw-viro",
+   "source": "Estland",
+   "target": "Viro",
+   "category": "Stadt & Länder",
+   "level": 4
+  },
+  {
+   "id": "gw-venaja",
+   "source": "Russland",
+   "target": "Venäjä",
+   "category": "Stadt & Länder",
+   "level": 4
+  },
+  {
+   "id": "gw-suomen-kieli",
+   "source": "Finnisch (Sprache)",
+   "target": "suomen kieli",
+   "category": "Stadt & Länder",
+   "level": 4,
+   "alternatives": [
+    "suomi"
+   ]
+  },
+  {
+   "id": "gw-kampaamo",
+   "source": "der Friseursalon",
+   "target": "kampaamo",
+   "category": "Stadt & Länder",
+   "level": 4
+  },
+  {
+   "id": "gw-auto",
+   "source": "das Auto",
+   "target": "auto",
+   "category": "Unterwegs",
+   "level": 1
+  },
+  {
+   "id": "gw-bussi",
+   "source": "der Bus",
+   "target": "bussi",
+   "category": "Unterwegs",
+   "level": 1
+  },
+  {
+   "id": "gw-taksi",
+   "source": "das Taxi",
+   "target": "taksi",
+   "category": "Unterwegs",
+   "level": 1
+  },
+  {
+   "id": "gw-metro",
+   "source": "die U-Bahn",
+   "target": "metro",
+   "category": "Unterwegs",
+   "level": 1
+  },
+  {
+   "id": "gw-passi",
+   "source": "der Pass",
+   "target": "passi",
+   "category": "Unterwegs",
+   "level": 1
+  },
+  {
+   "id": "gw-juna",
+   "source": "der Zug",
+   "target": "juna",
+   "category": "Unterwegs",
+   "level": 2
+  },
+  {
+   "id": "gw-laiva",
+   "source": "das Schiff",
+   "target": "laiva",
+   "category": "Unterwegs",
+   "level": 2
+  },
+  {
+   "id": "gw-vene",
+   "source": "das Boot",
+   "target": "vene",
+   "category": "Unterwegs",
+   "level": 2
+  },
+  {
+   "id": "gw-matka",
+   "source": "die Reise",
+   "target": "matka",
+   "category": "Unterwegs",
+   "level": 2
+  },
+  {
+   "id": "gw-kartta",
+   "source": "die Landkarte",
+   "target": "kartta",
+   "category": "Unterwegs",
+   "level": 2
+  },
+  {
+   "id": "gw-polkupyora",
+   "source": "das Fahrrad",
+   "target": "polkupyörä",
+   "category": "Unterwegs",
+   "level": 3,
+   "alternatives": [
+    "pyörä"
+   ]
+  },
+  {
+   "id": "gw-lentokone",
+   "source": "das Flugzeug",
+   "target": "lentokone",
+   "category": "Unterwegs",
+   "level": 3
+  },
+  {
+   "id": "gw-lippu",
+   "source": "die Fahrkarte",
+   "target": "lippu",
+   "category": "Unterwegs",
+   "level": 3
+  },
+  {
+   "id": "gw-pysakki",
+   "source": "die Haltestelle",
+   "target": "pysäkki",
+   "category": "Unterwegs",
+   "level": 3
+  },
+  {
+   "id": "gw-taalla",
+   "source": "hier",
+   "target": "täällä",
+   "category": "Unterwegs",
+   "level": 3
+  },
+  {
+   "id": "gw-siella",
+   "source": "dort",
+   "target": "siellä",
+   "category": "Unterwegs",
+   "level": 3
+  },
+  {
+   "id": "gw-raitiovaunu",
+   "source": "die Straßenbahn",
+   "target": "raitiovaunu",
+   "category": "Unterwegs",
+   "level": 4,
+   "alternatives": [
+    "ratikka"
+   ]
+  },
+  {
+   "id": "gw-matkalaukku",
+   "source": "der Koffer",
+   "target": "matkalaukku",
+   "category": "Unterwegs",
+   "level": 4
+  },
+  {
+   "id": "gw-oikealla",
+   "source": "rechts",
+   "target": "oikealla",
+   "category": "Unterwegs",
+   "level": 4
+  },
+  {
+   "id": "gw-vasemmalla",
+   "source": "links",
+   "target": "vasemmalla",
+   "category": "Unterwegs",
+   "level": 4
+  },
+  {
+   "id": "gw-suoraan",
+   "source": "geradeaus",
+   "target": "suoraan",
+   "category": "Unterwegs",
+   "level": 4
+  },
+  {
+   "id": "gw-lahella",
+   "source": "in der Nähe",
+   "target": "lähellä",
+   "category": "Unterwegs",
+   "level": 4
+  },
+  {
+   "id": "gw-kaukana",
+   "source": "weit weg",
+   "target": "kaukana",
+   "category": "Unterwegs",
+   "level": 4
+  },
+  {
+   "id": "gw-ylos",
+   "source": "nach oben",
+   "target": "ylös",
+   "category": "Unterwegs",
+   "level": 4
+  },
+  {
+   "id": "gw-alas",
+   "source": "nach unten",
+   "target": "alas",
+   "category": "Unterwegs",
+   "level": 4
+  },
+  {
+   "id": "gw-hattu",
+   "source": "der Hut",
+   "target": "hattu",
+   "category": "Kleidung",
+   "level": 1
+  },
+  {
+   "id": "gw-paita",
+   "source": "das Hemd",
+   "target": "paita",
+   "category": "Kleidung",
+   "level": 2
+  },
+  {
+   "id": "gw-housut",
+   "source": "die Hose",
+   "target": "housut",
+   "category": "Kleidung",
+   "level": 2
+  },
+  {
+   "id": "gw-mekko",
+   "source": "das Kleid",
+   "target": "mekko",
+   "category": "Kleidung",
+   "level": 2
+  },
+  {
+   "id": "gw-takki",
+   "source": "die Jacke",
+   "target": "takki",
+   "category": "Kleidung",
+   "level": 2
+  },
+  {
+   "id": "gw-kengat",
+   "source": "die Schuhe",
+   "target": "kengät",
+   "category": "Kleidung",
+   "level": 2
+  },
+  {
+   "id": "gw-t-paita",
+   "source": "das T-Shirt",
+   "target": "T-paita",
+   "category": "Kleidung",
+   "level": 2
+  },
+  {
+   "id": "gw-farkut",
+   "source": "die Jeans",
+   "target": "farkut",
+   "category": "Kleidung",
+   "level": 2
+  },
+  {
+   "id": "gw-hame",
+   "source": "der Rock",
+   "target": "hame",
+   "category": "Kleidung",
+   "level": 3
+  },
+  {
+   "id": "gw-sukat",
+   "source": "die Socken",
+   "target": "sukat",
+   "category": "Kleidung",
+   "level": 3
+  },
+  {
+   "id": "gw-pipo",
+   "source": "die Mütze",
+   "target": "pipo",
+   "category": "Kleidung",
+   "level": 3,
+   "alternatives": [
+    "lakki"
+   ]
+  },
+  {
+   "id": "gw-hanskat",
+   "source": "die Handschuhe",
+   "target": "hanskat",
+   "category": "Kleidung",
+   "level": 3,
+   "alternatives": [
+    "käsineet"
+   ]
+  },
+  {
+   "id": "gw-huivi",
+   "source": "der Schal",
+   "target": "huivi",
+   "category": "Kleidung",
+   "level": 3
+  },
+  {
+   "id": "gw-laukku",
+   "source": "die Tasche",
+   "target": "laukku",
+   "category": "Kleidung",
+   "level": 3
+  },
+  {
+   "id": "gw-vaatteet",
+   "source": "die Kleidung",
+   "target": "vaatteet",
+   "category": "Kleidung",
+   "level": 3
+  },
+  {
+   "id": "gw-villapaita",
+   "source": "der Pullover",
+   "target": "villapaita",
+   "category": "Kleidung",
+   "level": 4,
+   "alternatives": [
+    "neule"
+   ]
+  },
+  {
+   "id": "gw-sateenvarjo",
+   "source": "der Regenschirm",
+   "target": "sateenvarjo",
+   "category": "Kleidung",
+   "level": 4
+  },
+  {
+   "id": "gw-silmalasit",
+   "source": "die Brille",
+   "target": "silmälasit",
+   "category": "Kleidung",
+   "level": 4
+  },
+  {
+   "id": "gw-uimapuku",
+   "source": "der Badeanzug",
+   "target": "uimapuku",
+   "category": "Kleidung",
+   "level": 4
+  },
+  {
+   "id": "gw-saappaat",
+   "source": "die Stiefel",
+   "target": "saappaat",
+   "category": "Kleidung",
+   "level": 4
+  },
+  {
+   "id": "gw-oranssi",
+   "source": "orange",
+   "target": "oranssi",
+   "category": "Farben",
+   "level": 1
+  },
+  {
+   "id": "gw-violetti",
+   "source": "lila",
+   "target": "violetti",
+   "category": "Farben",
+   "level": 1,
+   "alternatives": [
+    "liila"
+   ]
+  },
+  {
+   "id": "gw-punainen",
+   "source": "rot",
+   "target": "punainen",
+   "category": "Farben",
+   "level": 2
+  },
+  {
+   "id": "gw-sininen",
+   "source": "blau",
+   "target": "sininen",
+   "category": "Farben",
+   "level": 2
+  },
+  {
+   "id": "gw-vihrea",
+   "source": "grün",
+   "target": "vihreä",
+   "category": "Farben",
+   "level": 2
+  },
+  {
+   "id": "gw-keltainen",
+   "source": "gelb",
+   "target": "keltainen",
+   "category": "Farben",
+   "level": 2
+  },
+  {
+   "id": "gw-musta",
+   "source": "schwarz",
+   "target": "musta",
+   "category": "Farben",
+   "level": 2
+  },
+  {
+   "id": "gw-valkoinen",
+   "source": "weiß",
+   "target": "valkoinen",
+   "category": "Farben",
+   "level": 2
+  },
+  {
+   "id": "gw-harmaa",
+   "source": "grau",
+   "target": "harmaa",
+   "category": "Farben",
+   "level": 2
+  },
+  {
+   "id": "gw-vari",
+   "source": "die Farbe",
+   "target": "väri",
+   "category": "Farben",
+   "level": 2
+  },
+  {
+   "id": "gw-ruskea",
+   "source": "braun",
+   "target": "ruskea",
+   "category": "Farben",
+   "level": 3
+  },
+  {
+   "id": "gw-vaaleanpunainen",
+   "source": "rosa",
+   "target": "vaaleanpunainen",
+   "category": "Farben",
+   "level": 4,
+   "alternatives": [
+    "pinkki"
+   ]
+  },
+  {
+   "id": "gw-aurinko",
+   "source": "die Sonne",
+   "target": "aurinko",
+   "category": "Natur & Wetter",
+   "level": 2
+  },
+  {
+   "id": "gw-kuu",
+   "source": "der Mond",
+   "target": "kuu",
+   "category": "Natur & Wetter",
+   "level": 2
+  },
+  {
+   "id": "gw-tahti",
+   "source": "der Stern",
+   "target": "tähti",
+   "category": "Natur & Wetter",
+   "level": 2
+  },
+  {
+   "id": "gw-lumi",
+   "source": "der Schnee",
+   "target": "lumi",
+   "category": "Natur & Wetter",
+   "level": 2
+  },
+  {
+   "id": "gw-jaa",
+   "source": "das Eis (gefroren)",
+   "target": "jää",
+   "category": "Natur & Wetter",
+   "level": 2
+  },
+  {
+   "id": "gw-saa",
+   "source": "das Wetter",
+   "target": "sää",
+   "category": "Natur & Wetter",
+   "level": 2
+  },
+  {
+   "id": "gw-metsa",
+   "source": "der Wald",
+   "target": "metsä",
+   "category": "Natur & Wetter",
+   "level": 2
+  },
+  {
+   "id": "gw-jarvi",
+   "source": "der See",
+   "target": "järvi",
+   "category": "Natur & Wetter",
+   "level": 2
+  },
+  {
+   "id": "gw-meri",
+   "source": "das Meer",
+   "target": "meri",
+   "category": "Natur & Wetter",
+   "level": 2
+  },
+  {
+   "id": "gw-joki",
+   "source": "der Fluss",
+   "target": "joki",
+   "category": "Natur & Wetter",
+   "level": 2
+  },
+  {
+   "id": "gw-vuori",
+   "source": "der Berg",
+   "target": "vuori",
+   "category": "Natur & Wetter",
+   "level": 2
+  },
+  {
+   "id": "gw-puu",
+   "source": "der Baum",
+   "target": "puu",
+   "category": "Natur & Wetter",
+   "level": 2
+  },
+  {
+   "id": "gw-kukka",
+   "source": "die Blume",
+   "target": "kukka",
+   "category": "Natur & Wetter",
+   "level": 2
+  },
+  {
+   "id": "gw-kivi",
+   "source": "der Stein",
+   "target": "kivi",
+   "category": "Natur & Wetter",
+   "level": 2
+  },
+  {
+   "id": "gw-lammin",
+   "source": "warm",
+   "target": "lämmin",
+   "category": "Natur & Wetter",
+   "level": 2
+  },
+  {
+   "id": "gw-taivas",
+   "source": "der Himmel",
+   "target": "taivas",
+   "category": "Natur & Wetter",
+   "level": 3
+  },
+  {
+   "id": "gw-pilvi",
+   "source": "die Wolke",
+   "target": "pilvi",
+   "category": "Natur & Wetter",
+   "level": 3
+  },
+  {
+   "id": "gw-sade",
+   "source": "der Regen",
+   "target": "sade",
+   "category": "Natur & Wetter",
+   "level": 3
+  },
+  {
+   "id": "gw-tuuli",
+   "source": "der Wind",
+   "target": "tuuli",
+   "category": "Natur & Wetter",
+   "level": 3
+  },
+  {
+   "id": "gw-saari",
+   "source": "die Insel",
+   "target": "saari",
+   "category": "Natur & Wetter",
+   "level": 3
+  },
+  {
+   "id": "gw-ruoho",
+   "source": "das Gras",
+   "target": "ruoho",
+   "category": "Natur & Wetter",
+   "level": 3
+  },
+  {
+   "id": "gw-ranta",
+   "source": "der Strand, das Ufer",
+   "target": "ranta",
+   "category": "Natur & Wetter",
+   "level": 3
+  },
+  {
+   "id": "gw-luonto",
+   "source": "die Natur",
+   "target": "luonto",
+   "category": "Natur & Wetter",
+   "level": 3
+  },
+  {
+   "id": "gw-viilea",
+   "source": "kühl",
+   "target": "viileä",
+   "category": "Natur & Wetter",
+   "level": 3
+  },
+  {
+   "id": "gw-pimea",
+   "source": "dunkel",
+   "target": "pimeä",
+   "category": "Natur & Wetter",
+   "level": 3
+  },
+  {
+   "id": "gw-tunturi",
+   "source": "das Fjell",
+   "target": "tunturi",
+   "category": "Natur & Wetter",
+   "level": 4
+  },
+  {
+   "id": "gw-revontulet",
+   "source": "das Nordlicht",
+   "target": "revontulet",
+   "category": "Natur & Wetter",
+   "level": 4
+  },
+  {
+   "id": "gw-sataa",
+   "source": "es regnet",
+   "target": "sataa",
+   "category": "Natur & Wetter",
+   "level": 4
+  },
+  {
+   "id": "gw-pakkanen",
+   "source": "der Frost",
+   "target": "pakkanen",
+   "category": "Natur & Wetter",
+   "level": 4
+  },
+  {
+   "id": "gw-myrsky",
+   "source": "der Sturm",
+   "target": "myrsky",
+   "category": "Natur & Wetter",
+   "level": 4
+  },
+  {
+   "id": "gw-sumu",
+   "source": "der Nebel",
+   "target": "sumu",
+   "category": "Natur & Wetter",
+   "level": 4
+  },
+  {
+   "id": "gw-ukkonen",
+   "source": "das Gewitter",
+   "target": "ukkonen",
+   "category": "Natur & Wetter",
+   "level": 4
+  },
+  {
+   "id": "gw-sateenkaari",
+   "source": "der Regenbogen",
+   "target": "sateenkaari",
+   "category": "Natur & Wetter",
+   "level": 4
+  },
+  {
+   "id": "gw-valoisa",
+   "source": "hell",
+   "target": "valoisa",
+   "category": "Natur & Wetter",
+   "level": 4
+  },
+  {
+   "id": "gw-keskiyon-aurinko",
+   "source": "die Mitternachtssonne",
+   "target": "keskiyön aurinko",
+   "category": "Natur & Wetter",
+   "level": 5
+  },
+  {
+   "id": "gw-aurinko-paistaa",
+   "source": "die Sonne scheint",
+   "target": "aurinko paistaa",
+   "category": "Natur & Wetter",
+   "level": 5
+  },
+  {
+   "id": "gw-koira",
+   "source": "der Hund",
+   "target": "koira",
+   "category": "Tiere",
+   "level": 1
+  },
+  {
+   "id": "gw-kissa",
+   "source": "die Katze",
+   "target": "kissa",
+   "category": "Tiere",
+   "level": 1
+  },
+  {
+   "id": "gw-lintu",
+   "source": "der Vogel",
+   "target": "lintu",
+   "category": "Tiere",
+   "level": 2
+  },
+  {
+   "id": "gw-sika",
+   "source": "das Schwein",
+   "target": "sika",
+   "category": "Tiere",
+   "level": 2
+  },
+  {
+   "id": "gw-hiiri",
+   "source": "die Maus",
+   "target": "hiiri",
+   "category": "Tiere",
+   "level": 2
+  },
+  {
+   "id": "gw-karhu",
+   "source": "der Bär",
+   "target": "karhu",
+   "category": "Tiere",
+   "level": 2
+  },
+  {
+   "id": "gw-poro",
+   "source": "das Rentier",
+   "target": "poro",
+   "category": "Tiere",
+   "level": 2
+  },
+  {
+   "id": "gw-ankka",
+   "source": "die Ente",
+   "target": "ankka",
+   "category": "Tiere",
+   "level": 2,
+   "alternatives": [
+    "sorsa"
+   ]
+  },
+  {
+   "id": "gw-hevonen",
+   "source": "das Pferd",
+   "target": "hevonen",
+   "category": "Tiere",
+   "level": 3
+  },
+  {
+   "id": "gw-lehma",
+   "source": "die Kuh",
+   "target": "lehmä",
+   "category": "Tiere",
+   "level": 3
+  },
+  {
+   "id": "gw-lammas",
+   "source": "das Schaf",
+   "target": "lammas",
+   "category": "Tiere",
+   "level": 3
+  },
+  {
+   "id": "gw-susi",
+   "source": "der Wolf",
+   "target": "susi",
+   "category": "Tiere",
+   "level": 3
+  },
+  {
+   "id": "gw-kettu",
+   "source": "der Fuchs",
+   "target": "kettu",
+   "category": "Tiere",
+   "level": 3
+  },
+  {
+   "id": "gw-janis",
+   "source": "der Hase",
+   "target": "jänis",
+   "category": "Tiere",
+   "level": 3
+  },
+  {
+   "id": "gw-orava",
+   "source": "das Eichhörnchen",
+   "target": "orava",
+   "category": "Tiere",
+   "level": 3
+  },
+  {
+   "id": "gw-hirvi",
+   "source": "der Elch",
+   "target": "hirvi",
+   "category": "Tiere",
+   "level": 3
+  },
+  {
+   "id": "gw-hyttynen",
+   "source": "die Mücke",
+   "target": "hyttynen",
+   "category": "Tiere",
+   "level": 3
+  },
+  {
+   "id": "gw-lokki",
+   "source": "die Möwe",
+   "target": "lokki",
+   "category": "Tiere",
+   "level": 3
+  },
+  {
+   "id": "gw-pollo",
+   "source": "die Eule",
+   "target": "pöllö",
+   "category": "Tiere",
+   "level": 3
+  },
+  {
+   "id": "gw-elain",
+   "source": "das Tier",
+   "target": "eläin",
+   "category": "Tiere",
+   "level": 3
+  },
+  {
+   "id": "gw-siili",
+   "source": "der Igel",
+   "target": "siili",
+   "category": "Tiere",
+   "level": 3
+  },
+  {
+   "id": "gw-ilves",
+   "source": "der Luchs",
+   "target": "ilves",
+   "category": "Tiere",
+   "level": 4
+  },
+  {
+   "id": "gw-kaarme",
+   "source": "die Schlange",
+   "target": "käärme",
+   "category": "Tiere",
+   "level": 4
+  },
+  {
+   "id": "gw-sammakko",
+   "source": "der Frosch",
+   "target": "sammakko",
+   "category": "Tiere",
+   "level": 4
+  },
+  {
+   "id": "gw-mehilainen",
+   "source": "die Biene",
+   "target": "mehiläinen",
+   "category": "Tiere",
+   "level": 4
+  },
+  {
+   "id": "gw-perhonen",
+   "source": "der Schmetterling",
+   "target": "perhonen",
+   "category": "Tiere",
+   "level": 4
+  },
+  {
+   "id": "gw-joutsen",
+   "source": "der Schwan",
+   "target": "joutsen",
+   "category": "Tiere",
+   "level": 4
+  },
+  {
+   "id": "gw-hylje",
+   "source": "die Robbe",
+   "target": "hylje",
+   "category": "Tiere",
+   "level": 4
+  },
+  {
+   "id": "gw-hamahakki",
+   "source": "die Spinne",
+   "target": "hämähäkki",
+   "category": "Tiere",
+   "level": 4
+  },
+  {
+   "id": "gw-muurahainen",
+   "source": "die Ameise",
+   "target": "muurahainen",
+   "category": "Tiere",
+   "level": 4
+  },
+  {
+   "id": "gw-paperi",
+   "source": "das Papier",
+   "target": "paperi",
+   "category": "Arbeit & Geld",
+   "level": 1
+  },
+  {
+   "id": "gw-tyo",
+   "source": "die Arbeit",
+   "target": "työ",
+   "category": "Arbeit & Geld",
+   "level": 2
+  },
+  {
+   "id": "gw-kirja",
+   "source": "das Buch",
+   "target": "kirja",
+   "category": "Arbeit & Geld",
+   "level": 2
+  },
+  {
+   "id": "gw-kyna",
+   "source": "der Stift",
+   "target": "kynä",
+   "category": "Arbeit & Geld",
+   "level": 2
+  },
+  {
+   "id": "gw-sana",
+   "source": "das Wort",
+   "target": "sana",
+   "category": "Arbeit & Geld",
+   "level": 2
+  },
+  {
+   "id": "gw-kieli",
+   "source": "die Sprache",
+   "target": "kieli",
+   "category": "Arbeit & Geld",
+   "level": 2
+  },
+  {
+   "id": "gw-loma",
+   "source": "der Urlaub",
+   "target": "loma",
+   "category": "Arbeit & Geld",
+   "level": 2
+  },
+  {
+   "id": "gw-kokki",
+   "source": "der Koch",
+   "target": "kokki",
+   "category": "Arbeit & Geld",
+   "level": 2
+  },
+  {
+   "id": "gw-insinoori",
+   "source": "der Ingenieur",
+   "target": "insinööri",
+   "category": "Arbeit & Geld",
+   "level": 2
+  },
+  {
+   "id": "gw-raha",
+   "source": "das Geld",
+   "target": "raha",
+   "category": "Arbeit & Geld",
+   "level": 2
+  },
+  {
+   "id": "gw-opettaja",
+   "source": "der Lehrer",
+   "target": "opettaja",
+   "category": "Arbeit & Geld",
+   "level": 3
+  },
+  {
+   "id": "gw-oppilas",
+   "source": "der Schüler",
+   "target": "oppilas",
+   "category": "Arbeit & Geld",
+   "level": 3
+  },
+  {
+   "id": "gw-opiskelija",
+   "source": "der Student",
+   "target": "opiskelija",
+   "category": "Arbeit & Geld",
+   "level": 3
+  },
+  {
+   "id": "gw-tietokone",
+   "source": "der Computer",
+   "target": "tietokone",
+   "category": "Arbeit & Geld",
+   "level": 3
+  },
+  {
+   "id": "gw-puhelin",
+   "source": "das Telefon",
+   "target": "puhelin",
+   "category": "Arbeit & Geld",
+   "level": 3,
+   "alternatives": [
+    "kännykkä"
+   ]
+  },
+  {
+   "id": "gw-kannykka",
+   "source": "das Handy",
+   "target": "kännykkä",
+   "category": "Arbeit & Geld",
+   "level": 3,
+   "alternatives": [
+    "puhelin",
+    "matkapuhelin"
+   ]
+  },
+  {
+   "id": "gw-kysymys",
+   "source": "die Frage",
+   "target": "kysymys",
+   "category": "Arbeit & Geld",
+   "level": 3
+  },
+  {
+   "id": "gw-vastaus",
+   "source": "die Antwort",
+   "target": "vastaus",
+   "category": "Arbeit & Geld",
+   "level": 3
+  },
+  {
+   "id": "gw-hinta",
+   "source": "der Preis",
+   "target": "hinta",
+   "category": "Arbeit & Geld",
+   "level": 3
+  },
+  {
+   "id": "gw-halpa",
+   "source": "billig",
+   "target": "halpa",
+   "category": "Arbeit & Geld",
+   "level": 3
+  },
+  {
+   "id": "gw-kallis",
+   "source": "teuer",
+   "target": "kallis",
+   "category": "Arbeit & Geld",
+   "level": 3
+  },
+  {
+   "id": "gw-kokous",
+   "source": "die Besprechung",
+   "target": "kokous",
+   "category": "Arbeit & Geld",
+   "level": 4,
+   "alternatives": [
+    "palaveri"
+   ]
+  },
+  {
+   "id": "gw-palkka",
+   "source": "der Lohn",
+   "target": "palkka",
+   "category": "Arbeit & Geld",
+   "level": 4
+  },
+  {
+   "id": "gw-ammatti",
+   "source": "der Beruf",
+   "target": "ammatti",
+   "category": "Arbeit & Geld",
+   "level": 4
+  },
+  {
+   "id": "gw-myyja",
+   "source": "der Verkäufer",
+   "target": "myyjä",
+   "category": "Arbeit & Geld",
+   "level": 4
+  },
+  {
+   "id": "gw-sairaanhoitaja",
+   "source": "der Krankenpfleger",
+   "target": "sairaanhoitaja",
+   "category": "Arbeit & Geld",
+   "level": 4
+  },
+  {
+   "id": "gw-kirjailija",
+   "source": "der Schriftsteller",
+   "target": "kirjailija",
+   "category": "Arbeit & Geld",
+   "level": 4
+  },
+  {
+   "id": "gw-kuljettaja",
+   "source": "der Fahrer",
+   "target": "kuljettaja",
+   "category": "Arbeit & Geld",
+   "level": 4
+  },
+  {
+   "id": "gw-kuitti",
+   "source": "die Quittung",
+   "target": "kuitti",
+   "category": "Arbeit & Geld",
+   "level": 4
+  },
+  {
+   "id": "gw-lasku",
+   "source": "die Rechnung",
+   "target": "lasku",
+   "category": "Arbeit & Geld",
+   "level": 4
+  },
+  {
+   "id": "gw-pankkikortti",
+   "source": "die Bankkarte",
+   "target": "pankkikortti",
+   "category": "Arbeit & Geld",
+   "level": 4
+  },
+  {
+   "id": "gw-musiikki",
+   "source": "die Musik",
+   "target": "musiikki",
+   "category": "Freizeit",
+   "level": 1
+  },
+  {
+   "id": "gw-kitara",
+   "source": "die Gitarre",
+   "target": "kitara",
+   "category": "Freizeit",
+   "level": 1
+  },
+  {
+   "id": "gw-televisio",
+   "source": "der Fernseher",
+   "target": "televisio",
+   "category": "Freizeit",
+   "level": 1,
+   "alternatives": [
+    "telkkari"
+   ]
+  },
+  {
+   "id": "gw-peli",
+   "source": "das Spiel",
+   "target": "peli",
+   "category": "Freizeit",
+   "level": 2
+  },
+  {
+   "id": "gw-kuva",
+   "source": "das Bild",
+   "target": "kuva",
+   "category": "Freizeit",
+   "level": 2,
+   "alternatives": [
+    "valokuva"
+   ]
+  },
+  {
+   "id": "gw-tanssi",
+   "source": "der Tanz",
+   "target": "tanssi",
+   "category": "Freizeit",
+   "level": 2
+  },
+  {
+   "id": "gw-laulu",
+   "source": "das Lied",
+   "target": "laulu",
+   "category": "Freizeit",
+   "level": 3
+  },
+  {
+   "id": "gw-elokuva",
+   "source": "der Film",
+   "target": "elokuva",
+   "category": "Freizeit",
+   "level": 3
+  },
+  {
+   "id": "gw-jalkapallo",
+   "source": "der Fußball",
+   "target": "jalkapallo",
+   "category": "Freizeit",
+   "level": 3
+  },
+  {
+   "id": "gw-juhla",
+   "source": "das Fest",
+   "target": "juhla",
+   "category": "Freizeit",
+   "level": 3
+  },
+  {
+   "id": "gw-lahja",
+   "source": "das Geschenk",
+   "target": "lahja",
+   "category": "Freizeit",
+   "level": 3
+  },
+  {
+   "id": "gw-valokuva",
+   "source": "das Foto",
+   "target": "valokuva",
+   "category": "Freizeit",
+   "level": 3,
+   "alternatives": [
+    "kuva"
+   ]
+  },
+  {
+   "id": "gw-lehti",
+   "source": "die Zeitung",
+   "target": "lehti",
+   "category": "Freizeit",
+   "level": 3,
+   "alternatives": [
+    "sanomalehti"
+   ]
+  },
+  {
+   "id": "gw-jaakiekko",
+   "source": "das Eishockey",
+   "target": "jääkiekko",
+   "category": "Freizeit",
+   "level": 4
+  },
+  {
+   "id": "gw-hiihto",
+   "source": "der Skilanglauf",
+   "target": "hiihto",
+   "category": "Freizeit",
+   "level": 4
+  },
+  {
+   "id": "gw-uinti",
+   "source": "das Schwimmen",
+   "target": "uinti",
+   "category": "Freizeit",
+   "level": 4
+  },
+  {
+   "id": "gw-harrastus",
+   "source": "das Hobby",
+   "target": "harrastus",
+   "category": "Freizeit",
+   "level": 4
+  },
+  {
+   "id": "gw-taide",
+   "source": "die Kunst",
+   "target": "taide",
+   "category": "Freizeit",
+   "level": 4
+  },
+  {
+   "id": "gw-uutiset",
+   "source": "die Nachrichten",
+   "target": "uutiset",
+   "category": "Freizeit",
+   "level": 4
+  },
+  {
+   "id": "gw-olla",
+   "source": "sein",
+   "target": "olla",
+   "category": "Verben",
+   "level": 2
+  },
+  {
+   "id": "gw-menna",
+   "source": "gehen",
+   "target": "mennä",
+   "category": "Verben",
+   "level": 2
+  },
+  {
+   "id": "gw-tulla",
+   "source": "kommen",
+   "target": "tulla",
+   "category": "Verben",
+   "level": 2
+  },
+  {
+   "id": "gw-syoda",
+   "source": "essen",
+   "target": "syödä",
+   "category": "Verben",
+   "level": 2
+  },
+  {
+   "id": "gw-juoda",
+   "source": "trinken",
+   "target": "juoda",
+   "category": "Verben",
+   "level": 2
+  },
+  {
+   "id": "gw-puhua",
+   "source": "sprechen",
+   "target": "puhua",
+   "category": "Verben",
+   "level": 2
+  },
+  {
+   "id": "gw-ostaa",
+   "source": "kaufen",
+   "target": "ostaa",
+   "category": "Verben",
+   "level": 2
+  },
+  {
+   "id": "gw-lukea",
+   "source": "lesen",
+   "target": "lukea",
+   "category": "Verben",
+   "level": 2
+  },
+  {
+   "id": "gw-asua",
+   "source": "wohnen",
+   "target": "asua",
+   "category": "Verben",
+   "level": 2
+  },
+  {
+   "id": "gw-tanssia",
+   "source": "tanzen",
+   "target": "tanssia",
+   "category": "Verben",
+   "level": 2
+  },
+  {
+   "id": "gw-nukkua",
+   "source": "schlafen",
+   "target": "nukkua",
+   "category": "Verben",
+   "level": 3
+  },
+  {
+   "id": "gw-sanoa",
+   "source": "sagen",
+   "target": "sanoa",
+   "category": "Verben",
+   "level": 3
+  },
+  {
+   "id": "gw-kysya",
+   "source": "fragen",
+   "target": "kysyä",
+   "category": "Verben",
+   "level": 3
+  },
+  {
+   "id": "gw-tehda",
+   "source": "machen",
+   "target": "tehdä",
+   "category": "Verben",
+   "level": 3
+  },
+  {
+   "id": "gw-myyda",
+   "source": "verkaufen",
+   "target": "myydä",
+   "category": "Verben",
+   "level": 3
+  },
+  {
+   "id": "gw-maksaa",
+   "source": "bezahlen",
+   "target": "maksaa",
+   "category": "Verben",
+   "level": 3
+  },
+  {
+   "id": "gw-antaa",
+   "source": "geben",
+   "target": "antaa",
+   "category": "Verben",
+   "level": 3
+  },
+  {
+   "id": "gw-ottaa",
+   "source": "nehmen",
+   "target": "ottaa",
+   "category": "Verben",
+   "level": 3
+  },
+  {
+   "id": "gw-nahda",
+   "source": "sehen",
+   "target": "nähdä",
+   "category": "Verben",
+   "level": 3
+  },
+  {
+   "id": "gw-katsoa",
+   "source": "schauen",
+   "target": "katsoa",
+   "category": "Verben",
+   "level": 3
+  },
+  {
+   "id": "gw-kuulla",
+   "source": "hören",
+   "target": "kuulla",
+   "category": "Verben",
+   "level": 3
+  },
+  {
+   "id": "gw-kirjoittaa",
+   "source": "schreiben",
+   "target": "kirjoittaa",
+   "category": "Verben",
+   "level": 3
+  },
+  {
+   "id": "gw-oppia",
+   "source": "lernen",
+   "target": "oppia",
+   "category": "Verben",
+   "level": 3,
+   "alternatives": [
+    "opiskella"
+   ]
+  },
+  {
+   "id": "gw-opiskella",
+   "source": "studieren",
+   "target": "opiskella",
+   "category": "Verben",
+   "level": 3
+  },
+  {
+   "id": "gw-tietaa",
+   "source": "wissen",
+   "target": "tietää",
+   "category": "Verben",
+   "level": 3
+  },
+  {
+   "id": "gw-rakastaa",
+   "source": "lieben",
+   "target": "rakastaa",
+   "category": "Verben",
+   "level": 3
+  },
+  {
+   "id": "gw-haluta",
+   "source": "wollen",
+   "target": "haluta",
+   "category": "Verben",
+   "level": 3
+  },
+  {
+   "id": "gw-pelata",
+   "source": "spielen (ein Spiel)",
+   "target": "pelata",
+   "category": "Verben",
+   "level": 3
+  },
+  {
+   "id": "gw-laulaa",
+   "source": "singen",
+   "target": "laulaa",
+   "category": "Verben",
+   "level": 3
+  },
+  {
+   "id": "gw-uida",
+   "source": "schwimmen",
+   "target": "uida",
+   "category": "Verben",
+   "level": 3
+  },
+  {
+   "id": "gw-juosta",
+   "source": "rennen",
+   "target": "juosta",
+   "category": "Verben",
+   "level": 3
+  },
+  {
+   "id": "gw-kavella",
+   "source": "spazieren gehen",
+   "target": "kävellä",
+   "category": "Verben",
+   "level": 3
+  },
+  {
+   "id": "gw-ajaa",
+   "source": "fahren",
+   "target": "ajaa",
+   "category": "Verben",
+   "level": 3
+  },
+  {
+   "id": "gw-lentaa",
+   "source": "fliegen",
+   "target": "lentää",
+   "category": "Verben",
+   "level": 3
+  },
+  {
+   "id": "gw-istua",
+   "source": "sitzen",
+   "target": "istua",
+   "category": "Verben",
+   "level": 3
+  },
+  {
+   "id": "gw-auttaa",
+   "source": "helfen",
+   "target": "auttaa",
+   "category": "Verben",
+   "level": 3
+  },
+  {
+   "id": "gw-etsia",
+   "source": "suchen",
+   "target": "etsiä",
+   "category": "Verben",
+   "level": 3
+  },
+  {
+   "id": "gw-loytaa",
+   "source": "finden",
+   "target": "löytää",
+   "category": "Verben",
+   "level": 3
+  },
+  {
+   "id": "gw-matkustaa",
+   "source": "reisen",
+   "target": "matkustaa",
+   "category": "Verben",
+   "level": 3
+  },
+  {
+   "id": "gw-nauraa",
+   "source": "lachen",
+   "target": "nauraa",
+   "category": "Verben",
+   "level": 3
+  },
+  {
+   "id": "gw-vastata",
+   "source": "antworten",
+   "target": "vastata",
+   "category": "Verben",
+   "level": 4
+  },
+  {
+   "id": "gw-kuunnella",
+   "source": "zuhören",
+   "target": "kuunnella",
+   "category": "Verben",
+   "level": 4
+  },
+  {
+   "id": "gw-ymmartaa",
+   "source": "verstehen",
+   "target": "ymmärtää",
+   "category": "Verben",
+   "level": 4
+  },
+  {
+   "id": "gw-ajatella",
+   "source": "denken",
+   "target": "ajatella",
+   "category": "Verben",
+   "level": 4
+  },
+  {
+   "id": "gw-pitaa",
+   "source": "mögen",
+   "target": "pitää",
+   "category": "Verben",
+   "level": 4
+  },
+  {
+   "id": "gw-voida",
+   "source": "können",
+   "target": "voida",
+   "category": "Verben",
+   "level": 4,
+   "alternatives": [
+    "osata"
+   ]
+  },
+  {
+   "id": "gw-tehda-toita",
+   "source": "arbeiten",
+   "target": "tehdä töitä",
+   "category": "Verben",
+   "level": 4,
+   "alternatives": [
+    "työskennellä"
+   ]
+  },
+  {
+   "id": "gw-leikkia",
+   "source": "spielen (Kinder)",
+   "target": "leikkiä",
+   "category": "Verben",
+   "level": 4
+  },
+  {
+   "id": "gw-seista",
+   "source": "stehen",
+   "target": "seistä",
+   "category": "Verben",
+   "level": 4
+  },
+  {
+   "id": "gw-odottaa",
+   "source": "warten",
+   "target": "odottaa",
+   "category": "Verben",
+   "level": 4
+  },
+  {
+   "id": "gw-avata",
+   "source": "öffnen",
+   "target": "avata",
+   "category": "Verben",
+   "level": 4
+  },
+  {
+   "id": "gw-sulkea",
+   "source": "schließen",
+   "target": "sulkea",
+   "category": "Verben",
+   "level": 4
+  },
+  {
+   "id": "gw-alkaa",
+   "source": "anfangen",
+   "target": "alkaa",
+   "category": "Verben",
+   "level": 4,
+   "alternatives": [
+    "aloittaa"
+   ]
+  },
+  {
+   "id": "gw-lopettaa",
+   "source": "aufhören",
+   "target": "lopettaa",
+   "category": "Verben",
+   "level": 4
+  },
+  {
+   "id": "gw-herata",
+   "source": "aufwachen",
+   "target": "herätä",
+   "category": "Verben",
+   "level": 4
+  },
+  {
+   "id": "gw-nousta",
+   "source": "aufstehen",
+   "target": "nousta",
+   "category": "Verben",
+   "level": 4
+  },
+  {
+   "id": "gw-pesta",
+   "source": "waschen",
+   "target": "pestä",
+   "category": "Verben",
+   "level": 4
+  },
+  {
+   "id": "gw-siivota",
+   "source": "putzen",
+   "target": "siivota",
+   "category": "Verben",
+   "level": 4
+  },
+  {
+   "id": "gw-soittaa",
+   "source": "anrufen",
+   "target": "soittaa",
+   "category": "Verben",
+   "level": 4
+  },
+  {
+   "id": "gw-muistaa",
+   "source": "sich erinnern",
+   "target": "muistaa",
+   "category": "Verben",
+   "level": 4
+  },
+  {
+   "id": "gw-unohtaa",
+   "source": "vergessen",
+   "target": "unohtaa",
+   "category": "Verben",
+   "level": 4
+  },
+  {
+   "id": "gw-tarvita",
+   "source": "brauchen",
+   "target": "tarvita",
+   "category": "Verben",
+   "level": 4
+  },
+  {
+   "id": "gw-maistaa",
+   "source": "probieren (kosten)",
+   "target": "maistaa",
+   "category": "Verben",
+   "level": 4
+  },
+  {
+   "id": "gw-tavata",
+   "source": "treffen",
+   "target": "tavata",
+   "category": "Verben",
+   "level": 4
+  },
+  {
+   "id": "gw-itkea",
+   "source": "weinen",
+   "target": "itkeä",
+   "category": "Verben",
+   "level": 4
+  },
+  {
+   "id": "gw-hymyilla",
+   "source": "lächeln",
+   "target": "hymyillä",
+   "category": "Verben",
+   "level": 4
+  },
+  {
+   "id": "gw-toivoa",
+   "source": "hoffen",
+   "target": "toivoa",
+   "category": "Verben",
+   "level": 4
+  },
+  {
+   "id": "gw-uskoa",
+   "source": "glauben",
+   "target": "uskoa",
+   "category": "Verben",
+   "level": 4
+  },
+  {
+   "id": "gw-taytya",
+   "source": "müssen",
+   "target": "täytyä",
+   "category": "Verben",
+   "level": 5,
+   "alternatives": [
+    "pitää",
+    "joutua"
+   ]
+  },
+  {
+   "id": "gw-palata",
+   "source": "zurückkehren",
+   "target": "palata",
+   "category": "Verben",
+   "level": 4
+  },
+  {
+   "id": "gw-pelata-2",
+   "source": "Angst haben",
+   "target": "pelätä",
+   "category": "Verben",
+   "level": 5
+  },
+  {
+   "id": "gw-hyva",
+   "source": "gut",
+   "target": "hyvä",
+   "category": "Adjektive",
+   "level": 1
+  },
+  {
+   "id": "gw-iso",
+   "source": "groß",
+   "target": "iso",
+   "category": "Adjektive",
+   "level": 2,
+   "alternatives": [
+    "suuri"
+   ]
+  },
+  {
+   "id": "gw-pieni",
+   "source": "klein",
+   "target": "pieni",
+   "category": "Adjektive",
+   "level": 2
+  },
+  {
+   "id": "gw-huono",
+   "source": "schlecht",
+   "target": "huono",
+   "category": "Adjektive",
+   "level": 2
+  },
+  {
+   "id": "gw-uusi",
+   "source": "neu",
+   "target": "uusi",
+   "category": "Adjektive",
+   "level": 2
+  },
+  {
+   "id": "gw-vanha",
+   "source": "alt",
+   "target": "vanha",
+   "category": "Adjektive",
+   "level": 2
+  },
+  {
+   "id": "gw-nuori",
+   "source": "jung",
+   "target": "nuori",
+   "category": "Adjektive",
+   "level": 2
+  },
+  {
+   "id": "gw-kaunis",
+   "source": "schön",
+   "target": "kaunis",
+   "category": "Adjektive",
+   "level": 2
+  },
+  {
+   "id": "gw-pitka",
+   "source": "lang",
+   "target": "pitkä",
+   "category": "Adjektive",
+   "level": 2
+  },
+  {
+   "id": "gw-kuuma",
+   "source": "heiß",
+   "target": "kuuma",
+   "category": "Adjektive",
+   "level": 2
+  },
+  {
+   "id": "gw-kylma",
+   "source": "kalt",
+   "target": "kylmä",
+   "category": "Adjektive",
+   "level": 2
+  },
+  {
+   "id": "gw-paljon",
+   "source": "viel",
+   "target": "paljon",
+   "category": "Adjektive",
+   "level": 2
+  },
+  {
+   "id": "gw-vahan",
+   "source": "wenig",
+   "target": "vähän",
+   "category": "Adjektive",
+   "level": 2
+  },
+  {
+   "id": "gw-kaikki",
+   "source": "alle",
+   "target": "kaikki",
+   "category": "Adjektive",
+   "level": 2
+  },
+  {
+   "id": "gw-ruma",
+   "source": "hässlich",
+   "target": "ruma",
+   "category": "Adjektive",
+   "level": 3
+  },
+  {
+   "id": "gw-lyhyt",
+   "source": "kurz",
+   "target": "lyhyt",
+   "category": "Adjektive",
+   "level": 3
+  },
+  {
+   "id": "gw-nopea",
+   "source": "schnell",
+   "target": "nopea",
+   "category": "Adjektive",
+   "level": 3
+  },
+  {
+   "id": "gw-hidas",
+   "source": "langsam",
+   "target": "hidas",
+   "category": "Adjektive",
+   "level": 3
+  },
+  {
+   "id": "gw-helppo",
+   "source": "einfach, leicht",
+   "target": "helppo",
+   "category": "Adjektive",
+   "level": 3
+  },
+  {
+   "id": "gw-vaikea",
+   "source": "schwierig",
+   "target": "vaikea",
+   "category": "Adjektive",
+   "level": 3
+  },
+  {
+   "id": "gw-iloinen",
+   "source": "fröhlich",
+   "target": "iloinen",
+   "category": "Adjektive",
+   "level": 3
+  },
+  {
+   "id": "gw-vasynyt",
+   "source": "müde",
+   "target": "väsynyt",
+   "category": "Adjektive",
+   "level": 3
+  },
+  {
+   "id": "gw-kiltti",
+   "source": "lieb, brav",
+   "target": "kiltti",
+   "category": "Adjektive",
+   "level": 3
+  },
+  {
+   "id": "gw-mukava",
+   "source": "nett",
+   "target": "mukava",
+   "category": "Adjektive",
+   "level": 3,
+   "alternatives": [
+    "kiltti"
+   ]
+  },
+  {
+   "id": "gw-hauska",
+   "source": "lustig",
+   "target": "hauska",
+   "category": "Adjektive",
+   "level": 3
+  },
+  {
+   "id": "gw-tylsa",
+   "source": "langweilig",
+   "target": "tylsä",
+   "category": "Adjektive",
+   "level": 3
+  },
+  {
+   "id": "gw-valmis",
+   "source": "fertig",
+   "target": "valmis",
+   "category": "Adjektive",
+   "level": 3
+  },
+  {
+   "id": "gw-vapaa",
+   "source": "frei",
+   "target": "vapaa",
+   "category": "Adjektive",
+   "level": 3
+  },
+  {
+   "id": "gw-taysi",
+   "source": "voll",
+   "target": "täysi",
+   "category": "Adjektive",
+   "level": 3
+  },
+  {
+   "id": "gw-tyhja",
+   "source": "leer",
+   "target": "tyhjä",
+   "category": "Adjektive",
+   "level": 3
+  },
+  {
+   "id": "gw-puhdas",
+   "source": "sauber",
+   "target": "puhdas",
+   "category": "Adjektive",
+   "level": 3
+  },
+  {
+   "id": "gw-rikas",
+   "source": "reich",
+   "target": "rikas",
+   "category": "Adjektive",
+   "level": 3
+  },
+  {
+   "id": "gw-koyha",
+   "source": "arm",
+   "target": "köyhä",
+   "category": "Adjektive",
+   "level": 3
+  },
+  {
+   "id": "gw-laiska",
+   "source": "faul",
+   "target": "laiska",
+   "category": "Adjektive",
+   "level": 3
+  },
+  {
+   "id": "gw-oikea",
+   "source": "richtig",
+   "target": "oikea",
+   "category": "Adjektive",
+   "level": 3
+  },
+  {
+   "id": "gw-vaara",
+   "source": "falsch",
+   "target": "väärä",
+   "category": "Adjektive",
+   "level": 3
+  },
+  {
+   "id": "gw-sama",
+   "source": "gleich",
+   "target": "sama",
+   "category": "Adjektive",
+   "level": 3
+  },
+  {
+   "id": "gw-painava",
+   "source": "schwer (Gewicht)",
+   "target": "painava",
+   "category": "Adjektive",
+   "level": 4
+  },
+  {
+   "id": "gw-kevyt",
+   "source": "leicht (Gewicht)",
+   "target": "kevyt",
+   "category": "Adjektive",
+   "level": 4
+  },
+  {
+   "id": "gw-surullinen",
+   "source": "traurig",
+   "target": "surullinen",
+   "category": "Adjektive",
+   "level": 4
+  },
+  {
+   "id": "gw-onnellinen",
+   "source": "glücklich",
+   "target": "onnellinen",
+   "category": "Adjektive",
+   "level": 4
+  },
+  {
+   "id": "gw-vihainen",
+   "source": "wütend",
+   "target": "vihainen",
+   "category": "Adjektive",
+   "level": 4
+  },
+  {
+   "id": "gw-tarkea",
+   "source": "wichtig",
+   "target": "tärkeä",
+   "category": "Adjektive",
+   "level": 4
+  },
+  {
+   "id": "gw-likainen",
+   "source": "schmutzig",
+   "target": "likainen",
+   "category": "Adjektive",
+   "level": 4
+  },
+  {
+   "id": "gw-ahkera",
+   "source": "fleißig",
+   "target": "ahkera",
+   "category": "Adjektive",
+   "level": 4
+  },
+  {
+   "id": "gw-hiljainen",
+   "source": "leise",
+   "target": "hiljainen",
+   "category": "Adjektive",
+   "level": 4
+  },
+  {
+   "id": "gw-aanekas",
+   "source": "laut",
+   "target": "äänekäs",
+   "category": "Adjektive",
+   "level": 4
+  },
+  {
+   "id": "gw-marka",
+   "source": "nass",
+   "target": "märkä",
+   "category": "Adjektive",
+   "level": 4
+  },
+  {
+   "id": "gw-kuiva",
+   "source": "trocken",
+   "target": "kuiva",
+   "category": "Adjektive",
+   "level": 4
+  },
+  {
+   "id": "gw-eri",
+   "source": "verschieden",
+   "target": "eri",
+   "category": "Adjektive",
+   "level": 4,
+   "alternatives": [
+    "erilainen"
+   ]
+  },
+  {
+   "id": "gw-mina",
+   "source": "ich",
+   "target": "minä",
+   "category": "Kleine Wörter",
+   "level": 1
+  },
+  {
+   "id": "gw-sina",
+   "source": "du",
+   "target": "sinä",
+   "category": "Kleine Wörter",
+   "level": 1
+  },
+  {
+   "id": "gw-me",
+   "source": "wir",
+   "target": "me",
+   "category": "Kleine Wörter",
+   "level": 1
+  },
+  {
+   "id": "gw-ja",
+   "source": "und",
+   "target": "ja",
+   "category": "Kleine Wörter",
+   "level": 1
+  },
+  {
+   "id": "gw-han",
+   "source": "er, sie",
+   "target": "hän",
+   "category": "Kleine Wörter",
+   "level": 2
+  },
+  {
+   "id": "gw-te",
+   "source": "ihr",
+   "target": "te",
+   "category": "Kleine Wörter",
+   "level": 2
+  },
+  {
+   "id": "gw-he",
+   "source": "sie (Mehrzahl)",
+   "target": "he",
+   "category": "Kleine Wörter",
+   "level": 2
+  },
+  {
+   "id": "gw-mika",
+   "source": "was",
+   "target": "mikä",
+   "category": "Kleine Wörter",
+   "level": 2,
+   "alternatives": [
+    "mitä"
+   ]
+  },
+  {
+   "id": "gw-kuka",
+   "source": "wer",
+   "target": "kuka",
+   "category": "Kleine Wörter",
+   "level": 2
+  },
+  {
+   "id": "gw-missa",
+   "source": "wo",
+   "target": "missä",
+   "category": "Kleine Wörter",
+   "level": 2
+  },
+  {
+   "id": "gw-tai",
+   "source": "oder",
+   "target": "tai",
+   "category": "Kleine Wörter",
+   "level": 2
+  },
+  {
+   "id": "gw-mutta",
+   "source": "aber",
+   "target": "mutta",
+   "category": "Kleine Wörter",
+   "level": 2
+  },
+  {
+   "id": "gw-mista",
+   "source": "woher",
+   "target": "mistä",
+   "category": "Kleine Wörter",
+   "level": 3
+  },
+  {
+   "id": "gw-mihin",
+   "source": "wohin",
+   "target": "mihin",
+   "category": "Kleine Wörter",
+   "level": 3,
+   "alternatives": [
+    "minne"
+   ]
+  },
+  {
+   "id": "gw-milloin",
+   "source": "wann",
+   "target": "milloin",
+   "category": "Kleine Wörter",
+   "level": 3,
+   "alternatives": [
+    "koska"
+   ]
+  },
+  {
+   "id": "gw-miksi",
+   "source": "warum",
+   "target": "miksi",
+   "category": "Kleine Wörter",
+   "level": 3
+  },
+  {
+   "id": "gw-miten",
+   "source": "wie",
+   "target": "miten",
+   "category": "Kleine Wörter",
+   "level": 3,
+   "alternatives": [
+    "kuinka"
+   ]
+  },
+  {
+   "id": "gw-paljonko",
+   "source": "wie viel",
+   "target": "paljonko",
+   "category": "Kleine Wörter",
+   "level": 3
+  },
+  {
+   "id": "gw-koska",
+   "source": "weil",
+   "target": "koska",
+   "category": "Kleine Wörter",
+   "level": 3
+  },
+  {
+   "id": "gw-myos",
+   "source": "auch",
+   "target": "myös",
+   "category": "Kleine Wörter",
+   "level": 3
+  },
+  {
+   "id": "gw-vain",
+   "source": "nur",
+   "target": "vain",
+   "category": "Kleine Wörter",
+   "level": 3
+  },
+  {
+   "id": "gw-ehka",
+   "source": "vielleicht",
+   "target": "ehkä",
+   "category": "Kleine Wörter",
+   "level": 3
+  },
+  {
+   "id": "gw-tama",
+   "source": "dieser, das hier",
+   "target": "tämä",
+   "category": "Kleine Wörter",
+   "level": 3
+  },
+  {
+   "id": "gw-tuo",
+   "source": "jener, das da",
+   "target": "tuo",
+   "category": "Kleine Wörter",
+   "level": 4
+  },
+  {
+   "id": "gw-etta",
+   "source": "dass",
+   "target": "että",
+   "category": "Kleine Wörter",
+   "level": 4
+  },
+  {
+   "id": "gw-jos",
+   "source": "wenn, falls",
+   "target": "jos",
+   "category": "Kleine Wörter",
+   "level": 4
+  },
+  {
+   "id": "gw-jokainen",
+   "source": "jeder",
+   "target": "jokainen",
+   "category": "Kleine Wörter",
+   "level": 4
+  },
+  {
+   "id": "gw-ei-mitaan",
+   "source": "nichts",
+   "target": "ei mitään",
+   "category": "Kleine Wörter",
+   "level": 4
+  },
+  {
+   "id": "gw-jotain",
+   "source": "etwas",
+   "target": "jotain",
+   "category": "Kleine Wörter",
+   "level": 4,
+   "alternatives": [
+    "jotakin"
+   ]
+  },
+  {
+   "id": "gw-joku",
+   "source": "jemand",
+   "target": "joku",
+   "category": "Kleine Wörter",
+   "level": 4
+  },
+  {
+   "id": "gw-kanssa",
+   "source": "mit (jemandem)",
+   "target": "kanssa",
+   "category": "Kleine Wörter",
+   "level": 4
+  },
+  {
+   "id": "gw-ilman",
+   "source": "ohne",
+   "target": "ilman",
+   "category": "Kleine Wörter",
+   "level": 4
+  },
+  {
+   "id": "gw-ennen",
+   "source": "vor (zeitlich)",
+   "target": "ennen",
+   "category": "Kleine Wörter",
+   "level": 4
+  },
+  {
+   "id": "gw-jalkeen",
+   "source": "nach (zeitlich)",
+   "target": "jälkeen",
+   "category": "Kleine Wörter",
+   "level": 5
+  },
+  {
+   "id": "gw-kotona",
+   "source": "zu Hause",
+   "target": "kotona",
+   "category": "Wendungen",
+   "level": 4
+  },
+  {
+   "id": "gw-kotiin",
+   "source": "nach Hause",
+   "target": "kotiin",
+   "category": "Wendungen",
+   "level": 4
+  },
+  {
+   "id": "gw-kesalla",
+   "source": "im Sommer",
+   "target": "kesällä",
+   "category": "Wendungen",
+   "level": 4
+  },
+  {
+   "id": "gw-talvella",
+   "source": "im Winter",
+   "target": "talvella",
+   "category": "Wendungen",
+   "level": 4
+  },
+  {
+   "id": "gw-joka-paiva",
+   "source": "jeden Tag",
+   "target": "joka päivä",
+   "category": "Wendungen",
+   "level": 4
+  },
+  {
+   "id": "gw-puhun-suomea",
+   "source": "Ich spreche Finnisch.",
+   "target": "Puhun suomea.",
+   "category": "Wendungen",
+   "level": 4
+  },
+  {
+   "id": "gw-olen-vasynyt",
+   "source": "Ich bin müde.",
+   "target": "Olen väsynyt.",
+   "category": "Wendungen",
+   "level": 4
+  },
+  {
+   "id": "gw-on-kylma",
+   "source": "Es ist kalt.",
+   "target": "On kylmä.",
+   "category": "Wendungen",
+   "level": 4
+  },
+  {
+   "id": "gw-missa-sina-asut",
+   "source": "Wo wohnst du?",
+   "target": "Missä sinä asut?",
+   "category": "Wendungen",
+   "level": 4
+  },
+  {
+   "id": "gw-mita-sina-teet",
+   "source": "Was machst du?",
+   "target": "Mitä sinä teet?",
+   "category": "Wendungen",
+   "level": 4
+  },
+  {
+   "id": "gw-minulla-on-auto",
+   "source": "Ich habe ein Auto.",
+   "target": "Minulla on auto.",
+   "category": "Wendungen",
+   "level": 5
+  },
+  {
+   "id": "gw-minulla-on-nalka",
+   "source": "Ich habe Hunger.",
+   "target": "Minulla on nälkä.",
+   "category": "Wendungen",
+   "level": 5
+  },
+  {
+   "id": "gw-minulla-on-jano",
+   "source": "Ich habe Durst.",
+   "target": "Minulla on jano.",
+   "category": "Wendungen",
+   "level": 5
+  },
+  {
+   "id": "gw-minulla-on-kylma",
+   "source": "Mir ist kalt.",
+   "target": "Minulla on kylmä.",
+   "category": "Wendungen",
+   "level": 5,
+   "alternatives": [
+    "Minua palelee."
+   ]
+  },
+  {
+   "id": "gw-suomessa",
+   "source": "in Finnland",
+   "target": "Suomessa",
+   "category": "Wendungen",
+   "level": 5
+  },
+  {
+   "id": "gw-suomesta",
+   "source": "aus Finnland",
+   "target": "Suomesta",
+   "category": "Wendungen",
+   "level": 5
+  },
+  {
+   "id": "gw-suomeen",
+   "source": "nach Finnland",
+   "target": "Suomeen",
+   "category": "Wendungen",
+   "level": 5
+  },
+  {
+   "id": "gw-talossa",
+   "source": "im Haus",
+   "target": "talossa",
+   "category": "Wendungen",
+   "level": 5
+  },
+  {
+   "id": "gw-poydalla",
+   "source": "auf dem Tisch",
+   "target": "pöydällä",
+   "category": "Wendungen",
+   "level": 5
+  },
+  {
+   "id": "gw-bussilla",
+   "source": "mit dem Bus",
+   "target": "bussilla",
+   "category": "Wendungen",
+   "level": 5
+  },
+  {
+   "id": "gw-maanantaina",
+   "source": "am Montag",
+   "target": "maanantaina",
+   "category": "Wendungen",
+   "level": 5
+  },
+  {
+   "id": "gw-tana-iltana",
+   "source": "heute Abend",
+   "target": "tänä iltana",
+   "category": "Wendungen",
+   "level": 5,
+   "alternatives": [
+    "tänään illalla"
+   ]
+  },
+  {
+   "id": "gw-kaksi-kahvia",
+   "source": "zwei Kaffee",
+   "target": "kaksi kahvia",
+   "category": "Wendungen",
+   "level": 5
+  },
+  {
+   "id": "gw-asun-helsingissa",
+   "source": "Ich wohne in Helsinki.",
+   "target": "Asun Helsingissä.",
+   "category": "Wendungen",
+   "level": 5
+  },
+  {
+   "id": "gw-pidan-kahvista",
+   "source": "Ich mag Kaffee.",
+   "target": "Pidän kahvista.",
+   "category": "Wendungen",
+   "level": 5
+  },
+  {
+   "id": "gw-kuinka-vanha-olet",
+   "source": "Wie alt bist du?",
+   "target": "Kuinka vanha olet?",
+   "category": "Wendungen",
+   "level": 5
+  }
+ ]
+}

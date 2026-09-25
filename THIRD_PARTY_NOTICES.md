@@ -32,6 +32,15 @@ Die Schriften werden lokal aus `dist/fonts/` ausgeliefert (keine Verbindung zu G
 - Fraunces – Copyright 2020 The Fraunces Project Authors (https://github.com/undercasetype/Fraunces), `dist/fonts/OFL-Fraunces.txt`
 - Bezogen über Fontsource (`@fontsource-variable/dm-sans`, `@fontsource-variable/fraunces`, Version 5).
 
+## Spiel Mustikka Hyppy (Bereich „Games“)
+
+`dist/games/hyppy/` enthält den Einbettungs-Build des eigenen Spiels Mustikka Hyppy (github.com/stev2020/mustikka-hyppy).
+
+- Phaser (https://phaser.io), MIT License – Lizenztext in `dist/games/hyppy/LICENSES.txt`
+- Schrift Patrick Hand – Copyright 2010–2012 Patrick Wagesreiter, SIL Open Font License 1.1, `dist/games/hyppy/fonts/OFL-Patrick-Hand.txt`
+- Wortliste `words-de-fi.json` – eigener Grundwortschatz, CC0 1.0
+- Grafiken – eigene, per Skript gezeichnete Kritzel-Grafiken
+
 ## Dienste
 
 - Hosting: GitHub Pages
