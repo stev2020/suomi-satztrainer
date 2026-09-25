@@ -601,14 +601,14 @@ $('close-report').onclick=()=>$('report-dialog').close();$('report-category').on
 $('report-form').onsubmit=async e=>{e.preventDefault();if(!reportSentence)return;const submit=e.submitter||$('report-form').querySelector('[type="submit"]'),category=$('report-category').value;if(!Object.hasOwn(REPORT_CATEGORIES,category))return;const note=$('report-note').value.trim();if(note.length>2000)return;const id=`${reportSentence.id}:${category}`,old=memory.reports[id],now=Math.max(Date.now(),(old?.updatedAt||0)+1);const r={sentenceId:reportSentence.id,category,note,sentenceText:reportSentence.text,translationText:reportSentence.translations.map(t=>t.text).join(' / '),createdAt:old?.createdAt||now,updatedAt:now};
  try{
   commitLearning({...memory,reports:{...memory.reports,[id]:r}});if($('report-error'))$('report-error').textContent='Hinweis bearbeiten';
-  if(!accountActive()||typeof window.suomiAccountRequest!=='function'){$('report-status').textContent='Hinweis nur für diese Sitzung vorgemerkt. Melde dich an, damit der Satz zentral geprüft und vorläufig ausgeschlossen wird.';return;}
+  if(!accountActive()||typeof window.suomiAccountRequest!=='function'){$('report-status').textContent='Hinweis nur für diese Sitzung vorgemerkt. Melde dich an, damit der Satz zentral geprüft wird.';return;}
   submit.disabled=true;$('report-status').textContent='Hinweis wird eingereicht …';
   const translation=reportSentence.translations[0];
   const response=await window.suomiAccountRequest('/rest/v1/rpc/sentence_quality_api',{method:'POST',body:JSON.stringify({action:'report',payload:{sentence_id:reportSentence.id,translation_id:category==='translation'&&Number.isSafeInteger(Number(translation?.id))?Number(translation.id):null,category,note,sentence_text:reportSentence.text,translation_text:r.translationText,source_kind:qualitySourceKind(category==='translation'?translation:reportSentence),activity}})});
   const value=await response.json().catch(()=>({}));if(!response.ok||value.error)throw new Error(value.error||value.message||'Der Hinweis konnte nicht eingereicht werden.');
   if(value.target==='translation'&&translation?.id)qualityExclusions.translations.add(qualityTranslationKey(Number(reportSentence.id),Number(translation.id)));else qualityExclusions.sentences.add(Number(reportSentence.id));
   data=qualityFilteredCards(data);archived=qualityFilteredCards(archived);renderStats();
-  $('report-status').textContent=value.target==='translation'?'Danke. Diese Übersetzungsverbindung ist bis zur Prüfung aus normalen Runden ausgeschlossen.':'Danke. Dieser Satz ist bis zur Prüfung aus normalen Runden ausgeschlossen.';
+  $('report-status').textContent=value.target==='translation'?'Danke. Diese Übersetzung ist für dich ausgeblendet und wird geprüft.':'Danke. Dieser Satz ist für dich ausgeblendet und wird geprüft.';
   submit.disabled=false;
  }catch(err){submit.disabled=false;$('report-status').textContent=`Der Hinweis bleibt in deinem Konto gespeichert, konnte aber noch nicht zentral eingereicht werden: ${err.message}`;}
 };
