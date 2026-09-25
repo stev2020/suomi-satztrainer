@@ -286,3 +286,15 @@ Neue Übungsart **Dialoge**: 65 kurze Alltagsdialoge (6–10 Zeilen), je einer p
 - Entstehung: je Level von KI geschrieben und von einer zweiten, unabhängigen KI-Durchsicht korrigiert (`review-level-N.md`, 102 Zeilen geändert). Nicht muttersprachlich geprüft; offene Fragen in `sources/dialogs/ZWEIFEL.md`. Die App weist in der Liste darauf hin.
 - Daten: `sources/dialogs/level-N.json` → `python build_dialogs.py build` → `dist/dialogs.json`. Die Wortanalyse der 601 Zeilen steht in `sources/lexicon-annotations.tsv` (IDs `d:<dialog>:<zeile>`).
 - Code: `dist/dialogs.mjs`. Prüfen: `python build_dialogs.py check N`, `node test-word-lookup.mjs` (auch Dialogzeilen), `node test-dialogs-browser.mjs`.
+
+## Hyppy: Meine schwierigen Wörter (25. September 2026)
+
+Mustikka Hyppy hat eine dritte Wortliste, **Meine schwierigen Wörter**. Sie entsteht aus dem eigenen Lernstand, nicht aus einer festen Liste:
+
+- **Sätze**, die zuletzt mit „Nochmal“ (Gewicht 1) oder „Schwer“ (0,45) bewertet wurden, aus dem gespeicherten Lernstand und den letzten Bewertungen. Jedes Inhaltswort des Satzes zählt; Allerweltswörter (*olla, ei, minä, ja* …), Namen und Zahlen nicht.
+- **Nachgeschlagene Wörter** (Wort antippen): je Nachschlagen 0,8, höchstens dreimal je Wort. Gespeichert werden sie nur in diesem Browser (`suomi-word-lookups`, höchstens 300).
+- **Verpasste Lücken** aus „Endungen“ in dieser Sitzung.
+
+Gespielt wird die Grundform mit ihrer häufigsten deutschen Bedeutung aus der Wortanalyse, höchstens 40 Wörter, zuerst die schwierigsten und zuletzt geübten. Deutsche Bedeutungen kommen nur einmal vor, damit die Aufgabe eindeutig bleibt. Unter 10 Wörtern ist der Start gesperrt, mit einem Hinweis, wie die Liste wächst. Der Spiel-Lernstand liegt wie bei den anderen Listen unter `games.hyppy.schwer` (mit Konto synchronisiert).
+
+Code: `dist/difficult-words.mjs`, eingebunden über `window.suomiDifficultDeck` in `app.js` und den Deck-Eintrag in `dist/games.mjs`. Prüfen: `node test-difficult-words.mjs`, `node test-difficult-words-browser.mjs`.
