@@ -42,7 +42,8 @@ def tokens(text):
 def all_sentences():
     payload = json.loads((ROOT / 'dist' / 'sentences.json').read_text(encoding='utf-8'))
     cards = payload['sentences'] + payload.get('archived_sentences', [])
-    return [c for c in cards if c.get('translations')]
+    from build_dialogs import lines_as_sentences
+    return [c for c in cards if c.get('translations')] + lines_as_sentences()
 
 
 def voikko():
@@ -56,7 +57,7 @@ def prepare():
     done = existing_rows()
     cards = sorted((c for c in all_sentences()
                     if any(done.get(f"{c['id']}:{i}", {}).get('token') != t for i, t in enumerate(tokens(c['text'])))),
-                   key=lambda c: (c['level'], c['id']))
+                   key=lambda c: (c['level'], str(c['id'])))
     for old in (WORK / 'batches').glob('*.txt') if (WORK / 'batches').exists() else []:
         old.unlink()
     WORK.mkdir(parents=True, exist_ok=True)
@@ -129,7 +130,7 @@ def merge():
     if errors:
         print('\n'.join(errors[:200])); print(f'{len(errors)} Fehler, {len(missing)} fehlende Tokens')
     live = {f"{c['id']}:{i}" for c in all_sentences() for i, _ in enumerate(tokens(c['text']))}
-    order = sorted((r for k, r in rows.items() if k in live), key=lambda r: (int(r['sentence_id']), int(r['index'])))
+    order = sorted((r for k, r in rows.items() if k in live), key=lambda r: (not r['sentence_id'].isdigit(), int(r['sentence_id']) if r['sentence_id'].isdigit() else 0, r['sentence_id'], int(r['index'])))
     with TSV.open('w', encoding='utf-8', newline='') as f:
         w = csv.DictWriter(f, fieldnames=FIELDS, delimiter='\t', lineterminator='\n')
         w.writeheader(); w.writerows(order)
@@ -144,7 +145,7 @@ def build():
         rows = list(csv.DictReader(f, delimiter='\t'))
     by_sentence = {}
     for r in rows:
-        by_sentence.setdefault(int(r['sentence_id']), {})[int(r['index'])] = r
+        by_sentence.setdefault(int(r['sentence_id']) if r['sentence_id'].isdigit() else r['sentence_id'], {})[int(r['index'])] = r
     lemmas, lemma_index, forms, form_index, sentences, errors = [], {}, [], {}, {}, []
     for card in cards:
         toks, ann = tokens(card['text']), by_sentence.get(card['id'], {})

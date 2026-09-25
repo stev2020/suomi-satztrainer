@@ -273,3 +273,16 @@ Wer beim Übersetzen (Deutsch → Finnisch) eine eigene Antwort eintippt, bekomm
 - **Anders formuliert:** kein Fehlerverzeichnis, nur der Hinweis, die Bedeutung selbst zu vergleichen.
 
 Es bleibt bei der Selbstbewertung: Andere Formulierungen können richtig sein. Im Schreibtest erscheint dieselbe Aufschlüsselung unter jeder abweichenden Antwort. Bei mehreren deutschen Vorlagen wird die nächstliegende verwendet. Code: `dist/translation-feedback.mjs`. Prüfen: `node test-translation-feedback.mjs`, `node test-translation-feedback-browser.mjs`.
+
+## Dialoge (25. September 2026)
+
+Neue Übungsart **Dialoge**: 65 kurze Alltagsdialoge (6–10 Zeilen), je einer pro Lernpfad-Thema in Level 1–5. Sie verwenden wörtlich Sätze aus dem jeweiligen Thema (`reuses`) und stellen sie in eine echte Situation – auch für Themen, zu denen der Satzbestand in einem Level noch nichts hat.
+
+- **Lesen:** Zeile für Zeile, jedes Wort antippbar, Übersetzung je Zeile aufdeckbar, am Ende die wichtigsten Wendungen.
+- **Mitspielen:** Eine Rolle wählen; eigene Zeilen erscheinen auf Deutsch, man spricht oder tippt sie auf Finnisch und deckt auf. Getippte Antworten bekommen die Rückmeldung aus „Übersetzen“.
+- **Vorlesen** nur, wenn das Gerät eine finnische Systemstimme hat (als Computerstimme gekennzeichnet).
+- Nach Abschluss eines Lernpfad-Themas bietet die Abschlusskarte „Dialog zum Thema lesen“ an. Gelesene Dialoge bekommen in der Liste einen Haken (nur in diesem Browser).
+- Sprachlage: gesprochenes Standardfinnisch (duzen, *joo*, Kurzantworten mit dem Verb, Partikeln), beim Thema Umgangssprache ab Level 3 und in lockeren Level-5-Szenen durchgehend Puhekieli. Regeln: `sources/dialogs/INSTRUCTIONS.md` (übernommen aus den Aimo-Regeln zu Register und Natürlichkeit).
+- Entstehung: je Level von KI geschrieben und von einer zweiten, unabhängigen KI-Durchsicht korrigiert (`review-level-N.md`, 102 Zeilen geändert). Nicht muttersprachlich geprüft; offene Fragen in `sources/dialogs/ZWEIFEL.md`. Die App weist in der Liste darauf hin.
+- Daten: `sources/dialogs/level-N.json` → `python build_dialogs.py build` → `dist/dialogs.json`. Die Wortanalyse der 601 Zeilen steht in `sources/lexicon-annotations.tsv` (IDs `d:<dialog>:<zeile>`).
+- Code: `dist/dialogs.mjs`. Prüfen: `python build_dialogs.py check N`, `node test-word-lookup.mjs` (auch Dialogzeilen), `node test-dialogs-browser.mjs`.

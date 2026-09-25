@@ -1,0 +1,1037 @@
+[
+  {
+    "id": "l5-hello",
+    "level": 5,
+    "topic": "hello",
+    "title": "Zu spät zur Hausversammlung",
+    "scene": "Onni ist neu im Haus und kommt zu spät zur Hausversammlung, die Leena leitet; er will einen Saunatermin bekommen.",
+    "speakers": {
+      "A": {
+        "name": "Leena",
+        "role": "Vorsitzende"
+      },
+      "B": {
+        "name": "Onni",
+        "role": "neuer Bewohner"
+      }
+    },
+    "lines": [
+      {
+        "s": "B",
+        "fi": "Hei! Pahoittelut myöhästymisestä. Onko tämä taloyhtiön kokous?",
+        "de": "Hallo! Entschuldige die Verspätung. Ist das hier die Hausversammlung?"
+      },
+      {
+        "s": "A",
+        "fi": "On, tule vaan. Olen Leena, hallituksen puheenjohtaja. Sinä olet varmaan se uusi asukas kolmannesta kerroksesta?",
+        "de": "Ja, komm rein. Ich bin Leena, die Vorstandsvorsitzende. Du bist bestimmt der Neue aus dem dritten Stock?"
+      },
+      {
+        "s": "B",
+        "fi": "Joo, Onni. Muutin tänne viime viikolla.",
+        "de": "Ja, Onni. Ich bin letzte Woche eingezogen."
+      },
+      {
+        "s": "A",
+        "fi": "Hauska tutustua. Puhuttiin juuri saunavuoroista. Vapaita on enää torstaina ja lauantaina, mutta lauantai on suosituin ja siksi vähän kalliimpi, ja vuoro pitää varata viimeistään perjantaina.",
+        "de": "Freut mich. Wir haben gerade über die Saunazeiten gesprochen. Frei sind nur noch Donnerstag und Samstag, aber Samstag ist am beliebtesten und deshalb etwas teurer, und man muss spätestens am Freitag buchen."
+      },
+      {
+        "s": "B",
+        "fi": "Anteeksi, voitko sanoa uudestaan vähän hitaammin? Luulen, että ymmärrän, mutta en ole ihan varma.",
+        "de": "Entschuldige, kannst du das etwas langsamer wiederholen? Ich glaube, ich verstehe es, aber ich bin mir nicht ganz sicher."
+      },
+      {
+        "s": "A",
+        "fi": "No niin, hitaasti. Torstai on vapaa. Lauantaikin on vapaa, mutta se maksaa enemmän.",
+        "de": "Also gut, langsam. Donnerstag ist frei. Samstag ist auch frei, kostet aber mehr."
+      },
+      {
+        "s": "B",
+        "fi": "Ai, sitten torstai. Kiitos, että jaksoit selittää.",
+        "de": "Ach so, dann Donnerstag. Danke, dass du es so geduldig erklärt hast."
+      },
+      {
+        "s": "A",
+        "fi": "Eipä kestä. Laitan sinut listaan: torstai, kello kahdeksan.",
+        "de": "Gern geschehen. Ich trag dich ein: Donnerstag, acht Uhr."
+      }
+    ],
+    "reuses": [
+      4548204,
+      2586087
+    ],
+    "phrases": [
+      {
+        "fi": "Pahoittelut myöhästymisestä.",
+        "de": "Entschuldigung für die Verspätung – feste, etwas förmliche Formel beim Zuspätkommen"
+      },
+      {
+        "fi": "Voitko sanoa uudestaan vähän hitaammin?",
+        "de": "Kannst du das etwas langsamer wiederholen? – wenn man nicht mitkommt"
+      }
+    ],
+    "doubts": []
+  },
+  {
+    "id": "l5-time",
+    "level": 5,
+    "topic": "time",
+    "title": "Konzert heute Nacht",
+    "scene": "Ville lädt seine Mitbewohnerin Emma zum Auftritt seiner Band ein, und die beiden klären Uhrzeiten und Geld.",
+    "speakers": {
+      "A": {
+        "name": "Ville",
+        "role": "Mitbewohner"
+      },
+      "B": {
+        "name": "Emma",
+        "role": "Mitbewohnerin"
+      }
+    },
+    "lines": [
+      {
+        "s": "A",
+        "fi": "Moi! Ootsä vapaa tänään? Mun bändi soittaa tänä yönä Kalliossa.",
+        "de": "Hi! Hast du heute Zeit? Meine Band spielt heute Nacht in Kallio."
+      },
+      {
+        "s": "B",
+        "fi": "Tänä yönä? Mihin aikaan?",
+        "de": "Heute Nacht? Um wie viel Uhr?"
+      },
+      {
+        "s": "A",
+        "fi": "Ovet aukee kymmeneltä, ja me soitetaan yhdestätoista puoli yhteen.",
+        "de": "Einlass ist um zehn, und wir spielen von elf bis halb eins."
+      },
+      {
+        "s": "B",
+        "fi": "Mun pitää käydä ensin mummolla, mut ei se mitään. Mä palaan seiskalta, eli ehdin hyvin.",
+        "de": "Ich muss vorher noch zu Oma, aber das macht nichts. Ich bin um sieben zurück, das schaffe ich locker."
+      },
+      {
+        "s": "A",
+        "fi": "Siistii. Liput maksaa kympin, mut mä laitoin sut listalle.",
+        "de": "Super. Karten kosten zehn Euro, aber ich hab dich auf die Gästeliste gesetzt."
+      },
+      {
+        "s": "B",
+        "fi": "Kiitti! Ai niin, ja sä oot mulle vielä kakskyt euroo velkaa.",
+        "de": "Danke! Ach ja, du schuldest mir übrigens noch zwanzig Euro."
+      },
+      {
+        "s": "A",
+        "fi": "Joo joo, mä muistan. Mä annan sen huomen, okei?",
+        "de": "Ja, ja, ich weiß. Ich geb's dir morgen, okay?"
+      },
+      {
+        "s": "B",
+        "fi": "Okei, mut huomen ennen kahtatoista. Mä lähden iltapäivällä mökille.",
+        "de": "Okay, aber morgen vor zwölf. Nachmittags fahre ich zum Ferienhaus."
+      },
+      {
+        "s": "A",
+        "fi": "Sovittu. Nähdään yhdeltätoista!",
+        "de": "Abgemacht. Bis um elf!"
+      }
+    ],
+    "reuses": [
+      4434655,
+      6568237,
+      6442482
+    ],
+    "phrases": [
+      {
+        "fi": "Sovittu.",
+        "de": "Abgemacht. – bestätigt eine Verabredung"
+      },
+      {
+        "fi": "Ei se mitään.",
+        "de": "Das macht nichts. – spielt ein Hindernis herunter"
+      }
+    ],
+    "doubts": [
+      "Zeile 7/8: „huomen“ (Lernpfad-Satz in Zeile 7, Zeile 8 angeglichen) – im Helsinkier Puhekieli geläufig oder eher westfinnisch gefärbt? Falls regional: 6442482 aus reuses nehmen und in beiden Zeilen „huomenna“ schreiben."
+    ]
+  },
+  {
+    "id": "l5-cafe",
+    "level": 5,
+    "topic": "cafe",
+    "title": "Abendessen bei Antti",
+    "scene": "Kaisa ist bei ihrem Freund Antti zum Essen eingeladen; Antti will wissen, was sie isst und trinkt.",
+    "speakers": {
+      "A": {
+        "name": "Antti",
+        "role": "Gastgeber"
+      },
+      "B": {
+        "name": "Kaisa",
+        "role": "Gast"
+      }
+    },
+    "lines": [
+      {
+        "s": "A",
+        "fi": "Tuu vaan sisään! Ruoka on kohta valmis. Syök sä possua?",
+        "de": "Komm rein! Das Essen ist gleich fertig. Isst du Schweinefleisch?"
+      },
+      {
+        "s": "B",
+        "fi": "Joo. Mä syön lihaa, mut kala ei oo mun juttu.",
+        "de": "Ja. Ich esse Fleisch, nur Fisch ist nicht so meins."
+      },
+      {
+        "s": "A",
+        "fi": "Hyvä, tää on nimittäin possupataa. Mä kaadan sulle viiniä.",
+        "de": "Gut, es gibt nämlich Schweineschmortopf. Ich schenk dir Wein ein."
+      },
+      {
+        "s": "B",
+        "fi": "Ei kiitti, vettä vaan.",
+        "de": "Nein danke, nur Wasser."
+      },
+      {
+        "s": "A",
+        "fi": "Miks sä juot vettä? Perjantai-iltana!",
+        "de": "Warum trinkst du Wasser? An einem Freitagabend!"
+      },
+      {
+        "s": "B",
+        "fi": "Mä oon autolla. Ja huomenna on aikainen herätys.",
+        "de": "Ich bin mit dem Auto da. Und morgen muss ich früh raus."
+      },
+      {
+        "s": "A",
+        "fi": "Okei, ymmärrän. Tykkääk sä kahvista? Ruoan jälkeen mä voin keittää.",
+        "de": "Okay, verstehe. Magst du Kaffee? Nach dem Essen kann ich welchen kochen."
+      },
+      {
+        "s": "B",
+        "fi": "Tykkään, mut iltasin en juo. Teetä kyl juon.",
+        "de": "Schon, aber abends trinke ich keinen. Tee schon."
+      },
+      {
+        "s": "A",
+        "fi": "Sit mä keitän teetä. Ja sä saat viedä pataa kotiin, tätä on ihan liikaa.",
+        "de": "Dann koch ich Tee. Und du nimmst Eintopf mit nach Hause, das ist viel zu viel."
+      }
+    ],
+    "reuses": [
+      7347628,
+      6974935,
+      5487992,
+      7665537
+    ],
+    "phrases": [
+      {
+        "fi": "Mä oon autolla.",
+        "de": "Ich bin mit dem Auto da. – übliche Begründung, keinen Alkohol zu trinken"
+      },
+      {
+        "fi": "… ei oo mun juttu",
+        "de": "… ist nicht so meins – lockere Ablehnung"
+      }
+    ],
+    "doubts": []
+  },
+  {
+    "id": "l5-family",
+    "level": 5,
+    "topic": "family",
+    "title": "Wiedersehen am Spielplatz",
+    "scene": "Pekka trifft auf dem Spielplatz seine alte Schulfreundin Noora mit ihren Kindern und erzählt vom Restaurant seines Vaters.",
+    "speakers": {
+      "A": {
+        "name": "Pekka",
+        "role": "alter Schulfreund"
+      },
+      "B": {
+        "name": "Noora",
+        "role": "Mutter"
+      }
+    },
+    "lines": [
+      {
+        "s": "A",
+        "fi": "Noora? Ei voi olla totta! Mä en oo nähny sua sitten kouluaikojen.",
+        "de": "Noora? Das gibt's ja nicht! Ich hab dich seit der Schule nicht mehr gesehen."
+      },
+      {
+        "s": "B",
+        "fi": "Pekka! Joo, siit on varmaan kymmenen vuotta. Nää on mun lapset, Eetu ja Aada.",
+        "de": "Pekka! Ja, das ist bestimmt zehn Jahre her. Das sind meine Kinder, Eetu und Aada."
+      },
+      {
+        "s": "A",
+        "fi": "Moi! Sun lapset on ihania. Eetu näyttää ihan sulta.",
+        "de": "Hallo, ihr zwei! Deine Kinder sind süß. Eetu sieht genau aus wie du."
+      },
+      {
+        "s": "B",
+        "fi": "Kaikki sanoo niin. Entä sä, onks sulla jo perhettä?",
+        "de": "Das sagen alle. Und du, hast du schon Familie?"
+      },
+      {
+        "s": "A",
+        "fi": "Ei vielä. Mä asun taas täällä ja teen töitä ravintolassa.",
+        "de": "Noch nicht. Ich wohne wieder hier und arbeite in einem Restaurant."
+      },
+      {
+        "s": "B",
+        "fi": "Ai, sun isän ravintolassa? Onks se vielä olemassa?",
+        "de": "Ach, im Restaurant deines Vaters? Gibt's das noch?"
+      },
+      {
+        "s": "A",
+        "fi": "On. Isä pyörittää sitä edelleen, vaikka se täyttää kohta seittemänkyt.",
+        "de": "Ja. Papa führt es immer noch, obwohl er bald siebzig wird."
+      },
+      {
+        "s": "B",
+        "fi": "Hienoa! Sano terveisii sun vanhemmille. Me syötiin siellä aina mun synttäreinä.",
+        "de": "Toll! Grüß deine Eltern von mir. Wir haben da immer an meinem Geburtstag gegessen."
+      },
+      {
+        "s": "A",
+        "fi": "Sanon. Tulkaa joskus käymään, isä ilahtuu varmasti.",
+        "de": "Mach ich. Kommt doch mal vorbei, Papa freut sich bestimmt."
+      }
+    ],
+    "reuses": [
+      4359709,
+      5029785
+    ],
+    "phrases": [
+      {
+        "fi": "Ei voi olla totta!",
+        "de": "Das gibt's doch nicht! – bei einer überraschenden Begegnung"
+      },
+      {
+        "fi": "Sano terveisii …",
+        "de": "Grüß … von mir – Abschiedsformel"
+      }
+    ],
+    "doubts": []
+  },
+  {
+    "id": "l5-travel",
+    "level": 5,
+    "topic": "travel",
+    "title": "Zurück aus Lissabon",
+    "scene": "Jussi kommt aus Lissabon zurück, wo er sich verlaufen hat, und Elina überlegt, beim nächsten Mal mitzufahren.",
+    "speakers": {
+      "A": {
+        "name": "Elina",
+        "role": "Kollegin"
+      },
+      "B": {
+        "name": "Jussi",
+        "role": "Kollege"
+      }
+    },
+    "lines": [
+      {
+        "s": "A",
+        "fi": "No moi! Miten sun reissu meni?",
+        "de": "Na hallo! Wie war deine Reise?"
+      },
+      {
+        "s": "B",
+        "fi": "Reissu oli tosi hauska. Lissabon on ihana, vaikka mä eksyin heti ekana päivänä.",
+        "de": "Die Reise hat echt Spaß gemacht. Lissabon ist toll, obwohl ich mich gleich am ersten Tag verlaufen habe."
+      },
+      {
+        "s": "A",
+        "fi": "Eksyit? Miten?",
+        "de": "Verlaufen? Wie das denn?"
+      },
+      {
+        "s": "B",
+        "fi": "Puhelimesta loppu akku, eikä mulla ollu karttaa. Kaikki kadut näytti samalta.",
+        "de": "Mein Handyakku war leer und ich hatte keinen Stadtplan. Alle Straßen sahen gleich aus."
+      },
+      {
+        "s": "A",
+        "fi": "Ai kamala. Miten sä löysit takas hotellille?",
+        "de": "Oh je. Wie hast du zurück zum Hotel gefunden?"
+      },
+      {
+        "s": "B",
+        "fi": "Mä kysyin tietä yhdeltä mummolta kahvilassa. Se ei puhunu englantia, mut se piirsi mulle kartan servettiin.",
+        "de": "Ich hab eine alte Dame im Café nach dem Weg gefragt. Sie sprach kein Englisch, aber sie hat mir einen Plan auf eine Serviette gezeichnet."
+      },
+      {
+        "s": "A",
+        "fi": "Ihana! Matkustaksä usein ulkomaille? Mä en oo käyny ku Tallinnassa.",
+        "de": "Wie schön! Reist du oft ins Ausland? Ich war bisher nur in Tallinn."
+      },
+      {
+        "s": "B",
+        "fi": "Pari kertaa vuodessa. Sun pitäis tulla mukaan ens kerralla, mä meen syksyllä Portoon.",
+        "de": "Ein paar Mal im Jahr. Du solltest nächstes Mal mitkommen, ich fahre im Herbst nach Porto."
+      },
+      {
+        "s": "A",
+        "fi": "Oikeesti? No, mä voisin tulla. Mut sä hoidat kartat!",
+        "de": "Echt? Na, ich könnte mitkommen. Aber du kümmerst dich um die Karten!"
+      }
+    ],
+    "reuses": [
+      4416864,
+      5548941,
+      4181818
+    ],
+    "phrases": [
+      {
+        "fi": "Miten sun reissu meni?",
+        "de": "Wie war deine Reise? – typische Frage nach der Rückkehr"
+      },
+      {
+        "fi": "kysyä tietä",
+        "de": "nach dem Weg fragen"
+      }
+    ],
+    "doubts": []
+  },
+  {
+    "id": "l5-shopping",
+    "level": 5,
+    "topic": "shopping",
+    "title": "Ein neuer Regenschirm",
+    "scene": "Lauri hat Veeras Regenschirm verloren und will ihr im Kaufhaus einen neuen kaufen.",
+    "speakers": {
+      "A": {
+        "name": "Lauri",
+        "role": "Freund"
+      },
+      "B": {
+        "name": "Veera",
+        "role": "Freundin"
+      }
+    },
+    "lines": [
+      {
+        "s": "B",
+        "fi": "Täs on sateenvarjot. Oikeesti, sun ei tarvii…",
+        "de": "Hier sind die Regenschirme. Echt, du musst nicht …"
+      },
+      {
+        "s": "A",
+        "fi": "Kyl tarvii. Mä hukkasin sun sateenvarjon. Mä ostan sulle uuden, ja sillä selvä.",
+        "de": "Doch. Ich hab deinen Schirm verloren. Ich kauf dir einen neuen, und damit basta."
+      },
+      {
+        "s": "B",
+        "fi": "No okei. Tää sininen on kiva. Paljonks se maksaa?",
+        "de": "Na gut. Der blaue hier ist schön. Was kostet der?"
+      },
+      {
+        "s": "A",
+        "fi": "Kakskytviis euroo. Entä toi musta? Se on tukevampi.",
+        "de": "Fünfundzwanzig Euro. Und der schwarze da? Der ist stabiler."
+      },
+      {
+        "s": "B",
+        "fi": "Se maksaa kuuskyt! Ei, se on liian kallis.",
+        "de": "Der kostet sechzig! Nein, der ist zu teuer."
+      },
+      {
+        "s": "A",
+        "fi": "Ei se haittaa. Mul on paljon rahaa tässä kuussa, mä sain palkankorotuksen.",
+        "de": "Das macht nichts. Ich hab diesen Monat viel Geld, ich hab eine Gehaltserhöhung bekommen."
+      },
+      {
+        "s": "B",
+        "fi": "Onneks olkoon! Mut mä tykkään enemmän siitä sinisestä. Otetaan se.",
+        "de": "Glückwunsch! Aber mir gefällt der blaue besser. Nehmen wir den."
+      },
+      {
+        "s": "A",
+        "fi": "Okei, sininen. Mennään kassalle, mä maksan kortilla.",
+        "de": "Okay, der blaue. Gehen wir zur Kasse, ich zahle mit Karte."
+      }
+    ],
+    "reuses": [
+      5195901,
+      6162132
+    ],
+    "phrases": [
+      {
+        "fi": "Paljonks se maksaa?",
+        "de": "Was kostet der? – lockere Preisfrage"
+      },
+      {
+        "fi": "… ja sillä selvä.",
+        "de": "… und damit basta. – beendet eine Diskussion"
+      }
+    ],
+    "doubts": []
+  },
+  {
+    "id": "l5-health",
+    "level": 5,
+    "topic": "health",
+    "title": "Anruf im Gesundheitszentrum",
+    "scene": "Aino hat sich beim Unihockey am Knie verletzt und ruft im Gesundheitszentrum an, wo die Pflegerin Sari ihr einen Arzttermin gibt.",
+    "speakers": {
+      "A": {
+        "name": "Sari",
+        "role": "Pflegerin"
+      },
+      "B": {
+        "name": "Aino",
+        "role": "Patientin"
+      }
+    },
+    "lines": [
+      {
+        "s": "A",
+        "fi": "Terveyskeskus, hoitaja Sari. Miten voin auttaa?",
+        "de": "Gesundheitszentrum, hier ist Sari, Pflegerin. Wie kann ich helfen?"
+      },
+      {
+        "s": "B",
+        "fi": "Hei, täällä Aino Laine. Kaaduin eilen salibandyssä. Polveeni sattuu kovasti.",
+        "de": "Hallo, hier ist Aino Laine. Ich bin gestern beim Unihockey gestürzt. Mein Knie tut sehr weh."
+      },
+      {
+        "s": "A",
+        "fi": "Voi ei. Onko polvi turvoksissa? Pystytkö kävelemään?",
+        "de": "Oh nein. Ist das Knie geschwollen? Kannst du laufen?"
+      },
+      {
+        "s": "B",
+        "fi": "On, aika paljon. Pystyn, mutta portaissa sattuu.",
+        "de": "Ja, ziemlich. Laufen geht, aber auf der Treppe tut es weh."
+      },
+      {
+        "s": "A",
+        "fi": "Lääkärin pitää katsoa se. Huomenna on vapaa aika varttia yli kahdeksan. Sopiiko?",
+        "de": "Das sollte sich eine Ärztin ansehen. Morgen ist um Viertel nach acht ein Termin frei. Passt das?"
+      },
+      {
+        "s": "B",
+        "fi": "Sopii. Mitä teen siihen asti?",
+        "de": "Passt. Was mache ich bis dahin?"
+      },
+      {
+        "s": "A",
+        "fi": "Laita polveen kylmää ja pidä jalka koholla. Jos kipu pahenee yöllä, soita Päivystysapuun, numero on 116 117.",
+        "de": "Kühl das Knie und leg das Bein hoch. Wenn die Schmerzen in der Nacht schlimmer werden, ruf den ärztlichen Bereitschaftsdienst an, die Nummer ist 116 117."
+      },
+      {
+        "s": "B",
+        "fi": "Selvä. Kylmää ja jalka ylös. Kiitos paljon!",
+        "de": "Alles klar. Kühlen und Bein hoch. Vielen Dank!"
+      },
+      {
+        "s": "A",
+        "fi": "Ole hyvä. Tervetuloa huomenna, ja parempaa vointia!",
+        "de": "Gern. Bis morgen dann, und gute Besserung!"
+      }
+    ],
+    "reuses": [
+      4248089
+    ],
+    "phrases": [
+      {
+        "fi": "Miten voin auttaa?",
+        "de": "Wie kann ich helfen? – übliche Frage am Telefon und am Schalter"
+      },
+      {
+        "fi": "Parempaa vointia!",
+        "de": "Gute Besserung!"
+      }
+    ],
+    "doubts": [
+      "Anrede: Die Pflegerin duzt Aino durchgehend (in finnischen Gesundheitszentren heute verbreitet, zumal bei jüngeren Patienten). Würde ein Muttersprachler am Telefon eher siezen oder unpersönlich formulieren („Pystyykö polvella kävelemään?“)?"
+    ]
+  },
+  {
+    "id": "l5-nature",
+    "level": 5,
+    "topic": "nature",
+    "title": "Sturm oder Sonne",
+    "scene": "Matti will am Samstag im Nationalpark Nuuksio wandern und fragt im Naturzentrum Haltia die Mitarbeiterin Riikka nach dem Wetter.",
+    "speakers": {
+      "A": {
+        "name": "Riikka",
+        "role": "Mitarbeiterin"
+      },
+      "B": {
+        "name": "Matti",
+        "role": "Wanderer"
+      }
+    },
+    "lines": [
+      {
+        "s": "B",
+        "fi": "Hei! Aion kävellä lauantaina pitkän reitin täällä Nuuksiossa. Millainen sää on tulossa?",
+        "de": "Hallo! Ich will am Samstag hier in Nuuksio die lange Route gehen. Was für Wetter ist angesagt?"
+      },
+      {
+        "s": "A",
+        "fi": "Sää on huono, valitettavasti. Lauantaille luvataan myrskyä.",
+        "de": "Das Wetter wird leider schlecht. Für Samstag ist Sturm angesagt."
+      },
+      {
+        "s": "B",
+        "fi": "Myrskyä? Viime syksynäkin varoitettiin myrskystä. Se ei ollut kummoinen myrsky.",
+        "de": "Sturm? Letzten Herbst wurde auch vor einem Sturm gewarnt. Das war kein besonders heftiger Sturm."
+      },
+      {
+        "s": "A",
+        "fi": "Tämä on kovempi. Metsässä voi kaatua puita, joten pitkälle reitille ei kannata lähteä lauantaina.",
+        "de": "Dieser wird stärker. Im Wald können Bäume umstürzen, deshalb solltest du am Samstag nicht auf die lange Route gehen."
+      },
+      {
+        "s": "B",
+        "fi": "No, entä sunnuntai? Mitä sille luvataan?",
+        "de": "Na, und Sonntag? Was ist dafür angesagt?"
+      },
+      {
+        "s": "A",
+        "fi": "Pakkasta ja aurinkoa. Sää on hyvä, ja yöllä voi tulla ensilumi.",
+        "de": "Frost und Sonne. Das Wetter ist gut, und in der Nacht kann der erste Schnee fallen."
+      },
+      {
+        "s": "B",
+        "fi": "Ensilumi! Sitten tulen sunnuntaina. Onko reitti silloin liukas?",
+        "de": "Der erste Schnee! Dann komme ich am Sonntag. Ist der Weg dann glatt?"
+      },
+      {
+        "s": "A",
+        "fi": "Pitkospuut voivat olla liukkaita. Laita hyvät kengät ja ota tästä kartta.",
+        "de": "Die Holzstege können glatt sein. Zieh gute Schuhe an und nimm dir hier eine Karte mit."
+      },
+      {
+        "s": "B",
+        "fi": "Kiitos! Sunnuntaina siis.",
+        "de": "Danke! Also am Sonntag."
+      }
+    ],
+    "reuses": [
+      6887741,
+      6948945,
+      5250328
+    ],
+    "phrases": [
+      {
+        "fi": "Mitä sille luvataan?",
+        "de": "Was ist dafür angesagt? – Frage nach der Wettervorhersage (luvata = versprechen, vorhersagen)"
+      },
+      {
+        "fi": "… ei kannata …",
+        "de": "… lohnt sich nicht / solltest du lieber nicht – vorsichtiger Rat"
+      }
+    ],
+    "doubts": []
+  },
+  {
+    "id": "l5-feelings",
+    "level": 5,
+    "topic": "feelings",
+    "title": "Angst vor Montag",
+    "scene": "Tiina fängt morgen einen neuen Job an und ist nervös; ihr Mitbewohner Otto versucht, sie aufzumuntern.",
+    "speakers": {
+      "A": {
+        "name": "Otto",
+        "role": "Mitbewohner"
+      },
+      "B": {
+        "name": "Tiina",
+        "role": "Mitbewohnerin"
+      }
+    },
+    "lines": [
+      {
+        "s": "A",
+        "fi": "Hei, mikä on? Sä oot ollu hiljaa koko illan.",
+        "de": "Hey, was ist los? Du bist den ganzen Abend so still."
+      },
+      {
+        "s": "B",
+        "fi": "Huomenna alkaa se uus työ. Mua jännittää ihan hirveesti.",
+        "de": "Morgen fängt doch der neue Job an. Ich bin total nervös."
+      },
+      {
+        "s": "A",
+        "fi": "Mut sähän odotit sitä koko kesän!",
+        "de": "Aber du hast dich doch den ganzen Sommer darauf gefreut!"
+      },
+      {
+        "s": "B",
+        "fi": "Odotin. Mä oon vähän ujo, ja siel on kolmekyt uutta ihmistä.",
+        "de": "Schon. Ich bin ein bisschen schüchtern, und da sind dreißig neue Leute."
+      },
+      {
+        "s": "A",
+        "fi": "Ekana päivänä kaikki on vähän ujoja. Ja ne valitsi just sut, muista se.",
+        "de": "Am ersten Tag sind alle ein bisschen schüchtern. Und sie haben genau dich genommen, vergiss das nicht."
+      },
+      {
+        "s": "B",
+        "fi": "Niin kai. Ja vielä maanantaina! Mä inhoon maanantaita.",
+        "de": "Kann sein. Und dann auch noch an einem Montag! Ich hasse Montage."
+      },
+      {
+        "s": "A",
+        "fi": "Kaikki inhoo maanantaita. Tiedätsä mitä, mä teen sulle huomenna lohikeittoa, meni päivä miten meni.",
+        "de": "Alle hassen Montage. Weißt du was, ich koch dir morgen Lachssuppe, egal wie der Tag läuft."
+      },
+      {
+        "s": "B",
+        "fi": "Oikeesti? No, sit mä ainakin odotan iltaa. Kunpa maanantai menis nopeesti ohi.",
+        "de": "Echt? Na, dann freu ich mich wenigstens auf den Abend. Hoffentlich geht der Montag schnell vorbei."
+      },
+      {
+        "s": "A",
+        "fi": "Mä toivon samaa. Mullakin on huomenna kolme palaveria.",
+        "de": "Das hoffe ich auch. Ich hab morgen auch drei Meetings."
+      }
+    ],
+    "reuses": [
+      5008793,
+      6585899,
+      5236321
+    ],
+    "phrases": [
+      {
+        "fi": "Mua jännittää.",
+        "de": "Ich bin nervös. – mit Partitiv der Person, ohne Subjekt"
+      },
+      {
+        "fi": "Tiedätsä mitä, …",
+        "de": "Weißt du was, … – leitet einen Vorschlag ein"
+      }
+    ],
+    "doubts": []
+  },
+  {
+    "id": "l5-work",
+    "level": 5,
+    "topic": "work",
+    "title": "Mittagspause im Büro",
+    "scene": "Sanna will Juha zum Mittagessen holen, aber er steckt in einem Projekt – bis sie gute Nachrichten vom Chef bringt.",
+    "speakers": {
+      "A": {
+        "name": "Sanna",
+        "role": "Kollegin"
+      },
+      "B": {
+        "name": "Juha",
+        "role": "Kollege"
+      }
+    },
+    "lines": [
+      {
+        "s": "A",
+        "fi": "Juha, lähetsä syömään? Kello on jo yli yksitoista.",
+        "de": "Juha, kommst du mit essen? Es ist schon nach elf."
+      },
+      {
+        "s": "B",
+        "fi": "En ehdi. Mä työstän yhtä projektia, ja deadline on huomenna.",
+        "de": "Ich schaff's nicht. Ich arbeite gerade an einem Projekt, und morgen ist Deadline."
+      },
+      {
+        "s": "A",
+        "fi": "Sitä asiakasprojektia? Mä luulin, et se on jo valmis.",
+        "de": "Das Kundenprojekt? Ich dachte, das ist schon fertig."
+      },
+      {
+        "s": "B",
+        "fi": "Melkein. Mut kone jumittaa koko ajan. Mun tarvii ladata mun kännykkä, akku on ihan loppu.",
+        "de": "Fast. Aber der Rechner hängt ständig. Ich muss mein Handy aufladen, der Akku ist komplett leer."
+      },
+      {
+        "s": "A",
+        "fi": "Ota mun laturi. Ja kuulitsä jo? Meiän pomo hyväksy meiän suunnitelman.",
+        "de": "Nimm mein Ladegerät. Und hast du's schon gehört? Unser Chef hat unseren Plan genehmigt."
+      },
+      {
+        "s": "B",
+        "fi": "Ihan oikeesti? Me saadaan harjoittelija?",
+        "de": "Echt jetzt? Wir kriegen einen Praktikanten?"
+      },
+      {
+        "s": "A",
+        "fi": "Saadaan! Se aloittaa ens kuussa ja auttaa just tällasissa projekteissa.",
+        "de": "Ja! Er fängt nächsten Monat an und hilft genau bei solchen Projekten."
+      },
+      {
+        "s": "B",
+        "fi": "No niin, tää päivä parani. Tuo mulle sit vaikka voileipä kahvilasta.",
+        "de": "Na also, der Tag wird besser. Bring mir dann doch ein Sandwich aus dem Café mit."
+      },
+      {
+        "s": "A",
+        "fi": "Tuon. Kinkkua vai kanaa?",
+        "de": "Mach ich. Schinken oder Hähnchen?"
+      },
+      {
+        "s": "B",
+        "fi": "Kanaa. Kiitti!",
+        "de": "Hähnchen. Danke!"
+      }
+    ],
+    "reuses": [
+      7559328,
+      4124995,
+      6604422
+    ],
+    "phrases": [
+      {
+        "fi": "En ehdi.",
+        "de": "Ich schaff's nicht (zeitlich). – kurze Absage"
+      },
+      {
+        "fi": "Kuulitsä jo?",
+        "de": "Hast du's schon gehört? – kündigt Neuigkeiten an"
+      }
+    ],
+    "doubts": []
+  },
+  {
+    "id": "l5-slang",
+    "level": 5,
+    "topic": "slang",
+    "title": "Besuch am Nachmittag",
+    "scene": "Liisa und Mikko holen Jonna zum Flohmarkt ab, aber Jonna hat die Verabredung verschlafen.",
+    "speakers": {
+      "A": {
+        "name": "Liisa",
+        "role": "Freundin"
+      },
+      "B": {
+        "name": "Mikko",
+        "role": "Freund"
+      },
+      "C": {
+        "name": "Jonna",
+        "role": "Freundin"
+      }
+    },
+    "lines": [
+      {
+        "s": "A",
+        "fi": "Moi! Häiritääksme sua? Me tuotiin pullaa.",
+        "de": "Hi! Stören wir? Wir haben Zimtschnecken mitgebracht."
+      },
+      {
+        "s": "C",
+        "fi": "Ette, tulkaa vaan. Mä heräsin just. Mä tarviin kofeiinii ennen ku mä pystyn puhumaan.",
+        "de": "Nein, kommt rein. Ich bin gerade erst aufgewacht. Ich brauche Koffein, bevor ich reden kann."
+      },
+      {
+        "s": "B",
+        "fi": "Heräsit just? Kello on kaks! Eksä muista? Me sovittiin, et mennään tänään kirppikselle.",
+        "de": "Gerade erst aufgewacht? Es ist zwei! Weißt du's nicht mehr? Wir hatten ausgemacht, dass wir heute auf den Flohmarkt gehen."
+      },
+      {
+        "s": "C",
+        "fi": "Ai hitsi, totta. Mä olin eilen keikalla tosi myöhään.",
+        "de": "Ach Mist, stimmt. Ich war gestern bis spät auf einem Konzert."
+      },
+      {
+        "s": "A",
+        "fi": "No, keitä kahvit, me ootetaan. Kirppis on auki kuuteen asti.",
+        "de": "Na, koch Kaffee, wir warten. Der Flohmarkt hat bis sechs offen."
+      },
+      {
+        "s": "C",
+        "fi": "Okei, okei. Mennään sit ratikalla, mun pyörän kumi on puhki.",
+        "de": "Okay, okay. Dann fahren wir mit der Straßenbahn, mein Fahrrad hat einen Platten."
+      },
+      {
+        "s": "B",
+        "fi": "Sopii. Mä ostan sulle sieltä herätyskellon.",
+        "de": "Passt. Ich kauf dir da einen Wecker."
+      },
+      {
+        "s": "C",
+        "fi": "Tosi hauska. Kupit on kaapissa, ottakaa ite.",
+        "de": "Sehr witzig. Die Tassen sind im Schrank, bedient euch."
+      }
+    ],
+    "reuses": [
+      4391161,
+      3871759,
+      6165771
+    ],
+    "phrases": [
+      {
+        "fi": "Ai hitsi!",
+        "de": "Ach Mist! – milder Fluch"
+      },
+      {
+        "fi": "kirppis",
+        "de": "Flohmarkt (von kirpputori)"
+      }
+    ],
+    "doubts": []
+  },
+  {
+    "id": "l5-romance",
+    "level": 5,
+    "topic": "romance",
+    "title": "Unser Jahrestag",
+    "scene": "Aleksi überrascht Helmi zum fünften Jahrestag mit einem Tisch im Restaurant ihres ersten Dates.",
+    "speakers": {
+      "A": {
+        "name": "Aleksi",
+        "role": "Partner"
+      },
+      "B": {
+        "name": "Helmi",
+        "role": "Partnerin"
+      }
+    },
+    "lines": [
+      {
+        "s": "A",
+        "fi": "Hyvää vuosipäivää! Viis vuotta tänään.",
+        "de": "Alles Gute zum Jahrestag! Heute sind es fünf Jahre."
+      },
+      {
+        "s": "B",
+        "fi": "Sä muistit! Mä luulin, et sä oot unohtanu, ku sä et sanonu aamulla mitään.",
+        "de": "Du hast dran gedacht! Ich dachte schon, du hast es vergessen, weil du heute Morgen nichts gesagt hast."
+      },
+      {
+        "s": "A",
+        "fi": "En mä unohtanu. Mä varasin pöydän siitä ravintolasta, missä me oltiin ekoilla treffeillä.",
+        "de": "Hab ich nicht. Ich hab einen Tisch in dem Restaurant reserviert, wo wir bei unserem ersten Date waren."
+      },
+      {
+        "s": "B",
+        "fi": "Siitä pienestä italialaisesta? Onks se vielä olemassa?",
+        "de": "Bei dem kleinen Italiener? Gibt's den noch?"
+      },
+      {
+        "s": "A",
+        "fi": "On. Samat kynttilät ja kaikki. Pöytä on seittemältä.",
+        "de": "Ja. Dieselben Kerzen und alles. Der Tisch ist um sieben."
+      },
+      {
+        "s": "B",
+        "fi": "Muistatsä sen illan? Sä puhuit koko ajan jalkapallosta.",
+        "de": "Weißt du noch, der Abend? Du hast die ganze Zeit von Fußball geredet."
+      },
+      {
+        "s": "A",
+        "fi": "Mä olin tosi hermona! Tänään en puhu jalkapallosta sanaakaan, lupaan.",
+        "de": "Ich war total nervös! Heute sag ich kein Wort über Fußball, versprochen."
+      },
+      {
+        "s": "B",
+        "fi": "Hyvä. Mä rakastan sua, jalkapallon kanssa tai ilman.",
+        "de": "Gut. Ich liebe dich, mit oder ohne Fußball."
+      },
+      {
+        "s": "A",
+        "fi": "Niin mäkin sua. Lähetään puol seittemältä?",
+        "de": "Ich dich auch. Gehen wir um halb sieben los?"
+      }
+    ],
+    "reuses": [
+      7584848
+    ],
+    "phrases": [
+      {
+        "fi": "Hyvää vuosipäivää!",
+        "de": "Alles Gute zum Jahrestag!"
+      },
+      {
+        "fi": "Niin mäkin sua.",
+        "de": "Ich dich auch. – übliche Antwort auf „Mä rakastan sua“"
+      }
+    ],
+    "doubts": []
+  },
+  {
+    "id": "l5-emergency",
+    "level": 5,
+    "topic": "emergency",
+    "title": "Tasche in der Straßenbahn",
+    "scene": "Maija hat ihre Tasche in der Straßenbahn liegen lassen und bittet am Marktplatz einen Passanten, Kalle, um sein Handy.",
+    "speakers": {
+      "A": {
+        "name": "Maija",
+        "role": "Fahrgast"
+      },
+      "B": {
+        "name": "Kalle",
+        "role": "Passant"
+      }
+    },
+    "lines": [
+      {
+        "s": "A",
+        "fi": "Anteeksi, voisinko lainata puhelintasi? Laukkuni jäi ratikkaan, ja puhelin oli siinä.",
+        "de": "Entschuldigung, könnte ich mal dein Handy leihen? Meine Tasche ist in der Straßenbahn liegen geblieben, und mein Handy war drin."
+      },
+      {
+        "s": "B",
+        "fi": "Voi ei. Totta kai, ole hyvä. Mitä muuta laukussa oli?",
+        "de": "Oh nein. Klar, hier. Was war sonst noch in der Tasche?"
+      },
+      {
+        "s": "A",
+        "fi": "Lompakko ja avaimet. Kortit pitää sulkea heti, mutta en muista pankin numeroa.",
+        "de": "Portemonnaie und Schlüssel. Die Karten muss ich sofort sperren lassen, aber ich weiß die Nummer der Bank nicht."
+      },
+      {
+        "s": "B",
+        "fi": "Katsotaan netistä kortin sulkupalvelun numero. Tässä, soita siihen.",
+        "de": "Schauen wir im Netz nach der Nummer der Kartensperre. Hier, ruf da an."
+      },
+      {
+        "s": "A",
+        "fi": "No niin, nyt kortit ovat kiinni. Mutta mistä saan laukun takaisin?",
+        "de": "So, jetzt sind die Karten gesperrt. Aber wie bekomme ich die Tasche zurück?"
+      },
+      {
+        "s": "B",
+        "fi": "Mikä linja se oli?",
+        "de": "Welche Linie war das?"
+      },
+      {
+        "s": "A",
+        "fi": "Kolmonen, ehkä vartti sitten.",
+        "de": "Die Drei, vor vielleicht einer Viertelstunde."
+      },
+      {
+        "s": "B",
+        "fi": "Ratikkaan jääneet tavarat viedään löytötavaratoimistoon. Laukku voi olla siellä jo huomenna.",
+        "de": "Was in der Straßenbahn liegen bleibt, kommt ins Fundbüro. Die Tasche kann schon morgen dort sein."
+      },
+      {
+        "s": "A",
+        "fi": "Hyvä. Soitan vielä siskolle, hänellä on vara-avain. Saanko?",
+        "de": "Gut. Ich ruf noch meine Schwester an, sie hat einen Ersatzschlüssel. Darf ich?"
+      },
+      {
+        "s": "B",
+        "fi": "Soita vaan, minulla ei ole kiire.",
+        "de": "Ruf ruhig an, ich hab keine Eile."
+      }
+    ],
+    "reuses": [],
+    "phrases": [
+      {
+        "fi": "Voisinko lainata puhelintasi?",
+        "de": "Könnte ich dein Handy leihen? – höfliche Bitte an Fremde (eine Konditionalform genügt)"
+      },
+      {
+        "fi": "Soita vaan.",
+        "de": "Ruf ruhig an. – vaan macht die Erlaubnis locker"
+      }
+    ],
+    "doubts": [
+      "Sachfrage, nicht Sprache: Stimmen die Fakten noch (zentrale Kartensperre 020 333; in HSL-Straßenbahnen Vergessenes geht ans löytötavaratoimisto)? Sonst Zeile 4 und 8 allgemeiner fassen."
+    ]
+  }
+]

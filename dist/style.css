@@ -243,3 +243,32 @@ header .header-nav button:hover,header .header-nav button.selected{background:va
 .translation-diffs .missing,.translation-diffs .extra{padding:1px 7px;border-radius:999px;background:var(--lavender);font-size:12px;font-weight:700}
 .writing-feedback{margin:8px 0}
 .feedback-more{margin:0 0 6px;color:var(--muted);font-size:13px}
+/* Dialoge */
+.dialog-list{display:grid;gap:10px;margin:14px 0;padding:0;list-style:none}
+.dialog-list button{display:flex;width:100%;flex-direction:column;align-items:flex-start;gap:2px;padding:12px 14px;text-align:left}
+.dialog-list-title{font-weight:700}
+.dialog-list small{color:var(--muted)}
+.dialog-done{color:#1d6b4f}
+.dialog-title{margin:10px 0 4px}
+.dialog-scene{margin:0 0 6px;color:var(--muted)}
+.dialog-cast{display:flex;flex-wrap:wrap;gap:6px 14px;margin:0 0 12px;font-size:14px}
+.dialog-lines{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.dialog-line{position:relative;max-width:88%;padding:10px 14px;border:2px solid var(--ink);border-radius:14px;background:var(--paper);text-align:left}
+.dialog-line.left{justify-self:start;border-bottom-left-radius:4px}
+.dialog-line.right{justify-self:end;border-bottom-right-radius:4px;background:#f3eefa}
+.dialog-line.mine{box-shadow:3px 3px 0 var(--orange)}
+.dialog-line.current{max-width:100%;width:100%}
+.dialog-speaker{display:block;margin-bottom:2px;color:var(--muted);font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.card .dialog-fi{margin:0;font:600 19px/1.4 var(--heading)}
+.card .dialog-de,.card .dialog-prompt{margin:4px 0 0;color:var(--muted);font:400 15px/1.4 'DM Sans',sans-serif}
+.card .dialog-prompt{color:var(--ink);font-size:17px}
+.dialog-translate,.dialog-speak{min-height:0;margin-top:4px;padding:2px 8px;font-size:13px}
+.dialog-speak{position:absolute;top:6px;right:8px;margin:0}
+#dialog-form{display:grid;gap:8px;margin-top:8px}
+.dialog-phrases{margin-top:16px;padding:12px 14px;border-radius:12px;background:var(--lavender);text-align:left}
+.dialog-phrases h3{margin:0 0 6px;font-size:15px}
+.dialog-phrases p{margin:4px 0}
+.dialog-actions{display:grid;gap:10px}
+.dialog-back{justify-self:center}
+.dialog-actions button:not(.primary){padding:10px 16px;border:2px solid var(--ink);border-radius:12px;background:var(--paper);color:var(--ink);font:600 15px 'DM Sans',sans-serif;box-shadow:3px 3px 0 var(--ink);cursor:pointer}
+.dialog-actions .dialog-back,#actions>.dialog-back{justify-self:center;margin-top:10px}
