@@ -20,12 +20,16 @@ try{
   await page.locator('[data-difficulty="hard"]').first().click();
   await page.locator('#continue-practice').click();
   if(await page.locator('#guest-continue').isVisible())await page.locator('#guest-continue').click();
-  for(const variant of ['one-letter','exact']){
+  const variants=['one-letter','exact'];
+  for(let guard=0;variants.length&&guard<10;guard++){
    await page.locator('#translation-input').waitFor();
    const german=(await page.locator('#card p.sentence[lang="de"]').evaluate(el=>el.firstChild.data)).trim();
    const card=sentences.filter(s=>s.translations[0].text===german);
    assert.ok(card.length,'Satz gefunden: '+german);
    const fi=card[0].text;
+   // A typo in a one- or two-word sentence counts as a different formulation; wait for a longer one.
+   const variant=fi.split(/\s+/).length>=3?variants.shift():(variants[0]==='exact'?variants.shift():'skip');
+   if(variant==='skip'){await page.locator('#reveal').click();await page.locator('#card.revealed').waitFor();await page.locator('#inline-grades button').first().click();continue;}
    // Change one ending letter of the longest word (still recognisably the same word).
    const longest=fi.split(/\s+/).map(w=>w.replace(/[.,!?]+$/,'')).sort((a,b)=>b.length-a.length)[0];
    const typed=variant==='exact'?fi.toLowerCase():fi.replace(longest,longest.slice(0,-1)+(longest.endsWith('a')?'e':'a'));
@@ -42,6 +46,7 @@ try{
    }
    await page.locator('#inline-grades button').first().click();
   }
+  assert.equal(variants.length,0,'beide Fälle geprüft');
   await context.close();
  }
  assert.deepEqual(errors,[]);
