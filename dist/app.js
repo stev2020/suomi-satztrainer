@@ -9,8 +9,8 @@ import {everydayPathState,homeReviewPool} from './learning-path.mjs';
 import {addPerformanceEvent,buildLearningInsights,mergePerformanceEvents,validatePerformanceEvents} from './learning-insights.mjs';
 import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './supabase-config.js';
 import {validateGames,mergeGames} from './games-progress.mjs';
-import {mountWordLookup,loadLexicon,onWordLookup} from './word-lookup.mjs?v=2';
-import {buildDifficultDeck,readLookups,saveLookup} from './difficult-words.mjs?v=1';
+import {mountWordLookup,loadLexicon} from './word-lookup.mjs?v=2';
+import {buildDifficultDeck} from './difficult-words.mjs?v=2';
 import {buildEndingItems,indexLexicon,renderEndings} from './endings-practice.mjs?v=1';
 import {translationFeedbackMarkup} from './translation-feedback.mjs?v=1';
 import {loadDialogs,renderDialogs,dialogForTopic,createDialogSession} from './dialogs.mjs?v=1';
@@ -746,5 +746,4 @@ document.addEventListener('keydown',e=>{if($('practice-view').hidden||document.q
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stopAudio();else if(ready)renderStats();});
 try{const response=await fetch('sentences.json');if(!response.ok)throw new Error('load');const payload=await response.json();await loadQualityExclusions();loadedSentenceIds=new Set([...(payload.sentences||[]),...(Array.isArray(payload.archived_sentences)?payload.archived_sentences:[])].filter(s=>s?.translations?.length).map(s=>s.id));data=qualityFilteredCards(payload.sentences);if(Array.isArray(payload.levels))levels=payload.levels.map(l=>l.id).filter(Number.isInteger);if(!levels.includes(level))level=levels[0]||1;archived=qualityFilteredCards(Array.isArray(payload.archived_sentences)?payload.archived_sentences:[]);if(!Array.isArray(data)||!data.length)throw new Error('empty');try{const g=await fetch('grammar.json');if(g.ok){const payload=await g.json();grammar=payload.sentences||{};grammarAvailable=true;}}catch{}ready=true;start();if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});}catch{$('card').className='card empty';$('card').innerHTML='<h2>Die Sätze konnten nicht geladen werden.</h2><p>Prüfe deine Verbindung und lade die Seite erneut.</p>';$('actions').innerHTML='<button class="primary" id="retry">Erneut versuchen</button>';$('retry').onclick=()=>location.reload();$('total').textContent='Sätze nicht verfügbar';}
 mountWordLookup([$('practice-view')]);
-onWordLookup(info=>saveLookup(info.lemma));
-window.suomiDifficultDeck=async()=>buildDifficultDeck({lexicon:await loadLexicon(),reviews:memory.reviews,events:memory.performanceEvents,lookups:readLookups(),missed:[...endingsState.missed]});
+window.suomiDifficultDeck=async()=>buildDifficultDeck({lexicon:await loadLexicon(),reviews:memory.reviews,events:memory.performanceEvents,missed:[...endingsState.missed]});

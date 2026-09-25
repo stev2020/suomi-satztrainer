@@ -30,23 +30,32 @@ export function verbDeck(verbs = VERBS) {
   return {meta: {title: 'Verbformen', sourceLang: 'de', targetLang: 'fi'}, entries};
 }
 
-const DECKS = {
-  grund: {title: 'Grundwortschatz', load: async () => (await fetch(BASE + 'words-de-fi.json')).json()},
-  verben: {title: 'Verbformen', load: async () => verbDeck()},
-  schwer: {title: 'Meine schwierigen Wörter', load: async () => (await window.suomiDifficultDeck?.()) || {meta: {title: 'Meine schwierigen Wörter'}, entries: []}},
-};
-const MIN_WORDS = 10;
+import {mixDifficultWords, seededProgress} from './difficult-words.mjs?v=2';
 
-/** Zeigt, wie viele eigene schwierige Wörter es gibt; zu wenige → Start gesperrt. */
+// Grundwortschatz: die eigenen schwierigen Wörter (Sätze mit „Nochmal“/„Schwer“, verpasste
+// Endungen) werden eingemischt und kommen im Spiel bevorzugt dran (siehe seededProgress).
+let difficultIds = [];
+async function grundDeck() {
+  const base = await (await fetch(BASE + 'words-de-fi.json')).json();
+  let difficult = {entries: []};
+  try { difficult = (await window.suomiDifficultDeck?.()) || difficult; } catch {}
+  const {words, ids} = mixDifficultWords(base, difficult);
+  difficultIds = ids;
+  return words;
+}
+
+const DECKS = {
+  grund: {title: 'Grundwortschatz', load: grundDeck},
+  verben: {title: 'Verbformen', load: async () => verbDeck()},
+};
+
+/** Zeigt beim Grundwortschatz, wie viele eigene schwierige Wörter eingemischt werden. */
 async function refreshDifficult() {
-  const info = $('hyppy-difficult-count');
-  if (!info || typeof window.suomiDifficultDeck !== 'function') return;
-  try {
-    const n = (await window.suomiDifficultDeck()).entries.length;
-    info.textContent = n >= MIN_WORDS ? `${n} Wörter aus deinen Fehlern und Nachschlägen` : `Noch ${n} von ${MIN_WORDS} Wörtern – bewerte Sätze mit „Nochmal“ oder tippe Wörter an`;
-    const start = $('hyppy-start');
-    if (deck === 'schwer' && start) { start.disabled = n < MIN_WORDS; start.title = n < MIN_WORDS ? 'Noch zu wenige schwierige Wörter' : ''; }
-  } catch { info.textContent = 'Wortdaten nicht verfügbar'; }
+  const info = $('hyppy-grund-info');
+  if (!info) return;
+  let n = 0;
+  try { n = (await window.suomiDifficultDeck?.())?.entries.length || 0; } catch {}
+  info.textContent = n ? `669 Wörter · ${n} schwierige aus deinen Übungen kommen öfter dran` : '669 Wörter und Wendungen';
 }
 
 const accountUser = () => (typeof window.suomiAccountUser === 'function' ? window.suomiAccountUser() : null);
@@ -65,9 +74,15 @@ function progressStore(deck) {
       state.saveGameProgress(GAME, deck, merged);
       try { localStorage.removeItem(localKey(deck)); } catch {}
     }
-    return {load: () => state.gameProgress(GAME, deck), save: map => state.saveGameProgress(GAME, deck, map)};
+    return withDifficult(deck, {load: () => state.gameProgress(GAME, deck), save: map => state.saveGameProgress(GAME, deck, map)});
   }
-  return {load: () => readLocal(deck), save: map => { try { localStorage.setItem(localKey(deck), JSON.stringify(map)); } catch {} }};
+  return withDifficult(deck, {load: () => readLocal(deck), save: map => { try { localStorage.setItem(localKey(deck), JSON.stringify(map)); } catch {} }});
+}
+
+/** Schwierige Wörter ohne eigenen Spielstand starten wie „einmal falsch“ – nur im Grundwortschatz. */
+function withDifficult(deck, store) {
+  if (deck !== 'grund') return store;
+  return {load: () => seededProgress(store.load(), difficultIds), save: store.save};
 }
 
 function knownCount(deck) {
@@ -83,8 +98,6 @@ function renderCard() {
   const n = knownCount(deck);
   const where = accountUser() ? 'in deinem Konto' : 'nur in diesem Browser – mit Konto wird er gespeichert';
   $('hyppy-progress').textContent = n ? `${n} Wörter sicher · Lernstand ${where}.` : `Lernstand ${where}.`;
-  const start = $('hyppy-start');
-  if (start && deck !== 'schwer') { start.disabled = false; start.title = ''; }
   refreshDifficult();
 }
 
@@ -113,7 +126,6 @@ async function openGame() {
   try {
     const [{createMustikkaHyppy}, words] = await Promise.all([import('./' + BASE + 'mustikka-hyppy.js'), DECKS[deck].load()]);
     if (!opening) return; // inzwischen geschlossen
-    if (deck === 'schwer' && words.entries.length < MIN_WORDS) throw new Error('zu wenige Wörter');
     $('game-loading').hidden = true;
     instance = createMustikkaHyppy({
       parent: $('game-stage'),
