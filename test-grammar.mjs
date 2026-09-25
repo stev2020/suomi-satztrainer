@@ -81,4 +81,8 @@ assert.equal(topicNotes({id:368188,text:'Changed sentence'},grammar,'negation').
 assert(!GRAMMAR_TOPICS.find(t=>t.id==='location').match.test('Hinweiswort im Partitiv'));
 const html=fs.readFileSync(new URL('./dist/index.html',import.meta.url),'utf8');
 for(const [,asset] of html.matchAll(/(?:src|href)="([^"#:]+)"/g)){if(!/^(https?:|\.\/)/.test(asset))assert(fs.existsSync(new URL('./dist/'+asset,import.meta.url)),asset);}
+// Spoken "et" after a comma is että ("dass"), never the negation verb.
+{const all=JSON.parse(fs.readFileSync(new URL('./dist/grammar.json',import.meta.url),'utf8')).sentences;
+ for(const [id,entry] of Object.entries(all))for(const note of entry.notes)if(note.title==='Verneinungsverb'&&note.focus.toLowerCase()==='et')assert(!/,\s*et\b/i.test(entry.sentence),`et = että misread as negation in ${id}`);
+ assert.equal(all['6930344'].notes.find(n=>n.focus==='et').title,'Gesprochenes et = että');}
 console.log('Grammar selection, reveal, reviews, backup compatibility, activity switching and static assets passed.');
