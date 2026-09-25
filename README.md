@@ -263,3 +263,13 @@ Neue Übungsart **Endungen** (Startseite und Übungsauswahl): Ein Wort im echten
 - Nach jeder Antwort: Form mit Erklärung aus der Wortanalyse („Adessiv „auf, bei“ Singular · hier: bei mir → ich habe“). Ist die eigene falsche Antwort eine echte Form desselben Wortes, wird sie ebenfalls erklärt. Bei Objekten gibt es einen Hinweis auf Partitiv/Genitiv. Danach steht der ganze Satz zum Antippen da.
 - Lücken: gebeugte Nomen, Adjektive, Pronomen, Zahlwörter und Namen außer Nominativ Singular, ohne Umgangssprache, Possessiv- oder Endpartikel (3.463 aktive Lücken; Level 1: 146). Pro Runde 5 oder 10 Lücken aus dem gewählten Level, eine je Satz. Falsch beantwortete Lücken kommen in der nächsten Runde zuerst (bis zum Neuladen). Jede Antwort zählt zum Tageszähler; Wiederholungstermine der Sätze ändern sich nicht.
 - Code: `dist/endings-practice.mjs` (Auswahl, Prüfung, Darstellung), eingebunden in `app.js` wie die Verbformen. Prüfen: `node test-endings.mjs`, `node test-endings-browser.mjs`.
+
+## Rückmeldung beim Übersetzen (25. September 2026)
+
+Wer beim Übersetzen (Deutsch → Finnisch) eine eigene Antwort eintippt, bekommt nach dem Aufdecken statt der bloßen Gegenüberstellung eine Rückmeldung:
+
+- **Stimmt mit der Vorlage überein** – nach Normalisierung (Großschreibung, Satzzeichen, Leerraum); weggelassene Personalpronomen *minä/sinä/me/te* sind erlaubt und werden erwähnt.
+- **Fast wie die Vorlage** (höchstens die Hälfte der Wörter weicht ab): Die Wörter werden angeglichen. Jede abweichende Stelle erscheint mit Buchstabenmarkierung (*kirkaa → kirkas*), fehlende und zusätzliche Wörter sind benannt. Zu jedem finnischen Vorlagewort erscheint die Erklärung aus der Wortanalyse (Grundform, Bedeutung, Form, „hier:“). Ist die eigene Form eine echte Form desselben Wortes, wird auch sie benannt („Deine Form: Pronomen · Ablativ …“).
+- **Anders formuliert:** kein Fehlerverzeichnis, nur der Hinweis, die Bedeutung selbst zu vergleichen.
+
+Es bleibt bei der Selbstbewertung: Andere Formulierungen können richtig sein. Im Schreibtest erscheint dieselbe Aufschlüsselung unter jeder abweichenden Antwort. Bei mehreren deutschen Vorlagen wird die nächstliegende verwendet. Code: `dist/translation-feedback.mjs`. Prüfen: `node test-translation-feedback.mjs`, `node test-translation-feedback-browser.mjs`.

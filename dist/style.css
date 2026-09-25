@@ -231,3 +231,15 @@ header .header-nav button:hover,header .header-nav button.selected{background:va
 #endings-form input{font-size:20px}
 .endings-explain{margin:8px 0 0;font-size:15px}
 .endings-full{margin:14px 0 0;text-align:center;font:600 18px/1.4 var(--heading)}
+/* Rückmeldung beim Übersetzen */
+.feedback .feedback-verdict{margin:8px 0 6px;font-weight:700}
+.feedback.exact .feedback-verdict{color:#1d6b4f}
+.translation-diffs{display:grid;gap:8px;margin:6px 0 8px;padding:0;list-style:none;text-align:left}
+.translation-diffs li{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px;padding:8px 10px;border:1.5px solid var(--line);border-radius:10px;background:var(--paper)}
+.translation-diffs li small{flex-basis:100%;color:var(--muted);font-size:13px;line-height:1.4}
+.translation-diffs .yours{font-weight:600;text-decoration:line-through;text-decoration-color:color-mix(in srgb,var(--orange) 70%,transparent)}
+.translation-diffs .template{font-weight:700}
+.translation-diffs .arrow{color:var(--muted)}
+.translation-diffs .missing,.translation-diffs .extra{padding:1px 7px;border-radius:999px;background:var(--lavender);font-size:12px;font-weight:700}
+.writing-feedback{margin:8px 0}
+.feedback-more{margin:0 0 6px;color:var(--muted);font-size:13px}
