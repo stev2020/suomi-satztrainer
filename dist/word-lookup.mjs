@@ -13,6 +13,8 @@ export function loadLexicon(fetcher=fetch){
  return loading;
 }
 
+export const getLexicon=()=>lexicon;
+
 export function setLexicon(data){
  lexicon=data;byText=new Map();
  for(const [id,entry] of Object.entries(data?.sentences||{}))if(!byText.has(entry.s))byText.set(entry.s,{id:Number(id),...entry});

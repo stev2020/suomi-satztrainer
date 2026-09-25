@@ -253,3 +253,13 @@ Jedes Wort eines finnischen Satzes lässt sich antippen – in der Frage, nach d
 - Maßgeblich ist `sources/lexicon-annotations.tsv` (eine Zeile je Wort, von Hand korrigierbar). `python build_lexicon.py build` erzeugt daraus `dist/lexicon.json` und bricht ab, wenn ein Wort fehlt. Für neue Sätze: `python build_lexicon.py prepare` (benötigt libvoikko) erzeugt Arbeitspakete nur für noch nicht annotierte Sätze, `check NNN` prüft eine Antwortdatei, `merge` ergänzt die TSV.
 - `dist/word-lookup.mjs` wird von `app.js` eingebunden, lädt das Lexikon nach und macht bekannte finnische Sätze in der Übungsansicht antippbar (auch Leertaste/Enter; Escape schließt). Die Wortgrenzen entsprechen `sentenceWords()` aus der Wortbaustein-Übung. Lexikon und Modul gehören zum Offline-Cache.
 - Prüfen: `node test-word-lookup.mjs` (Abdeckung, Satzbindung und Wortgrenzen aller Sätze) und `node test-word-lookup-browser.mjs` (Desktop und Handy).
+
+## Endungen (25. September 2026)
+
+Neue Übungsart **Endungen** (Startseite und Übungsauswahl): Ein Wort im echten Satz fehlt. Angezeigt werden die deutsche Übersetzung und die Grundform mit Bedeutung; gesucht ist die gebeugte Form (Fälle, Plural, Stufenwechsel wie *parveke → parvekkeella*).
+
+- **Leicht:** drei Formen zur Auswahl, der Fall wird angezeigt. Die falschen Formen sind echte andere Fallformen desselben Wortes aus dem Satzbestand; wenn es zu wenige gibt, kommen einfache falsche Endungen ohne Stufenwechsel dazu (nur bei Grundformen auf Vokal). Fehlen auch die, wird die Lücke eingetippt.
+- **Schwer:** Form selbst schreiben, ä/ö-Knöpfe, „Tipp: Fall zeigen“. Großschreibung und Leerraum zählen nicht.
+- Nach jeder Antwort: Form mit Erklärung aus der Wortanalyse („Adessiv „auf, bei“ Singular · hier: bei mir → ich habe“). Ist die eigene falsche Antwort eine echte Form desselben Wortes, wird sie ebenfalls erklärt. Bei Objekten gibt es einen Hinweis auf Partitiv/Genitiv. Danach steht der ganze Satz zum Antippen da.
+- Lücken: gebeugte Nomen, Adjektive, Pronomen, Zahlwörter und Namen außer Nominativ Singular, ohne Umgangssprache, Possessiv- oder Endpartikel (3.463 aktive Lücken; Level 1: 146). Pro Runde 5 oder 10 Lücken aus dem gewählten Level, eine je Satz. Falsch beantwortete Lücken kommen in der nächsten Runde zuerst (bis zum Neuladen). Jede Antwort zählt zum Tageszähler; Wiederholungstermine der Sätze ändern sich nicht.
+- Code: `dist/endings-practice.mjs` (Auswahl, Prüfung, Darstellung), eingebunden in `app.js` wie die Verbformen. Prüfen: `node test-endings.mjs`, `node test-endings-browser.mjs`.
