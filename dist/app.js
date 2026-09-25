@@ -86,7 +86,8 @@ function prepareAudio(url){
  while(audioCache.size>AUDIO_CACHE_LIMIT){const [oldURL,oldAudio]=audioCache.entries().next().value;oldAudio.pause();oldAudio.removeAttribute('src');oldAudio.load();audioCache.delete(oldURL);}
  return audio;
 }
-function preloadQueueAudio(){const urls=queue.slice(0,3).map(s=>s.audios?.[0]?.download_url).filter(Boolean);for(const url of new Set(urls))prepareAudio(url);}
+// Audio comes from api.tatoeba.org; load it only while the practice view is open (privacy, data use).
+function preloadQueueAudio(){if($('practice-view')?.hidden)return;const urls=queue.slice(0,3).map(s=>s.audios?.[0]?.download_url).filter(Boolean);for(const url of new Set(urls))prepareAudio(url);}
 function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function dailyPlan(){
  return reviewPlan(homeReviewPool([...data,...archived],level),memory.reviews,null,{translationOffset:reviewTranslationCount});
@@ -626,7 +627,7 @@ function showView(name,openSettings=false){
  document.querySelectorAll('.header-nav [data-view]').forEach(b=>{const selected=b.dataset.view===name;b.classList.toggle('selected',selected);if(selected)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
  const headerPractice=$('header-practice');headerPractice.classList.toggle('selected',name==='practice');if(name==='practice')headerPractice.setAttribute('aria-current','page');else headerPractice.removeAttribute('aria-current');
  if(name!=='practice')stopAudio();
- if(name==='practice'){applyDailyCard();$('practice-settings').open=openSettings;}
+ if(name==='practice'){applyDailyCard();$('practice-settings').open=openSettings;preloadQueueAudio();}
  window.scrollTo({top:0,behavior:'smooth'});
 }
 $('continue-practice').onclick=()=>{
