@@ -4,8 +4,8 @@
  "selected_on": "2026-09-25",
  "description": "Reviewed Finnish sentences with direct German Tatoeba links for Level 1/2 and Level 6, absent from the previous deck and archive. Text and attribution preserved; no audio. AI-reviewed classification, not certified CEFR.",
  "review_stats": {
-  "L2 keep": 745,
-  "L2 reject": 306,
+  "L2 keep": 744,
+  "L2 reject": 307,
   "L6 keep": 145,
   "L6 reject": 258,
   "dup skip": 8
@@ -2045,29 +2045,6 @@
    "audios": [],
    "level": 1,
    "topic": "travel",
-   "level_assessment": {
-    "status": "estimated",
-    "method": "reviewed-level-fill-2026-09-25"
-   }
-  },
-  {
-   "id": 3381068,
-   "lang": "fin",
-   "text": "Tom ei nuku.",
-   "owner": "Silja",
-   "license": "CC BY 2.0 FR",
-   "translations": [
-    {
-     "id": 2509176,
-     "lang": "deu",
-     "text": "Tom schläft nicht.",
-     "owner": "Zaghawa",
-     "license": "CC BY 2.0 FR"
-    }
-   ],
-   "audios": [],
-   "level": 1,
-   "topic": "-",
    "level_assessment": {
     "status": "estimated",
     "method": "reviewed-level-fill-2026-09-25"

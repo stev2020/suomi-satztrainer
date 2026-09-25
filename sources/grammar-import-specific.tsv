@@ -412,6 +412,11 @@
 6970679	et	Gesprochenes et = että	et steht hier nach einem Komma und ist die gesprochene Kurzform von että („dass“). Es leitet einen Nebensatz ein und ist nicht das Verneinungsverb et („du nicht“); das folgende Verb ist nicht verneint.
 6970679	soitan	Verbform: soittaa	soitan gehört zu soittaa („anrufen/ein Instrument spielen“): erste Person Singular (ich) im Präsens. Die Verbform zeigt die Person; das Präsens kann je nach Zusammenhang auch Zukünftiges bezeichnen.
 6970679	mä	Gesprochene Personalpronomen	mä/mää/mie sind gesprochene oder regionale Formen von minä („ich“), sä/sää/sie von sinä („du“). In der Standardsprache stehen minä und sinä.
+3381068	ei nuku	Verneinungsverb	nukkua („schlafen“) → ei nuku; kk wird zu k.
+3742596	Hyvää yötä	Gruß als selbstständiger Ausdruck	yö („Nacht“) → yötä: Viele Gruß- und Wunschformeln stehen im Partitiv: hyvää yötä = „gute Nacht“.
+3742596	nuku hyvin	Aufforderung	nukkua → nuku!: Aufforderung an eine Person. hyvin ist das Adverb zu hyvä: „gut“.
+3781632	sinun kanssasi	Nachgestelltes Verhältniswort	kanssa („mit“) steht nach dem Genitiv: sinun kanssasi = „mit dir“; -si wiederholt den Besitzer.
+3781632	haluaa puhua	Verbform: haluta	haluta → haluaa, danach die Grundform puhua („sprechen“).
 354748	En tiedä	Verneinungsverb	tietää („wissen“) wird mit dem Verneinungsverb verneint: en („ich nicht“) + tiedä. Das Hauptverb steht in der Verneinungsform ohne Personalendung; kk/t-Wechsel: tietää → tiedä.
 356199	rakastan sinua	Verbform: rakastaa	rakastaa („lieben“) → rakastan („ich liebe“). Das Objekt steht immer im Partitiv: sinä → sinua („dich“).
 356199	Minä	Personalpronomen	minä bedeutet „ich“. Weil die Endung -n schon „ich“ anzeigt, kann das Pronomen auch wegfallen; mit minä wird die Person etwas betont.
@@ -521,7 +526,6 @@
 3374036	Osaan laulaa	Erlernte Fähigkeit	osata → osaan („ich kann“) + Grundform laulaa („singen“).
 3374858	Osaan kävellä	Erlernte Fähigkeit	osata → osaan („ich kann“) + Grundform kävellä („gehen, laufen“).
 3375730	keittiössä	Inessiv: innerhalb eines Ortes	keittiö → keittiössä: Inessiv auf -ssä („in der Küche“).
-3381068	ei nuku	Verneinungsverb	nukkua („schlafen“) → ei nuku; kk wird zu k.
 3381464	Suurkiitokset	Gruß als selbstständiger Ausdruck	suur- („groß“) + kiitokset („Dank“, Plural): „vielen herzlichen Dank“.
 3381800	Mikä se on	Was oder wer?	mikä („was“) fragt nach einer Sache; se („es/das“) ist das Subjekt: „Was ist das?“.
 3382220	tanssii	Verb im Präsens	tanssia („tanzen“) → tanssii („er tanzt“): Die 3. Person verlängert den Vokal.
