@@ -1,5 +1,7 @@
 # Quellen und Lizenzen
 
+Der Code von Vanamo steht unter der AGPL-3.0-or-later (siehe `LICENSE`). Eigene Lerninhalte – Grammatikhilfen, Dialoge, Wortanalysen, KI-gestützte eigene Übersetzungen und Wortlisten – stehen unter CC BY-NC-SA 4.0 (https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de), sofern unten nichts anderes angegeben ist. Die folgenden fremden Inhalte behalten ihre eigenen Lizenzen.
+
 ## Satztexte
 
 Die finnischen und deutschen Tatoeba-Satztexte werden entsprechend der jeweils in `dist/sentences.json` angegebenen Lizenz verwendet. Soweit dort nichts anderes angegeben ist, gilt CC BY 2.0 FR. Urheber, Satz-ID und Lizenz sind in `dist/sentences.json` enthalten und in der App unter „Quellen & Aufnahmen“ sichtbar.

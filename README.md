@@ -1,14 +1,22 @@
-# Suomi-Satztrainer
+# Vanamo
 
-Ein Finnisch-Deutsch-Satztrainer als statische Website, ohne Konto und ohne Server-Datenbank.
+Vanamo ist eine kostenlose, quelloffene Sprachlern-App. Sie soll dauerhaft kostenlos bleiben und wird über freiwillige Spenden finanziert. Ziel ist, dass jeder Mensch auf der Welt mit Vanamo eine Sprache lernen kann.
 
-- 4.454 aktive Sätze in sechs geschätzten Schwierigkeitsstufen, darunter 300 Sätze in Level 1.
-- Übersetzen in beide Richtungen, Hörmodus, Diktat und Schreibtest.
-- Grammatik nach Themen sowie satzgebundene Grammatikhilfen.
-- Favoriten, Wiederholungsplanung und Sicherung des lokalen Lernstands.
-- 4.115 verknüpfte finnische Originalaufnahmen mit bestätigter Lizenz.
-- Audio bleibt online bei Tatoeba und ist nicht in diesem Repository enthalten.
+Aktuell ist Vanamo ein Finnisch-Deutsch-Satztrainer. Weitere Sprachen, eine mehrsprachige Oberfläche und ein Tandem-Modus sind geplant.
+
+- Über 5.000 finnische Sätze mit deutschen Übersetzungen in sechs geschätzten Schwierigkeitsstufen.
+- Übersetzen in beide Richtungen, Hörmodus, Diktat, Schreibtest, Endungen und Dialoge.
+- Wörter antippen für Grundform, Bedeutung und Form; Grammatik nach Themen und Verbformen.
+- Lernpfade, Wiederholungsplanung, Favoriten, Klassenräume und das Spiel Mustikka Hyppy.
+- Finnische Originalaufnahmen von Tatoeba; das Audio bleibt online bei Tatoeba und ist nicht in diesem Repository enthalten.
 - Quellen, Mitwirkende und Lizenzen werden an den jeweiligen Sätzen angezeigt.
+
+## Lizenz
+
+- **Code:** GNU Affero General Public License v3.0 oder später (AGPL-3.0-or-later), siehe [`LICENSE`](LICENSE). Jede und jeder darf den Code nutzen, verändern und weitergeben. Wer eine veränderte Fassung als Website oder App anbietet, muss den eigenen Quellcode ebenfalls unter der AGPL offenlegen.
+- **Eigene Lerninhalte** (Grammatikhilfen, Dialoge, Wortanalysen, eigene Übersetzungen und Wortlisten): Creative Commons Namensnennung – Nicht kommerziell – Weitergabe unter gleichen Bedingungen 4.0 (CC BY-NC-SA 4.0), soweit in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) nichts anderes steht.
+- **Fremde Inhalte** behalten ihre eigene Lizenz: Tatoeba-Satztexte (meist CC BY 2.0 FR), Tatoeba-Aufnahmen (CC BY-NC 4.0, nur nichtkommerziell), Schriften (SIL Open Font License), Phaser (MIT). Details in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+- Der Name „Vanamo“ und das Logo sind von diesen Lizenzen nicht erfasst.
 
 `dist/` enthält die fertige Website. Ein Build-Schritt ist nicht erforderlich.
 
