@@ -203,3 +203,16 @@ header .header-nav button:hover,header .header-nav button.selected{background:va
 .legal li{margin:4px 0}
 .legal code{font-size:12px;background:var(--lavender);padding:1px 5px;border-radius:5px}
 @media (max-width:600px){.legal{padding:18px;margin:12px 0}.legal h1{font-size:28px}}
+/* Wort antippen */
+.fi-words{display:inline}
+.fi-word{display:inline;margin:0;padding:0 1px;border:0;border-radius:4px;background:none;color:inherit;font:inherit;letter-spacing:inherit;line-height:inherit;cursor:pointer;text-decoration:underline dotted color-mix(in srgb,var(--purple) 45%,transparent);text-decoration-thickness:1.5px;text-underline-offset:.22em;box-shadow:none;min-height:0;min-width:0;transform:none}
+.fi-word:hover,.fi-word:focus-visible,.fi-word.active{background:var(--lavender);text-decoration-color:var(--purple);outline:none}
+.word-lookup-hint{margin:6px 0 0;color:var(--muted);font:13px/1.4 'DM Sans',sans-serif;text-align:center}
+.word-popover{position:fixed;z-index:1000;width:min(300px,calc(100vw - 24px));padding:12px 14px;border:2px solid var(--ink);border-radius:12px;background:var(--paper);color:var(--ink);box-shadow:4px 4px 0 var(--purple);font:14px/1.45 'DM Sans',sans-serif;text-align:left}
+.word-popover[hidden]{display:none}
+.word-popover p{margin:0 0 6px;overflow-wrap:anywhere}
+.word-popover p:last-child{margin-bottom:0}
+.word-popover-word{font:600 20px/1.2 var(--heading)}
+.word-popover-label{display:inline-block;margin-right:4px;color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.word-popover-form{padding:5px 8px;border-radius:8px;background:var(--lavender);font-size:13px}
+.word-popover-note{color:var(--muted);font-size:11px}

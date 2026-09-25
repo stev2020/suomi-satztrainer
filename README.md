@@ -243,3 +243,13 @@ Der Header hat einen eigenen Button **Spiele**. Die Ansicht `#games-view` zeigt 
 - **Lernstand:** Mit Konto unter `games.hyppy.<liste>` im synchronisierten Lernstand (`dist/games-progress.mjs`: Prüfung und Zusammenführen je Wort, neuere Antwort gewinnt). Ohne Konto nur im Browser (`suomi-hyppy.progress.<liste>`); beim ersten Spielen mit Konto wird dieser Stand übernommen.
 - **Aktualisieren:** Im Spiel-Repo `npm run build:embed`, dann hier `node scripts/update-hyppy.mjs ../mustikka-hyppy`.
 - **Tests:** `test-games.mjs` (in `npm test`) und `test-games-browser.mjs` (in der CI).
+
+## Wort antippen (25. September 2026)
+
+Jedes Wort eines finnischen Satzes lässt sich antippen – in der Frage, nach dem Aufdecken, in Hörmodus, Diktat-Lösung und Grammatik. Ein kleines Fenster zeigt **Grundform**, **deutsche Bedeutung**, **Form** (Fall und Zahl bzw. Person, Zeit und Modus, Partizipien, Infinitive, Possessiv- und Frageendungen), optional **„hier:“** mit der Wiedergabe genau dieser Form im Satz und bei Zusammensetzungen die **Wortteile**.
+
+- `dist/lexicon.json` deckt alle 4.454 aktiven und 239 archivierten Sätze ab (16.041 Wörter, 2.326 Grundformen). Die Daten sind an den exakten Satztext gebunden; geänderte Sätze bekommen keine veralteten Erklärungen.
+- Entstehung: Die Morphologie stammt aus [Voikko](https://voikko.puimula.org/) (Kandidaten je Wortform). Auswahl im Satzzusammenhang, deutsche Bedeutung, „hier:“ und die Behandlung von Umgangssprache (*mä*, *oon*, *mun* …) sowie erstarrten Formen (*missä* „wo“, *kotona* „zu Hause“) sind KI-Annotationen (Claude) nach `sources/lexicon-instructions.md`. Die App kennzeichnet das im Fenster. Keine vollständige linguistische Prüfung.
+- Maßgeblich ist `sources/lexicon-annotations.tsv` (eine Zeile je Wort, von Hand korrigierbar). `python build_lexicon.py build` erzeugt daraus `dist/lexicon.json` und bricht ab, wenn ein Wort fehlt. Für neue Sätze: `python build_lexicon.py prepare` (benötigt libvoikko) erzeugt Arbeitspakete nur für noch nicht annotierte Sätze, `check NNN` prüft eine Antwortdatei, `merge` ergänzt die TSV.
+- `dist/word-lookup.mjs` wird von `app.js` eingebunden, lädt das Lexikon nach und macht bekannte finnische Sätze in der Übungsansicht antippbar (auch Leertaste/Enter; Escape schließt). Die Wortgrenzen entsprechen `sentenceWords()` aus der Wortbaustein-Übung. Lexikon und Modul gehören zum Offline-Cache.
+- Prüfen: `node test-word-lookup.mjs` (Abdeckung, Satzbindung und Wortgrenzen aller Sätze) und `node test-word-lookup-browser.mjs` (Desktop und Handy).
