@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node server.mjs",
-    "test": "node scripts/find-sentence-duplicates.mjs && node test-grammar.mjs && node test-word-lookup.mjs && node test-learning-insights.mjs && node test-learning-path.mjs && node test-auth-sync.mjs && node test-auth-refresh.mjs && node test-games.mjs && node test-sentence-quality.mjs && node test-account-deletion.mjs"
+    "test": "node scripts/find-sentence-duplicates.mjs && node test-grammar.mjs && node test-word-lookup.mjs && node test-endings.mjs && node test-learning-insights.mjs && node test-learning-path.mjs && node test-auth-sync.mjs && node test-auth-refresh.mjs && node test-games.mjs && node test-sentence-quality.mjs && node test-account-deletion.mjs"
   },
   "engines": {
     "node": ">=18"

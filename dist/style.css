@@ -216,3 +216,18 @@ header .header-nav button:hover,header .header-nav button.selected{background:va
 .word-popover-label{display:inline-block;margin-right:4px;color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
 .word-popover-form{padding:5px 8px;border-radius:8px;background:var(--lavender);font-size:13px}
 .word-popover-note{color:var(--muted);font-size:11px}
+/* Endungen */
+.endings-sentence{margin:18px 0 6px}
+.endings-gap{display:inline-block;min-width:4.2em;height:1em;margin:0 2px;border-bottom:3px solid var(--purple);vertical-align:-.1em}
+.endings-filled{padding:0 4px;border-radius:6px;color:var(--ink)}
+.endings-filled.correct{background:var(--mint)}
+.endings-filled.incorrect{background:#ffd9c7;box-shadow:inset 0 -3px 0 var(--orange)}
+.endings-translation{margin:0 0 14px;color:var(--muted);text-align:center;font-size:15px}
+.endings-base{margin:0 0 14px;text-align:center;font-size:15px}
+.endings-case{display:inline-block;margin-left:4px;padding:2px 8px;border:1.5px solid var(--purple);border-radius:999px;background:var(--lavender);font-size:13px;font-weight:700;white-space:nowrap}
+.endings-choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:6px 0 4px}
+.endings-choices button{font-size:18px;padding:12px 10px}
+#endings-form{display:grid;gap:8px}
+#endings-form input{font-size:20px}
+.endings-explain{margin:8px 0 0;font-size:15px}
+.endings-full{margin:14px 0 0;text-align:center;font:600 18px/1.4 var(--heading)}
