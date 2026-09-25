@@ -233,3 +233,13 @@ Alle 4.467 aktiven Satzpaare wurden inhaltlich geprüft (Person/Anrede, Bedeutun
 - `sources/translation-corrections.tsv`: 168 korrigierte deutsche Übersetzungen, davon 89 Anrede-Fehler (du/ihr/Sie, meist über englisch „you“ entstanden), 62 Bedeutungsfehler (z. B. „Nouse ylös!“ = „Steh auf!“, nicht „Wach auf!“) und 17 deutsche Grammatik-/Stilfehler (z. B. „Sers!“). Die Korrektur ersetzt die jeweilige Übersetzung durch eine als KI-Fassung gekennzeichnete Übertragung aus dem Finnischen (`origin: finnish_adaptation`, `adapted_by: Claude`); die ersetzte Fassung steht unter `corrects`. Jede Zeile enthält den bisherigen Text als Prüfwert, damit eine Korrektur nie eine geänderte Quelle trifft.
 - `sources/sentence-archive.tsv`: 13 Sätze mit Fehlern im finnischen Text (z. B. *pystyn lukea* statt *pystyn lukemaan*, Tippfehler *OIet*) werden archiviert statt verändert, weil Text und Aufnahme aus Tatoeba stammen. Bestehende Wiederholungen und Favoriten bleiben erhalten. Ein betroffener Satz wurde aus dem Lernpfad „Reisen und Orientierung“ entfernt.
 - Beides wird von `python build_full_deck.py` angewendet. Danach: 4.454 aktive und 239 archivierte Sätze; Grammatikhilfen unverändert.
+
+## Games: Mustikka Hyppy (25. September 2026)
+
+Der Header hat einen eigenen Button **Games**. Die Ansicht `#games-view` zeigt die verfügbaren Spiele; weitere lassen sich als zusätzliche Karte ergänzen.
+
+- **Mustikka Hyppy** ist das Vokabel-Sprungspiel im Kritzel-Look (Heidelbeere, Holzplanken, Karopapier). Es wird erst beim Klick auf „Spielen“ geladen (`dist/games/hyppy/mustikka-hyppy.js`, rund 400 KB gzip plus Grafiken) und läuft im Vollbild-Overlay. „← Zurück“ im Spielmenü oder die Zurück-Taste des Browsers/Handys schließt es.
+- **Wortlisten:** Grundwortschatz (669 Wörter, CC0, `games/hyppy/words-de-fi.json`) oder **Verbformen** – aus `verbs-data.mjs` erzeugt: „ich (wohnen)“ → *asun*, falsche Planken sind die anderen Formen desselben Verbs (`verbDeck()` in `dist/games.mjs`).
+- **Lernstand:** Mit Konto unter `games.hyppy.<liste>` im synchronisierten Lernstand (`dist/games-progress.mjs`: Prüfung und Zusammenführen je Wort, neuere Antwort gewinnt). Ohne Konto nur im Browser (`suomi-hyppy.progress.<liste>`); beim ersten Spielen mit Konto wird dieser Stand übernommen.
+- **Aktualisieren:** Im Spiel-Repo `npm run build:embed`, dann hier `node scripts/update-hyppy.mjs ../mustikka-hyppy`.
+- **Tests:** `test-games.mjs` (in `npm test`) und `test-games-browser.mjs` (in der CI).

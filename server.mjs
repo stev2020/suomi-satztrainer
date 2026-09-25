@@ -5,7 +5,7 @@ import {fileURLToPath} from 'node:url';
 
 const root=path.join(path.dirname(fileURLToPath(import.meta.url)),'dist');
 const port=Number(process.env.PORT)||4173;
-const types={'.css':'text/css; charset=utf-8','.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.webmanifest':'application/manifest+json'};
+const types={'.css':'text/css; charset=utf-8','.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.woff2':'font/woff2','.txt':'text/plain; charset=utf-8','.webmanifest':'application/manifest+json'};
 
 http.createServer((request,response)=>{
   const pathname=decodeURIComponent(new URL(request.url,'http://localhost').pathname);

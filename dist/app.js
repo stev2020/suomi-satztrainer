@@ -8,6 +8,7 @@ import {reviewPlan,dueSentences,unseenSentences,lastPracticed} from './review-pl
 import {everydayPathState,homeReviewPool} from './learning-path.mjs';
 import {addPerformanceEvent,buildLearningInsights,mergePerformanceEvents,validatePerformanceEvents} from './learning-insights.mjs';
 import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './supabase-config.js';
+import {validateGames,mergeGames} from './games-progress.mjs';
 const $=id=>document.getElementById(id);
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const safeURL=s=>{try{const u=new URL(s);return ['https:','http:'].includes(u.protocol)?escape(u.href):'#';}catch{return '#';}};
@@ -19,8 +20,8 @@ let guestExerciseAccepted=false,pendingGuestStart=null;
 try{guestExerciseAccepted=sessionStorage.getItem('suomi-guest-exercise-accepted')==='1';}catch{}
 if(!hasStoredSession())try{localStorage.removeItem(STORE);}catch{}
 const REPORT_CATEGORIES={translation:'Übersetzung falsch',unnatural:'Unnatürlich formuliert',outdated:'Veraltet oder ungebräuchlich',inappropriate:'Ungeeignet oder anstößig',duplicate:'Doppelter Satz',grammar:'Grammatikhilfe',audio:'Aufnahme',level:'Falsches Level',other:'Sonstiges'};
-let memory={reviews:{},favorites:[],daily:{},prefs:{},reports:{},writingRatings:{},verbProgress:{},performanceEvents:[]};
-try{const saved=hasStoredSession()?JSON.parse(localStorage.getItem(STORE)):null;if(saved&&typeof saved==='object'){for(const k of ['reviews','daily','prefs'])if(saved[k]&&typeof saved[k]==='object'&&!Array.isArray(saved[k]))memory[k]=saved[k];if(Array.isArray(saved.favorites))memory.favorites=saved.favorites.filter(Number.isInteger);if(saved.verbProgress)try{memory.verbProgress=validateVerbProgress(saved.verbProgress);}catch{}if(saved.performanceEvents)try{memory.performanceEvents=validatePerformanceEvents(saved.performanceEvents);}catch{}if(saved.writingRatings)try{memory.writingRatings=validateWritingRatings(saved.writingRatings);}catch{}if(saved.reports)try{memory.reports=validateReports(saved.reports);}catch{}}}catch{}
+let memory={reviews:{},favorites:[],daily:{},prefs:{},reports:{},writingRatings:{},verbProgress:{},performanceEvents:[],games:{}};
+try{const saved=hasStoredSession()?JSON.parse(localStorage.getItem(STORE)):null;if(saved&&typeof saved==='object'){for(const k of ['reviews','daily','prefs'])if(saved[k]&&typeof saved[k]==='object'&&!Array.isArray(saved[k]))memory[k]=saved[k];if(Array.isArray(saved.favorites))memory.favorites=saved.favorites.filter(Number.isInteger);if(saved.verbProgress)try{memory.verbProgress=validateVerbProgress(saved.verbProgress);}catch{}if(saved.performanceEvents)try{memory.performanceEvents=validatePerformanceEvents(saved.performanceEvents);}catch{}if(saved.writingRatings)try{memory.writingRatings=validateWritingRatings(saved.writingRatings);}catch{}if(saved.reports)try{memory.reports=validateReports(saved.reports);}catch{}if(saved.games)memory.games=validateGames(saved.games);}}catch{}
 let grammar={},grammarAvailable=false,loadedSentenceIds=new Set();
 const qualityExclusions={sentences:new Set(),translations:new Set()};
 const qualityTranslationKey=(sentenceId,translationId)=>`${sentenceId}:${translationId}`;
@@ -573,7 +574,7 @@ function validateBackup(input){
  const p=objectRecord(m.prefs);if(!Number.isInteger(p.level)||p.level<1||p.level>1000||!['fi-de','de-fi','random'].includes(p.direction)||typeof p.audioOnly!=='boolean'||!['translate','listen','dictation','writing','grammar','verbs','suchsel'].includes(p.activity)||![.5,.75,1].includes(p.speed))throw new Error('Ungültige Lerneinstellungen.');out.prefs={searchDifficulty:p.searchDifficulty==='hard'?'hard':'easy',difficulty:p.difficulty==='easy'?'easy':'hard',level:p.level,direction:p.direction,audioOnly:p.audioOnly,activity:p.activity,speed:p.speed,grammarTopic:GRAMMAR_TOPICS.some(t=>t.id===p.grammarTopic)?p.grammarTopic:'negation'};out.reports=validateReports(m.reports||{});out.writingRatings=validateWritingRatings(m.writingRatings||{});out.verbProgress=validateVerbProgress(m.verbProgress||{});out.performanceEvents=validatePerformanceEvents(m.performanceEvents||[]);return out;
 }
 function mergeLearning(current,incoming){
- const out={reviews:{...current.reviews},favorites:[...new Set([...current.favorites,...incoming.favorites])],daily:{...current.daily},prefs:{...incoming.prefs},reports:{...current.reports},writingRatings:{...current.writingRatings},verbProgress:mergeVerbProgress(current.verbProgress,incoming.verbProgress),performanceEvents:mergePerformanceEvents(current.performanceEvents||[],incoming.performanceEvents||[])};
+ const out={reviews:{...current.reviews},favorites:[...new Set([...current.favorites,...incoming.favorites])],daily:{...current.daily},prefs:{...incoming.prefs},reports:{...current.reports},writingRatings:{...current.writingRatings},verbProgress:mergeVerbProgress(current.verbProgress,incoming.verbProgress),performanceEvents:mergePerformanceEvents(current.performanceEvents||[],incoming.performanceEvents||[]),games:mergeGames(current.games,incoming.games)};
  for(const [k,r] of Object.entries(incoming.reviews)){const old=out.reviews[k];const newer=old&&Number.isFinite(old.updatedAt)&&Number.isFinite(r.updatedAt)?r.updatedAt>old.updatedAt:!old||r.repetitions>old.repetitions||(r.repetitions===old.repetitions&&r.due>old.due);if(!old||newer)out.reviews[k]={...r};}
  for(const [date,n] of Object.entries(incoming.daily))out.daily[date]=Math.max(out.daily[date]||0,n);
  for(const [id,r] of Object.entries(incoming.writingRatings||{}))if(!out.writingRatings[id]||r.updatedAt>out.writingRatings[id].updatedAt)out.writingRatings[id]={...r};
@@ -582,7 +583,11 @@ function mergeLearning(current,incoming){
 }
 function commitLearning(candidate,notify=true){if(accountActive())localStorage.setItem(STORE,JSON.stringify(candidate));else localStorage.removeItem(STORE);memory=candidate;if(notify&&accountActive())window.dispatchEvent(new Event('suomi-learning-changed'));}
 function learningSnapshot(){return JSON.parse(JSON.stringify({...memory,prefs:{level,direction,audioOnly,activity,speed,grammarTopic,difficulty,searchDifficulty}}));}
-window.suomiLearningState={snapshot:learningSnapshot,applyCloud:incoming=>{
+window.suomiLearningState={snapshot:learningSnapshot,
+ // Spiele (games.mjs): Lernstand je Spiel und Wortliste lesen/speichern
+ gameProgress:(game,deck)=>JSON.parse(JSON.stringify(memory.games?.[game]?.[deck]||{})),
+ saveGameProgress:(game,deck,map)=>{const games=validateGames({...memory.games,[game]:{...(memory.games?.[game]||{}),[deck]:map}});commitLearning({...memory,games});},
+ applyCloud:incoming=>{
  const candidate=mergeLearning(memory,{...incoming,prefs:learningSnapshot().prefs,verbProgress:validateVerbProgress(incoming.verbProgress||{})});
  commitLearning(candidate,false);if(ready)renderStats();return true;
 }};
@@ -623,7 +628,7 @@ function showView(name,openSettings=false){
  if(name==='home'&&ready)renderDailyPlan();
  if(name==='progress'&&ready)renderStats();
  if(name==='home'&&dailySession?.active){const previous=dailySession.previous;activity=previous.activity;direction=previous.direction;difficulty=previous.difficulty;mode=previous.mode;syncControls();renderStats();}
- for(const view of ['home','practice','progress','classrooms']){const node=$(`${view}-view`);if(node)node.hidden=view!==name;}
+ for(const view of ['home','practice','progress','classrooms','games']){const node=$(`${view}-view`);if(node)node.hidden=view!==name;}
  document.querySelectorAll('.header-nav [data-view]').forEach(b=>{const selected=b.dataset.view===name;b.classList.toggle('selected',selected);if(selected)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
  const headerPractice=$('header-practice');headerPractice.classList.toggle('selected',name==='practice');if(name==='practice')headerPractice.setAttribute('aria-current','page');else headerPractice.removeAttribute('aria-current');
  if(name!=='practice')stopAudio();
