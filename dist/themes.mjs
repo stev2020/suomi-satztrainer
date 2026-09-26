@@ -6,11 +6,11 @@
 // index.html setzt die Palette schon vor dem ersten Zeichnen, damit nichts aufblitzt.
 
 export const THEMES=[
- {id:'vanamo',name:'Vanamo',hint:'Waldblume',dark:false,swatch:['#faf7f0','#ace0d4','#65478b','#ff935c']},
- {id:'mustikka',name:'Mustikka',hint:'Heidelbeere',dark:false,swatch:['#eeedff','#c6caff','#3e4a8c','#cea716']},
- {id:'ruska',name:'Ruska',hint:'Herbstlaub',dark:false,swatch:['#f5f0e1','#f1cdb8','#933d18','#e8a33d']},
- {id:'kaamos',name:'Kaamos',hint:'Polarnacht',dark:true,swatch:['#121a2e','#173f4a','#8fb0ff','#d2a517']},
- {id:'revontulet',name:'Revontulet',hint:'Nordlicht',dark:true,swatch:['#111126','#0f3a33','#b39bff','#3ccb9a']},
+ {id:'vanamo',name:'Vanamo',hint:'Waldblume',dark:false,color:'#65478b'},
+ {id:'mustikka',name:'Mustikka',hint:'Heidelbeere',dark:false,color:'#3e4a8c'},
+ {id:'ruska',name:'Ruska',hint:'Herbstlaub',dark:false,color:'#b4532a'},
+ {id:'kaamos',name:'Kaamos',hint:'Polarnacht',dark:true,color:'#1f2b4d'},
+ {id:'revontulet',name:'Revontulet',hint:'Nordlicht',dark:true,color:'#2bb38a'},
 ];
 export const STORAGE_KEY='vanamo-theme';
 const DEFAULT_LIGHT='vanamo',DEFAULT_DARK='kaamos';
@@ -29,7 +29,7 @@ function apply(id){
  root.dataset.theme=theme.id;
  root.dataset.themeMode=theme.dark?'dark':'light';
  const meta=document.querySelector('meta[name="theme-color"]');
- if(meta)meta.content=getComputedStyle(root).getPropertyValue('--bg').trim()||theme.swatch[0];
+ if(meta)meta.content=getComputedStyle(root).getPropertyValue('--bg').trim();
  document.querySelectorAll('[data-theme-id]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.themeId===theme.id)));
  document.dispatchEvent(new CustomEvent('vanamo-theme',{detail:{id:theme.id,dark:theme.dark}}));
 }
@@ -51,8 +51,7 @@ function mount(){
    const label=`${t.name} – ${t.hint}`;
    b.title=label;
    b.setAttribute('aria-label',label);
-   b.style.setProperty('--s0',t.swatch[0]);b.style.setProperty('--s1',t.swatch[1]);
-   b.style.setProperty('--s2',t.swatch[2]);b.style.setProperty('--s3',t.swatch[3]);
+   b.style.setProperty('--swatch',t.color);
    b.onclick=()=>setTheme(t.id);
    return b;
   }));
