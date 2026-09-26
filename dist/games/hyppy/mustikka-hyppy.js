@@ -1,13 +1,13 @@
-var gi = Object.defineProperty, vi = (j, k, B) => k in j ? gi(j, k, { enumerable: !0, configurable: !0, writable: !0, value: B }) : j[k] = B, Q = (j, k, B) => vi(j, typeof k != "symbol" ? k + "" : k, B);
-function mi(j) {
+var xi = Object.defineProperty, Ti = (j, k, B) => k in j ? xi(j, k, { enumerable: !0, configurable: !0, writable: !0, value: B }) : j[k] = B, Q = (j, k, B) => Ti(j, typeof k != "symbol" ? k + "" : k, B);
+function wi(j) {
   return j && j.__esModule && Object.prototype.hasOwnProperty.call(j, "default") ? j.default : j;
 }
-var Se = { exports: {} }, yi = Se.exports, Ie;
-function xi() {
+var Se = { exports: {} }, bi = Se.exports, Ie;
+function Si() {
   return Ie || (Ie = 1, (function(j, k) {
     (function(B, X) {
       j.exports = X();
-    })(yi, () => (() => {
+    })(bi, () => (() => {
       var B = { 50792: ((g) => {
         var T = Object.prototype.hasOwnProperty, t = "~";
         function l() {
@@ -3559,12 +3559,12 @@ function xi() {
       }), 53048: ((g) => {
         var T = function(t, l, f, a) {
           if (f === void 0 && (f = !1), a === void 0) return a = { local: { x: 0, y: 0, width: 0, height: 0 }, global: { x: 0, y: 0, width: 0, height: 0 }, lines: { shortest: 0, longest: 0, lengths: null, height: 0 }, wrappedText: "", words: [], characters: [], scaleX: 0, scaleY: 0 }, a;
-          var n = t.text, r = n.length, e = t.maxWidth, s = t.wordWrapCharCode, o = Number.MAX_VALUE, i = Number.MAX_VALUE, h = 0, c = 0, d = t.fontData.chars, u = t.fontData.lineHeight, p = t.letterSpacing, v = t.lineSpacing, y = 0, m = 0, x = 0, w = null, b = t._align, S = 0, _ = 0, E = t.fontSize / t.fontData.size, A = E * t.scaleX, C = E * t.scaleY, M = null, O = 0, I = [], z = Number.MAX_VALUE, N = 0, P = 0, D = 0, R, F, L, Y = [], U = [], G = null, H = function(Et, Pt) {
-            for (var yt = 0, At = 0; At < Et.length; At++) {
-              var Ct = Et.charCodeAt(At), Ot = Pt.chars[Ct];
-              Ot && (yt += Ot.xAdvance);
+          var n = t.text, r = n.length, e = t.maxWidth, s = t.wordWrapCharCode, o = Number.MAX_VALUE, i = Number.MAX_VALUE, h = 0, c = 0, d = t.fontData.chars, u = t.fontData.lineHeight, p = t.letterSpacing, v = t.lineSpacing, y = 0, m = 0, x = 0, w = null, b = t._align, S = 0, _ = 0, E = t.fontSize / t.fontData.size, A = E * t.scaleX, C = E * t.scaleY, M = null, O = 0, I = [], z = Number.MAX_VALUE, N = 0, P = 0, D = 0, R, F, L, Y = [], U = [], G = null, H = function(At, Lt) {
+            for (var xt = 0, _t = 0; _t < At.length; _t++) {
+              var Mt = At.charCodeAt(_t), Ot = Lt.chars[Mt];
+              Ot && (xt += Ot.xAdvance);
             }
-            return yt * A;
+            return xt * A;
           };
           if (e > 0) {
             L = n.split(`
@@ -3592,28 +3592,28 @@ function xi() {
             }
             if (w = d[x], !!w) {
               if (S = y, _ = m, M !== null) {
-                var ot = w.kerning[O];
-                S += ot !== void 0 ? ot : 0;
+                var ht = w.kerning[O];
+                S += ht !== void 0 ? ht : 0;
               }
               o > S && (o = S), i > _ && (i = _);
-              var ht = S + w.xAdvance, et = _ + u;
-              h < ht && (h = ht), c < et && (c = et);
-              var rt = w.xOffset + w.xAdvance + (ot !== void 0 ? ot : 0);
-              x === s ? G !== null && (Y.push({ word: G.word, i: G.i, x: G.x * A, y: G.y * C, w: G.w * A, h: G.h * C }), G = null) : (G === null && (G = { word: "", i: at, x: y, y: m, w: 0, h: u }), G.word = G.word.concat(n[R]), G.w += rt), U.push({ i: at, idx: R, char: n[R], code: x, x: (w.xOffset + S) * E, y: (w.yOffset + m) * E, w: w.width * E, h: w.height * E, t: m * E, r: ht * E, b: u * E, line: P, glyph: w }), y += w.xAdvance + p + (ot !== void 0 ? ot : 0), M = w, O = x, D = ht * E, at++;
+              var lt = S + w.xAdvance, et = _ + u;
+              h < lt && (h = lt), c < et && (c = et);
+              var rt = w.xOffset + w.xAdvance + (ht !== void 0 ? ht : 0);
+              x === s ? G !== null && (Y.push({ word: G.word, i: G.i, x: G.x * A, y: G.y * C, w: G.w * A, h: G.h * C }), G = null) : (G === null && (G = { word: "", i: at, x: y, y: m, w: 0, h: u }), G.word = G.word.concat(n[R]), G.w += rt), U.push({ i: at, idx: R, char: n[R], code: x, x: (w.xOffset + S) * E, y: (w.yOffset + m) * E, w: w.width * E, h: w.height * E, t: m * E, r: lt * E, b: u * E, line: P, glyph: w }), y += w.xAdvance + p + (ht !== void 0 ? ht : 0), M = w, O = x, D = lt * E, at++;
             }
           }
           if (G !== null && Y.push({ word: G.word, i: G.i, x: G.x * A, y: G.y * C, w: G.w * A, h: G.h * C }), I[P] = D, D > N && (N = D), D < z && (z = D), b > 0) for (var nt = 0; nt < U.length; nt++) {
-            var ut = U[nt];
+            var dt = U[nt];
             if (b === 1) {
-              var gt = (N - I[ut.line]) / 2;
-              ut.x += gt, ut.r += gt;
+              var vt = (N - I[dt.line]) / 2;
+              dt.x += vt, dt.r += vt;
             } else if (b === 2) {
-              var bt = N - I[ut.line];
-              ut.x += bt, ut.r += bt;
+              var St = N - I[dt.line];
+              dt.x += St, dt.r += St;
             }
           }
-          var pt = a.local, ft = a.global;
-          return L = a.lines, pt.x = o * E, pt.y = i * E, pt.width = h * E, pt.height = c * E, ft.x = t.x - t._displayOriginX + o * A, ft.y = t.y - t._displayOriginY + i * C, ft.width = h * A, ft.height = c * C, L.shortest = z, L.longest = N, L.lengths = I, l && (pt.x = Math.ceil(pt.x), pt.y = Math.ceil(pt.y), pt.width = Math.ceil(pt.width), pt.height = Math.ceil(pt.height), ft.x = Math.ceil(ft.x), ft.y = Math.ceil(ft.y), ft.width = Math.ceil(ft.width), ft.height = Math.ceil(ft.height), L.shortest = Math.ceil(z), L.longest = Math.ceil(N)), f && (t._displayOriginX = t.originX * pt.width, t._displayOriginY = t.originY * pt.height, ft.x = t.x - t._displayOriginX * t.scaleX, ft.y = t.y - t._displayOriginY * t.scaleY, l && (ft.x = Math.ceil(ft.x), ft.y = Math.ceil(ft.y))), a.words = Y, a.characters = U, a.lines.height = u, a.scale = E, a.scaleX = t.scaleX, a.scaleY = t.scaleY, a;
+          var ft = a.local, gt = a.global;
+          return L = a.lines, ft.x = o * E, ft.y = i * E, ft.width = h * E, ft.height = c * E, gt.x = t.x - t._displayOriginX + o * A, gt.y = t.y - t._displayOriginY + i * C, gt.width = h * A, gt.height = c * C, L.shortest = z, L.longest = N, L.lengths = I, l && (ft.x = Math.ceil(ft.x), ft.y = Math.ceil(ft.y), ft.width = Math.ceil(ft.width), ft.height = Math.ceil(ft.height), gt.x = Math.ceil(gt.x), gt.y = Math.ceil(gt.y), gt.width = Math.ceil(gt.width), gt.height = Math.ceil(gt.height), L.shortest = Math.ceil(z), L.longest = Math.ceil(N)), f && (t._displayOriginX = t.originX * ft.width, t._displayOriginY = t.originY * ft.height, gt.x = t.x - t._displayOriginX * t.scaleX, gt.y = t.y - t._displayOriginY * t.scaleY, l && (gt.x = Math.ceil(gt.x), gt.y = Math.ceil(gt.y))), a.words = Y, a.characters = U, a.lines.height = u, a.scale = E, a.scaleX = t.scaleX, a.scaleY = t.scaleY, a;
         };
         g.exports = T;
       }), 61327: ((g, T, t) => {
@@ -3747,7 +3747,7 @@ function xi() {
             s.maxWidth > 0 && (h = it.wrappedText, c = h.length);
             var J = s._bounds.lines;
             $ === 1 ? tt = (J.longest - J.lengths[0]) / 2 : $ === 2 && (tt = J.longest - J.lengths[0]);
-            for (var at = o.roundPixels, ot = s.displayCallback, ht = s.callbackData, et = 0; et < c; et++) {
+            for (var at = o.roundPixels, ht = s.displayCallback, lt = s.callbackData, et = 0; et < c; et++) {
               if (I = h.charCodeAt(et), I === 10) {
                 Z++, $ === 1 ? tt = (J.longest - J.lengths[Z]) / 2 : $ === 2 && (tt = J.longest - J.lengths[Z]), M = 0, O += H, F = null;
                 continue;
@@ -3756,18 +3756,18 @@ function xi() {
                 D = P.width, R = P.height;
                 var rt = P.xOffset + M - L, nt = P.yOffset + O - Y;
                 if (F !== null) {
-                  var ut = P.kerning[z] || 0;
-                  rt += ut, M += ut;
+                  var dt = P.kerning[z] || 0;
+                  rt += dt, M += dt;
                 }
                 if (M += P.xAdvance + N, F = P, z = I, !(D === 0 || R === 0 || I === 32)) {
-                  if (q = s.fontSize / s.fontData.size, K = 0, ot) {
-                    ht.color = 0, ht.tint.topLeft = S, ht.tint.topRight = _, ht.tint.bottomLeft = E, ht.tint.bottomRight = A, ht.index = et, ht.charCode = I, ht.x = rt, ht.y = nt, ht.scale = q, ht.rotation = K, ht.data = P.data;
-                    var gt = ot(ht);
-                    rt = gt.x, nt = gt.y, q = gt.scale, K = gt.rotation, gt.color ? (S = gt.color, _ = gt.color, E = gt.color, A = gt.color) : (S = gt.tint.topLeft, _ = gt.tint.topRight, E = gt.tint.bottomLeft, A = gt.tint.bottomRight), S = a.getTintAppendFloatAlpha(S, o.alpha * s._alphaTL), _ = a.getTintAppendFloatAlpha(_, o.alpha * s._alphaTR), E = a.getTintAppendFloatAlpha(E, o.alpha * s._alphaBL), A = a.getTintAppendFloatAlpha(A, o.alpha * s._alphaBR);
+                  if (q = s.fontSize / s.fontData.size, K = 0, ht) {
+                    lt.color = 0, lt.tint.topLeft = S, lt.tint.topRight = _, lt.tint.bottomLeft = E, lt.tint.bottomRight = A, lt.index = et, lt.charCode = I, lt.x = rt, lt.y = nt, lt.scale = q, lt.rotation = K, lt.data = P.data;
+                    var vt = ht(lt);
+                    rt = vt.x, nt = vt.y, q = vt.scale, K = vt.rotation, vt.color ? (S = vt.color, _ = vt.color, E = vt.color, A = vt.color) : (S = vt.tint.topLeft, _ = vt.tint.topRight, E = vt.tint.bottomLeft, A = vt.tint.bottomRight), S = a.getTintAppendFloatAlpha(S, o.alpha * s._alphaTL), _ = a.getTintAppendFloatAlpha(_, o.alpha * s._alphaTR), E = a.getTintAppendFloatAlpha(E, o.alpha * s._alphaBL), A = a.getTintAppendFloatAlpha(A, o.alpha * s._alphaBR);
                   }
                   rt *= q, nt *= q, rt -= s.displayOriginX, nt -= s.displayOriginY, rt += tt, y.applyITRS(rt, nt, K, q, q), v.multiply(y, p);
-                  var bt = P.u0, pt = P.v0, ft = P.u1, Et = P.v1, Pt = D, yt = R, At = p.e, Ct = p.f, Ot = yt * p.c + p.e, Xt = yt * p.d + p.f, Wt = Pt * p.a + yt * p.c + p.e, Gt = Pt * p.b + yt * p.d + p.f, Vt = Pt * p.a + p.e, Ht = Pt * p.b + p.f;
-                  at && (At = Math.round(At), Ct = Math.round(Ct), Ot = Math.round(Ot), Xt = Math.round(Xt), Wt = Math.round(Wt), Gt = Math.round(Gt), Vt = Math.round(Vt), Ht = Math.round(Ht)), d.shouldFlush(6) && (d.flush(), C = d.setGameObject(s)), d.batchQuad(s, At, Ct, Ot, Xt, Wt, Gt, Vt, Ht, bt, pt, ft, Et, S, _, E, A, b, w, C);
+                  var St = P.u0, ft = P.v0, gt = P.u1, At = P.v1, Lt = D, xt = R, _t = p.e, Mt = p.f, Ot = xt * p.c + p.e, Wt = xt * p.d + p.f, Gt = Lt * p.a + xt * p.c + p.e, Vt = Lt * p.b + xt * p.d + p.f, Ht = Lt * p.a + p.e, jt = Lt * p.b + p.f;
+                  at && (_t = Math.round(_t), Mt = Math.round(Mt), Ot = Math.round(Ot), Wt = Math.round(Wt), Gt = Math.round(Gt), Vt = Math.round(Vt), Ht = Math.round(Ht), jt = Math.round(jt)), d.shouldFlush(6) && (d.flush(), C = d.setGameObject(s)), d.batchQuad(s, _t, Mt, Ot, Wt, Gt, Vt, Ht, jt, St, ft, gt, At, S, _, E, A, b, w, C);
                 }
               }
             }
@@ -5385,9 +5385,9 @@ function xi() {
                 break;
               }
               case l.ARC: {
-                var it = 0, J = m[++R], at = m[++R], ot = m[++R], ht = m[++R], et = m[++R], rt = m[++R], nt = m[++R];
-                for (et -= ht, rt ? et < -M ? et = -M : et > 0 && (et = -M + et % M) : et > M ? et = M : et < 0 && (et = M + et % M), P === null && (P = new e(J + Math.cos(ht) * ot, at + Math.sin(ht) * ot, w), I.push(P), it += C); it < 1 + nt; ) A = et * it + ht, _ = J + Math.cos(A) * ot, E = at + Math.sin(A) * ot, P.points.push(new r(_, E, w)), it += C;
-                A = et + ht, _ = J + Math.cos(A) * ot, E = at + Math.sin(A) * ot, P.points.push(new r(_, E, w));
+                var it = 0, J = m[++R], at = m[++R], ht = m[++R], lt = m[++R], et = m[++R], rt = m[++R], nt = m[++R];
+                for (et -= lt, rt ? et < -M ? et = -M : et > 0 && (et = -M + et % M) : et > M ? et = M : et < 0 && (et = M + et % M), P === null && (P = new e(J + Math.cos(lt) * ht, at + Math.sin(lt) * ht, w), I.push(P), it += C); it < 1 + nt; ) A = et * it + lt, _ = J + Math.cos(A) * ht, E = at + Math.sin(A) * ht, P.points.push(new r(_, E, w)), it += C;
+                A = et + lt, _ = J + Math.cos(A) * ht, E = at + Math.sin(A) * ht, P.points.push(new r(_, E, w));
                 break;
               }
               case l.FILL_RECT: {
@@ -5493,13 +5493,13 @@ function xi() {
             l.SetDepth(w, J, at);
           }
           if (o(p, "setScrollFactor")) {
-            var ot = s(p, "setScrollFactor.x", 1), ht = s(p, "setScrollFactor.y", ot), et = s(p, "setScrollFactor.stepX", 0), rt = s(p, "setScrollFactor.stepY", 0);
-            l.SetScrollFactor(w, ot, ht, et, rt);
+            var ht = s(p, "setScrollFactor.x", 1), lt = s(p, "setScrollFactor.y", ht), et = s(p, "setScrollFactor.stepX", 0), rt = s(p, "setScrollFactor.stepY", 0);
+            l.SetScrollFactor(w, ht, lt, et, rt);
           }
-          var nt = e(p, "hitArea", null), ut = e(p, "hitAreaCallback", null);
-          nt && l.SetHitArea(w, nt, ut);
-          var gt = e(p, "gridAlign", !1);
-          return gt && l.GridAlign(w, gt), this.createMultipleCallback && this.createMultipleCallback.call(this, w), w;
+          var nt = e(p, "hitArea", null), dt = e(p, "hitAreaCallback", null);
+          nt && l.SetHitArea(w, nt, dt);
+          var vt = e(p, "gridAlign", !1);
+          return vt && l.GridAlign(w, vt), this.createMultipleCallback && this.createMultipleCallback.call(this, w), w;
         }, preUpdate: function(p, v) {
           if (!(!this.runChildUpdate || this.children.size === 0)) for (var y = this.children.entries.slice(), m = 0; m < y.length; m++) {
             var x = y[m];
@@ -9670,23 +9670,23 @@ function xi() {
           else if (c && typeof d == "string") d = c.scene.sys.textures.get(d);
           else if (!d) return P;
           D || (D = d.get(u)), !N && C && d && c && (p = D.width / c.height, v = D.height / c.height);
-          var R = p / 2, F = v / 2, L = Math.floor(y), Y = Math.floor(m), U = L + 1, G = Y + 1, H = p / L, q = v / Y, K = [], $ = [], Z, tt, it = 0, J = 1, at = 0, ot = 1;
-          D && (it = D.u0, J = D.u1, z ? (at = D.v1, ot = D.v0) : (at = D.v0, ot = D.v1));
-          var ht = J - it, et = ot - at;
+          var R = p / 2, F = v / 2, L = Math.floor(y), Y = Math.floor(m), U = L + 1, G = Y + 1, H = p / L, q = v / Y, K = [], $ = [], Z, tt, it = 0, J = 1, at = 0, ht = 1;
+          D && (it = D.u0, J = D.u1, z ? (at = D.v1, ht = D.v0) : (at = D.v0, ht = D.v1));
+          var lt = J - it, et = ht - at;
           for (tt = 0; tt < G; tt++) {
             var rt = tt * q - F;
             for (Z = 0; Z < U; Z++) {
               var nt = Z * H - R;
               $.push(nt, -rt);
-              var ut = it + ht * (Z / L), gt = at + et * (tt / Y);
-              K.push(ut, gt);
+              var dt = it + lt * (Z / L), vt = at + et * (tt / Y);
+              K.push(dt, vt);
             }
           }
           Array.isArray(M) || (M = [M]), Array.isArray(O) || (O = [O]);
-          var bt = 0, pt = 0;
+          var St = 0, ft = 0;
           for (tt = 0; tt < Y; tt++) for (Z = 0; Z < L; Z++) {
-            var ft = (Z + U * tt) * 2, Et = (Z + U * (tt + 1)) * 2, Pt = (Z + 1 + U * (tt + 1)) * 2, yt = (Z + 1 + U * tt) * 2, At = M[pt], Ct = O[bt], Ot = new r($[ft], $[ft + 1], 0, K[ft], K[ft + 1], At, Ct).transformMat4(o), Xt = new r($[Et], $[Et + 1], 0, K[Et], K[Et + 1], At, Ct).transformMat4(o), Wt = new r($[yt], $[yt + 1], 0, K[yt], K[yt + 1], At, Ct).transformMat4(o), Gt = new r($[Et], $[Et + 1], 0, K[Et], K[Et + 1], At, Ct).transformMat4(o), Vt = new r($[Pt], $[Pt + 1], 0, K[Pt], K[Pt + 1], At, Ct).transformMat4(o), Ht = new r($[yt], $[yt + 1], 0, K[yt], K[yt + 1], At, Ct).transformMat4(o);
-            I && (Ot.setUVs(it, ot), Xt.setUVs(it, at), Wt.setUVs(J, ot), Gt.setUVs(it, at), Vt.setUVs(J, at), Ht.setUVs(J, ot)), pt++, pt === M.length && (pt = 0), bt++, bt === O.length && (bt = 0), P.verts.push(Ot, Xt, Wt, Gt, Vt, Ht), P.faces.push(new l(Ot, Xt, Wt), new l(Gt, Vt, Ht));
+            var gt = (Z + U * tt) * 2, At = (Z + U * (tt + 1)) * 2, Lt = (Z + 1 + U * (tt + 1)) * 2, xt = (Z + 1 + U * tt) * 2, _t = M[ft], Mt = O[St], Ot = new r($[gt], $[gt + 1], 0, K[gt], K[gt + 1], _t, Mt).transformMat4(o), Wt = new r($[At], $[At + 1], 0, K[At], K[At + 1], _t, Mt).transformMat4(o), Gt = new r($[xt], $[xt + 1], 0, K[xt], K[xt + 1], _t, Mt).transformMat4(o), Vt = new r($[At], $[At + 1], 0, K[At], K[At + 1], _t, Mt).transformMat4(o), Ht = new r($[Lt], $[Lt + 1], 0, K[Lt], K[Lt + 1], _t, Mt).transformMat4(o), jt = new r($[xt], $[xt + 1], 0, K[xt], K[xt + 1], _t, Mt).transformMat4(o);
+            I && (Ot.setUVs(it, ht), Wt.setUVs(it, at), Gt.setUVs(J, ht), Vt.setUVs(it, at), Ht.setUVs(J, at), jt.setUVs(J, ht)), ft++, ft === M.length && (ft = 0), St++, St === O.length && (St = 0), P.verts.push(Ot, Wt, Gt, Vt, Ht, jt), P.faces.push(new l(Ot, Wt, Gt), new l(Vt, Ht, jt));
           }
           return c && (c.faces = c.faces.concat(P.faces), c.vertices = c.vertices.concat(P.verts)), P;
         };
@@ -10052,15 +10052,15 @@ function xi() {
         function n(P, D, R, F) {
           var L = P.prev, Y = P, U = P.next;
           if (x(L, Y, U) >= 0) return !1;
-          for (var G = L.x, H = Y.x, q = U.x, K = L.y, $ = Y.y, Z = U.y, tt = G < H ? G < q ? G : q : H < q ? H : q, it = K < $ ? K < Z ? K : Z : $ < Z ? $ : Z, J = G > H ? G > q ? G : q : H > q ? H : q, at = K > $ ? K > Z ? K : Z : $ > Z ? $ : Z, ot = p(tt, it, D, R, F), ht = p(J, at, D, R, F), et = P.prevZ, rt = P.nextZ; et && et.z >= ot && rt && rt.z <= ht; ) {
+          for (var G = L.x, H = Y.x, q = U.x, K = L.y, $ = Y.y, Z = U.y, tt = G < H ? G < q ? G : q : H < q ? H : q, it = K < $ ? K < Z ? K : Z : $ < Z ? $ : Z, J = G > H ? G > q ? G : q : H > q ? H : q, at = K > $ ? K > Z ? K : Z : $ > Z ? $ : Z, ht = p(tt, it, D, R, F), lt = p(J, at, D, R, F), et = P.prevZ, rt = P.nextZ; et && et.z >= ht && rt && rt.z <= lt; ) {
             if (et.x >= tt && et.x <= J && et.y >= it && et.y <= at && et !== L && et !== U && y(G, K, H, $, q, Z, et.x, et.y) && x(et.prev, et, et.next) >= 0 || (et = et.prevZ, rt.x >= tt && rt.x <= J && rt.y >= it && rt.y <= at && rt !== L && rt !== U && y(G, K, H, $, q, Z, rt.x, rt.y) && x(rt.prev, rt, rt.next) >= 0)) return !1;
             rt = rt.nextZ;
           }
-          for (; et && et.z >= ot; ) {
+          for (; et && et.z >= ht; ) {
             if (et.x >= tt && et.x <= J && et.y >= it && et.y <= at && et !== L && et !== U && y(G, K, H, $, q, Z, et.x, et.y) && x(et.prev, et, et.next) >= 0) return !1;
             et = et.prevZ;
           }
-          for (; rt && rt.z <= ht; ) {
+          for (; rt && rt.z <= lt; ) {
             if (rt.x >= tt && rt.x <= J && rt.y >= it && rt.y <= at && rt !== L && rt !== U && y(G, K, H, $, q, Z, rt.x, rt.y) && x(rt.prev, rt, rt.next) >= 0) return !1;
             rt = rt.nextZ;
           }
@@ -15453,19 +15453,19 @@ return new ` + this.key + `();
           var Y = R.isCircle, U = F.isCircle, G = R.center, H = F.center, q = R.immovable, K = F.immovable, $ = R.velocity, Z = F.velocity, tt = 0, it = !0;
           if (Y !== U) {
             it = !1;
-            var J = G.x, at = G.y, ot = R.halfWidth, ht = F.position.x, et = F.position.y, rt = F.right, nt = F.bottom;
-            U && (J = H.x, at = H.y, ot = F.halfWidth, ht = R.position.x, et = R.position.y, rt = R.right, nt = R.bottom), at < et ? J < ht ? tt = s(J, at, ht, et) - ot : J > rt && (tt = s(J, at, rt, et) - ot) : at > nt && (J < ht ? tt = s(J, at, ht, nt) - ot : J > rt && (tt = s(J, at, rt, nt) - ot)), tt *= -1;
+            var J = G.x, at = G.y, ht = R.halfWidth, lt = F.position.x, et = F.position.y, rt = F.right, nt = F.bottom;
+            U && (J = H.x, at = H.y, ht = F.halfWidth, lt = R.position.x, et = R.position.y, rt = R.right, nt = R.bottom), at < et ? J < lt ? tt = s(J, at, lt, et) - ht : J > rt && (tt = s(J, at, rt, et) - ht) : at > nt && (J < lt ? tt = s(J, at, lt, nt) - ht : J > rt && (tt = s(J, at, rt, nt) - ht)), tt *= -1;
           } else tt = R.halfWidth + F.halfWidth - o(G, H);
           R.overlapR = tt, F.overlapR = tt;
-          var ut = l(G, H), gt = (tt + x.EPSILON) * Math.cos(ut), bt = (tt + x.EPSILON) * Math.sin(ut), pt = { overlap: tt, result: !1, x: gt, y: bt };
-          if (L && (!it || it && tt !== 0)) return pt.result = !0, pt;
-          if (!it && tt === 0 || q && K || R.customSeparateX || F.customSeparateX) return pt.x = void 0, pt.y = void 0, pt;
-          var ft = !R.pushable && !F.pushable;
+          var dt = l(G, H), vt = (tt + x.EPSILON) * Math.cos(dt), St = (tt + x.EPSILON) * Math.sin(dt), ft = { overlap: tt, result: !1, x: vt, y: St };
+          if (L && (!it || it && tt !== 0)) return ft.result = !0, ft;
+          if (!it && tt === 0 || q && K || R.customSeparateX || F.customSeparateX) return ft.x = void 0, ft.y = void 0, ft;
+          var gt = !R.pushable && !F.pushable;
           if (it) {
-            var Et = G.x - H.x, Pt = G.y - H.y, yt = Math.sqrt(Math.pow(Et, 2) + Math.pow(Pt, 2)), At = (H.x - G.x) / yt || 0, Ct = (H.y - G.y) / yt || 0, Ot = 2 * ($.x * At + $.y * Ct - Z.x * At - Z.y * Ct) / (R.mass + F.mass);
-            (q || K || !R.pushable || !F.pushable) && (Ot *= 2), !q && R.pushable && ($.x = $.x - Ot / R.mass * At, $.y = $.y - Ot / R.mass * Ct, $.multiply(R.bounce)), !K && F.pushable && (Z.x = Z.x + Ot / F.mass * At, Z.y = Z.y + Ot / F.mass * Ct, Z.multiply(F.bounce)), !q && !K && (gt *= 0.5, bt *= 0.5), (!q || R.pushable || ft) && (R.x -= gt, R.y -= bt, R.updateCenter()), (!K || F.pushable || ft) && (F.x += gt, F.y += bt, F.updateCenter()), pt.result = !0;
-          } else !q && (R.pushable || ft) && (R.x -= gt, R.y -= bt, R.updateCenter()), !K && (F.pushable || ft) && (F.x += gt, F.y += bt, F.updateCenter()), pt.x = void 0, pt.y = void 0;
-          return pt;
+            var At = G.x - H.x, Lt = G.y - H.y, xt = Math.sqrt(Math.pow(At, 2) + Math.pow(Lt, 2)), _t = (H.x - G.x) / xt || 0, Mt = (H.y - G.y) / xt || 0, Ot = 2 * ($.x * _t + $.y * Mt - Z.x * _t - Z.y * Mt) / (R.mass + F.mass);
+            (q || K || !R.pushable || !F.pushable) && (Ot *= 2), !q && R.pushable && ($.x = $.x - Ot / R.mass * _t, $.y = $.y - Ot / R.mass * Mt, $.multiply(R.bounce)), !K && F.pushable && (Z.x = Z.x + Ot / F.mass * _t, Z.y = Z.y + Ot / F.mass * Mt, Z.multiply(F.bounce)), !q && !K && (vt *= 0.5, St *= 0.5), (!q || R.pushable || gt) && (R.x -= vt, R.y -= St, R.updateCenter()), (!K || F.pushable || gt) && (F.x += vt, F.y += St, F.updateCenter()), ft.result = !0;
+          } else !q && (R.pushable || gt) && (R.x -= vt, R.y -= St, R.updateCenter()), !K && (F.pushable || gt) && (F.x += vt, F.y += St, F.updateCenter()), ft.x = void 0, ft.y = void 0;
+          return ft;
         }, intersects: function(R, F) {
           return R === F ? !1 : !R.isCircle && !F.isCircle ? !(R.right <= F.left || R.bottom <= F.top || R.left >= F.right || R.top >= F.bottom) : R.isCircle ? F.isCircle ? o(R.center, F.center) <= R.halfWidth + F.halfWidth : this.circleBodyIntersects(R, F) : this.circleBodyIntersects(F, R);
         }, circleBodyIntersects: function(R, F) {
@@ -17422,23 +17422,23 @@ return new ` + this.key + `();
               if (!(!w.isActive || w.isSensor)) {
                 var b = w.collision, S = b.parentA, _ = b.parentB, E = b.normal.x, A = b.normal.y, C = b.tangent.x, M = b.tangent.y, O = w.inverseMass, I = w.friction * w.frictionStatic * d, z = w.contacts, N = w.contactCount, P = 1 / N, D = S.position.x - S.positionPrev.x, R = S.position.y - S.positionPrev.y, F = S.angle - S.anglePrev, L = _.position.x - _.positionPrev.x, Y = _.position.y - _.positionPrev.y, U = _.angle - _.anglePrev;
                 for (x = 0; x < N; x++) {
-                  var G = z[x], H = G.vertex, q = H.x - S.position.x, K = H.y - S.position.y, $ = H.x - _.position.x, Z = H.y - _.position.y, tt = D - K * F, it = R + q * F, J = L - Z * U, at = Y + $ * U, ot = tt - J, ht = it - at, et = E * ot + A * ht, rt = C * ot + M * ht, nt = w.separation + et, ut = Math.min(nt, 1);
-                  ut = nt < 0 ? 0 : ut;
-                  var gt = ut * I;
-                  rt < -gt || rt > gt ? (y = rt > 0 ? rt : -rt, v = w.friction * (rt > 0 ? 1 : -1) * i, v < -y ? v = -y : v > y && (v = y)) : (v = rt, y = u);
-                  var bt = q * A - K * E, pt = $ * A - Z * E, ft = P / (O + S.inverseInertia * bt * bt + _.inverseInertia * pt * pt), Et = (1 + w.restitution) * et * ft;
-                  if (v *= ft, et < h) G.normalImpulse = 0;
+                  var G = z[x], H = G.vertex, q = H.x - S.position.x, K = H.y - S.position.y, $ = H.x - _.position.x, Z = H.y - _.position.y, tt = D - K * F, it = R + q * F, J = L - Z * U, at = Y + $ * U, ht = tt - J, lt = it - at, et = E * ht + A * lt, rt = C * ht + M * lt, nt = w.separation + et, dt = Math.min(nt, 1);
+                  dt = nt < 0 ? 0 : dt;
+                  var vt = dt * I;
+                  rt < -vt || rt > vt ? (y = rt > 0 ? rt : -rt, v = w.friction * (rt > 0 ? 1 : -1) * i, v < -y ? v = -y : v > y && (v = y)) : (v = rt, y = u);
+                  var St = q * A - K * E, ft = $ * A - Z * E, gt = P / (O + S.inverseInertia * St * St + _.inverseInertia * ft * ft), At = (1 + w.restitution) * et * gt;
+                  if (v *= gt, et < h) G.normalImpulse = 0;
                   else {
-                    var Pt = G.normalImpulse;
-                    G.normalImpulse += Et, G.normalImpulse > 0 && (G.normalImpulse = 0), Et = G.normalImpulse - Pt;
+                    var Lt = G.normalImpulse;
+                    G.normalImpulse += At, G.normalImpulse > 0 && (G.normalImpulse = 0), At = G.normalImpulse - Lt;
                   }
                   if (rt < -c || rt > c) G.tangentImpulse = 0;
                   else {
-                    var yt = G.tangentImpulse;
-                    G.tangentImpulse += v, G.tangentImpulse < -y && (G.tangentImpulse = -y), G.tangentImpulse > y && (G.tangentImpulse = y), v = G.tangentImpulse - yt;
+                    var xt = G.tangentImpulse;
+                    G.tangentImpulse += v, G.tangentImpulse < -y && (G.tangentImpulse = -y), G.tangentImpulse > y && (G.tangentImpulse = y), v = G.tangentImpulse - xt;
                   }
-                  var At = E * Et + C * v, Ct = A * Et + M * v;
-                  S.isStatic || S.isSleeping || (S.positionPrev.x += At * S.inverseMass, S.positionPrev.y += Ct * S.inverseMass, S.anglePrev += (q * Ct - K * At) * S.inverseInertia), _.isStatic || _.isSleeping || (_.positionPrev.x -= At * _.inverseMass, _.positionPrev.y -= Ct * _.inverseMass, _.anglePrev -= ($ * Ct - Z * At) * _.inverseInertia);
+                  var _t = E * At + C * v, Mt = A * At + M * v;
+                  S.isStatic || S.isSleeping || (S.positionPrev.x += _t * S.inverseMass, S.positionPrev.y += Mt * S.inverseMass, S.anglePrev += (q * Mt - K * _t) * S.inverseInertia), _.isStatic || _.isSleeping || (_.positionPrev.x -= _t * _.inverseMass, _.positionPrev.y -= Mt * _.inverseMass, _.anglePrev -= ($ * Mt - Z * _t) * _.inverseInertia);
                 }
               }
             }
@@ -18455,19 +18455,19 @@ return new ` + this.key + `();
         }
         function M(P, D, R, F, L, Y, U) {
           Y = Y || 100, U = U || 0, L = L || 25, D = typeof D < "u" ? D : [], R = R || [], F = F || [];
-          var G = [0, 0], H = [0, 0], q = [0, 0], K = 0, $ = 0, Z = 0, tt = 0, it = 0, J = 0, at = 0, ot = [], ht = [], et = P, rt = P;
+          var G = [0, 0], H = [0, 0], q = [0, 0], K = 0, $ = 0, Z = 0, tt = 0, it = 0, J = 0, at = 0, ht = [], lt = [], et = P, rt = P;
           if (rt.length < 3) return D;
           if (U++, U > Y) return console.warn("quickDecomp: max level (" + Y + ") reached."), D;
           for (var nt = 0; nt < P.length; ++nt) if (v(et, nt)) {
             R.push(et[nt]), K = $ = Number.MAX_VALUE;
-            for (var ut = 0; ut < P.length; ++ut) f(h(et, nt - 1), h(et, nt), h(et, ut)) && r(h(et, nt - 1), h(et, nt), h(et, ut - 1)) && (q = C(h(et, nt - 1), h(et, nt), h(et, ut), h(et, ut - 1)), n(h(et, nt + 1), h(et, nt), q) && (Z = i(et[nt], q), Z < $ && ($ = Z, H = q, J = ut))), f(h(et, nt + 1), h(et, nt), h(et, ut + 1)) && r(h(et, nt + 1), h(et, nt), h(et, ut)) && (q = C(h(et, nt + 1), h(et, nt), h(et, ut), h(et, ut + 1)), f(h(et, nt - 1), h(et, nt), q) && (Z = i(et[nt], q), Z < K && (K = Z, G = q, it = ut)));
-            if (J === (it + 1) % P.length) q[0] = (H[0] + G[0]) / 2, q[1] = (H[1] + G[1]) / 2, F.push(q), nt < it ? (d(ot, et, nt, it + 1), ot.push(q), ht.push(q), J !== 0 && d(ht, et, J, et.length), d(ht, et, 0, nt + 1)) : (nt !== 0 && d(ot, et, nt, et.length), d(ot, et, 0, it + 1), ot.push(q), ht.push(q), d(ht, et, J, nt + 1));
+            for (var dt = 0; dt < P.length; ++dt) f(h(et, nt - 1), h(et, nt), h(et, dt)) && r(h(et, nt - 1), h(et, nt), h(et, dt - 1)) && (q = C(h(et, nt - 1), h(et, nt), h(et, dt), h(et, dt - 1)), n(h(et, nt + 1), h(et, nt), q) && (Z = i(et[nt], q), Z < $ && ($ = Z, H = q, J = dt))), f(h(et, nt + 1), h(et, nt), h(et, dt + 1)) && r(h(et, nt + 1), h(et, nt), h(et, dt)) && (q = C(h(et, nt + 1), h(et, nt), h(et, dt), h(et, dt + 1)), f(h(et, nt - 1), h(et, nt), q) && (Z = i(et[nt], q), Z < K && (K = Z, G = q, it = dt)));
+            if (J === (it + 1) % P.length) q[0] = (H[0] + G[0]) / 2, q[1] = (H[1] + G[1]) / 2, F.push(q), nt < it ? (d(ht, et, nt, it + 1), ht.push(q), lt.push(q), J !== 0 && d(lt, et, J, et.length), d(lt, et, 0, nt + 1)) : (nt !== 0 && d(ht, et, nt, et.length), d(ht, et, 0, it + 1), ht.push(q), lt.push(q), d(lt, et, J, nt + 1));
             else {
               if (J > it && (it += P.length), tt = Number.MAX_VALUE, it < J) return D;
-              for (var ut = J; ut <= it; ++ut) a(h(et, nt - 1), h(et, nt), h(et, ut)) && r(h(et, nt + 1), h(et, nt), h(et, ut)) && (Z = i(h(et, nt), h(et, ut)), Z < tt && w(et, nt, ut) && (tt = Z, at = ut % P.length));
-              nt < at ? (d(ot, et, nt, at + 1), at !== 0 && d(ht, et, at, rt.length), d(ht, et, 0, nt + 1)) : (nt !== 0 && d(ot, et, nt, rt.length), d(ot, et, 0, at + 1), d(ht, et, at, nt + 1));
+              for (var dt = J; dt <= it; ++dt) a(h(et, nt - 1), h(et, nt), h(et, dt)) && r(h(et, nt + 1), h(et, nt), h(et, dt)) && (Z = i(h(et, nt), h(et, dt)), Z < tt && w(et, nt, dt) && (tt = Z, at = dt % P.length));
+              nt < at ? (d(ht, et, nt, at + 1), at !== 0 && d(lt, et, at, rt.length), d(lt, et, 0, nt + 1)) : (nt !== 0 && d(ht, et, nt, rt.length), d(ht, et, 0, at + 1), d(lt, et, at, nt + 1));
             }
-            return ot.length < ht.length ? (M(ot, D, R, F, L, Y, U), M(ht, D, R, F, L, Y, U)) : (M(ht, D, R, F, L, Y, U), M(ot, D, R, F, L, Y, U)), D;
+            return ht.length < lt.length ? (M(ht, D, R, F, L, Y, U), M(lt, D, R, F, L, Y, U)) : (M(lt, D, R, F, L, Y, U), M(ht, D, R, F, L, Y, U)), D;
           }
           return D.push(P), D;
         }
@@ -19860,16 +19860,16 @@ return new ` + this.key + `();
           this.manager.preBatch(c), this.batchQuad(c, U[0], U[1], U[2], U[3], U[4], U[5], U[6], U[7], w, b, S, _, q, K, $, Z, c.tintFill, x, tt), this.manager.postBatch(c);
         }, batchTexture: function(c, d, u, p, v, y, m, x, w, b, S, _, E, A, C, M, O, I, z, N, P, D, R, F, L, Y, U, G, H, q, K, $, Z) {
           Z === void 0 && (Z = !1), this.manager.set(this, c);
-          var tt = this._tempMatrix1, it = this._tempMatrix2, J = this._tempMatrix3, at = I / u + U, ot = z / p + G, ht = (I + N) / u + U, et = (z + P) / p + G, rt = m, nt = x, ut = -M, gt = -O;
+          var tt = this._tempMatrix1, it = this._tempMatrix2, J = this._tempMatrix3, at = I / u + U, ht = z / p + G, lt = (I + N) / u + U, et = (z + P) / p + G, rt = m, nt = x, dt = -M, vt = -O;
           if (c.isCropped) {
-            var bt = c._crop, pt = bt.width, ft = bt.height;
-            rt = pt, nt = ft, m = pt, x = ft, I = bt.x, z = bt.y;
-            var Et = I, Pt = z;
-            _ && (Et = N - bt.x - pt), E && (Pt = P - bt.y - ft), at = Et / u + U, ot = Pt / p + G, ht = (Et + pt) / u + U, et = (Pt + ft) / p + G, ut = -M + I, gt = -O + z;
+            var St = c._crop, ft = St.width, gt = St.height;
+            rt = ft, nt = gt, m = ft, x = gt, I = St.x, z = St.y;
+            var At = I, Lt = z;
+            _ && (At = N - St.x - ft), E && (Lt = P - St.y - gt), at = At / u + U, ht = Lt / p + G, lt = (At + ft) / u + U, et = (Lt + gt) / p + G, dt = -M + I, vt = -O + z;
           }
-          E = E ^ (!K && d.isRenderTexture ? 1 : 0), _ && (rt *= -1, ut += m), E && (nt *= -1, gt += x), H.roundPixels && (v = Math.floor(v), y = Math.floor(y)), it.applyITRS(v, y, S, w, b), tt.copyFrom(H.matrix), q ? (tt.multiplyWithOffset(q, -H.scrollX * A, -H.scrollY * C), it.e = v, it.f = y) : (it.e -= H.scrollX * A, it.f -= H.scrollY * C), tt.multiply(it, J);
-          var yt = J.setQuad(ut, gt, ut + rt, gt + nt, H.renderRoundPixels);
-          $ == null && ($ = this.setTexture2D(d)), c && !Z && this.manager.preBatch(c), this.batchQuad(c, yt[0], yt[1], yt[2], yt[3], yt[4], yt[5], yt[6], yt[7], at, ot, ht, et, D, R, F, L, Y, d, $), c && !Z && this.manager.postBatch(c);
+          E = E ^ (!K && d.isRenderTexture ? 1 : 0), _ && (rt *= -1, dt += m), E && (nt *= -1, vt += x), H.roundPixels && (v = Math.floor(v), y = Math.floor(y)), it.applyITRS(v, y, S, w, b), tt.copyFrom(H.matrix), q ? (tt.multiplyWithOffset(q, -H.scrollX * A, -H.scrollY * C), it.e = v, it.f = y) : (it.e -= H.scrollX * A, it.f -= H.scrollY * C), tt.multiply(it, J);
+          var xt = J.setQuad(dt, vt, dt + rt, vt + nt, H.renderRoundPixels);
+          $ == null && ($ = this.setTexture2D(d)), c && !Z && this.manager.preBatch(c), this.batchQuad(c, xt[0], xt[1], xt[2], xt[3], xt[4], xt[5], xt[6], xt[7], at, ht, lt, et, D, R, F, L, Y, d, $), c && !Z && this.manager.postBatch(c);
         }, batchTextureFrame: function(c, d, u, p, v, y, m) {
           this.manager.set(this);
           var x = this._tempMatrix1.copyFrom(y), w = this._tempMatrix2;
@@ -19914,10 +19914,10 @@ return new ` + this.key + `();
           S && S.multiply(b, _);
           var E = u - c, A = p - d, C = Math.sqrt(E * E + A * A);
           if (C !== 0) {
-            var M = v * (p - d) / C, O = v * (c - u) / C, I = y * (p - d) / C, z = y * (c - u) / C, N = u - I, P = p - z, D = c - M, R = d - O, F = u + I, L = p + z, Y = c + M, U = d + O, G = _.getX(N, P), H = _.getY(N, P), q = _.getX(D, R), K = _.getY(D, R), $ = _.getX(F, L), Z = _.getY(F, L), tt = _.getX(Y, U), it = _.getY(Y, U), J = this.strokeTint, at = J.TL, ot = J.TR, ht = J.BL, et = J.BR;
-            if (this.batchQuad(null, tt, it, q, K, G, H, $, Z, 0, 0, 1, 1, at, ot, ht, et, 2), !(m <= 2)) {
+            var M = v * (p - d) / C, O = v * (c - u) / C, I = y * (p - d) / C, z = y * (c - u) / C, N = u - I, P = p - z, D = c - M, R = d - O, F = u + I, L = p + z, Y = c + M, U = d + O, G = _.getX(N, P), H = _.getY(N, P), q = _.getX(D, R), K = _.getY(D, R), $ = _.getX(F, L), Z = _.getY(F, L), tt = _.getX(Y, U), it = _.getY(Y, U), J = this.strokeTint, at = J.TL, ht = J.TR, lt = J.BL, et = J.BR;
+            if (this.batchQuad(null, tt, it, q, K, G, H, $, Z, 0, 0, 1, 1, at, ht, lt, et, 2), !(m <= 2)) {
               var rt = this.prevQuad, nt = this.firstQuad;
-              x > 0 && rt[4] ? this.batchQuad(null, tt, it, q, K, rt[0], rt[1], rt[2], rt[3], 0, 0, 1, 1, at, ot, ht, et, 2) : (nt[0] = tt, nt[1] = it, nt[2] = q, nt[3] = K, nt[4] = 1), w && nt[4] ? this.batchQuad(null, G, H, $, Z, nt[0], nt[1], nt[2], nt[3], 0, 0, 1, 1, at, ot, ht, et, 2) : (rt[0] = G, rt[1] = H, rt[2] = $, rt[3] = Z, rt[4] = 1);
+              x > 0 && rt[4] ? this.batchQuad(null, tt, it, q, K, rt[0], rt[1], rt[2], rt[3], 0, 0, 1, 1, at, ht, lt, et, 2) : (nt[0] = tt, nt[1] = it, nt[2] = q, nt[3] = K, nt[4] = 1), w && nt[4] ? this.batchQuad(null, G, H, $, Z, nt[0], nt[1], nt[2], nt[3], 0, 0, 1, 1, at, ht, lt, et, 2) : (rt[0] = G, rt[1] = H, rt[2] = $, rt[3] = Z, rt[4] = 1);
             }
           }
         }, destroy: function() {
@@ -20001,8 +20001,8 @@ return new ` + this.key + `();
           f(it, Math.round(H.centerX), Math.round(H.centerY)), this.tempSprite = p;
           var J = this.gl, at = this.renderer;
           at.clearStencilMask(), this.setShader(this.drawSpriteShader), this.set1i("uMainSampler", 0), this.set2f("uResolution", at.width, at.height), this.flipProjectionMatrix(!0), p && (this.onDrawSprite(p, tt), p.preFX.onFX(this));
-          var ot = this.fsTarget;
-          return this.flush(), J.viewport(0, 0, at.width, at.height), J.bindFramebuffer(J.FRAMEBUFFER, ot.framebuffer.webGLFramebuffer), J.framebufferTexture2D(J.FRAMEBUFFER, J.COLOR_ATTACHMENT0, J.TEXTURE_2D, ot.texture.webGLTexture, 0), J.clearColor(0, 0, 0, 0), J.clear(J.COLOR_BUFFER_BIT), this.setTexture2D(D), this.batchVert(v, y, E, A, 0, P, O), this.batchVert(m, x, E, M, 0, P, z), this.batchVert(w, b, C, M, 0, P, N), this.batchVert(v, y, E, A, 0, P, O), this.batchVert(w, b, C, M, 0, P, N), this.batchVert(S, _, C, A, 0, P, I), this.flush(), this.flipProjectionMatrix(!1), J.activeTexture(J.TEXTURE0), J.bindTexture(J.TEXTURE_2D, tt.texture.webGLTexture), J.copyTexSubImage2D(J.TEXTURE_2D, 0, 0, 0, it.x, it.y, it.width, it.height), J.bindFramebuffer(J.FRAMEBUFFER, null), J.bindTexture(J.TEXTURE_2D, null), this.onBatch(p), this.currentShader = this.copyShader, this.onDraw(tt, this.manager.getSwapRenderTarget(), this.manager.getAltSwapRenderTarget()), !0;
+          var ht = this.fsTarget;
+          return this.flush(), J.viewport(0, 0, at.width, at.height), J.bindFramebuffer(J.FRAMEBUFFER, ht.framebuffer.webGLFramebuffer), J.framebufferTexture2D(J.FRAMEBUFFER, J.COLOR_ATTACHMENT0, J.TEXTURE_2D, ht.texture.webGLTexture, 0), J.clearColor(0, 0, 0, 0), J.clear(J.COLOR_BUFFER_BIT), this.setTexture2D(D), this.batchVert(v, y, E, A, 0, P, O), this.batchVert(m, x, E, M, 0, P, z), this.batchVert(w, b, C, M, 0, P, N), this.batchVert(v, y, E, A, 0, P, O), this.batchVert(w, b, C, M, 0, P, N), this.batchVert(S, _, C, A, 0, P, I), this.flush(), this.flipProjectionMatrix(!1), J.activeTexture(J.TEXTURE0), J.bindTexture(J.TEXTURE_2D, tt.texture.webGLTexture), J.copyTexSubImage2D(J.TEXTURE_2D, 0, 0, 0, it.x, it.y, it.width, it.height), J.bindFramebuffer(J.FRAMEBUFFER, null), J.bindTexture(J.TEXTURE_2D, null), this.onBatch(p), this.currentShader = this.copyShader, this.onDraw(tt, this.manager.getSwapRenderTarget(), this.manager.getAltSwapRenderTarget()), !0;
         }, onDrawSprite: function() {
         }, onCopySprite: function() {
         }, copySprite: function(p, v, y, m, x, w, b) {
@@ -25285,11 +25285,11 @@ return new ` + this.key + `();
           !w && x.targets && (w = x.targets);
           for (var b = i(m), S = e(m, "delay", x.delay), _ = e(m, "duration", x.duration), E = e(m, "easeParams", x.easeParams), A = e(m, "ease", x.ease), C = e(m, "hold", x.hold), M = e(m, "repeat", x.repeat), O = e(m, "repeatDelay", x.repeatDelay), I = n(m, "yoyo", x.yoyo), z = n(m, "flipX", x.flipX), N = n(m, "flipY", x.flipY), P = e(m, "interpolation", x.interpolation), D = function(Z, tt, it, J) {
             if (it === "texture") {
-              var at = J, ot = void 0;
-              Array.isArray(J) ? (at = J[0], ot = J[1]) : J.hasOwnProperty("value") ? (at = J.value, Array.isArray(J.value) ? (at = J.value[0], ot = J.value[1]) : typeof J.value == "string" && (at = J.value)) : typeof J == "string" && (at = J), Z.addFrame(tt, at, ot, o(J, "delay", S), e(J, "duration", _), e(J, "hold", C), e(J, "repeat", M), e(J, "repeatDelay", O), n(J, "flipX", z), n(J, "flipY", N));
+              var at = J, ht = void 0;
+              Array.isArray(J) ? (at = J[0], ht = J[1]) : J.hasOwnProperty("value") ? (at = J.value, Array.isArray(J.value) ? (at = J.value[0], ht = J.value[1]) : typeof J.value == "string" && (at = J.value)) : typeof J == "string" && (at = J), Z.addFrame(tt, at, ht, o(J, "delay", S), e(J, "duration", _), e(J, "hold", C), e(J, "repeat", M), e(J, "repeatDelay", O), n(J, "flipX", z), n(J, "flipY", N));
             } else {
-              var ht = d(it, J), et = s(e(J, "interpolation", P));
-              Z.add(tt, it, ht.getEnd, ht.getStart, ht.getActive, r(e(J, "ease", A), e(J, "easeParams", E)), o(J, "delay", S), e(J, "duration", _), n(J, "yoyo", I), e(J, "hold", C), e(J, "repeat", M), e(J, "repeatDelay", O), n(J, "flipX", z), n(J, "flipY", N), et, et ? J : null);
+              var lt = d(it, J), et = s(e(J, "interpolation", P));
+              Z.add(tt, it, lt.getEnd, lt.getStart, lt.getActive, r(e(J, "ease", A), e(J, "easeParams", E)), o(J, "delay", S), e(J, "duration", _), n(J, "yoyo", I), e(J, "hold", C), e(J, "repeat", M), e(J, "repeatDelay", O), n(J, "flipX", z), n(J, "flipY", N), et, et ? J : null);
             }
           }, R = new p(y, w), F = 0; F < b.length; F++) for (var L = b[F].key, Y = b[F].value, U = 0; U < w.length; U++) L === "scale" && !w[U].hasOwnProperty("scale") ? (D(R, U, "scaleX", Y), D(R, U, "scaleY", Y)) : D(R, U, L, Y);
           R.completeDelay = a(m, "completeDelay", 0), R.loop = Math.round(a(m, "loop", 0)), R.loopDelay = Math.round(a(m, "loopDelay", 0)), R.paused = n(m, "paused", !1), R.persist = n(m, "persist", !1), R.callbackScope = e(m, "callbackScope", R);
@@ -26442,40 +26442,48 @@ return new ` + this.key + `();
     })());
   })(Se)), Se.exports;
 }
-var Ti = xi();
-const dt = mi(Ti), st = 720, mt = 1280, jt = ["slow", "normal", "fast"], wi = { slow: "Langsam", normal: "Normal", fast: "Schnell" }, zt = 230, bi = { slow: 1.2, normal: 0.95, fast: 0.75 }, Si = 540, Qe = 0.1, Ei = 0.15, Be = 1500, Ai = 1e4;
+var Ei = Si();
+const pt = wi(Ei), st = 720, yt = 1280, qt = ["slow", "normal", "fast"], Ai = { slow: "Langsam", normal: "Normal", fast: "Schnell" }, Ut = 230, _i = { slow: 1.2, normal: 0.95, fast: 0.75 }, Ci = 540, Je = 0.1, Mi = 0.15, Be = 1500, Ri = 1e4;
 function ve(j) {
-  const k = bi[j], B = zt, X = Si / k;
-  return { T: k, gravity: 8 * B / (k * k), jumpVelocity: 4 * B / k, maxVx: X, accel: X / (Qe * k) };
+  const k = _i[j], B = Ut, X = Ci / k;
+  return { T: k, gravity: 8 * B / (k * k), jumpVelocity: 4 * B / k, maxVx: X, accel: X / (Je * k) };
 }
 function Ne(j) {
-  const k = Math.min(1, Math.max(0, (j - Be) / (Ai - Be)));
-  return 1 + Ei * k;
+  const k = Math.min(1, Math.max(0, (j - Be) / (Ri - Be)));
+  return 1 + Mi * k;
 }
 function oe(j, k = 0.85) {
   const B = ve("normal");
-  if (j >= zt) return 0;
-  const X = B.jumpVelocity * B.jumpVelocity - 2 * B.gravity * j, W = (B.jumpVelocity + Math.sqrt(Math.max(0, X))) / B.gravity, V = Qe * B.T / 2;
+  if (j >= Ut) return 0;
+  const X = B.jumpVelocity * B.jumpVelocity - 2 * B.gravity * j, W = (B.jumpVelocity + Math.sqrt(Math.max(0, X))) / B.gravity, V = Je * B.T / 2;
   return Math.max(0, B.maxVx * (W - V) * k);
 }
-const _i = 440, Ci = 60, St = { startPlatformHeight: 70, gapMinStart: 100, gapMinEnd: 120, gapMaxStart: 150, gapMaxEnd: 180, gapRampHeight: 8e3, neutralsBetweenRows: [6, 7], neutralsBeforeFirstRow: 5, rowLaunchGap: 150, preLaunchGap: 112, rowExitGap: 118, unreachableMargin: 20, firstRowMinFromTop: 250, generateAhead: 500 }, Ft = { minWidth: 170, minWidthTight: 150, paddingX: 26, fontSizeMax: 38, fontSizeMin: 24, minGap: 8, textColor: "#2b2230", strokeColor: "#fff8e6", strokeThickness: 0 }, xt = { movingFrom: 1500, movingChance: [0.12, 0.32], movingMaxGap: 118, movingAmp: [70, 190], movingPeriodT: [2.6, 4.2], springFrom: 2500, springChance: 0.16, springFactor: 2.3, crumbleFrom: 700, crumbleChance: [0.2, 0.38], crumbleOffset: [190, 300], rowSafeBelow: 250, rowSafeAbove: 110, berryChance: 0.33, berryOnExtraChance: 0.57, berryOffset: [110, 250], berriesForHeart: 10, berryBonusPoints: 250, berryPoints: 10, rampHeight: 9e3 }, Ee = { maxLearning: 15, reviewShare: 0.2, levelNames: ["sehr leicht", "leicht", "mittel", "schwer", "sehr schwer"] }, ge = { optionsAt(j) {
+const Pi = 440, Li = 60, Et = { startPlatformHeight: 70, gapMinStart: 100, gapMinEnd: 120, gapMaxStart: 150, gapMaxEnd: 180, gapRampHeight: 8e3, neutralsBetweenRows: [6, 7], neutralsBeforeFirstRow: 5, rowLaunchGap: 150, preLaunchGap: 112, rowExitGap: 118, unreachableMargin: 20, firstRowMinFromTop: 250, generateAhead: 500 }, Ft = { minWidth: 170, minWidthTight: 150, paddingX: 26, fontSizeMax: 38, fontSizeMin: 24, minGap: 8, textColor: "#2b2230", strokeColor: "#fff8e6", strokeThickness: 0 }, Tt = { movingFrom: 1500, movingChance: [0.12, 0.32], movingMaxGap: 118, movingAmp: [70, 190], movingPeriodT: [2.6, 4.2], springFrom: 2500, springChance: 0.16, springFactor: 2.3, crumbleFrom: 700, crumbleChance: [0.2, 0.38], crumbleOffset: [190, 300], rowSafeBelow: 250, rowSafeAbove: 110, berryChance: 0.33, berryOnExtraChance: 0.57, berryOffset: [110, 250], berriesForHeart: 10, berryBonusPoints: 250, berryPoints: 10, rampHeight: 9e3 }, Ee = { maxLearning: 15, reviewShare: 0.2, levelNames: ["sehr leicht", "leicht", "mittel", "schwer", "sehr schwer"] }, ge = { optionsAt(j) {
   return j < 1500 ? 2 : j < 3600 ? 3 : 4;
 }, similarityAt(j) {
   return j < 2500 ? 0 : j < 5500 ? 1 : 2;
 }, maxLevelAt(j) {
   return j < 3e3 ? 1 : j < 6500 ? 2 : 99;
-}, repeatAfterRows: [3, 4] }, Qt = { correct: 100, perExtraOption: 25, streakStep: 0.1, streakMax: 2 }, de = 3, Je = { sfxVolume: 1.25, speechVolume: 0.75 }, Dt = { y: 650, intro: 300, holdBase: 850, holdPerChar: 35, holdMax: 1500, outro: 450, solutionHold: 1e3 }, Ae = 420, Mi = [{ key: "lake_far", f: 0.35, plane: 0 }, { key: "lake_mid", f: 0.6, plane: 1, glow: "lake_midglow" }, { key: "lake_near", f: 1, plane: 2, glow: "lake_nearglow" }], Ri = [{ name: "forest", start: 1100, end: 4700, layers: [{ key: "forest_far", f: 0.35, plane: 0 }, { key: "forest_mid", f: 0.6, plane: 1 }, { key: "forest_near", f: 1, plane: 2 }] }, { name: "fjell", start: 4300, end: 8200, layers: [{ key: "fjell_mid", f: 0.6, plane: 1 }, { key: "fjell_near", f: 1, plane: 2 }] }], Mt = { cloudsStart: 7400, cloudFactorMin: 0.75, cloudFactorMax: 0.95, cloudSpacingMin: 260, cloudSpacingMax: 520, cloudDriftMin: 6, cloudDriftMax: 22, moonStart: 6800, moonFade: 600, moonFactor: 0.08, starFactor: 0.04, starCount: 190 }, Pi = [{ h: 0, top: 1183796, mid: 3811432, bottom: 15241846 }, { h: 2500, top: 1052210, mid: 2892384, bottom: 7884950 }, { h: 5500, top: 657958, mid: 1710150, bottom: 4075632 }, { h: 8500, top: 329240, mid: 921648, bottom: 2235988 }], lt = { sky: 0, stars: 1, aurora: 2, moon: 3, plane: [10, 20, 30], clouds: 40, platforms: 50, fx: 55, player: 60, hud: 100, overlay: 200 }, ti = { berry_idle: "character/berry_idle.png", berry_jump: "character/berry_jump.png", berry_land: "character/berry_land.png", berry_hurt: "character/berry_hurt.png", plank_word: "platforms/plank_word.png", plank_snow: "platforms/plank_snow.png", lake_far: "bg/lake/far.png", lake_mid: "bg/lake/mid.png", lake_midglow: "bg/lake/midglow.png", lake_near: "bg/lake/near.png", lake_nearglow: "bg/lake/nearglow.png", forest_far: "bg/forest/far_tile.png", forest_mid: "bg/forest/mid_tile.png", forest_near: "bg/forest/near_tile.png", fjell_mid: "bg/fjell/mid_tile.png", fjell_near: "bg/fjell/near_tile.png", cloud1: "bg/sky/cloud1.png", cloud2: "bg/sky/cloud2.png", cloud3: "bg/sky/cloud3.png", moon: "bg/sky/moon.png", star: "bg/sky/star.png", aurora_band: "bg/sky/aurora_band.png", paper: "bg/paper_tile.png" }, Ye = { family: "Patrick Hand", path: "fonts/patrick-hand.woff2" }, wt = { frames: { idle: "berry_idle", jump: "berry_jump", land: "berry_land", hurt: "berry_hurt" }, sourceSize: 512, footY: 450, bodyHeight: 365, displayHeight: 100, footHalfWidth: 24 }, Tt = { key: "plank_word", width: 890, height: 226, sliceLeft: 90, sliceRight: 90, surfaceY: 14, displayHeight: 62, splinterRects: [{ x: 140, y: 40, w: 90, h: 16 }, { x: 320, y: 90, w: 70, h: 14 }, { x: 520, y: 140, w: 110, h: 18 }, { x: 700, y: 60, w: 60, h: 12 }, { x: 250, y: 170, w: 50, h: 20 }] }, Nt = { key: "plank_snow", width: 894, height: 153, surfaceY: 30, displayWidth: 150 }, pe = { clouds: ["cloud1", "cloud2", "cloud3"], moon: "moon", moonDisplaySize: 180 }, ei = "./", Bt = ["doodle"], ee = { doodle: { id: "doodle", label: "Kritzel", bgDir: "", sky: Pi, stars: 0.35, aurora: 0.8, moon: !0, sun: !1, windowGlow: 0, pageBackground: "#faf7ef" } }, me = ["lake_far", "lake_mid", "lake_midglow", "lake_near", "lake_nearglow", "forest_far", "forest_mid", "forest_near", "fjell_mid", "fjell_near", "cloud1", "cloud2", "cloud3"], Li = new Set(me);
-function te(j, k) {
-  return Li.has(j) ? `${j}@${k}` : j;
+}, repeatAfterRows: [3, 4] }, Jt = { correct: 100, perExtraOption: 25, streakStep: 0.1, streakMax: 2 }, de = 3, ti = { sfxVolume: 1.25, speechVolume: 0.75 }, Dt = { y: 650, intro: 300, holdBase: 850, holdPerChar: 35, holdMax: 1500, outro: 450, solutionHold: 1e3 }, Ae = 420, Oi = [{ key: "lake_far", f: 0.35, plane: 0 }, { key: "lake_mid", f: 0.6, plane: 1, glow: "lake_midglow" }, { key: "lake_near", f: 1, plane: 2, glow: "lake_nearglow" }], ki = [{ name: "forest", start: 1100, end: 4700, layers: [{ key: "forest_far", f: 0.35, plane: 0 }, { key: "forest_mid", f: 0.6, plane: 1 }, { key: "forest_near", f: 1, plane: 2 }] }, { name: "fjell", start: 4300, end: 8200, layers: [{ key: "fjell_mid", f: 0.6, plane: 1 }, { key: "fjell_near", f: 1, plane: 2 }] }], Rt = { cloudsStart: 7400, cloudFactorMin: 0.75, cloudFactorMax: 0.95, cloudSpacingMin: 260, cloudSpacingMax: 520, cloudDriftMin: 6, cloudDriftMax: 22, moonStart: 6800, moonFade: 600, moonFactor: 0.08, starFactor: 0.04, starCount: 190 }, Ye = [{ h: 0, top: 1183796, mid: 3811432, bottom: 15241846 }, { h: 2500, top: 1052210, mid: 2892384, bottom: 7884950 }, { h: 5500, top: 657958, mid: 1710150, bottom: 4075632 }, { h: 8500, top: 329240, mid: 921648, bottom: 2235988 }], ct = { sky: 0, stars: 1, aurora: 2, moon: 3, plane: [10, 20, 30], clouds: 40, platforms: 50, fx: 55, player: 60, hud: 100, overlay: 200 }, ei = { berry_idle: "character/berry_idle.png", berry_jump: "character/berry_jump.png", berry_land: "character/berry_land.png", berry_hurt: "character/berry_hurt.png", plank_word: "platforms/plank_word.png", plank_snow: "platforms/plank_snow.png", lake_far: "bg/lake/far.png", lake_mid: "bg/lake/mid.png", lake_midglow: "bg/lake/midglow.png", lake_near: "bg/lake/near.png", lake_nearglow: "bg/lake/nearglow.png", forest_far: "bg/forest/far_tile.png", forest_mid: "bg/forest/mid_tile.png", forest_near: "bg/forest/near_tile.png", fjell_mid: "bg/fjell/mid_tile.png", fjell_near: "bg/fjell/near_tile.png", cloud1: "bg/sky/cloud1.png", cloud2: "bg/sky/cloud2.png", cloud3: "bg/sky/cloud3.png", moon: "bg/sky/moon.png", star: "bg/sky/star.png", aurora_band: "bg/sky/aurora_band.png", paper: "bg/paper_tile.png" }, ze = { family: "Patrick Hand", path: "fonts/patrick-hand.woff2" }, bt = { frames: { idle: "berry_idle", jump: "berry_jump", land: "berry_land", hurt: "berry_hurt" }, sourceSize: 512, footY: 450, bodyHeight: 365, displayHeight: 100, footHalfWidth: 24 }, wt = { key: "plank_word", width: 890, height: 226, sliceLeft: 90, sliceRight: 90, surfaceY: 14, displayHeight: 62, splinterRects: [{ x: 140, y: 40, w: 90, h: 16 }, { x: 320, y: 90, w: 70, h: 14 }, { x: 520, y: 140, w: 110, h: 18 }, { x: 700, y: 60, w: 60, h: 12 }, { x: 250, y: 170, w: 50, h: 20 }] }, Nt = { key: "plank_snow", width: 894, height: 153, surfaceY: 30, displayWidth: 150 }, pe = { clouds: ["cloud1", "cloud2", "cloud3"], moon: "moon", moonDisplaySize: 180 }, ii = "./", Bt = ["doodle", "night"];
+function Di() {
+  try {
+    if (typeof window < "u" && window.matchMedia?.("(prefers-color-scheme: dark)").matches) return "night";
+  } catch {
+  }
+  return "doodle";
 }
-function Oi(j, k) {
-  return ee[k].bgDir + ti[j];
+const ee = { doodle: { id: "doodle", label: "Hell", bgDir: "", sky: Ye, stars: 0.35, aurora: 0.8, moon: !0, sun: !1, windowGlow: 0, pageBackground: "#faf7ef" }, night: { id: "night", label: "Dunkel", bgDir: "night/", sky: Ye, stars: 0.65, aurora: 1, moon: !0, sun: !1, windowGlow: 1, pageBackground: "#1c2042" } }, me = ["lake_far", "lake_mid", "lake_midglow", "lake_near", "lake_nearglow", "forest_far", "forest_mid", "forest_near", "fjell_mid", "fjell_near", "cloud1", "cloud2", "cloud3", "moon", "star", "paper"], Fi = new Set(me);
+function zt(j, k) {
+  return Fi.has(j) ? `${j}@${k}` : j;
 }
-const ki = { sourceLang: "de", targetLang: "fi", direction: "forward", showMenu: !0, allowMenu: !0, allowImport: !0, storagePrefix: "mustikka-hyppy" }, Di = { de: "Deutsch", fi: "Finnisch", en: "Englisch", sv: "Schwedisch", et: "Estnisch", fr: "Französisch", es: "Spanisch", it: "Italienisch" };
+function Ii(j, k) {
+  return ee[k].bgDir + ei[j];
+}
+const Bi = { sourceLang: "de", targetLang: "fi", direction: "forward", showMenu: !0, allowMenu: !0, allowImport: !0, storagePrefix: "mustikka-hyppy" }, Ni = { de: "Deutsch", fi: "Finnisch", en: "Englisch", sv: "Schwedisch", et: "Estnisch", fr: "Französisch", es: "Spanisch", it: "Italienisch" };
 function ie(j) {
-  return Di[j] ?? j.toUpperCase();
+  return Ni[j] ?? j.toUpperCase();
 }
-class Fi {
+class Yi {
   constructor(k) {
     Q(this, "prefix"), this.prefix = k;
   }
@@ -26494,7 +26502,7 @@ class Fi {
   }
   getTempo() {
     const k = this.get("tempo");
-    return k && jt.includes(k) ? k : null;
+    return k && qt.includes(k) ? k : null;
   }
   setTempo(k) {
     this.set("tempo", k);
@@ -26534,10 +26542,116 @@ class Fi {
     this.set("tilt", k ? "1" : "0");
   }
 }
-const _e = 4, le = 3, ii = [0, 10 * 6e4, 24 * 36e5, 72 * 36e5, 168 * 36e5], ze = [6, 3, 1.6, 0.9, 0.5], Ii = 2.5;
-function Bi(j, k) {
-  if (!j) return Ii;
-  const B = ze[j.box] ?? ze[_e], X = j.box > 0 && k - j.last >= ii[j.box], W = 1 + Math.min(1.5, 0.5 * j.wrong / (j.right + 1));
+const ye = '"Patrick Hand", "Comic Sans MS", "Segoe Print", system-ui, sans-serif';
+let re = null;
+function zi(j, k, B = 400) {
+  return !re && typeof document < "u" && (re = document.createElement("canvas").getContext("2d")), re ? (re.font = `${B} ${k}px ${ye}`, re.measureText(j).width) : j.length * k * 0.6;
+}
+function Ui(j) {
+  const k = j.length, B = Ft.paddingX;
+  let X = Ft.fontSizeMax, W = Ft.minWidth, V = [];
+  for (; V = j.map((a) => Math.max(W, Math.ceil(zi(a, X) + 2 * B + Ft.strokeThickness))), !(V.reduce((a, n) => a + n, 0) + (k + 1) * Ft.minGap <= st); ) {
+    if (W > Ft.minWidthTight) {
+      W = Math.max(Ft.minWidthTight, W - 5);
+      continue;
+    }
+    if (X > Ft.fontSizeMin) {
+      X -= 1;
+      continue;
+    }
+    const a = st - (k + 1) * Ft.minGap, n = V.reduce((r, e) => r + e, 0);
+    V = V.map((r) => Math.floor(r * a / n));
+    break;
+  }
+  const g = V.reduce((a, n) => a + n, 0), T = (st - g) / (k + 1), t = [], l = [];
+  let f = T;
+  for (let a = 0; a < k; a++) t.push({ x: f + V[a] / 2, w: V[a] }), f += V[a], a < k - 1 && l.push(f + T / 2), f += T;
+  return { fontSize: X, planks: t, gapCenters: l };
+}
+const Xi = ye, si = { doodle: { cream: "#2b2230", brown: "#fffdf5", ink: 2826800, paper: 16776694, panel: 16776694, panelStroke: 2826800, shadow: 2826800, shadowAlpha: 0.1, accent: 7329162, accentDark: 10215546, button: 16773560, buttonActive: 16757370, buttonText: "#2b2230", buttonTextStroke: "#fffdf5", buttonStroke: 2826800, heart: "#e0485a", heartLost: "#c9c0cf", muted: "#6b5f86", text2: "#4a4058", faint: "#857a9e", subtitle: "#6b4a3a", orange: "#d17a00", green: "#2f8a45", red: "#c8323c", heartPlus: "#d6455d", blue: "#3f5bc4", veil: 16447471, tint: 2826800, tintAlpha: 0.06, fade: [250, 247, 239], canvas: "#faf7ef" }, night: { cream: "#f1edfb", brown: "#1c2042", ink: 15657722, paper: 2501464, panel: 2501464, panelStroke: 15657722, shadow: 329242, shadowAlpha: 0.45, accent: 7329162, accentDark: 10215546, button: 16773560, buttonActive: 16757370, buttonText: "#2b2230", buttonTextStroke: "#fffdf5", buttonStroke: 855846, heart: "#ff6b7c", heartLost: "#565a86", muted: "#b7b0dc", text2: "#d6d1ee", faint: "#9a94c4", subtitle: "#ffd98a", orange: "#ffb347", green: "#7fe39a", red: "#ff7a82", heartPlus: "#ff7a8e", blue: "#9fb4ff", veil: 1316666, tint: 16777215, tintAlpha: 0.07, fade: [28, 32, 66], canvas: "#1c2042" } }, ot = { ...si.doodle };
+function ri(j) {
+  Object.assign(ot, si[j]);
+}
+function ni(j, k) {
+  const [B, X, W] = ot.fade;
+  j.cameras.main.fadeIn(k, B, X, W);
+}
+function Wi(j, k) {
+  const [B, X, W] = ot.fade;
+  j.cameras.main.fadeOut(k, B, X, W);
+}
+function Oe(j, k, B, X, W, V, g = {}) {
+  let T = g.seed ?? Math.round(k * 7 + B * 13 + X * 3 + W);
+  const t = () => (T = (T * 16807 + 11) % 2147483647) / 2147483647 - 0.5;
+  V = Math.min(V, X / 2, W / 2);
+  const l = [], f = (r, e, s) => {
+    for (let o = 0; o <= 6; o++) {
+      const i = s + o / 6 * (Math.PI / 2);
+      l.push(new pt.Math.Vector2(r + Math.cos(i) * V, e + Math.sin(i) * V));
+    }
+  }, a = (r, e, s, o) => {
+    const i = Math.max(2, Math.round(Math.hypot(s - r, o - e) / 40));
+    for (let h = 1; h < i; h++) l.push(new pt.Math.Vector2(r + (s - r) * h / i + t() * 2.2, e + (o - e) * h / i + t() * 2.2));
+  };
+  f(k + X - V, B + V, -Math.PI / 2), a(k + X, B + V, k + X, B + W - V), f(k + X - V, B + W - V, 0), a(k + X - V, B + W, k + V, B + W), f(k + V, B + W - V, Math.PI / 2), a(k, B + W - V, k, B + V), f(k + V, B + V, Math.PI), a(k + V, B, k + X - V, B), g.fill !== void 0 && (j.fillStyle(g.fill, g.fillAlpha ?? 1), j.fillPoints(l, !0));
+  const n = g.width ?? 4;
+  j.lineStyle(n, g.stroke ?? ot.ink, 1), j.strokePoints(l, !0), j.lineStyle(Math.max(1, n * 0.45), g.stroke ?? ot.ink, 0.55), j.beginPath(), j.moveTo(l[0].x + 1.5, l[0].y - 1);
+  for (let r = 1; r < Math.min(l.length, 12); r++) j.lineTo(l[r].x + 1.5, l[r].y - 1);
+  j.strokePath();
+}
+function ue(j) {
+  return j.scale.width / st;
+}
+function Qt(j) {
+  const k = j.cameras.main, B = ue(j);
+  return k.setOrigin(0, 0), k.setZoom(B), k;
+}
+function Gi(j, k) {
+  const B = ue(j);
+  return { x: k.x / B, y: k.y / B };
+}
+function ut(j, k, B, X, W = {}) {
+  const V = W.size ?? 32, g = j.add.text(k, B, X, { fontFamily: Xi, fontSize: `${V}px`, fontStyle: "normal", color: W.color ?? ot.cream, stroke: W.stroke ?? ot.brown, strokeThickness: Math.round((W.strokeThickness ?? Math.max(0, Math.round(V / 6))) * 0.6), align: W.align ?? "center", wordWrap: W.wrapWidth ? { width: W.wrapWidth, useAdvancedWrap: !0 } : void 0, padding: { x: 4, y: Math.ceil(V * 0.18) }, resolution: ue(j) });
+  return g.setOrigin(0.5), g;
+}
+function It(j, k, B, X) {
+  let W = B;
+  for (j.setFontSize(W); j.width > k && W > X; ) W -= 2, j.setFontSize(W), j.setStroke(String(j.style.stroke ?? ot.brown), Math.max(2, Math.round(W / 10)));
+  j.width > k ? j.setScale(k / j.width) : j.setScale(1);
+}
+function se(j, k, B, X, W, V = 26, g = 0.82) {
+  const T = j.add.graphics();
+  return T.fillStyle(ot.shadow, ot.shadowAlpha), T.fillRoundedRect(k + 6, B + 8, X, W, V * 0.6), Oe(T, k, B, X, W, V * 0.6, { fill: ot.panel, fillAlpha: Math.max(g, 0.94), width: 4 }), T;
+}
+function Ct(j, k, B, X, W, V, g, T = {}) {
+  const t = T.color ?? ot.button, l = T.activeColor ?? ot.buttonActive, f = j.add.graphics();
+  let a = !1;
+  const n = (o = !1) => {
+    f.clear();
+    const i = a ? l : t, h = o ? 3 : 0;
+    f.fillStyle(ot.buttonStroke, 0.85), f.fillRoundedRect(-X / 2 + 3, -W / 2 + 6, X, W, W / 3), Oe(f, -X / 2, -W / 2 + h, X, W, W / 3, { fill: i, stroke: ot.buttonStroke, width: a ? 5 : 4, seed: Math.round(X * 3 + W) });
+  };
+  n();
+  const r = T.size ?? 30, e = ut(j, 0, 0, V, { size: r, color: ot.buttonText, stroke: ot.buttonTextStroke });
+  It(e, X - 22, r, 14);
+  const s = j.add.container(k, B, [f, e]);
+  return s.setSize(X, W), s.setInteractive({ useHandCursor: !0 }), s.on("pointerdown", (o, i, h, c) => {
+    c?.stopPropagation?.(), n(!0);
+  }), s.on("pointerout", () => n(!1)), s.on("pointerup", (o, i, h, c) => {
+    c?.stopPropagation?.(), n(!1), j.registry.get("ctx")?.sfx?.play("click"), g();
+  }), { container: s, setActive(o) {
+    a = o, n();
+  }, setLabel(o) {
+    e.setText(o), It(e, X - 22, r, 14);
+  } };
+}
+function xe(j, k = 0.55) {
+  return j.add.rectangle(0, 0, st, yt, ot.veil, Math.min(0.8, k + 0.15)).setOrigin(0).setScrollFactor(0);
+}
+const _e = 4, le = 3, ai = [0, 10 * 6e4, 24 * 36e5, 72 * 36e5, 168 * 36e5], Ue = [6, 3, 1.6, 0.9, 0.5], Vi = 2.5;
+function Hi(j, k) {
+  if (!j) return Vi;
+  const B = Ue[j.box] ?? Ue[_e], X = j.box > 0 && k - j.last >= ai[j.box], W = 1 + Math.min(1.5, 0.5 * j.wrong / (j.right + 1));
   return B * (X ? 2 : 1) * W;
 }
 class ce {
@@ -26559,7 +26673,7 @@ class ce {
     }
   }
 }
-class si {
+class oi {
   constructor(k) {
     Q(this, "store"), Q(this, "map"), this.store = k, this.map = k?.load() ?? {};
   }
@@ -26567,7 +26681,7 @@ class si {
     return this.map[k];
   }
   weight(k, B = Date.now()) {
-    return Bi(this.map[k], B);
+    return Hi(this.map[k], B);
   }
   record(k, B, X = Date.now()) {
     const W = this.map[k] ?? { box: 0, right: 0, wrong: 0 }, V = B ? { box: Math.min(_e, W.box + 1), right: W.right + 1, wrong: W.wrong, last: X } : { box: 0, right: W.right, wrong: W.wrong + 1, last: X };
@@ -26580,7 +26694,7 @@ class si {
   }
   isDue(k, B = Date.now()) {
     const X = this.map[k];
-    return !!X && X.box > 0 && B - X.last >= ii[X.box];
+    return !!X && X.box > 0 && B - X.last >= ai[X.box];
   }
   reset() {
     this.map = {}, this.store?.save(this.map);
@@ -26595,7 +26709,7 @@ class si {
   }
 }
 const Yt = "builtin";
-class Ni {
+class ji {
   constructor(k) {
     Q(this, "prefix"), this.prefix = k;
   }
@@ -26650,34 +26764,34 @@ class Ni {
     this.set("activeList", k);
   }
 }
-const vt = (j) => j.registry.get("ctx");
+const mt = (j) => j.registry.get("ctx");
 function Ce(j, k) {
-  const B = vt(j);
+  const B = mt(j);
   B.tempo = k, B.prefs.setTempo(k), j.game.events.emit("tempo-changed", k);
 }
-function ri(j) {
+function hi(j) {
   j.parentEl.style.background = ee[j.theme].pageBackground;
 }
-function Yi(j, k) {
-  const B = vt(j);
-  B.theme = k, B.prefs.setTheme(k), ri(B);
+function qi(j, k) {
+  const B = mt(j);
+  B.theme = k, B.prefs.setTheme(k), ri(k), hi(B);
 }
-function ni(j, k) {
-  const B = vt(j);
+function li(j, k) {
+  const B = mt(j);
   B.sfx.enabled = k, B.prefs.setBool("sound", k), k && B.sfx.unlock();
 }
-function zi(j, k) {
-  const B = vt(j);
+function Ki(j, k) {
+  const B = mt(j);
   B.speech.enabled = k, B.prefs.setBool("speech", k), k || B.speech.cancel();
 }
 function he(j, k) {
   const B = k !== Yt ? j.lists.load(k) : null, X = B ? k : Yt, W = B ? B.meta : j.builtin.meta;
   j.entries = B ? B.entries : j.builtin.entries, j.meta = W, j.listId = X, j.listTitle = B ? B.title : j.builtin.meta.title ?? "Beispiel-Wortschatz", W.sourceLang && (j.settings.sourceLang = W.sourceLang), W.targetLang && (j.settings.targetLang = W.targetLang);
   const V = j.settings.storagePrefix, g = j.settings.direction, T = X === Yt ? j.customProgressStore ?? new ce(`${V}.progress.${g}`) : new ce(`${V}.progress.${X}.${g}`);
-  j.progress = new si(T), j.speech.setLang(j.settings.targetLang), j.settings.allowImport && j.lists.setActive(X);
+  j.progress = new oi(T), j.speech.setLang(j.settings.targetLang), j.settings.allowImport && j.lists.setActive(X);
 }
-const Ui = () => typeof window < "u" && ("ontouchstart" in window || (navigator.maxTouchPoints ?? 0) > 0);
-function Xi(j) {
+const Zi = () => typeof window < "u" && ("ontouchstart" in window || (navigator.maxTouchPoints ?? 0) > 0);
+function $i(j) {
   const k = j.textures;
   if (!k.exists("fx_dot")) {
     const B = k.createCanvas("fx_dot", 32, 32), X = B.getContext();
@@ -26716,214 +26830,119 @@ function Xi(j) {
     X.putImageData(W, 0, 0), B.refresh();
   }
 }
-function Wi(j, k, B) {
+function Qi(j, k, B) {
   const X = j.textures.get(k), W = [];
   return B.forEach((V, g) => {
     const T = `splinter${g}`;
     X.has(T) || X.add(T, 0, V.x, V.y, V.w, V.h), W.push(T);
   }), W;
 }
-const ye = '"Patrick Hand", "Comic Sans MS", "Segoe Print", system-ui, sans-serif';
-let re = null;
-function Gi(j, k, B = 400) {
-  return !re && typeof document < "u" && (re = document.createElement("canvas").getContext("2d")), re ? (re.font = `${B} ${k}px ${ye}`, re.measureText(j).width) : j.length * k * 0.6;
-}
-function Vi(j) {
-  const k = j.length, B = Ft.paddingX;
-  let X = Ft.fontSizeMax, W = Ft.minWidth, V = [];
-  for (; V = j.map((a) => Math.max(W, Math.ceil(Gi(a, X) + 2 * B + Ft.strokeThickness))), !(V.reduce((a, n) => a + n, 0) + (k + 1) * Ft.minGap <= st); ) {
-    if (W > Ft.minWidthTight) {
-      W = Math.max(Ft.minWidthTight, W - 5);
-      continue;
-    }
-    if (X > Ft.fontSizeMin) {
-      X -= 1;
-      continue;
-    }
-    const a = st - (k + 1) * Ft.minGap, n = V.reduce((r, e) => r + e, 0);
-    V = V.map((r) => Math.floor(r * a / n));
-    break;
-  }
-  const g = V.reduce((a, n) => a + n, 0), T = (st - g) / (k + 1), t = [], l = [];
-  let f = T;
-  for (let a = 0; a < k; a++) t.push({ x: f + V[a] / 2, w: V[a] }), f += V[a], a < k - 1 && l.push(f + T / 2), f += T;
-  return { fontSize: X, planks: t, gapCenters: l };
-}
-const Hi = ye, Lt = { cream: "#2b2230", brown: "#fffdf5", ink: 2826800, panel: 16776694, button: 16773560, buttonActive: 16757370, heart: "#e0485a", heartLost: "#c9c0cf" };
-function Oe(j, k, B, X, W, V, g = {}) {
-  let T = g.seed ?? Math.round(k * 7 + B * 13 + X * 3 + W);
-  const t = () => (T = (T * 16807 + 11) % 2147483647) / 2147483647 - 0.5;
-  V = Math.min(V, X / 2, W / 2);
-  const l = [], f = (r, e, s) => {
-    for (let o = 0; o <= 6; o++) {
-      const i = s + o / 6 * (Math.PI / 2);
-      l.push(new dt.Math.Vector2(r + Math.cos(i) * V, e + Math.sin(i) * V));
-    }
-  }, a = (r, e, s, o) => {
-    const i = Math.max(2, Math.round(Math.hypot(s - r, o - e) / 40));
-    for (let h = 1; h < i; h++) l.push(new dt.Math.Vector2(r + (s - r) * h / i + t() * 2.2, e + (o - e) * h / i + t() * 2.2));
-  };
-  f(k + X - V, B + V, -Math.PI / 2), a(k + X, B + V, k + X, B + W - V), f(k + X - V, B + W - V, 0), a(k + X - V, B + W, k + V, B + W), f(k + V, B + W - V, Math.PI / 2), a(k, B + W - V, k, B + V), f(k + V, B + V, Math.PI), a(k + V, B, k + X - V, B), g.fill !== void 0 && (j.fillStyle(g.fill, g.fillAlpha ?? 1), j.fillPoints(l, !0));
-  const n = g.width ?? 4;
-  j.lineStyle(n, g.stroke ?? Lt.ink, 1), j.strokePoints(l, !0), j.lineStyle(Math.max(1, n * 0.45), g.stroke ?? Lt.ink, 0.55), j.beginPath(), j.moveTo(l[0].x + 1.5, l[0].y - 1);
-  for (let r = 1; r < Math.min(l.length, 12); r++) j.lineTo(l[r].x + 1.5, l[r].y - 1);
-  j.strokePath();
-}
-function ue(j) {
-  return j.scale.width / st;
-}
-function $t(j) {
-  const k = j.cameras.main, B = ue(j);
-  return k.setOrigin(0, 0), k.setZoom(B), k;
-}
-function ji(j, k) {
-  const B = ue(j);
-  return { x: k.x / B, y: k.y / B };
-}
-function ct(j, k, B, X, W = {}) {
-  const V = W.size ?? 32, g = j.add.text(k, B, X, { fontFamily: Hi, fontSize: `${V}px`, fontStyle: "normal", color: W.color ?? Lt.cream, stroke: W.stroke ?? Lt.brown, strokeThickness: Math.round((W.strokeThickness ?? Math.max(0, Math.round(V / 6))) * 0.6), align: W.align ?? "center", wordWrap: W.wrapWidth ? { width: W.wrapWidth, useAdvancedWrap: !0 } : void 0, padding: { x: 4, y: Math.ceil(V * 0.18) }, resolution: ue(j) });
-  return g.setOrigin(0.5), g;
-}
-function It(j, k, B, X) {
-  let W = B;
-  for (j.setFontSize(W); j.width > k && W > X; ) W -= 2, j.setFontSize(W), j.setStroke(Lt.brown, Math.max(2, Math.round(W / 10)));
-  j.width > k ? j.setScale(k / j.width) : j.setScale(1);
-}
-function se(j, k, B, X, W, V = 26, g = 0.82) {
-  const T = j.add.graphics();
-  return T.fillStyle(Lt.ink, 0.1), T.fillRoundedRect(k + 6, B + 8, X, W, V * 0.6), Oe(T, k, B, X, W, V * 0.6, { fill: Lt.panel, fillAlpha: Math.max(g, 0.94), width: 4 }), T;
-}
-function _t(j, k, B, X, W, V, g, T = {}) {
-  const t = T.color ?? Lt.button, l = T.activeColor ?? Lt.buttonActive, f = j.add.graphics();
-  let a = !1;
-  const n = (o = !1) => {
-    f.clear();
-    const i = a ? l : t, h = o ? 3 : 0;
-    f.fillStyle(Lt.ink, 0.85), f.fillRoundedRect(-X / 2 + 3, -W / 2 + 6, X, W, W / 3), Oe(f, -X / 2, -W / 2 + h, X, W, W / 3, { fill: i, width: a ? 5 : 4, seed: Math.round(X * 3 + W) });
-  };
-  n();
-  const r = T.size ?? 30, e = ct(j, 0, 0, V, { size: r });
-  It(e, X - 22, r, 14);
-  const s = j.add.container(k, B, [f, e]);
-  return s.setSize(X, W), s.setInteractive({ useHandCursor: !0 }), s.on("pointerdown", (o, i, h, c) => {
-    c?.stopPropagation?.(), n(!0);
-  }), s.on("pointerout", () => n(!1)), s.on("pointerup", (o, i, h, c) => {
-    c?.stopPropagation?.(), n(!1), j.registry.get("ctx")?.sfx?.play("click"), g();
-  }), { container: s, setActive(o) {
-    a = o, n();
-  }, setLabel(o) {
-    e.setText(o), It(e, X - 22, r, 14);
-  } };
-}
-function xe(j, k = 0.55) {
-  return j.add.rectangle(0, 0, st, mt, 16447471, Math.min(0.8, k + 0.15)).setOrigin(0).setScrollFactor(0);
-}
-function qi(j) {
-  let k = vt(j).settings.assetBaseUrl ?? ei;
+function Ji(j) {
+  let k = mt(j).settings.assetBaseUrl ?? ii;
   return k && !k.endsWith("/") && (k += "/"), k;
 }
-function ai(j, k) {
+function ci(j, k) {
   let B = 0;
-  j.load.setPath(qi(j));
+  j.load.setPath(Ji(j));
   for (const X of me) {
-    const W = te(X, k);
-    j.textures.exists(W) || (j.load.image(W, Oi(X, k)), B++);
+    const W = zt(X, k);
+    j.textures.exists(W) || (j.load.image(W, Ii(X, k)), B++);
   }
   return B;
 }
-function Ki(j, k) {
+function ts(j, k) {
   return new Promise((B) => {
-    if (ai(j, k) === 0) return B();
-    j.load.once(dt.Loader.Events.COMPLETE, () => B()), j.load.start();
+    if (ci(j, k) === 0) return B();
+    j.load.once(pt.Loader.Events.COMPLETE, () => B()), j.load.start();
   });
 }
-function Zi(j, k) {
+function es(j, k) {
   for (const B of Bt) if (B !== k) for (const X of me) {
-    const W = te(X, B);
+    const W = zt(X, B);
     j.textures.exists(W) && j.textures.remove(W);
   }
 }
-class $i extends dt.Scene {
+class is extends pt.Scene {
   constructor() {
     super("Boot");
   }
   preload() {
-    $t(this);
-    const k = vt(this);
-    let B = k.settings.assetBaseUrl ?? ei;
+    Qt(this);
+    const k = mt(this);
+    let B = k.settings.assetBaseUrl ?? ii;
     B && !B.endsWith("/") && (B += "/"), this.load.setPath(B);
-    const X = ct(this, st / 2, mt / 2, "Lade …", { size: 34 }), W = this.add.rectangle(st / 2 - 200, mt / 2 + 60, 0, 12, 2826800).setOrigin(0, 0.5);
+    const X = ut(this, st / 2, yt / 2, "Lade …", { size: 34 }), W = this.add.rectangle(st / 2 - 200, yt / 2 + 60, 0, 12, ot.ink).setOrigin(0, 0.5);
     this.load.on("progress", (V) => {
       W.width = 400 * V, X.setText(`Lade … ${Math.round(V * 100)} %`);
     }), this.load.on("loaderror", (V) => {
       console.error("[Mustikka Hyppy] Asset fehlt:", V.src);
     });
-    for (const [V, g] of Object.entries(ti)) me.includes(V) || this.load.image(V, g);
-    ai(this, k.theme), this.load.font(Ye.family, Ye.path, "woff2");
+    for (const [V, g] of Object.entries(ei)) me.includes(V) || this.load.image(V, g);
+    ci(this, k.theme), this.load.font(ze.family, ze.path, "woff2");
   }
   create() {
-    Xi(this), Wi(this, Tt.key, Tt.splinterRects);
-    const k = vt(this);
+    $i(this), Qi(this, wt.key, wt.splinterRects);
+    const k = mt(this);
     this.scene.start(k.settings.showMenu ? "Menu" : "Game");
   }
 }
-class Qi extends dt.Scene {
+class ss extends pt.Scene {
   constructor() {
     super("GameOver");
   }
   create(k) {
-    $t(this);
-    const B = vt(this), { result: X, wrong: W } = k, V = st / 2, g = B.settings.allowMenu || !!B.onExit;
-    xe(this, 0.62).setDepth(lt.overlay);
-    const T = 110, t = mt - 90;
-    se(this, 44, T, st - 88, t - T, 34, 0.95).setDepth(lt.overlay);
-    const l = this.add.container(0, 0).setDepth(lt.overlay + 1), f = X.newlyKnown > 0 ? ` · ${X.newlyKnown} ${X.newlyKnown === 1 ? "Wort" : "Wörter"} neu gelernt` : "", a = (X.endedBy === "hearts" ? "Keine Herzen mehr" : "Abgestürzt!") + f;
-    if (l.add(ct(this, V, T + 70, "Game Over", { size: 60 })), l.add(ct(this, V, T + 128, a, { size: 26, color: "#6b5f86", strokeThickness: 0 })), X.newHighscore) {
-      const i = ct(this, V, T + 292, X.previousHighscore > 0 ? `Neuer Highscore! (vorher ${X.previousHighscore})` : "Neuer Highscore!", { size: 30, color: "#d17a00", strokeThickness: 6 });
-      l.add(i), this.tweens.add({ targets: i, scale: { from: 1, to: 1.08 }, duration: 500, yoyo: !0, repeat: -1, ease: "Sine.InOut" }), this.add.particles(V, T + 292, "fx_dot", { lifespan: { min: 600, max: 1e3 }, speed: { min: 60, max: 180 }, angle: { min: 0, max: 360 }, scale: { start: 0.45, end: 0 }, tint: [16765562, 4875464], blendMode: dt.BlendModes.NORMAL, frequency: 70, emitZone: { type: "random", source: new dt.Geom.Rectangle(-200, -16, 400, 32) } }).setDepth(lt.overlay + 2);
+    Qt(this);
+    const B = mt(this), { result: X, wrong: W } = k, V = st / 2, g = B.settings.allowMenu || !!B.onExit;
+    xe(this, 0.62).setDepth(ct.overlay);
+    const T = 110, t = yt - 90;
+    se(this, 44, T, st - 88, t - T, 34, 0.95).setDepth(ct.overlay);
+    const l = this.add.container(0, 0).setDepth(ct.overlay + 1), f = X.newlyKnown > 0 ? ` · ${X.newlyKnown} ${X.newlyKnown === 1 ? "Wort" : "Wörter"} neu gelernt` : "", a = (X.endedBy === "hearts" ? "Keine Herzen mehr" : "Abgestürzt!") + f;
+    if (l.add(ut(this, V, T + 70, "Game Over", { size: 60 })), l.add(ut(this, V, T + 128, a, { size: 26, color: ot.muted, strokeThickness: 0 })), X.newHighscore) {
+      const i = ut(this, V, T + 292, X.previousHighscore > 0 ? `Neuer Highscore! (vorher ${X.previousHighscore})` : "Neuer Highscore!", { size: 30, color: ot.orange, strokeThickness: 6 });
+      l.add(i), this.tweens.add({ targets: i, scale: { from: 1, to: 1.08 }, duration: 500, yoyo: !0, repeat: -1, ease: "Sine.InOut" }), this.add.particles(V, T + 292, "fx_dot", { lifespan: { min: 600, max: 1e3 }, speed: { min: 60, max: 180 }, angle: { min: 0, max: 360 }, scale: { start: 0.45, end: 0 }, tint: [16765562, 4875464], blendMode: pt.BlendModes.NORMAL, frequency: 70, emitZone: { type: "random", source: new pt.Geom.Rectangle(-200, -16, 400, 32) } }).setDepth(ct.overlay + 2);
     } else {
       const i = B.prefs.getHighscore();
-      i && i.score > 0 && l.add(ct(this, V, T + 292, `Highscore: ${i.score} Punkte`, { size: 24, color: "#d17a00", strokeThickness: 0 }));
+      i && i.score > 0 && l.add(ut(this, V, T + 292, `Highscore: ${i.score} Punkte`, { size: 24, color: ot.orange, strokeThickness: 0 }));
     }
     const n = X.answers.filter((i) => i.correct).length;
     [[`${X.score}`, "Punkte"], [`${X.maxHeightMeters} m`, "Höhe"], [`${n}/${X.answers.length}`, "richtig"]].forEach(([i, h], c) => {
       const d = V + (c - 1) * 200;
-      l.add(ct(this, d, T + 205, i, { size: 44 })), l.add(ct(this, d, T + 250, h, { size: 20, color: "#6b5f86", strokeThickness: 0 }));
+      l.add(ut(this, d, T + 205, i, { size: 44 })), l.add(ut(this, d, T + 250, h, { size: 20, color: ot.muted, strokeThickness: 0 }));
     });
     const r = T + 330, e = this.add.graphics();
-    if (e.fillStyle(2826800, 0.06), e.fillRoundedRect(76, r, st - 152, 500, 22), l.add(e), W.length === 0) l.add(ct(this, V, r + 60, X.answers.length ? "Alles richtig – stark!" : "Noch keine Wörter beantwortet.", { size: 28, color: "#2f8a45" }));
+    if (e.fillStyle(ot.tint, ot.tintAlpha), e.fillRoundedRect(76, r, st - 152, 500, 22), l.add(e), W.length === 0) l.add(ut(this, V, r + 60, X.answers.length ? "Alles richtig – stark!" : "Noch keine Wörter beantwortet.", { size: 28, color: ot.green }));
     else {
-      l.add(ct(this, V, r + 38, "Nochmal üben:", { size: 26, color: "#d17a00" }));
+      l.add(ut(this, V, r + 38, "Nochmal üben:", { size: 26, color: ot.orange }));
       const i = 8;
       W.slice(0, i).forEach((h, c) => {
-        const d = r + 92 + c * 48, u = ct(this, V - 14, d, h.source, { size: 26 }).setOrigin(1, 0.5), p = ct(this, V, d, "→", { size: 22, color: "#6b5f86", strokeThickness: 0 }), v = ct(this, V + 14, d, h.target, { size: 26, color: "#2f8a45" }).setOrigin(0, 0.5);
+        const d = r + 92 + c * 48, u = ut(this, V - 14, d, h.source, { size: 26 }).setOrigin(1, 0.5), p = ut(this, V, d, "→", { size: 22, color: ot.muted, strokeThickness: 0 }), v = ut(this, V + 14, d, h.target, { size: 26, color: ot.green }).setOrigin(0, 0.5);
         It(u, 250, 26, 18), It(v, 250, 26, 18), l.add([u, p, v]);
-      }), W.length > i && l.add(ct(this, V, r + 92 + i * 48 - 6, `… und ${W.length - i} weitere`, { size: 20, color: Lt.cream, strokeThickness: 0 }));
+      }), W.length > i && l.add(ut(this, V, r + 92 + i * 48 - 6, `… und ${W.length - i} weitere`, { size: 20, color: ot.cream, strokeThickness: 0 }));
     }
     const s = () => {
       this.scene.stop("Game"), this.scene.start("Game");
     }, o = t - (g ? 150 : 70);
-    l.add(_t(this, V, o, 420, 80, "Nochmal", s, { size: 34, color: 10215546 }).container), g && l.add(_t(this, V, o + 92, 420, 70, B.settings.allowMenu ? "Hauptmenü" : "Beenden", () => {
+    l.add(Ct(this, V, o, 420, 80, "Nochmal", s, { size: 34, color: 10215546 }).container), g && l.add(Ct(this, V, o + 92, 420, 70, B.settings.allowMenu ? "Hauptmenü" : "Beenden", () => {
       this.scene.stop("Game"), B.settings.allowMenu ? this.scene.start("Menu") : (this.scene.stop(), B.onExit?.());
     }, { size: 28 }).container), this.input.keyboard?.once("keydown-ENTER", s), this.input.keyboard?.once("keydown-SPACE", s), l.setAlpha(0), this.tweens.add({ targets: l, alpha: 1, duration: 300 });
   }
 }
-class Ut {
+class Xt {
   constructor(k, B) {
     Q(this, "scene"), Q(this, "keys"), Q(this, "tiltGamma", null), Q(this, "tiltReceived", !1), Q(this, "tiltHandler"), Q(this, "motionHandler"), Q(this, "fromOrientation", !1), Q(this, "hudHeight", 0), this.scene = k;
-    const X = k.input.keyboard, W = dt.Input.Keyboard.KeyCodes;
+    const X = k.input.keyboard, W = pt.Input.Keyboard.KeyCodes;
     this.keys = { left: [X.addKey(W.LEFT), X.addKey(W.A)], right: [X.addKey(W.RIGHT), X.addKey(W.D)] }, B && this.enableTilt();
   }
   enableTilt() {
     this.tiltHandler || typeof window > "u" || (this.tiltHandler = (k) => {
       if (k.gamma == null) return;
       this.tiltReceived = !0, this.fromOrientation = !0;
-      const B = oi();
+      const B = ui();
       let X = k.gamma;
       B === 90 ? X = k.beta ?? X : B === 270 && (X = -(k.beta ?? -X)), this.tiltGamma = X;
     }, this.motionHandler = (k) => {
       if (this.fromOrientation) return;
-      const B = Ue(k);
+      const B = Xe(k);
       B !== null && (this.tiltReceived = !0, this.tiltGamma = B);
     }, window.addEventListener("deviceorientation", this.tiltHandler), window.addEventListener("deviceorientationabsolute", this.tiltHandler), window.addEventListener("devicemotion", this.motionHandler));
   }
@@ -26935,13 +26954,13 @@ class Ut {
   }
   static probeTilt(k = 2500) {
     return new Promise((B) => {
-      if (Ut.tiltBlockedReason()) return B(!1);
+      if (Xt.tiltBlockedReason()) return B(!1);
       const X = () => {
         window.removeEventListener("deviceorientation", W), window.removeEventListener("deviceorientationabsolute", W), window.removeEventListener("devicemotion", V), clearTimeout(g);
       }, W = (T) => {
         T.gamma == null && T.beta == null || (X(), B(!0));
       }, V = (T) => {
-        Ue(T) !== null && (X(), B(!0));
+        Xe(T) !== null && (X(), B(!0));
       }, g = setTimeout(() => {
         X(), B(!1);
       }, k);
@@ -26963,13 +26982,13 @@ class Ut {
     let B = !1, X = !1;
     for (const W of this.scene.input.manager.pointers) {
       if (!W || !W.isDown) continue;
-      const V = ji(this.scene, W);
+      const V = Gi(this.scene, W);
       V.y < this.hudHeight || (V.x < st / 2 ? B = !0 : X = !0);
     }
     if (B !== X) return B ? -1 : 1;
     if (this.tiltGamma !== null) {
       const W = this.tiltGamma, V = 3;
-      return Math.abs(W) < V ? 0 : dt.Math.Clamp((W - Math.sign(W) * V) / 18, -1, 1);
+      return Math.abs(W) < V ? 0 : pt.Math.Clamp((W - Math.sign(W) * V) / 18, -1, 1);
     }
     return 0;
   }
@@ -26977,50 +26996,50 @@ class Ut {
     this.disableTilt();
   }
 }
-function oi() {
+function ui() {
   return ((screen.orientation?.angle ?? window.orientation ?? 0) % 360 + 360) % 360;
 }
-function Ue(j) {
+function Xe(j) {
   const k = j.accelerationIncludingGravity;
   if (!k || k.x == null || k.y == null) return null;
-  const B = oi();
+  const B = ui();
   let X = B === 90 ? k.y : B === 270 ? -k.y : k.x;
   /iPad|iPhone|iPod/.test(navigator.userAgent) && (X = -X);
   const W = Math.max(-1, Math.min(1, X / 9.81));
   return -Math.asin(W) * 180 / Math.PI;
 }
-let qt = null, Me = !1, Xe = !1;
-async function We() {
+let Kt = null, Me = !1, We = !1;
+async function Ge() {
   if (!Me || document.visibilityState !== "visible") return;
   const j = navigator.wakeLock;
-  if (!(!j || qt && !qt.released)) try {
+  if (!(!j || Kt && !Kt.released)) try {
     const k = await j.request("screen");
-    qt = k, k.addEventListener("release", () => {
-      qt === k && (qt = null);
-    }), Me || hi();
+    Kt = k, k.addEventListener("release", () => {
+      Kt === k && (Kt = null);
+    }), Me || di();
   } catch {
   }
 }
-async function hi() {
-  const j = qt;
-  qt = null;
+async function di() {
+  const j = Kt;
+  Kt = null;
   try {
     await j?.release();
   } catch {
   }
 }
-function Ge(j) {
-  Me = j, !Xe && typeof document < "u" && (Xe = !0, document.addEventListener("visibilitychange", () => {
-    document.visibilityState === "visible" && We();
-  })), j ? We() : hi();
+function Ve(j) {
+  Me = j, !We && typeof document < "u" && (We = !0, document.addEventListener("visibilitychange", () => {
+    document.visibilityState === "visible" && Ge();
+  })), j ? Ge() : di();
 }
-const Zt = (j, k) => {
+const $t = (j, k) => {
   const B = Math.abs(j - k) % st;
   return Math.min(B, st - B);
 };
-class Ji {
+class rs {
   constructor(k, B = Math.random) {
-    Q(this, "deck"), Q(this, "rng"), Q(this, "nextId", 1), Q(this, "lastH", 0), Q(this, "lastX", st / 2), Q(this, "rowIndex", 0), Q(this, "normalsLeft", St.neutralsBeforeFirstRow - 1), Q(this, "pendingRow", null), Q(this, "plankW", Nt.displayWidth), Q(this, "forceSmallGap", !1), Q(this, "lastRowH", -1 / 0), this.deck = k, this.rng = B;
+    Q(this, "deck"), Q(this, "rng"), Q(this, "nextId", 1), Q(this, "lastH", 0), Q(this, "lastX", st / 2), Q(this, "rowIndex", 0), Q(this, "normalsLeft", Et.neutralsBeforeFirstRow - 1), Q(this, "pendingRow", null), Q(this, "plankW", Nt.displayWidth), Q(this, "forceSmallGap", !1), Q(this, "lastRowH", -1 / 0), this.deck = k, this.rng = B;
   }
   get topHeight() {
     return this.lastH;
@@ -27029,37 +27048,37 @@ class Ji {
     return k + (B - k) * this.rng();
   }
   gapRange(k) {
-    const B = Math.min(1, k / St.gapRampHeight);
-    return [St.gapMinStart + (St.gapMinEnd - St.gapMinStart) * B, St.gapMaxStart + (St.gapMaxEnd - St.gapMaxStart) * B];
+    const B = Math.min(1, k / Et.gapRampHeight);
+    return [Et.gapMinStart + (Et.gapMinEnd - Et.gapMinStart) * B, Et.gapMaxStart + (Et.gapMaxEnd - Et.gapMaxStart) * B];
   }
   neutral(k, B, X) {
     return this.lastH = B, this.lastX = k, { kind: "neutral", id: this.nextId++, x: k, h: B, w: this.plankW, role: X };
   }
   ramp(k, B) {
-    return Math.min(1, Math.max(0, (k - B) / (xt.rampHeight - B)));
+    return Math.min(1, Math.max(0, (k - B) / (Tt.rampHeight - B)));
   }
   wrapX(k, B) {
     let X = (k % st + st) % st;
     return X = Math.min(st - B, Math.max(B, X)), X;
   }
   berryNear(k, B) {
-    const [X, W] = xt.berryOffset, V = this.rng() < 0.5 ? -1 : 1;
+    const [X, W] = Tt.berryOffset, V = this.rng() < 0.5 ? -1 : 1;
     return { kind: "berry", id: this.nextId++, x: this.wrapX(k + V * this.rand(X, W), 40), h: B };
   }
   pickX(k, B, X) {
     const W = this.plankW / 2 + 6, V = Math.min(oe(B) - 10, 330), g = X ? Math.min(oe(X.dy) - 10, 340) : 1 / 0;
     for (let t = 0; t < 40; t++) {
       const l = this.rand(W, st - W);
-      if (!(Zt(l, k) > V) && !(X && Zt(l, X.x) > g) && !(Zt(l, k) < 40 && this.rng() < 0.7)) return l;
+      if (!($t(l, k) > V) && !(X && $t(l, X.x) > g) && !($t(l, k) < 40 && this.rng() < 0.7)) return l;
     }
     const T = X ? X.x : k;
     return Math.min(st - W, Math.max(W, T + this.rand(-60, 60)));
   }
   start() {
-    return this.neutral(st / 2, St.startPlatformHeight, "start");
+    return this.neutral(st / 2, Et.startPlatformHeight, "start");
   }
   prepareRow(k) {
-    const B = ge.optionsAt(k), X = this.deck.next(B, ge.similarityAt(k), ge.maxLevelAt(k)), W = Vi(X.options), V = W.gapCenters[Math.floor(this.rng() * W.gapCenters.length)] ?? st / 2;
+    const B = ge.optionsAt(k), X = this.deck.next(B, ge.similarityAt(k), ge.maxLevelAt(k)), W = Ui(X.options), V = W.gapCenters[Math.floor(this.rng() * W.gapCenters.length)] ?? st / 2;
     this.pendingRow = { question: X, layout: W, launchX: V };
   }
   generateUpTo(k) {
@@ -27071,52 +27090,52 @@ class Ji {
         const r = this.normalsLeft === 1, e = this.lastH + a;
         let s;
         if (!r) {
-          const [y, m] = xt.movingChance, x = e >= xt.movingFrom ? y + (m - y) * this.ramp(e, xt.movingFrom) : 0, w = (this.normalsLeft - 1) * 100 + St.preLaunchGap + St.rowLaunchGap, b = xt.springFactor * zt + 20 < w, S = this.rng();
-          e >= xt.springFrom && b && S < xt.springChance ? s = "spring" : S < xt.springChance + x && (s = "moving");
+          const [y, m] = Tt.movingChance, x = e >= Tt.movingFrom ? y + (m - y) * this.ramp(e, Tt.movingFrom) : 0, w = (this.normalsLeft - 1) * 100 + Et.preLaunchGap + Et.rowLaunchGap, b = Tt.springFactor * Ut + 20 < w, S = this.rng();
+          e >= Tt.springFrom && b && S < Tt.springChance ? s = "spring" : S < Tt.springChance + x && (s = "moving");
         }
-        (s === "moving" || this.forceSmallGap) && (a = Math.min(a, 100), n = Math.min(n, xt.movingMaxGap)), this.forceSmallGap = s === "moving";
+        (s === "moving" || this.forceSmallGap) && (a = Math.min(a, 100), n = Math.min(n, Tt.movingMaxGap)), this.forceSmallGap = s === "moving";
         const o = this.rand(a, n), i = this.lastH + o, h = this.lastX, c = this.lastH;
         this.normalsLeft--;
         let d;
         if (this.normalsLeft === 0) {
-          this.prepareRow(i + St.preLaunchGap + St.rowLaunchGap);
-          const y = this.pickX(this.lastX, o, { x: this.pendingRow.launchX, dy: St.preLaunchGap });
+          this.prepareRow(i + Et.preLaunchGap + Et.rowLaunchGap);
+          const y = this.pickX(this.lastX, o, { x: this.pendingRow.launchX, dy: Et.preLaunchGap });
           d = this.neutral(y, i, "normal");
         } else d = this.neutral(this.pickX(this.lastX, o), i, "normal");
         if (s === "moving") {
-          const y = this.plankW / 2 + 6, [m, x] = xt.movingAmp;
+          const y = this.plankW / 2 + 6, [m, x] = Tt.movingAmp;
           let w = this.rand(m, x);
           w = Math.min(w, (st - 2 * y) / 2), d.x = Math.min(st - y - w, Math.max(y + w, d.x)), this.lastX = d.x;
-          const [b, S] = xt.movingPeriodT;
+          const [b, S] = Tt.movingPeriodT;
           d.special = "moving", d.move = { amp: w, periodT: this.rand(b, S), phase: this.rand(0, Math.PI * 2) };
         } else s === "spring" && (d.special = "spring");
-        B.push(d), this.rng() < xt.berryChance && B.push(this.berryNear((h + d.x) / 2, c + o * 0.55));
-        const [u, p] = xt.crumbleChance, v = i >= xt.crumbleFrom ? u + (p - u) * this.ramp(i, xt.crumbleFrom) : 0;
+        B.push(d), this.rng() < Tt.berryChance && B.push(this.berryNear((h + d.x) / 2, c + o * 0.55));
+        const [u, p] = Tt.crumbleChance, v = i >= Tt.crumbleFrom ? u + (p - u) * this.ramp(i, Tt.crumbleFrom) : 0;
         if (this.normalsLeft >= 1 && this.rng() < v) {
-          const y = i + this.rand(-30, 40), m = i + this.normalsLeft * 100 + St.preLaunchGap + St.rowLaunchGap;
-          if (y < m - xt.rowSafeBelow && y > this.lastRowH + xt.rowSafeAbove) {
-            const [x, w] = xt.crumbleOffset, b = this.rng() < 0.5 ? -1 : 1, S = this.plankW / 2 + 6, _ = this.wrapX(d.x + b * this.rand(x, w), S);
-            Zt(_, d.x) > this.plankW + 20 && (B.push({ kind: "neutral", id: this.nextId++, x: _, h: y, w: this.plankW, role: "extra", special: "crumble" }), this.rng() < xt.berryOnExtraChance && B.push({ kind: "berry", id: this.nextId++, x: _, h: y + 75 }));
+          const y = i + this.rand(-30, 40), m = i + this.normalsLeft * 100 + Et.preLaunchGap + Et.rowLaunchGap;
+          if (y < m - Tt.rowSafeBelow && y > this.lastRowH + Tt.rowSafeAbove) {
+            const [x, w] = Tt.crumbleOffset, b = this.rng() < 0.5 ? -1 : 1, S = this.plankW / 2 + 6, _ = this.wrapX(d.x + b * this.rand(x, w), S);
+            $t(_, d.x) > this.plankW + 20 && (B.push({ kind: "neutral", id: this.nextId++, x: _, h: y, w: this.plankW, role: "extra", special: "crumble" }), this.rng() < Tt.berryOnExtraChance && B.push({ kind: "berry", id: this.nextId++, x: _, h: y + 75 }));
           }
         }
         continue;
       }
-      this.pendingRow || this.prepareRow(this.lastH + St.preLaunchGap + St.rowLaunchGap);
+      this.pendingRow || this.prepareRow(this.lastH + Et.preLaunchGap + Et.rowLaunchGap);
       const W = this.pendingRow;
       this.pendingRow = null;
-      const V = this.lastH + St.preLaunchGap;
+      const V = this.lastH + Et.preLaunchGap;
       B.push(this.neutral(W.launchX, V, "launch"));
-      let g = V + St.rowLaunchGap;
-      X && this.rowIndex === 0 && (g = Math.min(g, mt - St.firstRowMinFromTop)), B.push({ kind: "row", id: this.nextId++, h: g, index: this.rowIndex++, question: W.question, layout: W.layout }), this.lastH = g, this.lastRowH = g, this.forceSmallGap = !1;
-      const T = g + St.rowExitGap;
+      let g = V + Et.rowLaunchGap;
+      X && this.rowIndex === 0 && (g = Math.min(g, yt - Et.firstRowMinFromTop)), B.push({ kind: "row", id: this.nextId++, h: g, index: this.rowIndex++, question: W.question, layout: W.layout }), this.lastH = g, this.lastRowH = g, this.forceSmallGap = !1;
+      const T = g + Et.rowExitGap;
       B.push(this.neutral(this.rand(this.plankW / 2 + 6, st - this.plankW / 2 - 6), T, "exit"));
-      const [t, l] = St.neutralsBetweenRows, f = t + Math.floor(this.rng() * (l - t + 1));
+      const [t, l] = Et.neutralsBetweenRows, f = t + Math.floor(this.rng() * (l - t + 1));
       this.normalsLeft = Math.max(1, f - 2);
     }
     return B;
   }
 }
-function ts(j) {
+function ns(j) {
   const k = [], B = j.filter((t) => t.kind === "row" || t.kind === "neutral" && t.role !== "extra"), X = j.filter((t) => t.kind === "neutral" && t.role === "extra"), W = B.filter((t) => t.kind === "row");
   let V = null, g = null, T = null;
   for (let t = 0; t < B.length; t++) {
@@ -27125,55 +27144,55 @@ function ts(j) {
       if (V) if (V.role !== "launch") k.push(`Reihe ${l.index}: keine Absprungplattform`);
       else {
         const f = l.h - V.h;
-        f >= zt && k.push(`Reihe ${l.index}: zu hoch (${f})`);
-        for (const a of l.layout.planks) Zt(a.x, V.x) > oe(f) + a.w / 2 && k.push(`Reihe ${l.index}: Planke bei ${a.x.toFixed(0)} nicht erreichbar`);
-        T && l.h - T.h <= zt + St.unreachableMargin && k.push(`Reihe ${l.index}: von unterhalb der Absprungplattform erreichbar`);
+        f >= Ut && k.push(`Reihe ${l.index}: zu hoch (${f})`);
+        for (const a of l.layout.planks) $t(a.x, V.x) > oe(f) + a.w / 2 && k.push(`Reihe ${l.index}: Planke bei ${a.x.toFixed(0)} nicht erreichbar`);
+        T && l.h - T.h <= Ut + Et.unreachableMargin && k.push(`Reihe ${l.index}: von unterhalb der Absprungplattform erreichbar`);
       }
       g = l;
       continue;
     }
     if (g && l.role === "exit") {
-      for (const f of g.layout.planks) Zt(f.x, l.x) > oe(l.h - g.h) + f.w / 2 && k.push(`Ausstieg nach Reihe ${g.index} von ${f.x.toFixed(0)} nicht erreichbar`);
-      V && l.h - V.h <= zt + St.unreachableMargin && k.push(`Ausstieg nach Reihe ${g.index} direkt von Absprung erreichbar`);
+      for (const f of g.layout.planks) $t(f.x, l.x) > oe(l.h - g.h) + f.w / 2 && k.push(`Ausstieg nach Reihe ${g.index} von ${f.x.toFixed(0)} nicht erreichbar`);
+      V && l.h - V.h <= Ut + Et.unreachableMargin && k.push(`Ausstieg nach Reihe ${g.index} direkt von Absprung erreichbar`);
     } else if (V) {
       const f = l.h - V.h;
-      f >= zt && k.push(`Plattform ${l.id}: zu hoch (${f.toFixed(0)})`);
+      f >= Ut && k.push(`Plattform ${l.id}: zu hoch (${f.toFixed(0)})`);
       const a = l.special === "moving" || V.special === "moving";
-      a && f > xt.movingMaxGap + 0.5 && k.push(`Plattform ${l.id}: zu weit von/zu beweglicher Plattform (${f.toFixed(0)})`), (a ? st / 2 : Zt(l.x, V.x)) > oe(f) + l.w / 2 && k.push(`Plattform ${l.id}: seitlich nicht erreichbar`);
+      a && f > Tt.movingMaxGap + 0.5 && k.push(`Plattform ${l.id}: zu weit von/zu beweglicher Plattform (${f.toFixed(0)})`), (a ? st / 2 : $t(l.x, V.x)) > oe(f) + l.w / 2 && k.push(`Plattform ${l.id}: seitlich nicht erreichbar`);
     }
     if (l.special === "spring") {
       const f = W.find((a) => a.h > l.h);
-      f && l.h + xt.springFactor * zt + 20 >= f.h && k.push(`Feder ${l.id}: Sprung reicht über Reihe ${f.index}`);
+      f && l.h + Tt.springFactor * Ut + 20 >= f.h && k.push(`Feder ${l.id}: Sprung reicht über Reihe ${f.index}`);
     }
     l.special === "moving" && l.move && (l.x - l.move.amp < l.w / 2 || l.x + l.move.amp > st - l.w / 2) && k.push(`Bewegliche Plattform ${l.id}: verlässt den Bildschirm`), l.role === "launch" && (T = V), V = l;
   }
   for (const t of X) {
     t.special === "spring" && k.push(`Extra ${t.id}: Feder als Extra nicht erlaubt`);
-    for (const l of W) t.h > l.h - xt.rowSafeBelow && t.h < l.h + xt.rowSafeAbove && k.push(`Extra ${t.id}: in der Schutzzone von Reihe ${l.index}`);
+    for (const l of W) t.h > l.h - Tt.rowSafeBelow && t.h < l.h + Tt.rowSafeAbove && k.push(`Extra ${t.id}: in der Schutzzone von Reihe ${l.index}`);
   }
   return k;
 }
-const Re = (j) => j < 0 ? 0 : j > 1 ? 1 : j, Kt = (j) => {
+const Re = (j) => j < 0 ? 0 : j > 1 ? 1 : j, Zt = (j) => {
   const k = Re(j);
   return k * k * (3 - 2 * k);
-}, Ve = { lake: 0, forest: 1, fjell: 2 }, li = class ae {
+}, He = { lake: 0, forest: 1, fjell: 2 }, pi = class ae {
   constructor(k, B, X, W, V, g) {
-    Q(this, "scene"), Q(this, "key"), Q(this, "f"), Q(this, "depth"), Q(this, "strips", []), Q(this, "A"), Q(this, "B"), Q(this, "frames", []), this.scene = k, this.key = B, this.f = X, this.depth = g, this.A = W * X + mt, this.B = V * X + mt;
-    const T = k.textures.get(B), t = T.getSourceImage(), l = t.height || mt, f = Math.round(l / ae.STRIP);
+    Q(this, "scene"), Q(this, "key"), Q(this, "f"), Q(this, "depth"), Q(this, "strips", []), Q(this, "A"), Q(this, "B"), Q(this, "frames", []), this.scene = k, this.key = B, this.f = X, this.depth = g, this.A = W * X + yt, this.B = V * X + yt;
+    const T = k.textures.get(B), t = T.getSourceImage(), l = t.height || yt, f = Math.round(l / ae.STRIP);
     for (let a = 0; a < f; a++) {
       const n = `strip${a}`;
       T.has(n) || T.add(n, 0, 0, l - (a + 1) * ae.STRIP, t.width || st, ae.STRIP), this.frames.push(n);
     }
   }
   fade(k) {
-    return Kt((k - this.A) / Ae) * Kt((this.B - k) / Ae);
+    return Zt((k - this.A) / Ae) * Zt((this.B - k) / Ae);
   }
   strip(k) {
     let B = this.strips[k];
     return B || (B = this.scene.add.image(0, 0, this.key, this.frames[0]).setOrigin(0, 1).setScrollFactor(0).setDepth(this.depth), this.strips[k] = B), B;
   }
   update(k) {
-    const B = ae.STRIP, X = k * this.f, W = Math.max(X, this.A), V = Math.min(X + mt, this.B);
+    const B = ae.STRIP, X = k * this.f, W = Math.max(X, this.A), V = Math.min(X + yt, this.B);
     let g = 0;
     if (W < V) {
       const T = Math.floor((W - this.A) / B), t = Math.ceil((V - this.A) / B);
@@ -27181,51 +27200,51 @@ const Re = (j) => j < 0 ? 0 : j > 1 ? 1 : j, Kt = (j) => {
         const f = this.A + l * B, a = this.fade(f), n = this.fade(f + B);
         if (a <= 1e-3 && n <= 1e-3) continue;
         const r = this.strip(g++);
-        r.setFrame(this.frames[l % this.frames.length]), r.setPosition(0, mt - f + X), r.setAlpha(n, n, a, a), r.setVisible(!0);
+        r.setFrame(this.frames[l % this.frames.length]), r.setPosition(0, yt - f + X), r.setAlpha(n, n, a, a), r.setVisible(!0);
       }
     }
     for (let T = g; T < this.strips.length; T++) this.strips[T].setVisible(!1);
   }
 };
-Q(li, "STRIP", 64);
-let es = li;
-class ci {
+Q(pi, "STRIP", 64);
+let as = pi;
+class fi {
   constructor(k, B) {
-    Q(this, "scene"), Q(this, "theme"), Q(this, "sky"), Q(this, "stars", []), Q(this, "auroras", []), Q(this, "moon"), Q(this, "sun"), Q(this, "lake", []), Q(this, "tiled", []), Q(this, "clouds", []), Q(this, "nextCloudAt", Mt.cloudsStart), Q(this, "time", 0), Q(this, "flareLevel", 0), this.scene = k, this.theme = B, this.sky = k.add.tileSprite(0, 0, st, mt, "paper").setOrigin(0, 0).setScrollFactor(0).setDepth(lt.sky);
-    const X = Math.round(Mt.starCount * B.stars);
+    Q(this, "scene"), Q(this, "theme"), Q(this, "sky"), Q(this, "stars", []), Q(this, "auroras", []), Q(this, "moon"), Q(this, "sun"), Q(this, "lake", []), Q(this, "tiled", []), Q(this, "clouds", []), Q(this, "nextCloudAt", Rt.cloudsStart), Q(this, "time", 0), Q(this, "flareLevel", 0), this.scene = k, this.theme = B, this.sky = k.add.tileSprite(0, 0, st, yt, zt("paper", B.id)).setOrigin(0, 0).setScrollFactor(0).setDepth(ct.sky);
+    const X = Math.round(Rt.starCount * B.stars);
     for (let V = 0; V < X; V++) {
-      const g = k.add.image(0, 0, "star").setScrollFactor(0).setDepth(lt.stars).setAngle(-15 + Math.random() * 30), T = 0.26 + Math.pow(Math.random(), 2) * 0.26;
-      this.stars.push({ img: g, x: Math.random() * st, y0: Math.random() * mt, threshold: Math.random(), phase: Math.random() * Math.PI * 2, speed: 0.8 + Math.random() * 2.2, scale: T }), g.setScale(T);
+      const g = k.add.image(0, 0, zt("star", B.id)).setScrollFactor(0).setDepth(ct.stars).setAngle(-15 + Math.random() * 30), T = 0.26 + Math.pow(Math.random(), 2) * 0.26;
+      this.stars.push({ img: g, x: Math.random() * st, y0: Math.random() * yt, threshold: Math.random(), phase: Math.random() * Math.PI * 2, speed: 0.8 + Math.random() * 2.2, scale: T }), g.setScale(T);
     }
     const W = [{ base: 250, amp: 38, k: 65e-4, w: 0.35, color: 3983754, strength: 1 }, { base: 190, amp: 30, k: 9e-3, w: -0.27, color: 3126470, strength: 0.75 }, { base: 150, amp: 26, k: 48e-4, w: 0.2, color: 10119904, strength: 0.6 }];
     for (const V of W) {
       const g = [];
-      for (let t = 0; t < 40; t++) g.push(new dt.Math.Vector2(-60 + t * (st + 120) / 39, 0));
+      for (let t = 0; t < 40; t++) g.push(new pt.Math.Vector2(-60 + t * (st + 120) / 39, 0));
       const T = k.add.rope(0, 0, "aurora_band", void 0, g, !0);
-      T.setScrollFactor(0).setDepth(lt.aurora), T.setColors(V.color), this.auroras.push({ rope: T, ...V, phase: Math.random() * 10 });
+      T.setScrollFactor(0).setDepth(ct.aurora), T.setColors(V.color), this.auroras.push({ rope: T, ...V, phase: Math.random() * 10 });
     }
-    if (B.moon && (this.moon = k.add.image(st - 150, 150, pe.moon).setScrollFactor(0).setDepth(lt.moon), this.moon.setDisplaySize(pe.moonDisplaySize, pe.moonDisplaySize).setAlpha(0)), B.sun) {
-      const V = k.add.image(0, 0, "fx_dot").setScrollFactor(0).setDepth(lt.moon).setBlendMode(dt.BlendModes.NORMAL);
+    if (B.moon && (this.moon = k.add.image(st - 150, 150, zt(pe.moon, B.id)).setScrollFactor(0).setDepth(ct.moon), this.moon.setDisplaySize(pe.moonDisplaySize, pe.moonDisplaySize).setAlpha(0)), B.sun) {
+      const V = k.add.image(0, 0, "fx_dot").setScrollFactor(0).setDepth(ct.moon).setBlendMode(pt.BlendModes.NORMAL);
       V.setDisplaySize(420, 420).setTint(16773572).setAlpha(0.55);
-      const g = k.add.image(0, 0, "fx_sun").setScrollFactor(0).setDepth(lt.moon + 0.1);
+      const g = k.add.image(0, 0, "fx_sun").setScrollFactor(0).setDepth(ct.moon + 0.1);
       g.setDisplaySize(150, 150), this.sun = { core: g, halo: V };
     }
-    for (const V of Mi) this.addLakeLayer(V);
-    for (const V of Ri) for (const g of V.layers) {
-      const T = lt.plane[g.plane] + Ve[V.name];
-      this.tiled.push(new es(k, te(g.key, B.id), g.f, V.start, V.end, T));
+    for (const V of Oi) this.addLakeLayer(V);
+    for (const V of ki) for (const g of V.layers) {
+      const T = ct.plane[g.plane] + He[V.name];
+      this.tiled.push(new as(k, zt(g.key, B.id), g.f, V.start, V.end, T));
     }
   }
   addLakeLayer(k) {
-    const B = lt.plane[k.plane] + Ve.lake, X = this.scene.add.image(0, mt, te(k.key, this.theme.id)).setOrigin(0, 1).setScrollFactor(0).setDepth(B);
+    const B = ct.plane[k.plane] + He.lake, X = this.scene.add.image(0, yt, zt(k.key, this.theme.id)).setOrigin(0, 1).setScrollFactor(0).setDepth(B);
     let W;
-    k.glow && (W = this.scene.add.image(0, mt, te(k.glow, this.theme.id)).setOrigin(0, 1).setScrollFactor(0).setDepth(B + 0.5)), this.lake.push({ img: X, f: k.f, glow: W, phase: Math.random() * Math.PI * 2 });
+    k.glow && (W = this.scene.add.image(0, yt, zt(k.glow, this.theme.id)).setOrigin(0, 1).setScrollFactor(0).setDepth(B + 0.5)), this.lake.push({ img: X, f: k.f, glow: W, phase: Math.random() * Math.PI * 2 });
   }
   spawnCloud(k, B) {
-    const X = pe.clouds, W = Mt.cloudFactorMin + Math.random() * (Mt.cloudFactorMax - Mt.cloudFactorMin), V = this.scene.add.image(Math.random() * st, 0, te(X[Math.floor(Math.random() * X.length)], this.theme.id));
-    V.setScale(0.7 + (W - Mt.cloudFactorMin) * 2).setScrollFactor(0).setDepth(lt.clouds + W), Math.random() < 0.5 && V.setFlipX(!0);
-    const g = (Math.random() < 0.5 ? -1 : 1) * (Mt.cloudDriftMin + Math.random() * (Mt.cloudDriftMax - Mt.cloudDriftMin));
-    this.clouds.push({ img: V, f: W, vx: g, L: mt - B + k * W });
+    const X = pe.clouds, W = Rt.cloudFactorMin + Math.random() * (Rt.cloudFactorMax - Rt.cloudFactorMin), V = this.scene.add.image(Math.random() * st, 0, zt(X[Math.floor(Math.random() * X.length)], this.theme.id));
+    V.setScale(0.7 + (W - Rt.cloudFactorMin) * 2).setScrollFactor(0).setDepth(ct.clouds + W), Math.random() < 0.5 && V.setFlipX(!0);
+    const g = (Math.random() < 0.5 ? -1 : 1) * (Rt.cloudDriftMin + Math.random() * (Rt.cloudDriftMax - Rt.cloudDriftMin));
+    this.clouds.push({ img: V, f: W, vx: g, L: yt - B + k * W });
   }
   flare(k = 1) {
     this.flareLevel = Math.max(this.flareLevel, k);
@@ -27236,18 +27255,18 @@ class ci {
     this.sky.tilePositionY = -k;
     const W = Re(k / 8500), V = 0.3 + 0.7 * W, g = 0.45 + 0.55 * W, T = 0.3 + 0.7 * Re(k / 5e3);
     for (const f of this.stars) {
-      const a = Kt((V - f.threshold) / 0.08);
+      const a = Zt((V - f.threshold) / 0.08);
       if (a <= 0) {
         f.img.setVisible(!1);
         continue;
       }
-      let n = (f.y0 + k * Mt.starFactor) % mt;
-      n < 0 && (n += mt);
-      const r = 1 - Kt((n / mt - T) / 0.25), e = 0.85 + 0.15 * Math.sin(X * f.speed + f.phase), s = a * g * e * r;
+      let n = (f.y0 + k * Rt.starFactor) % yt;
+      n < 0 && (n += yt);
+      const r = 1 - Zt((n / yt - T) / 0.25), e = 0.85 + 0.15 * Math.sin(X * f.speed + f.phase), s = a * g * e * r;
       f.img.setVisible(s > 0.01).setPosition(f.x, n).setAlpha(s).setScale(f.scale * (0.8 + 0.4 * W));
     }
     this.flareLevel = Math.max(0, this.flareLevel - B / 2.4);
-    const t = 0.9 * Kt((k - 2500) / 5e3) * this.theme.aurora;
+    const t = 0.9 * Zt((k - 2500) / 5e3) * this.theme.aurora;
     for (const f of this.auroras) {
       const a = f.rope.points;
       for (let e = 0; e < a.length; e++) {
@@ -27259,26 +27278,26 @@ class ci {
       f.rope.setAlpha(Math.min(1, t * f.strength * n * 0.85 + r * (0.55 + 0.45 * f.strength))), f.rope.setVisible(f.rope.alpha > 5e-3);
     }
     if (this.moon) {
-      const f = Kt((k - Mt.moonStart) / Mt.moonFade);
-      this.moon.setVisible(f > 0).setAlpha(f), f > 0 && (this.moon.y = Math.min(330, 150 + (k - (Mt.moonStart + Mt.moonFade)) * Mt.moonFactor));
+      const f = Zt((k - Rt.moonStart) / Rt.moonFade);
+      this.moon.setVisible(f > 0).setAlpha(f), f > 0 && (this.moon.y = Math.min(330, 150 + (k - (Rt.moonStart + Rt.moonFade)) * Rt.moonFactor));
     }
     if (this.sun) {
       const f = Math.min(430, 300 + k * 0.012);
       this.sun.core.setPosition(st - 150, f), this.sun.halo.setPosition(st - 150, f).setAlpha(0.5 + 0.08 * Math.sin(X * 0.7));
     }
     for (const f of this.lake) {
-      const a = mt + k * f.f, n = a - mt < mt;
+      const a = yt + k * f.f, n = a - yt < yt;
       f.img.setVisible(n).setY(a), f.glow && (f.glow.setVisible(n).setY(a), f.glow.setAlpha((0.78 + 0.22 * Math.sin(X * 1.3 + f.phase)) * this.theme.windowGlow));
     }
     for (const f of this.tiled) f.update(k);
-    if (k >= Mt.cloudsStart) for (; k >= this.nextCloudAt; ) {
-      const f = this.clouds.length === 0 && this.nextCloudAt === Mt.cloudsStart;
-      this.spawnCloud(k, f ? -120 - Math.random() * 100 : -110 - Math.random() * 120), this.nextCloudAt += Mt.cloudSpacingMin + Math.random() * (Mt.cloudSpacingMax - Mt.cloudSpacingMin);
+    if (k >= Rt.cloudsStart) for (; k >= this.nextCloudAt; ) {
+      const f = this.clouds.length === 0 && this.nextCloudAt === Rt.cloudsStart;
+      this.spawnCloud(k, f ? -120 - Math.random() * 100 : -110 - Math.random() * 120), this.nextCloudAt += Rt.cloudSpacingMin + Math.random() * (Rt.cloudSpacingMax - Rt.cloudSpacingMin);
     }
-    const l = Kt((k - Mt.cloudsStart) / Ae);
+    const l = Zt((k - Rt.cloudsStart) / Ae);
     for (let f = this.clouds.length - 1; f >= 0; f--) {
-      const a = this.clouds[f], n = mt - a.L + k * a.f;
-      if (n - a.img.displayHeight / 2 > mt + 20) {
+      const a = this.clouds[f], n = yt - a.L + k * a.f;
+      if (n - a.img.displayHeight / 2 > yt + 20) {
         a.img.destroy(), this.clouds.splice(f, 1);
         continue;
       }
@@ -27288,12 +27307,12 @@ class ci {
     }
   }
 }
-const Rt = (j) => mt - j;
+const Pt = (j) => yt - j;
 class Te {
   constructor(k, B, X, W, V, g) {
     Q(this, "scene"), Q(this, "x"), Q(this, "h"), Q(this, "special"), Q(this, "move"), Q(this, "img"), Q(this, "halfWidth"), Q(this, "glow"), Q(this, "arrows"), Q(this, "baseX"), Q(this, "t", 0), Q(this, "broken", !1), this.scene = k, this.x = B, this.h = X, this.special = V, this.move = g;
     const T = W / Nt.width;
-    this.baseX = B, this.img = k.add.image(B, Rt(X), Nt.key).setOrigin(0.5, Nt.surfaceY / Nt.height).setScale(T).setDepth(lt.platforms), this.halfWidth = W / 2, V === "spring" ? (this.img.setTint(16763213), this.glow = k.add.image(B, Rt(X) + 2, "fx_glow").setBlendMode(dt.BlendModes.NORMAL).setTint(16756768).setDisplaySize(W * 1.9, 110).setDepth(lt.platforms - 0.1), k.tweens.add({ targets: this.glow, alpha: { from: 0.25, to: 0.55 }, duration: 480, yoyo: !0, repeat: -1, ease: "Sine.InOut" }), this.arrows = is(k, B, Rt(X) - 26, "▲ ▲ ▲", 20, "#d17a00", "#6a3b00").setDepth(lt.platforms + 0.2), k.tweens.add({ targets: this.arrows, y: Rt(X) - 40, alpha: { from: 1, to: 0.35 }, duration: 560, yoyo: !0, repeat: -1, ease: "Sine.InOut" })) : V === "crumble" && (this.img.setTint(9335395).setAlpha(0.92), k.tweens.add({ targets: this.img, angle: { from: -1.4, to: 1.4 }, duration: 700 + Math.random() * 300, yoyo: !0, repeat: -1, ease: "Sine.InOut" })), V === "moving" && this.update(0, 1);
+    this.baseX = B, this.img = k.add.image(B, Pt(X), Nt.key).setOrigin(0.5, Nt.surfaceY / Nt.height).setScale(T).setDepth(ct.platforms), this.halfWidth = W / 2, V === "spring" ? (this.img.setTint(16763213), this.glow = k.add.image(B, Pt(X) + 2, "fx_glow").setBlendMode(pt.BlendModes.NORMAL).setTint(16756768).setDisplaySize(W * 1.9, 110).setDepth(ct.platforms - 0.1), k.tweens.add({ targets: this.glow, alpha: { from: 0.25, to: 0.55 }, duration: 480, yoyo: !0, repeat: -1, ease: "Sine.InOut" }), this.arrows = os(k, B, Pt(X) - 26, "▲ ▲ ▲", 20, "#d17a00", "#6a3b00").setDepth(ct.platforms + 0.2), k.tweens.add({ targets: this.arrows, y: Pt(X) - 40, alpha: { from: 1, to: 0.35 }, duration: 560, yoyo: !0, repeat: -1, ease: "Sine.InOut" })) : V === "crumble" && (this.img.setTint(9335395).setAlpha(0.92), k.tweens.add({ targets: this.img, angle: { from: -1.4, to: 1.4 }, duration: 700 + Math.random() * 300, yoyo: !0, repeat: -1, ease: "Sine.InOut" })), V === "moving" && this.update(0, 1);
   }
   canLand() {
     return !this.broken;
@@ -27308,17 +27327,17 @@ class Te {
     if (this.special === "spring") {
       const B = this.img.scaleY;
       k.tweens.add({ targets: this.img, scaleY: { from: B * 0.45, to: B }, duration: 380, ease: "Elastic.Out" });
-      const X = k.add.particles(this.x, Rt(this.h), "fx_dot", { emitting: !1, lifespan: { min: 350, max: 700 }, speed: { min: 150, max: 380 }, angle: { min: 230, max: 310 }, scale: { start: 0.5, end: 0 }, tint: [16765562, 4875464], blendMode: dt.BlendModes.NORMAL });
-      X.setDepth(lt.fx), X.explode(18), k.time.delayedCall(800, () => X.destroy());
+      const X = k.add.particles(this.x, Pt(this.h), "fx_dot", { emitting: !1, lifespan: { min: 350, max: 700 }, speed: { min: 150, max: 380 }, angle: { min: 230, max: 310 }, scale: { start: 0.5, end: 0 }, tint: [16765562, 4875464], blendMode: pt.BlendModes.NORMAL });
+      X.setDepth(ct.fx), X.explode(18), k.time.delayedCall(800, () => X.destroy());
       return;
     }
-    k.tweens.add({ targets: this.img, y: { from: Rt(this.h) + 7, to: Rt(this.h) }, duration: 220, ease: "Back.Out" });
+    k.tweens.add({ targets: this.img, y: { from: Pt(this.h) + 7, to: Pt(this.h) }, duration: 220, ease: "Back.Out" });
   }
   crumble(k) {
     if (this.broken) return;
     this.broken = !0;
-    const B = this.scene, X = Rt(this.h), W = Tt.displayHeight / Tt.height, V = B.add.particles(this.x, X + 6, Tt.key, { frame: k, emitting: !1, lifespan: { min: 500, max: 900 }, speed: { min: 60, max: 220 }, angle: { min: 20, max: 160 }, gravityY: 1400, rotate: { min: -180, max: 180 }, scale: { start: W * 0.9, end: W * 0.5 }, tint: 11836038, alpha: { start: 1, end: 0 }, emitZone: { type: "random", source: new dt.Geom.Rectangle(-this.halfWidth, -4, this.halfWidth * 2, 10) } }), g = B.add.particles(this.x, X - 4, "fx_dot", { emitting: !1, lifespan: { min: 400, max: 800 }, speed: { min: 40, max: 140 }, angle: { min: 200, max: 340 }, gravityY: 500, scale: { start: 0.45, end: 0.1 }, alpha: { start: 0.9, end: 0 }, emitZone: { type: "random", source: new dt.Geom.Rectangle(-this.halfWidth, -3, this.halfWidth * 2, 6) } });
-    V.setDepth(lt.fx), g.setDepth(lt.fx), V.explode(14), g.explode(16), B.time.delayedCall(1e3, () => {
+    const B = this.scene, X = Pt(this.h), W = wt.displayHeight / wt.height, V = B.add.particles(this.x, X + 6, wt.key, { frame: k, emitting: !1, lifespan: { min: 500, max: 900 }, speed: { min: 60, max: 220 }, angle: { min: 20, max: 160 }, gravityY: 1400, rotate: { min: -180, max: 180 }, scale: { start: W * 0.9, end: W * 0.5 }, tint: 11836038, alpha: { start: 1, end: 0 }, emitZone: { type: "random", source: new pt.Geom.Rectangle(-this.halfWidth, -4, this.halfWidth * 2, 10) } }), g = B.add.particles(this.x, X - 4, "fx_dot", { emitting: !1, lifespan: { min: 400, max: 800 }, speed: { min: 40, max: 140 }, angle: { min: 200, max: 340 }, gravityY: 500, scale: { start: 0.45, end: 0.1 }, alpha: { start: 0.9, end: 0 }, emitZone: { type: "random", source: new pt.Geom.Rectangle(-this.halfWidth, -3, this.halfWidth * 2, 6) } });
+    V.setDepth(ct.fx), g.setDepth(ct.fx), V.explode(14), g.explode(16), B.time.delayedCall(1e3, () => {
       V.destroy(), g.destroy();
     }), B.tweens.killTweensOf(this.img), B.tweens.add({ targets: this.img, y: X + 160, alpha: 0, angle: (Math.random() < 0.5 ? -1 : 1) * 25, duration: 550, ease: "Quad.In" });
   }
@@ -27326,21 +27345,21 @@ class Te {
     this.scene.tweens.killTweensOf(this.img), this.img.destroy(), this.glow && (this.scene.tweens.killTweensOf(this.glow), this.glow.destroy()), this.arrows && (this.scene.tweens.killTweensOf(this.arrows), this.arrows.destroy());
   }
 }
-function is(j, k, B, X, W, V, g) {
+function os(j, k, B, X, W, V, g) {
   return j.add.text(k, B, X, { fontFamily: ye, fontSize: `${W}px`, fontStyle: "normal", color: V, stroke: g, strokeThickness: 4, padding: { x: 2, y: 4 }, resolution: ue(j) }).setOrigin(0.5);
 }
-class ss {
+class hs {
   constructor(k, B, X) {
     Q(this, "scene"), Q(this, "x"), Q(this, "h"), Q(this, "img"), Q(this, "glow"), Q(this, "collected", !1), this.scene = k, this.x = B, this.h = X;
-    const W = Rt(X);
-    this.glow = k.add.image(B, W, "fx_glow").setBlendMode(dt.BlendModes.NORMAL).setTint(10466559).setDisplaySize(76, 56).setAlpha(0.45).setDepth(lt.platforms + 1), this.img = k.add.image(B, W, wt.frames.idle).setOrigin(0.5, 0.52).setScale(rs / wt.bodyHeight).setDepth(lt.platforms + 1.1);
+    const W = Pt(X);
+    this.glow = k.add.image(B, W, "fx_glow").setBlendMode(pt.BlendModes.NORMAL).setTint(10466559).setDisplaySize(76, 56).setAlpha(0.45).setDepth(ct.platforms + 1), this.img = k.add.image(B, W, bt.frames.idle).setOrigin(0.5, 0.52).setScale(ls / bt.bodyHeight).setDepth(ct.platforms + 1.1);
     const V = Math.random() * 600;
     k.tweens.add({ targets: [this.img, this.glow], y: W - 7, duration: 900, delay: V, yoyo: !0, repeat: -1, ease: "Sine.InOut" }), k.tweens.add({ targets: this.img, angle: { from: -8, to: 8 }, duration: 1300, delay: V, yoyo: !0, repeat: -1, ease: "Sine.InOut" });
   }
   collect(k, B, X) {
     this.collected = !0;
-    const W = this.img.y + k, V = this.scene.add.image(this.x, W, wt.frames.idle).setOrigin(0.5, 0.52).setScale(this.img.scale).setScrollFactor(0).setDepth(lt.hud + 1), g = this.scene.add.particles(this.x, this.img.y, "fx_dot", { emitting: !1, lifespan: { min: 300, max: 600 }, speed: { min: 80, max: 220 }, angle: { min: 0, max: 360 }, scale: { start: 0.4, end: 0 }, tint: [12175615, 4875464], blendMode: dt.BlendModes.NORMAL });
-    g.setDepth(lt.fx), g.explode(12), this.scene.time.delayedCall(700, () => g.destroy()), this.destroy(), this.scene.tweens.add({ targets: V, x: B.x, y: B.y, scale: V.scale * 0.8, duration: 420, ease: "Cubic.In", onComplete: () => {
+    const W = this.img.y + k, V = this.scene.add.image(this.x, W, bt.frames.idle).setOrigin(0.5, 0.52).setScale(this.img.scale).setScrollFactor(0).setDepth(ct.hud + 1), g = this.scene.add.particles(this.x, this.img.y, "fx_dot", { emitting: !1, lifespan: { min: 300, max: 600 }, speed: { min: 80, max: 220 }, angle: { min: 0, max: 360 }, scale: { start: 0.4, end: 0 }, tint: [12175615, 4875464], blendMode: pt.BlendModes.NORMAL });
+    g.setDepth(ct.fx), g.explode(12), this.scene.time.delayedCall(700, () => g.destroy()), this.destroy(), this.scene.tweens.add({ targets: V, x: B.x, y: B.y, scale: V.scale * 0.8, duration: 420, ease: "Cubic.In", onComplete: () => {
       V.destroy(), X();
     } });
   }
@@ -27348,22 +27367,22 @@ class ss {
     this.scene.tweens.killTweensOf([this.img, this.glow]), this.img.destroy(), this.glow.destroy();
   }
 }
-const rs = 40;
+const ls = 40;
 class we {
   constructor(k, B, X, W, V, g, T) {
     Q(this, "scene"), Q(this, "x"), Q(this, "h"), Q(this, "width"), Q(this, "text"), Q(this, "correct"), Q(this, "container"), Q(this, "plank"), Q(this, "plankParts"), Q(this, "label"), Q(this, "glow"), Q(this, "halfWidth"), Q(this, "state", "active"), this.scene = k, this.x = B, this.h = X, this.width = W, this.text = V, this.correct = g;
-    const t = Tt.displayHeight / Tt.height;
-    this.halfWidth = W / 2, this.glow = k.add.image(0, 0, "fx_glow").setBlendMode(dt.BlendModes.NORMAL).setAlpha(0).setTint(6160260);
-    const l = k.textures.get(Tt.key), f = Tt.sliceLeft, a = Tt.sliceRight;
-    l.has("capL") || (l.add("capL", 0, 0, 0, f, Tt.height), l.add("mid", 0, f, 0, Tt.width - f - a, Tt.height), l.add("capR", 0, Tt.width - a, 0, a, Tt.height));
-    const n = Tt.surfaceY / Tt.height, r = f * t, e = Math.max(1, W - r - a * t), s = k.add.image(-W / 2, 0, Tt.key, "capL").setOrigin(0, n).setScale(t), o = k.add.image(-W / 2 + r - 0.5, 0, Tt.key, "mid").setOrigin(0, n);
-    o.setDisplaySize(e + 1, Tt.height * t);
-    const i = k.add.image(W / 2, 0, Tt.key, "capR").setOrigin(1, n).setScale(t);
+    const t = wt.displayHeight / wt.height;
+    this.halfWidth = W / 2, this.glow = k.add.image(0, 0, "fx_glow").setBlendMode(pt.BlendModes.NORMAL).setAlpha(0).setTint(6160260);
+    const l = k.textures.get(wt.key), f = wt.sliceLeft, a = wt.sliceRight;
+    l.has("capL") || (l.add("capL", 0, 0, 0, f, wt.height), l.add("mid", 0, f, 0, wt.width - f - a, wt.height), l.add("capR", 0, wt.width - a, 0, a, wt.height));
+    const n = wt.surfaceY / wt.height, r = f * t, e = Math.max(1, W - r - a * t), s = k.add.image(-W / 2, 0, wt.key, "capL").setOrigin(0, n).setScale(t), o = k.add.image(-W / 2 + r - 0.5, 0, wt.key, "mid").setOrigin(0, n);
+    o.setDisplaySize(e + 1, wt.height * t);
+    const i = k.add.image(W / 2, 0, wt.key, "capR").setOrigin(1, n).setScale(t);
     this.plankParts = [s, o, i], this.plank = k.add.container(0, 0, this.plankParts);
-    const h = (Tt.height / 2 - Tt.surfaceY) * t;
-    this.glow.setPosition(0, h).setDisplaySize(W * 1.55, Tt.displayHeight * 2.6), this.label = k.add.text(0, h, V, { fontFamily: ye, fontSize: `${T}px`, fontStyle: "normal", color: Ft.textColor, stroke: Ft.strokeColor, strokeThickness: Ft.strokeThickness, padding: { x: 4, y: Math.ceil(T * 0.25) }, resolution: ue(k) }), this.label.setOrigin(0.5, 0.5);
+    const h = (wt.height / 2 - wt.surfaceY) * t;
+    this.glow.setPosition(0, h).setDisplaySize(W * 1.55, wt.displayHeight * 2.6), this.label = k.add.text(0, h, V, { fontFamily: ye, fontSize: `${T}px`, fontStyle: "normal", color: Ft.textColor, stroke: Ft.strokeColor, strokeThickness: Ft.strokeThickness, padding: { x: 4, y: Math.ceil(T * 0.25) }, resolution: ue(k) }), this.label.setOrigin(0.5, 0.5);
     const c = W - 32;
-    this.label.width > c && this.label.setScale(c / this.label.width, 1), this.container = k.add.container(B, Rt(X), [this.glow, this.plank, this.label]).setDepth(lt.platforms);
+    this.label.width > c && this.label.setScale(c / this.label.width, 1), this.container = k.add.container(B, Pt(X), [this.glow, this.plank, this.label]).setDepth(ct.platforms);
   }
   canLand() {
     return this.state === "active" || this.state === "correct";
@@ -27372,21 +27391,21 @@ class we {
     this.glow.setTint(k), this.scene.tweens.killTweensOf(this.glow), this.glow.setAlpha(0), this.scene.tweens.add({ targets: this.glow, alpha: { from: 0, to: B * 0.6 }, duration: W, yoyo: !0, repeat: X, ease: "Sine.InOut", onComplete: () => this.glow.setAlpha(0) });
   }
   markCorrect() {
-    this.state = "correct", this.pulseGlow(6160260, 1, 0, 260), this.plankParts.forEach((k) => k.setTint(14286809)), this.scene.time.delayedCall(520, () => this.plankParts.forEach((k) => k.clearTint())), this.scene.tweens.add({ targets: this.container, y: Rt(this.h) + 8, duration: 90, yoyo: !0, ease: "Quad.Out" });
+    this.state = "correct", this.pulseGlow(6160260, 1, 0, 260), this.plankParts.forEach((k) => k.setTint(14286809)), this.scene.time.delayedCall(520, () => this.plankParts.forEach((k) => k.clearTint())), this.scene.tweens.add({ targets: this.container, y: Pt(this.h) + 8, duration: 90, yoyo: !0, ease: "Quad.Out" });
   }
   revealSolution() {
     this.state = "correct", this.pulseGlow(6160260, 1, 2, 230), this.scene.tweens.add({ targets: this.container, scale: 1.08, duration: 230, yoyo: !0, repeat: 2, ease: "Sine.InOut" });
   }
   shatter(k) {
     this.state = "broken";
-    const B = Rt(this.h), X = Tt.displayHeight / Tt.height, W = this.scene.add.particles(0, 0, Tt.key, { frame: k, emitting: !1, lifespan: { min: 700, max: 1200 }, speed: { min: 160, max: 480 }, angle: { min: 195, max: 345 }, gravityY: 1600, rotate: { min: -180, max: 180 }, scale: { start: X * 1.4, end: X * 0.9 }, alpha: { start: 1, end: 0, ease: "Quad.In" }, emitZone: { type: "random", source: new dt.Geom.Rectangle(-this.width / 2, 0, this.width, Tt.displayHeight * 0.8) } });
-    W.setDepth(lt.fx), W.explode(Math.round(18 + this.width / 10), this.x, B), this.scene.time.delayedCall(1500, () => W.destroy()), this.plankParts.forEach((V) => V.setTint(16756896)), this.scene.tweens.add({ targets: this.container, y: B + 420, angle: (Math.random() < 0.5 ? -1 : 1) * (14 + Math.random() * 16), alpha: 0, scaleX: 0.85, duration: 750, ease: "Quad.In" });
+    const B = Pt(this.h), X = wt.displayHeight / wt.height, W = this.scene.add.particles(0, 0, wt.key, { frame: k, emitting: !1, lifespan: { min: 700, max: 1200 }, speed: { min: 160, max: 480 }, angle: { min: 195, max: 345 }, gravityY: 1600, rotate: { min: -180, max: 180 }, scale: { start: X * 1.4, end: X * 0.9 }, alpha: { start: 1, end: 0, ease: "Quad.In" }, emitZone: { type: "random", source: new pt.Geom.Rectangle(-this.width / 2, 0, this.width, wt.displayHeight * 0.8) } });
+    W.setDepth(ct.fx), W.explode(Math.round(18 + this.width / 10), this.x, B), this.scene.time.delayedCall(1500, () => W.destroy()), this.plankParts.forEach((V) => V.setTint(16756896)), this.scene.tweens.add({ targets: this.container, y: B + 420, angle: (Math.random() < 0.5 ? -1 : 1) * (14 + Math.random() * 16), alpha: 0, scaleX: 0.85, duration: 750, ease: "Quad.In" });
   }
   retire(k = 0) {
-    this.state === "active" && (this.state = "retired", this.scene.tweens.add({ targets: this.container, alpha: 0, y: Rt(this.h) + 60, delay: k, duration: 450, ease: "Quad.In" }));
+    this.state === "active" && (this.state = "retired", this.scene.tweens.add({ targets: this.container, alpha: 0, y: Pt(this.h) + 60, delay: k, duration: 450, ease: "Quad.In" }));
   }
   bounce() {
-    this.scene.tweens.add({ targets: this.container, y: Rt(this.h) + 6, duration: 80, yoyo: !0, ease: "Quad.Out" });
+    this.scene.tweens.add({ targets: this.container, y: Pt(this.h) + 6, duration: 80, yoyo: !0, ease: "Quad.Out" });
   }
   destroy() {
     this.scene.tweens.killTweensOf(this.container), this.scene.tweens.killTweensOf(this.glow), this.container.destroy();
@@ -27501,8 +27520,8 @@ class ke {
     this.repeats.push({ entry: k, dueIn: X + Math.floor(this.rng() * (W - X + 1)) });
   }
 }
-const Jt = 176;
-class ns extends dt.Scene {
+const te = 176;
+class cs extends pt.Scene {
   constructor() {
     super("Game"), Q(this, "ctx"), Q(this, "phys"), Q(this, "bg"), Q(this, "controls"), Q(this, "deck"), Q(this, "gen"), Q(this, "px", st / 2), Q(this, "ph", 0), Q(this, "vx", 0), Q(this, "vy", 0), Q(this, "sprite"), Q(this, "ghost"), Q(this, "pose", "idle"), Q(this, "landTimer", 0), Q(this, "hurtTimer", 0), Q(this, "squash", 0), Q(this, "lastLandedH", 0), Q(this, "camH", 0), Q(this, "maxH", 0), Q(this, "neutrals", []), Q(this, "berries", []), Q(this, "berryCount", 0), Q(this, "berriesTotal", 0), Q(this, "berryIcon"), Q(this, "berryText"), Q(this, "streakText"), Q(this, "rows", []), Q(this, "allSpecs", []), Q(this, "hearts", de), Q(this, "score", 0), Q(this, "streak", 0), Q(this, "answers", []), Q(this, "wrongEntries", /* @__PURE__ */ new Map()), Q(this, "elapsedMs", 0), Q(this, "over", !1), Q(this, "dying", !1), Q(this, "heartTexts", []), Q(this, "scoreText"), Q(this, "promptText"), Q(this, "promptHint"), Q(this, "shownRowId", -1), Q(this, "promptLockUntil", 0), Q(this, "announcement"), Q(this, "best", null), Q(this, "highscoreToastShown", !1), Q(this, "announcementsShown", 0), Q(this, "newlyKnown", /* @__PURE__ */ new Set()), Q(this, "debugText"), Q(this, "autopilot", !1);
   }
@@ -27510,52 +27529,52 @@ class ns extends dt.Scene {
     this.px = st / 2, this.ph = 0, this.vx = 0, this.vy = 0, this.pose = "idle", this.landTimer = this.hurtTimer = this.squash = 0, this.camH = this.maxH = 0, this.neutrals = [], this.rows = [], this.berries = [], this.berryCount = 0, this.berriesTotal = 0, this.allSpecs = [], this.hearts = de, this.score = this.streak = 0, this.answers = [], this.wrongEntries = /* @__PURE__ */ new Map(), this.over = this.dying = !1, this.shownRowId = -1, this.promptLockUntil = 0, this.elapsedMs = 0, this.heartTexts = [], this.highscoreToastShown = !1, this.announcementsShown = 0, this.newlyKnown = /* @__PURE__ */ new Set();
   }
   create() {
-    this.ctx = vt(this), $t(this), this.phys = ve(this.ctx.tempo), this.best = this.ctx.prefs.getHighscore(), this.bg = new ci(this, ee[this.ctx.theme]), this.controls = new Ut(this, this.ctx.tilt), this.controls.hudHeight = Jt + 10, this.deck = new ke(this.ctx.entries, { direction: this.ctx.settings.direction, levels: this.ctx.settings.levels, categories: this.ctx.settings.categories, repeatAfterRows: ge.repeatAfterRows, progress: this.ctx.progress, learningPath: { maxLearning: Ee.maxLearning, reviewShare: Ee.reviewShare } }), this.gen = new Ji(this.deck);
+    this.ctx = mt(this), Qt(this), this.phys = ve(this.ctx.tempo), this.best = this.ctx.prefs.getHighscore(), this.bg = new fi(this, ee[this.ctx.theme]), this.controls = new Xt(this, this.ctx.tilt), this.controls.hudHeight = te + 10, this.deck = new ke(this.ctx.entries, { direction: this.ctx.settings.direction, levels: this.ctx.settings.levels, categories: this.ctx.settings.categories, repeatAfterRows: ge.repeatAfterRows, progress: this.ctx.progress, learningPath: { maxLearning: Ee.maxLearning, reviewShare: Ee.reviewShare } }), this.gen = new rs(this.deck);
     const k = this.gen.start();
     this.spawn(k), this.allSpecs.push(k), this.ensureGenerated(), this.ph = k.h, this.px = k.x, this.lastLandedH = k.h, this.vy = this.phys.jumpVelocity;
-    const B = wt.displayHeight / wt.bodyHeight;
-    this.sprite = this.add.image(this.px, Rt(this.ph), wt.frames.idle).setOrigin(0.5, wt.footY / wt.sourceSize).setScale(B).setDepth(lt.player), this.ghost = this.add.image(0, 0, wt.frames.idle).setOrigin(0.5, wt.footY / wt.sourceSize).setScale(B).setDepth(lt.player).setVisible(!1), this.createHud();
+    const B = bt.displayHeight / bt.bodyHeight;
+    this.sprite = this.add.image(this.px, Pt(this.ph), bt.frames.idle).setOrigin(0.5, bt.footY / bt.sourceSize).setScale(B).setDepth(ct.player), this.ghost = this.add.image(0, 0, bt.frames.idle).setOrigin(0.5, bt.footY / bt.sourceSize).setScale(B).setDepth(ct.player).setVisible(!1), this.createHud();
     const X = this.input.keyboard;
-    X.on("keydown-ESC", () => this.openPause()), X.on("keydown-P", () => this.openPause()), X.on("keydown-M", () => ni(this, !this.ctx.sfx.enabled));
+    X.on("keydown-ESC", () => this.openPause()), X.on("keydown-P", () => this.openPause()), X.on("keydown-M", () => li(this, !this.ctx.sfx.enabled));
     const W = () => this.openPause();
-    this.game.events.on(dt.Core.Events.HIDDEN, W), this.game.events.on(dt.Core.Events.BLUR, W);
+    this.game.events.on(pt.Core.Events.HIDDEN, W), this.game.events.on(pt.Core.Events.BLUR, W);
     const V = (g) => this.applyTempo(g);
-    this.game.events.on("tempo-changed", V), this.events.once(dt.Scenes.Events.SHUTDOWN, () => {
-      this.game.events.off(dt.Core.Events.HIDDEN, W), this.game.events.off(dt.Core.Events.BLUR, W), this.game.events.off("tempo-changed", V), this.controls.destroy();
-    }), this.ctx.debug && (this.debugText = ct(this, 12, Jt + 24, "", { size: 18 }).setOrigin(0, 0).setScrollFactor(0).setDepth(lt.hud), X.on("keydown-B", () => this.autopilot = !this.autopilot), this.autopilot = new URLSearchParams(location.search).has("autopilot"), window.__mustikka = this), this.cameras.main.fadeIn(350, 250, 247, 239), Ge(!0), this.events.once(dt.Scenes.Events.SHUTDOWN, () => Ge(!1));
+    this.game.events.on("tempo-changed", V), this.events.once(pt.Scenes.Events.SHUTDOWN, () => {
+      this.game.events.off(pt.Core.Events.HIDDEN, W), this.game.events.off(pt.Core.Events.BLUR, W), this.game.events.off("tempo-changed", V), this.controls.destroy();
+    }), this.ctx.debug && (this.debugText = ut(this, 12, te + 24, "", { size: 18 }).setOrigin(0, 0).setScrollFactor(0).setDepth(ct.hud), X.on("keydown-B", () => this.autopilot = !this.autopilot), this.autopilot = new URLSearchParams(location.search).has("autopilot"), window.__mustikka = this), ni(this, 350), Ve(!0), this.events.once(pt.Scenes.Events.SHUTDOWN, () => Ve(!1));
   }
   createHud() {
-    const k = this.add.container(0, 0).setScrollFactor(0).setDepth(lt.hud);
-    k.add(se(this, 14, 14, st - 28, Jt - 14, 26, 0.86));
+    const k = this.add.container(0, 0).setScrollFactor(0).setDepth(ct.hud);
+    k.add(se(this, 14, 14, st - 28, te - 14, 26, 0.86));
     for (let V = 0; V < de; V++) {
-      const g = ct(this, 46 + V * 42, 52, "♥", { size: 40, color: Lt.heart, strokeThickness: 5 });
+      const g = ut(this, 46 + V * 42, 52, "♥", { size: 40, color: ot.heart, strokeThickness: 5 });
       this.heartTexts.push(g), k.add(g);
     }
-    this.berryIcon = this.add.image(186, 52, wt.frames.idle).setOrigin(0.5, 0.52).setScale(34 / wt.bodyHeight), this.berryText = ct(this, 206, 53, "", { size: 22, strokeThickness: 4 }).setOrigin(0, 0.5), k.add([this.berryIcon, this.berryText]), this.scoreText = ct(this, 432, 52, "", { size: 25 }), k.add(this.scoreText), this.streakText = ct(this, st - 40, 92, "", { size: 18, color: "#d17a00", strokeThickness: 3 }).setOrigin(1, 0.5), k.add(this.streakText);
-    const B = _t(this, st - 66, 52, 76, 52, "II", () => this.openPause(), { size: 26 });
+    this.berryIcon = this.add.image(186, 52, bt.frames.idle).setOrigin(0.5, 0.52).setScale(34 / bt.bodyHeight), this.berryText = ut(this, 206, 53, "", { size: 22, strokeThickness: 4 }).setOrigin(0, 0.5), k.add([this.berryIcon, this.berryText]), this.scoreText = ut(this, 432, 52, "", { size: 25 }), k.add(this.scoreText), this.streakText = ut(this, st - 40, 92, "", { size: 18, color: ot.orange, strokeThickness: 3 }).setOrigin(1, 0.5), k.add(this.streakText);
+    const B = Ct(this, st - 66, 52, 76, 52, "II", () => this.openPause(), { size: 26 });
     k.add(B.container);
     const X = ie(this.ctx.settings.direction === "forward" ? this.ctx.meta.sourceLang ?? this.ctx.settings.sourceLang : this.ctx.meta.targetLang ?? this.ctx.settings.targetLang), W = ie(this.ctx.settings.direction === "forward" ? this.ctx.meta.targetLang ?? this.ctx.settings.targetLang : this.ctx.meta.sourceLang ?? this.ctx.settings.sourceLang);
-    this.promptHint = ct(this, st / 2, 92, `${X} → ${W}`, { size: 18, color: "#6b5f86", strokeThickness: 0 }), this.promptText = ct(this, st / 2, 132, "", { size: 50 }), k.add([this.promptHint, this.promptText]), this.updateHud();
+    this.promptHint = ut(this, st / 2, 92, `${X} → ${W}`, { size: 18, color: ot.muted, strokeThickness: 0 }), this.promptText = ut(this, st / 2, 132, "", { size: 50 }), k.add([this.promptHint, this.promptText]), this.updateHud();
   }
   updateHud() {
-    this.heartTexts.forEach((W, V) => W.setColor(V < this.hearts ? Lt.heart : Lt.heartLost)), this.scoreText.setText(`${this.score} Punkte · ${Math.floor(this.maxH / 100)} m`), It(this.scoreText, 390, 25, 18), this.berryText.setText(`${this.berryCount}/${xt.berriesForHeart}`);
-    const k = Math.min(Qt.streakMax, 1 + Qt.streakStep * this.streak);
+    this.heartTexts.forEach((W, V) => W.setColor(V < this.hearts ? ot.heart : ot.heartLost)), this.scoreText.setText(`${this.score} Punkte · ${Math.floor(this.maxH / 100)} m`), It(this.scoreText, 390, 25, 18), this.berryText.setText(`${this.berryCount}/${Tt.berriesForHeart}`);
+    const k = Math.min(Jt.streakMax, 1 + Jt.streakStep * this.streak);
     if (this.streakText.setText(this.streak >= 2 ? `Serie ${this.streak} · ×${k.toFixed(1).replace(".", ",")}` : ""), !this.highscoreToastShown && this.best && this.best.score > 0 && this.score > this.best.score && (this.highscoreToastShown = !0, this.highscoreToast()), this.time.now < this.promptLockUntil) return;
     const B = this.currentRow(), X = B ? B.spec.id : -1;
-    X !== this.shownRowId && (this.shownRowId = X, this.setPrompt(B ? B.spec.question.prompt : "", Lt.cream), B && !this.dying && !this.over && this.announce(B.spec.question.prompt, { label: "Neues Wort" }));
+    X !== this.shownRowId && (this.shownRowId = X, this.setPrompt(B ? B.spec.question.prompt : "", ot.cream), B && !this.dying && !this.over && this.announce(B.spec.question.prompt, { label: "Neues Wort" }));
   }
   announce(k, B = {}) {
     this.announcement && (this.tweens.killTweensOf(this.announcement), this.announcement.destroy());
-    const X = ct(this, 0, B.label ? 18 : 0, k, { size: 66, color: B.color ?? Lt.cream, strokeThickness: 11 });
+    const X = ut(this, 0, B.label ? 18 : 0, k, { size: 66, color: B.color ?? ot.cream, strokeThickness: 11 });
     It(X, st - 130, 66, 30);
-    const W = [], V = Math.min(st - 50, Math.max(320, X.displayWidth + 100)), g = B.label ? 176 : 132, T = this.add.image(0, 0, "fx_glow").setBlendMode(dt.BlendModes.NORMAL).setTint(B.glow ?? 16765562);
+    const W = [], V = Math.min(st - 50, Math.max(320, X.displayWidth + 100)), g = B.label ? 176 : 132, T = this.add.image(0, 0, "fx_glow").setBlendMode(pt.BlendModes.NORMAL).setTint(B.glow ?? 16765562);
     T.setDisplaySize(V * 1.6, g * 2.4).setAlpha(0.5);
     const t = this.add.graphics();
-    t.fillStyle(Lt.ink, 0.1), t.fillRoundedRect(-V / 2 + 6, -g / 2 + 8, V, g, 24), Oe(t, -V / 2, -g / 2, V, g, 24, { fill: Lt.panel, width: 4 }), W.push(T, t), B.label && W.push(ct(this, 0, -46, B.label, { size: 22, color: "#6b5f86", strokeThickness: 0 })), W.push(X), this.announcementsShown++ > 0 && this.ctx.sfx.play("whoosh");
-    const l = this.add.container(st / 2, Dt.y, W).setScrollFactor(0).setDepth(lt.hud - 1);
+    t.fillStyle(ot.ink, 0.1), t.fillRoundedRect(-V / 2 + 6, -g / 2 + 8, V, g, 24), Oe(t, -V / 2, -g / 2, V, g, 24, { fill: ot.panel, width: 4 }), W.push(T, t), B.label && W.push(ut(this, 0, -46, B.label, { size: 22, color: ot.muted, strokeThickness: 0 })), W.push(X), this.announcementsShown++ > 0 && this.ctx.sfx.play("whoosh");
+    const l = this.add.container(st / 2, Dt.y, W).setScrollFactor(0).setDepth(ct.hud - 1);
     this.announcement = l, l.setScale(0.45).setAlpha(0), this.tweens.add({ targets: l, scale: 1, alpha: 1, duration: Dt.intro, ease: "Back.Out" }), this.tweens.add({ targets: T, alpha: { from: 0.8, to: 0.3 }, duration: 520, yoyo: !0, repeat: 1, ease: "Sine.InOut" });
-    const f = this.add.particles(st / 2, Dt.y, "fx_dot", { emitting: !1, lifespan: { min: 500, max: 900 }, speed: { min: 140, max: 330 }, angle: { min: 0, max: 360 }, scale: { start: 0.55, end: 0 }, alpha: { start: 1, end: 0 }, tint: [B.glow ?? 16769946, 4875464], blendMode: dt.BlendModes.NORMAL, emitZone: { type: "edge", source: new dt.Geom.Rectangle(-V / 2, -g / 2, V, g), quantity: 22 } });
-    f.setScrollFactor(0).setDepth(lt.hud - 1), f.explode(22), this.time.delayedCall(1e3, () => f.destroy());
+    const f = this.add.particles(st / 2, Dt.y, "fx_dot", { emitting: !1, lifespan: { min: 500, max: 900 }, speed: { min: 140, max: 330 }, angle: { min: 0, max: 360 }, scale: { start: 0.55, end: 0 }, alpha: { start: 1, end: 0 }, tint: [B.glow ?? 16769946, 4875464], blendMode: pt.BlendModes.NORMAL, emitZone: { type: "edge", source: new pt.Geom.Rectangle(-V / 2, -g / 2, V, g), quantity: 22 } });
+    f.setScrollFactor(0).setDepth(ct.hud - 1), f.explode(22), this.time.delayedCall(1e3, () => f.destroy());
     const a = B.hold ?? Math.min(Dt.holdMax, Dt.holdBase + Dt.holdPerChar * k.length);
     this.tweens.add({ targets: l, delay: Dt.intro + a, y: this.promptText.y, scale: 0.4, alpha: 0, duration: Dt.outro, ease: "Cubic.In", onComplete: () => {
       l.destroy(), this.announcement === l && (this.announcement = void 0);
@@ -27564,10 +27583,10 @@ class ns extends dt.Scene {
     } });
   }
   highscoreToast() {
-    const k = ct(this, st / 2, Jt + 40, "Neuer Highscore!", { size: 34, color: "#d17a00", strokeThickness: 7 });
-    k.setScrollFactor(0).setDepth(lt.hud).setScale(0.4).setAlpha(0), this.tweens.add({ targets: k, scale: 1, alpha: 1, duration: 320, ease: "Back.Out" }), this.tweens.add({ targets: k, angle: { from: -3, to: 3 }, duration: 160, yoyo: !0, repeat: 3, ease: "Sine.InOut" }), this.tweens.add({ targets: k, alpha: 0, y: Jt + 10, delay: 1900, duration: 500, ease: "Quad.In", onComplete: () => k.destroy() });
-    const B = this.add.particles(st / 2, Jt + 40, "fx_dot", { emitting: !1, lifespan: { min: 500, max: 900 }, speed: { min: 120, max: 300 }, angle: { min: 0, max: 360 }, scale: { start: 0.5, end: 0 }, tint: [16765562, 4875464], blendMode: dt.BlendModes.NORMAL });
-    B.setScrollFactor(0).setDepth(lt.hud), B.explode(26), this.ctx.sfx.play("highscore"), this.time.delayedCall(1e3, () => B.destroy());
+    const k = ut(this, st / 2, te + 40, "Neuer Highscore!", { size: 34, color: ot.orange, strokeThickness: 7 });
+    k.setScrollFactor(0).setDepth(ct.hud).setScale(0.4).setAlpha(0), this.tweens.add({ targets: k, scale: 1, alpha: 1, duration: 320, ease: "Back.Out" }), this.tweens.add({ targets: k, angle: { from: -3, to: 3 }, duration: 160, yoyo: !0, repeat: 3, ease: "Sine.InOut" }), this.tweens.add({ targets: k, alpha: 0, y: te + 10, delay: 1900, duration: 500, ease: "Quad.In", onComplete: () => k.destroy() });
+    const B = this.add.particles(st / 2, te + 40, "fx_dot", { emitting: !1, lifespan: { min: 500, max: 900 }, speed: { min: 120, max: 300 }, angle: { min: 0, max: 360 }, scale: { start: 0.5, end: 0 }, tint: [16765562, 4875464], blendMode: pt.BlendModes.NORMAL });
+    B.setScrollFactor(0).setDepth(ct.hud), B.explode(26), this.ctx.sfx.play("highscore"), this.time.delayedCall(1e3, () => B.destroy());
   }
   setPrompt(k, B) {
     this.promptText.setText(k).setColor(B), It(this.promptText, st - 80, 50, 26);
@@ -27576,20 +27595,20 @@ class ns extends dt.Scene {
   }
   spawn(k) {
     if (k.kind === "neutral") this.neutrals.push(new Te(this, k.x, k.h, k.w, k.special, k.move));
-    else if (k.kind === "berry") this.berries.push(new ss(this, k.x, k.h));
+    else if (k.kind === "berry") this.berries.push(new hs(this, k.x, k.h));
     else {
       const B = k.question, X = k.layout.planks.map((W, V) => new we(this, W.x, k.h, W.w, B.options[V], V === B.correctIndex, k.layout.fontSize));
       this.rows.push({ spec: k, planks: X, resolved: !1 });
     }
   }
   ensureGenerated() {
-    const k = this.camH + mt + St.generateAhead;
+    const k = this.camH + yt + Et.generateAhead;
     if (this.gen.topHeight >= k) return;
     const B = this.gen.generateUpTo(k);
     for (const X of B) this.spawn(X);
     if (this.ctx.debug) {
       this.allSpecs.push(...B);
-      const X = ts(this.allSpecs);
+      const X = ns(this.allSpecs);
       X.length && console.warn("[Mustikka Hyppy] Erreichbarkeit:", X), this.allSpecs.length > 60 && this.allSpecs.splice(0, this.allSpecs.length - 40);
     }
   }
@@ -27628,17 +27647,17 @@ class ns extends dt.Scene {
   }
   step(k) {
     const B = this.phys, X = (this.dying ? 0 : this.autopilot ? this.steerAutopilot() : this.controls.direction()) * B.maxVx - this.vx, W = B.accel * k;
-    this.vx += dt.Math.Clamp(X, -W, W), this.px += this.vx * k, this.px < 0 && (this.px += st), this.px >= st && (this.px -= st);
+    this.vx += pt.Math.Clamp(X, -W, W), this.px += this.vx * k, this.px < 0 && (this.px += st), this.px >= st && (this.px -= st);
     for (const g of this.neutrals) g.special === "moving" && g.update(k, B.T);
     const V = this.ph;
-    this.vy -= B.gravity * k, this.ph += this.vy * k, this.vy < 0 && !this.dying && this.checkLanding(V), this.dying || this.collectBerries(), this.camH = Math.max(this.camH, this.ph - _i), this.maxH = Math.max(this.maxH, this.ph), this.ensureGenerated(), this.cleanup(), this.landTimer = Math.max(0, this.landTimer - k), this.hurtTimer = Math.max(0, this.hurtTimer - k), this.ph < this.camH - Ci && this.endRound(this.hearts <= 0 ? "hearts" : "fall");
+    this.vy -= B.gravity * k, this.ph += this.vy * k, this.vy < 0 && !this.dying && this.checkLanding(V), this.dying || this.collectBerries(), this.camH = Math.max(this.camH, this.ph - Pi), this.maxH = Math.max(this.maxH, this.ph), this.ensureGenerated(), this.cleanup(), this.landTimer = Math.max(0, this.landTimer - k), this.hurtTimer = Math.max(0, this.hurtTimer - k), this.ph < this.camH - Li && this.endRound(this.hearts <= 0 ? "hearts" : "fall");
   }
   checkLanding(k) {
     let B;
     const X = (g, T) => {
       if (!g.canLand() || !(k >= g.h - 0.5 && this.ph <= g.h)) return;
       let t = Math.abs(this.px - g.x) % st;
-      t = Math.min(t, st - t), !(t > g.halfWidth + wt.footHalfWidth) && (!B || g.h > B.p.h) && (B = { p: g, row: T });
+      t = Math.min(t, st - t), !(t > g.halfWidth + bt.footHalfWidth) && (!B || g.h > B.p.h) && (B = { p: g, row: T });
     };
     for (const g of this.neutrals) X(g);
     for (const g of this.rows) for (const T of g.planks) X(T, g);
@@ -27651,23 +27670,23 @@ class ns extends dt.Scene {
     this.bounceOn(W);
   }
   bounceOn(k) {
-    this.ph = k.h, this.vy = this.phys.jumpVelocity, this.lastLandedH = k.h, this.landTimer = 0.13, this.squash = 1, k instanceof Te && k.special === "spring" ? (this.vy = this.phys.jumpVelocity * Math.sqrt(xt.springFactor), this.ctx.sfx.play("spring")) : this.ctx.sfx.play("jump"), k instanceof Te ? (k.bounce(this), k.special === "crumble" && (this.ctx.sfx.play("crumble"), this.time.delayedCall(40, () => k.crumble(["splinter0", "splinter1", "splinter2", "splinter3", "splinter4"])))) : k instanceof we && k.bounce();
+    this.ph = k.h, this.vy = this.phys.jumpVelocity, this.lastLandedH = k.h, this.landTimer = 0.13, this.squash = 1, k instanceof Te && k.special === "spring" ? (this.vy = this.phys.jumpVelocity * Math.sqrt(Tt.springFactor), this.ctx.sfx.play("spring")) : this.ctx.sfx.play("jump"), k instanceof Te ? (k.bounce(this), k.special === "crumble" && (this.ctx.sfx.play("crumble"), this.time.delayedCall(40, () => k.crumble(["splinter0", "splinter1", "splinter2", "splinter3", "splinter4"])))) : k instanceof we && k.bounce();
   }
   collectBerries() {
-    const k = this.ph + wt.displayHeight * 0.45;
+    const k = this.ph + bt.displayHeight * 0.45;
     for (const B of this.berries) {
       if (B.collected) continue;
       let X = Math.abs(this.px - B.x) % st;
       X = Math.min(X, st - X);
       const W = k - B.h;
-      X * X + W * W > 3364 || (this.berriesTotal++, this.score += xt.berryPoints, this.ctx.sfx.play("berry"), B.collect(this.camH, { x: this.berryIcon.x, y: this.berryIcon.y }, () => this.berryArrived()));
+      X * X + W * W > 3364 || (this.berriesTotal++, this.score += Tt.berryPoints, this.ctx.sfx.play("berry"), B.collect(this.camH, { x: this.berryIcon.x, y: this.berryIcon.y }, () => this.berryArrived()));
     }
   }
   berryArrived() {
-    if (!this.over && (this.berryCount++, this.tweens.add({ targets: this.berryIcon, scale: { from: this.berryIcon.scale * 1.5, to: 34 / wt.bodyHeight }, duration: 260, ease: "Back.Out" }), !(this.berryCount < xt.berriesForHeart))) if (this.berryCount = 0, this.hearts < de) {
+    if (!this.over && (this.berryCount++, this.tweens.add({ targets: this.berryIcon, scale: { from: this.berryIcon.scale * 1.5, to: 34 / bt.bodyHeight }, duration: 260, ease: "Back.Out" }), !(this.berryCount < Tt.berriesForHeart))) if (this.berryCount = 0, this.hearts < de) {
       const k = this.heartTexts[this.hearts];
-      this.hearts++, this.ctx.sfx.play("heartUp"), k.setScale(2), this.tweens.add({ targets: k, scale: 1, duration: 450, ease: "Back.Out" }), this.floatText(st / 2, Rt(this.ph) - 150, "+1 Herz!", "#d6455d");
-    } else this.score += xt.berryBonusPoints, this.ctx.sfx.play("heartUp"), this.floatText(st / 2, Rt(this.ph) - 150, `+${xt.berryBonusPoints} Beerenbonus!`, "#3f5bc4");
+      this.hearts++, this.ctx.sfx.play("heartUp"), k.setScale(2), this.tweens.add({ targets: k, scale: 1, duration: 450, ease: "Back.Out" }), this.floatText(st / 2, Pt(this.ph) - 150, "+1 Herz!", ot.heartPlus);
+    } else this.score += Tt.berryBonusPoints, this.ctx.sfx.play("heartUp"), this.floatText(st / 2, Pt(this.ph) - 150, `+${Tt.berryBonusPoints} Beerenbonus!`, ot.blue);
   }
   record(k, B, X) {
     const W = k.spec.question;
@@ -27680,8 +27699,8 @@ class ns extends dt.Scene {
   answerCorrect(k, B) {
     k.resolved = !0, this.record(k, B, !0), this.bounceOn(B), B.markCorrect();
     for (const g of k.planks) g !== B && g.retire(150);
-    const X = k.planks.length, W = Math.min(Qt.streakMax, 1 + Qt.streakStep * this.streak), V = Math.round((Qt.correct + Qt.perExtraOption * (X - 2)) * W);
-    this.streak++, this.ctx.sfx.play("correct"), this.ctx.speech.speak(k.spec.question.entry.target), this.streak % 5 === 0 && (this.ctx.sfx.play("streak"), this.bg.flare(this.streak >= 10 ? 1 : 0.75), this.sparkleRain(this.streak >= 10 ? 70 : 45), this.time.delayedCall(250, () => this.floatText(st / 2, Rt(B.h) - 120, `${this.streak} richtig in Folge!`, "#d17a00"))), this.score += V, this.floatText(B.x, Rt(B.h) - 40, `+${V}`, "#2f8a45");
+    const X = k.planks.length, W = Math.min(Jt.streakMax, 1 + Jt.streakStep * this.streak), V = Math.round((Jt.correct + Jt.perExtraOption * (X - 2)) * W);
+    this.streak++, this.ctx.sfx.play("correct"), this.ctx.speech.speak(k.spec.question.entry.target), this.streak % 5 === 0 && (this.ctx.sfx.play("streak"), this.bg.flare(this.streak >= 10 ? 1 : 0.75), this.sparkleRain(this.streak >= 10 ? 70 : 45), this.time.delayedCall(250, () => this.floatText(st / 2, Pt(B.h) - 120, `${this.streak} richtig in Folge!`, ot.orange))), this.score += V, this.floatText(B.x, Pt(B.h) - 40, `+${V}`, ot.green);
   }
   answerWrong(k, B) {
     k.resolved = !0, this.record(k, B, !1), this.streak = 0, this.hearts = Math.max(0, this.hearts - 1), B.shatter(["splinter0", "splinter1", "splinter2", "splinter3", "splinter4"]), this.ctx.sfx.play("wrong"), this.ctx.sfx.play("heart");
@@ -27692,26 +27711,26 @@ class ns extends dt.Scene {
     for (const g of k.planks) g !== B && g !== W && g.retire(650);
     this.vy = Math.min(this.vy, 0) * 0.3, this.hurtTimer = 0.9, this.cameras.main.shake(180, 6e-3), this.heartTexts[this.hearts]?.setScale(1.5), this.tweens.add({ targets: this.heartTexts[this.hearts], scale: 1, duration: 300, ease: "Back.Out" });
     const V = k.spec.question;
-    this.promptLockUntil = this.time.now + Dt.intro + Dt.solutionHold + Dt.outro + 50, this.shownRowId = -2, this.setPrompt(`${V.prompt} = ${V.answer}`, "#d17a00"), this.hearts > 0 && this.announce(V.answer, { label: `„${V.prompt}“ heißt`, color: "#2f8a45", glow: 6160260, hold: Dt.solutionHold }), this.hearts <= 0 && (this.dying = !0, this.time.delayedCall(1100, () => this.endRound("hearts")));
+    this.promptLockUntil = this.time.now + Dt.intro + Dt.solutionHold + Dt.outro + 50, this.shownRowId = -2, this.setPrompt(`${V.prompt} = ${V.answer}`, ot.orange), this.hearts > 0 && this.announce(V.answer, { label: `„${V.prompt}“ heißt`, color: ot.green, glow: 6160260, hold: Dt.solutionHold }), this.hearts <= 0 && (this.dying = !0, this.time.delayedCall(1100, () => this.endRound("hearts")));
   }
   sparkleRain(k) {
-    const B = this.add.particles(0, 0, "fx_dot", { x: { min: 0, max: st }, y: { min: -20, max: 200 }, lifespan: { min: 1200, max: 2e3 }, speedY: { min: 120, max: 320 }, speedX: { min: -30, max: 30 }, scale: { start: 0.55, end: 0 }, alpha: { start: 1, end: 0 }, tint: [16765562, 10354612, 10930431, 4875464], blendMode: dt.BlendModes.NORMAL, frequency: 25, quantity: 2 });
-    B.setScrollFactor(0).setDepth(lt.hud - 2), this.time.delayedCall(k / 2 * 25, () => B.stop()), this.time.delayedCall(2600, () => B.destroy());
+    const B = this.add.particles(0, 0, "fx_dot", { x: { min: 0, max: st }, y: { min: -20, max: 200 }, lifespan: { min: 1200, max: 2e3 }, speedY: { min: 120, max: 320 }, speedX: { min: -30, max: 30 }, scale: { start: 0.55, end: 0 }, alpha: { start: 1, end: 0 }, tint: [16765562, 10354612, 10930431, 4875464], blendMode: pt.BlendModes.NORMAL, frequency: 25, quantity: 2 });
+    B.setScrollFactor(0).setDepth(ct.hud - 2), this.time.delayedCall(k / 2 * 25, () => B.stop()), this.time.delayedCall(2600, () => B.destroy());
   }
   floatText(k, B, X, W) {
-    const V = ct(this, k, B, X, { size: 34, color: W }).setDepth(lt.fx);
+    const V = ut(this, k, B, X, { size: 34, color: W }).setDepth(ct.fx);
     this.tweens.add({ targets: V, y: B - 90, alpha: 0, duration: 900, ease: "Quad.Out", onComplete: () => V.destroy() });
   }
   updatePlayerSprite(k) {
     let B;
-    this.hurtTimer > 0 ? B = "hurt" : this.landTimer > 0 ? B = "land" : this.vy > this.phys.jumpVelocity * 0.2 ? B = "jump" : B = "idle", B !== this.pose && (this.pose = B, this.sprite.setTexture(wt.frames[B]), this.ghost.setTexture(wt.frames[B]));
-    const X = wt.displayHeight / wt.bodyHeight;
+    this.hurtTimer > 0 ? B = "hurt" : this.landTimer > 0 ? B = "land" : this.vy > this.phys.jumpVelocity * 0.2 ? B = "jump" : B = "idle", B !== this.pose && (this.pose = B, this.sprite.setTexture(bt.frames[B]), this.ghost.setTexture(bt.frames[B]));
+    const X = bt.displayHeight / bt.bodyHeight;
     this.squash = Math.max(0, this.squash - k / 0.16);
-    const W = dt.Math.Clamp(this.vy / this.phys.jumpVelocity, -1, 1);
+    const W = pt.Math.Clamp(this.vy / this.phys.jumpVelocity, -1, 1);
     let V = 1 - 0.05 * Math.abs(W), g = 1 + 0.07 * Math.abs(W);
     const T = Math.sin(this.squash * Math.PI * 0.5);
     V += 0.14 * T, g -= 0.16 * T;
-    const t = this.vx / this.phys.maxVx * 7, l = Rt(this.ph);
+    const t = this.vx / this.phys.maxVx * 7, l = Pt(this.ph);
     this.sprite.setPosition(this.px, l).setScale(X * V, X * g).setAngle(t);
     const f = 60;
     this.px < f || this.px > st - f ? this.ghost.setVisible(!0).setPosition(this.px < f ? this.px + st : this.px - st, l).setScale(X * V, X * g).setAngle(t) : this.ghost.setVisible(!1);
@@ -27744,45 +27763,45 @@ class ns extends dt.Scene {
     }));
   }
 }
-const as = { nbsp: " ", amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", shy: "", ndash: "–", mdash: "—", hellip: "…", auml: "ä", ouml: "ö", uuml: "ü", Auml: "Ä", Ouml: "Ö", Uuml: "Ü", aring: "å", Aring: "Å", szlig: "ß" };
-function os(j) {
+const us = { nbsp: " ", amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", shy: "", ndash: "–", mdash: "—", hellip: "…", auml: "ä", ouml: "ö", uuml: "ü", Auml: "Ä", Ouml: "Ö", Uuml: "Ü", aring: "å", Aring: "Å", szlig: "ß" };
+function ds(j) {
   return j.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (k, B) => {
     if (B[0] === "#") {
       const X = B[1] === "x" || B[1] === "X" ? parseInt(B.slice(2), 16) : parseInt(B.slice(1), 10);
       return Number.isFinite(X) ? String.fromCodePoint(X) : k;
     }
-    return as[B] ?? k;
+    return us[B] ?? k;
   });
 }
-function hs(j) {
+function ps(j) {
   let k = j.replace(/\[sound:[^\]]*\]/gi, " ").replace(/\{\{c\d+::(.*?)(::[^}]*)?\}\}/g, "$1").replace(/<br\s*\/?>|<\/?(div|p|li|ul|ol)[^>]*>/gi, `
 `).replace(/<[^>]+>/g, "");
-  return k = os(k), k.split(`
+  return k = ds(k), k.split(`
 `).map((B) => B.replace(/\s+/g, " ").trim()).filter(Boolean);
 }
 function Pe(j) {
-  return hs(j)[0] ?? "";
+  return ps(j)[0] ?? "";
 }
-function ls(j, k) {
+function fs(j, k) {
   const B = j.split(/\s*[;,]\s*|\s+\/\s+/).map((V) => V.trim()).filter(Boolean), X = B.length > 1 ? B : [];
   if (j.length <= k) return { display: j, alternatives: X };
   const W = B[0];
   return W && W.length <= k ? { display: W, alternatives: X } : null;
 }
-const cs = /[äöÄÖ]|\b\w*(ssa|ssä|sta|stä|lla|llä|lta|ltä|lle|nen|ksi|aan|ään|ssaan|mme|tte|vat|vät|taa|tää)\b|(aa|ee|ii|oo|uu|yy|ää|öö|kk|pp|tt)/gi, us = /\b(the|to|a|an|is|are|you|of|and|it|in|on|what|how|my|your|he|she|we|they|this|that|with|for|be)\b/gi, ds = /\b(der|die|das|den|dem|ein|eine|einen|ist|sind|und|nicht|ich|du|er|wir|ihr|zu|mit|für|von|im|am|wie|was)\b|[ßüÜ]/gi, ps = /\b(och|att|det|en|ett|jag|du|är|inte|på|med|för|av)\b|[åÅ]/gi, fe = (j, k) => (j.match(k) ?? []).length;
-function ui(j) {
+const gs = /[äöÄÖ]|\b\w*(ssa|ssä|sta|stä|lla|llä|lta|ltä|lle|nen|ksi|aan|ään|ssaan|mme|tte|vat|vät|taa|tää)\b|(aa|ee|ii|oo|uu|yy|ää|öö|kk|pp|tt)/gi, vs = /\b(the|to|a|an|is|are|you|of|and|it|in|on|what|how|my|your|he|she|we|they|this|that|with|for|be)\b/gi, ms = /\b(der|die|das|den|dem|ein|eine|einen|ist|sind|und|nicht|ich|du|er|wir|ihr|zu|mit|für|von|im|am|wie|was)\b|[ßüÜ]/gi, ys = /\b(och|att|det|en|ett|jag|du|är|inte|på|med|för|av)\b|[åÅ]/gi, fe = (j, k) => (j.match(k) ?? []).length;
+function gi(j) {
   const k = j.join(`
 `);
-  return { fi: fe(k, cs), en: fe(k, us), de: fe(k, ds), sv: fe(k, ps) };
+  return { fi: fe(k, gs), en: fe(k, vs), de: fe(k, ms), sv: fe(k, ys) };
 }
-function fs(j) {
-  const k = ui(j);
+function xs(j) {
+  const k = gi(j);
   return ["en", "de", "sv"].reduce((B, X) => k[X] > k[B] ? X : B, "en");
 }
-function gs(j) {
+function Ts(j) {
   let k = 0, B = -1 / 0;
   return j.forEach((X, W) => {
-    const V = ui(X.slice(0, 300)), g = V.fi - 1.5 * (V.en + V.de + V.sv);
+    const V = gi(X.slice(0, 300)), g = V.fi - 1.5 * (V.en + V.de + V.sv);
     g > B && (B = g, k = W);
   }), k;
 }
@@ -27791,11 +27810,11 @@ function De(j) {
   for (let B = 0; B < j.length; B++) k ^= j.charCodeAt(B), k = Math.imul(k, 16777619);
   return (k >>> 0).toString(36);
 }
-async function vs() {
+async function ws() {
   const [j, k, B, X] = await Promise.all([import("sql.js"), import("sql.js/dist/sql-wasm.wasm?url"), import("fflate"), import("fzstd")]), W = j.default;
   return { SQL: await W({ locateFile: () => k.default }), unzip: (V) => B.unzipSync(V), zstd: (V) => X.decompress(V) };
 }
-const di = (j) => j.charAt(0).toUpperCase() + j.slice(1);
+const vi = (j) => j.charAt(0).toUpperCase() + j.slice(1);
 function ne(j, k) {
   try {
     return j.exec(k)[0]?.values ?? [];
@@ -27803,7 +27822,7 @@ function ne(j, k) {
     return [];
   }
 }
-function ms(j, k) {
+function bs(j, k) {
   const B = k.unzip(j);
   let X;
   if (B["collection.anki21b"] ? X = k.zstd(B["collection.anki21b"]) : B["collection.anki21"] ? X = B["collection.anki21"] : B["collection.anki2"] && (X = B["collection.anki2"]), !X) throw new Error("Keine Anki-Sammlung in der Datei gefunden.");
@@ -27841,13 +27860,13 @@ function ms(j, k) {
     }
     const e = /* @__PURE__ */ new Map();
     for (const h of n) e.set(h.deck, (e.get(h.deck) ?? 0) + 1);
-    const s = [...e.entries()].sort((h, c) => c[1] - h[1])[0]?.[0] ?? "", o = di(s.split("::").pop()?.trim() || "Anki-Deck"), i = V.get(a) ?? n[0].fields.map((h, c) => `Feld ${c + 1}`);
+    const s = [...e.entries()].sort((h, c) => c[1] - h[1])[0]?.[0] ?? "", o = vi(s.split("::").pop()?.trim() || "Anki-Deck"), i = V.get(a) ?? n[0].fields.map((h, c) => `Feld ${c + 1}`);
     return { title: o, fieldNames: i, notes: n, source: "apkg", otherModelNotes: r };
   } finally {
     W.close();
   }
 }
-function ys(j, k) {
+function Ss(j, k) {
   const B = [];
   let X = "", W = !1;
   for (let V = 0; V < j.length; V++) {
@@ -27856,7 +27875,7 @@ function ys(j, k) {
   }
   return B.push(X), B;
 }
-function xs(j, k) {
+function Es(j, k) {
   const B = j.replace(/^﻿/, "").split(/\r?\n/), X = {}, W = [];
   for (const s of B) {
     const o = /^#([a-z ]+):(.*)$/i.exec(s);
@@ -27872,27 +27891,27 @@ function xs(j, k) {
   const T = (s) => X[s] ? Number(X[s]) - 1 : -1, t = new Set([T("guid column"), T("notetype column"), T("deck column"), T("tags column")].filter((s) => s >= 0)), l = T("tags column"), f = T("deck column"), a = T("guid column"), n = [];
   let r = 0;
   for (const s of W) {
-    const o = ys(s, g), i = o.filter((h, c) => !t.has(c));
+    const o = Ss(s, g), i = o.filter((h, c) => !t.has(c));
     r = Math.max(r, i.length), n.push({ id: a >= 0 ? `g${o[a]}` : `t${De(i.slice(0, 2).join("|"))}`, fields: i, tags: l >= 0 ? (o[l] ?? "").split(/\s+/).filter(Boolean) : [], deck: f >= 0 ? o[f] ?? "" : "", ivl: 0 });
   }
   if (!n.length || r < 2) throw new Error("Keine Karten mit mindestens zwei Feldern gefunden.");
   const e = n.find((s) => s.deck)?.deck ?? "";
-  return { title: di(e.split("::").pop()?.trim() || k.replace(/\.[^.]+$/, "")), fieldNames: Array.from({ length: r }, (s, o) => `Feld ${o + 1}`), notes: n, source: "txt", otherModelNotes: 0 };
+  return { title: vi(e.split("::").pop()?.trim() || k.replace(/\.[^.]+$/, "")), fieldNames: Array.from({ length: r }, (s, o) => `Feld ${o + 1}`), notes: n, source: "txt", otherModelNotes: 0 };
 }
-const Ts = 24, ws = 60;
-function bs(j) {
-  const k = j.fieldNames.map((g, T) => j.notes.slice(0, 300).map((t) => Pe(t.fields[T] ?? ""))), B = k.map((g) => g.filter(Boolean).length), X = k.map((g, T) => T).filter((g) => B[g] >= Math.max(1, B.length ? Math.max(...B) * 0.5 : 1)), W = X[gs(X.map((g) => k[g]))] ?? 0, V = X.find((g) => g !== W) ?? (W === 0 ? 1 : 0);
-  return { target: W, source: V, targetLang: "fi", sourceLang: fs(k[V] ?? []) };
+const As = 24, _s = 60;
+function Cs(j) {
+  const k = j.fieldNames.map((g, T) => j.notes.slice(0, 300).map((t) => Pe(t.fields[T] ?? ""))), B = k.map((g) => g.filter(Boolean).length), X = k.map((g, T) => T).filter((g) => B[g] >= Math.max(1, B.length ? Math.max(...B) * 0.5 : 1)), W = X[Ts(X.map((g) => k[g]))] ?? 0, V = X.find((g) => g !== W) ?? (W === 0 ? 1 : 0);
+  return { target: W, source: V, targetLang: "fi", sourceLang: xs(k[V] ?? []) };
 }
-function Ss(j, k) {
+function Ms(j, k) {
   if (/(^|\s)[-+]|[-+](\s|$)|\bG \+|\(|\)/.test(j)) return 5;
   const B = k.map(Number).find((V) => Number.isInteger(V) && V > 0);
   let X = B ? 1 + Math.floor((Math.min(B, 10) - 1) / 2.5) : 2;
   const W = j.trim().split(/\s+/).length;
   return j.length > 11 && X++, W > 2 && X++, Math.max(1, Math.min(5, X));
 }
-const Es = /* @__PURE__ */ new Set(["sanasto", "tarina", "fraasit", "vocab", "vocabulary", "leech", "marked", "duplicate"]);
-function He(j, k) {
+const Rs = /* @__PURE__ */ new Set(["sanasto", "tarina", "fraasit", "vocab", "vocabulary", "leech", "marked", "duplicate"]);
+function je(j, k) {
   const B = /* @__PURE__ */ new Map();
   for (const T of j.notes) for (const t of T.tags) B.set(t, (B.get(t) ?? 0) + 1);
   const X = [], W = {}, V = { empty: 0, tooLong: 0, duplicate: 0, same: 0 }, g = /* @__PURE__ */ new Set();
@@ -27902,8 +27921,8 @@ function He(j, k) {
       V.empty++;
       continue;
     }
-    const f = ls(t, Ts);
-    if (!f || l.length > ws) {
+    const f = fs(t, As);
+    if (!f || l.length > _s) {
       V.tooLong++;
       continue;
     }
@@ -27917,12 +27936,12 @@ function He(j, k) {
       continue;
     }
     g.add(a);
-    const n = T.tags.filter((o) => !/^\d+$/.test(o) && !Es.has(o.toLowerCase())), r = T.tags.find((o) => /^\d+$/.test(o)), e = n.length ? n.sort((o, i) => (B.get(o) ?? 0) - (B.get(i) ?? 0))[0] : r ? `Kapitel ${r}` : "allgemein", s = `anki-${T.id}`;
-    X.push({ id: s, source: l, target: f.display, lemma: f.display, category: e, level: Ss(f.display, T.tags), alternatives: f.alternatives.length ? f.alternatives : void 0, tags: T.tags.length ? T.tags : void 0 }), T.ivl >= 21 ? W[s] = 3 : T.ivl >= 7 ? W[s] = 2 : T.ivl >= 1 && (W[s] = 1);
+    const n = T.tags.filter((o) => !/^\d+$/.test(o) && !Rs.has(o.toLowerCase())), r = T.tags.find((o) => /^\d+$/.test(o)), e = n.length ? n.sort((o, i) => (B.get(o) ?? 0) - (B.get(i) ?? 0))[0] : r ? `Kapitel ${r}` : "allgemein", s = `anki-${T.id}`;
+    X.push({ id: s, source: l, target: f.display, lemma: f.display, category: e, level: Ms(f.display, T.tags), alternatives: f.alternatives.length ? f.alternatives : void 0, tags: T.tags.length ? T.tags : void 0 }), T.ivl >= 21 ? W[s] = 3 : T.ivl >= 7 ? W[s] = 2 : T.ivl >= 1 && (W[s] = 1);
   }
   return { entries: X, meta: { title: j.title, sourceLang: k.sourceLang, targetLang: k.targetLang }, skipped: V, seedBoxes: W };
 }
-function As(j) {
+function Ps(j) {
   return new Promise((k) => {
     const B = document.createElement("input");
     B.type = "file", B.accept = j, B.style.position = "fixed", B.style.left = "-1000px";
@@ -27936,106 +27955,106 @@ function As(j) {
 function Fe(j) {
   return Array.isArray(j) ? { meta: {}, entries: j } : { meta: j.meta ?? {}, entries: j.entries ?? [] };
 }
-function pi(j, k, B, X = 600) {
-  const W = vt(j), V = j.add.container(0, 0);
-  V.add(ct(j, k, B - 58, "Tempo", { size: 26, color: "#6b5f86", strokeThickness: 0 }));
-  const g = (X - 32) / 3, T = [], t = () => T.forEach((a, n) => a.setActive(jt[n] === vt(j).tempo));
-  jt.forEach((a, n) => {
-    const r = _t(j, k - X / 2 + g / 2 + n * (g + 16), B, g, 64, wi[a], () => {
+function mi(j, k, B, X = 600) {
+  const W = mt(j), V = j.add.container(0, 0);
+  V.add(ut(j, k, B - 58, "Tempo", { size: 26, color: ot.muted, strokeThickness: 0 }));
+  const g = (X - 32) / 3, T = [], t = () => T.forEach((a, n) => a.setActive(qt[n] === mt(j).tempo));
+  qt.forEach((a, n) => {
+    const r = Ct(j, k - X / 2 + g / 2 + n * (g + 16), B, g, 64, Ai[a], () => {
       Ce(j, a), t();
     }, { size: 26 });
     T.push(r), V.add(r.container);
   }), t();
   const l = j.input.keyboard, f = (a) => {
-    const n = jt.indexOf(W.tempo), r = dt.Math.Clamp(n + a, 0, jt.length - 1);
-    r !== n && (Ce(j, jt[r]), t());
+    const n = qt.indexOf(W.tempo), r = pt.Math.Clamp(n + a, 0, qt.length - 1);
+    r !== n && (Ce(j, qt[r]), t());
   };
   return l?.on("keydown-LEFT", () => f(-1)), l?.on("keydown-RIGHT", () => f(1)), V;
 }
 function Le(j, k, B, X) {
-  const W = j.add.container(0, 0), V = (X - 16) / 2, g = () => `Sound: ${vt(j).sfx.enabled ? "an" : "aus"}`, T = () => {
-    const a = vt(j).speech;
+  const W = j.add.container(0, 0), V = (X - 16) / 2, g = () => `Sound: ${mt(j).sfx.enabled ? "an" : "aus"}`, T = () => {
+    const a = mt(j).speech;
     return a.supported ? a.enabled ? a.hasVoice ? a.voiceLabel ? `Aussprache: ${a.voiceLabel}` : "Aussprache: an" : "Aussprache: keine Stimme" : "Aussprache: aus" : "Aussprache: –";
-  }, t = _t(j, k - X / 2 + V / 2, B, V, 54, g(), () => {
-    ni(j, !vt(j).sfx.enabled), t.setLabel(g()), t.setActive(vt(j).sfx.enabled);
+  }, t = Ct(j, k - X / 2 + V / 2, B, V, 54, g(), () => {
+    li(j, !mt(j).sfx.enabled), t.setLabel(g()), t.setActive(mt(j).sfx.enabled);
   }, { size: 22 });
-  t.setActive(vt(j).sfx.enabled);
-  const l = _t(j, k + X / 2 - V / 2, B, V, 54, T(), () => {
-    const a = vt(j);
-    zi(j, !a.speech.enabled), l.setLabel(T()), l.setActive(a.speech.enabled && a.speech.hasVoice), a.speech.enabled && a.speech.speak("Mustikka");
+  t.setActive(mt(j).sfx.enabled);
+  const l = Ct(j, k + X / 2 - V / 2, B, V, 54, T(), () => {
+    const a = mt(j);
+    Ki(j, !a.speech.enabled), l.setLabel(T()), l.setActive(a.speech.enabled && a.speech.hasVoice), a.speech.enabled && a.speech.speak("Mustikka");
   }, { size: 22 });
-  l.setActive(vt(j).speech.enabled && vt(j).speech.hasVoice);
-  const f = vt(j).speech.onVoicesChanged(() => {
-    l.setLabel(T()), l.setActive(vt(j).speech.enabled && vt(j).speech.hasVoice);
+  l.setActive(mt(j).speech.enabled && mt(j).speech.hasVoice);
+  const f = mt(j).speech.onVoicesChanged(() => {
+    l.setLabel(T()), l.setActive(mt(j).speech.enabled && mt(j).speech.hasVoice);
   });
-  return j.events.once(dt.Scenes.Events.SHUTDOWN, f), W.add([t.container, l.container]), W;
+  return j.events.once(pt.Scenes.Events.SHUTDOWN, f), W.add([t.container, l.container]), W;
 }
-class _s extends dt.Scene {
+class Ls extends pt.Scene {
   constructor() {
     super("Menu"), Q(this, "bg"), Q(this, "berry"), Q(this, "t", 0), Q(this, "berryBaseY", 0);
   }
   create() {
-    $t(this);
-    const k = vt(this);
-    Zi(this, k.theme), this.bg = new ci(this, ee[k.theme]);
-    const B = st / 2, X = ct(this, B, 170, "Mustikka Hyppy", { size: 70, strokeThickness: 12 }).setDepth(lt.hud);
+    Qt(this);
+    const k = mt(this);
+    es(this, k.theme), this.bg = new fi(this, ee[k.theme]);
+    const B = st / 2, X = ut(this, B, 170, "Mustikka Hyppy", { size: 70, strokeThickness: 12 }).setDepth(ct.hud);
     this.tweens.add({ targets: X, y: 180, duration: 1600, yoyo: !0, repeat: -1, ease: "Sine.InOut" });
     const W = ie(k.settings.direction === "forward" ? k.meta.sourceLang ?? k.settings.sourceLang : k.meta.targetLang ?? k.settings.targetLang), V = ie(k.settings.direction === "forward" ? k.meta.targetLang ?? k.settings.targetLang : k.meta.sourceLang ?? k.settings.sourceLang);
-    ct(this, B, 250, `Vokabel-Sprungspiel · ${W} → ${V}`, { size: 26, color: "#6b4a3a" }).setDepth(lt.hud);
+    ut(this, B, 250, `Vokabel-Sprungspiel · ${W} → ${V}`, { size: 26, color: ot.subtitle }).setDepth(ct.hud);
     const g = k.prefs.getHighscore(), T = new ke(k.entries, { direction: k.settings.direction, levels: k.settings.levels, categories: k.settings.categories, repeatAfterRows: [3, 4] }).poolIds, t = k.progress.stats(T), l = [];
-    g && g.score > 0 && l.push(`Highscore ${g.score}`), l.push(t.known + t.learning > 0 ? `${t.known}/${t.total} sicher · ${t.learning} in Arbeit` : `${t.total} Wörter · Lernstand`), _t(this, B, 302, 560, 46, `${l.join("  ·  ")}  ▸`, () => {
+    g && g.score > 0 && l.push(`Highscore ${g.score}`), l.push(t.known + t.learning > 0 ? `${t.known}/${t.total} sicher · ${t.learning} in Arbeit` : `${t.total} Wörter · Lernstand`), Ct(this, B, 302, 560, 46, `${l.join("  ·  ")}  ▸`, () => {
       this.scene.launch("Stats"), this.scene.pause();
-    }, { size: 20 }).container.setDepth(lt.hud);
+    }, { size: 20 }).container.setDepth(ct.hud);
     const f = 560;
-    this.add.image(B, f, Nt.key).setOrigin(0.5, Nt.surfaceY / Nt.height).setScale(Nt.displayWidth / Nt.width).setDepth(lt.platforms);
-    const a = wt.displayHeight / wt.bodyHeight * 1.15;
-    this.berry = this.add.image(B, f, wt.frames.idle).setOrigin(0.5, wt.footY / wt.sourceSize).setScale(a).setDepth(lt.player), this.berryBaseY = f;
+    this.add.image(B, f, Nt.key).setOrigin(0.5, Nt.surfaceY / Nt.height).setScale(Nt.displayWidth / Nt.width).setDepth(ct.platforms);
+    const a = bt.displayHeight / bt.bodyHeight * 1.15;
+    this.berry = this.add.image(B, f, bt.frames.idle).setOrigin(0.5, bt.footY / bt.sourceSize).setScale(a).setDepth(ct.player), this.berryBaseY = f;
     const n = 620;
-    se(this, 40, n, st - 80, 640, 34, 0.84).setDepth(lt.hud);
-    const r = this.add.container(0, 0).setDepth(lt.hud + 1);
-    r.add(pi(this, B, n + 95, 580));
+    se(this, 40, n, st - 80, 640, 34, 0.84).setDepth(ct.hud);
+    const r = this.add.container(0, 0).setDepth(ct.hud + 1);
+    r.add(mi(this, B, n + 95, 580));
     const e = Bt.length > 1;
     e && r.add(this.themeSelector(B, n + 215, 580));
-    const s = e ? n + 292 : n + 205, o = Ui();
+    const s = e ? n + 292 : n + 205, o = Zi();
     o ? (r.add(Le(this, B - 99, s, 382)), r.add(this.tiltButton(B + 199, s, 182))) : r.add(Le(this, B, s, 580));
     const i = () => this.startGame();
-    r.add(_t(this, B, n + (e ? 388 : 330), 440, 96, "Los geht’s!", i, { size: 44, color: 10215546 }).container);
+    r.add(Ct(this, B, n + (e ? 388 : 330), 440, 96, "Los geht’s!", i, { size: 44, color: 10215546 }).container);
     const h = o ? `Lenken: Pfeiltasten ← → oder A / D
 oder links / rechts auf den Bildschirm tippen` : `Lenken: ← → oder A / D · Pause: Esc · Ton: M
 Lande auf der richtigen Übersetzung!`;
-    r.add(ct(this, B, n + (e ? 490 : 450), h, { size: 22, strokeThickness: 0, color: "#4a4058" })), k.settings.allowImport ? r.add(this.listRow(B, n + (e ? 580 : 560), 580)) : r.add(ct(this, B, n + (e ? 580 : 560), `${k.entries.length} Vokabeln geladen`, { size: 18, strokeThickness: 0, color: "#857a9e" })), k.onExit && _t(this, 92, 62, 150, 58, "← Zurück", () => k.onExit?.(), { size: 26 }).container.setDepth(lt.hud + 2), this.input.keyboard?.once("keydown-ENTER", i), this.input.keyboard?.once("keydown-SPACE", i), this.cameras.main.fadeIn(300, 250, 247, 239);
+    r.add(ut(this, B, n + (e ? 490 : 450), h, { size: 22, strokeThickness: 0, color: ot.text2 })), k.settings.allowImport ? r.add(this.listRow(B, n + (e ? 580 : 560), 580)) : r.add(ut(this, B, n + (e ? 580 : 560), `${k.entries.length} Vokabeln geladen`, { size: 18, strokeThickness: 0, color: ot.faint })), k.onExit && Ct(this, 92, 62, 150, 58, "← Zurück", () => k.onExit?.(), { size: 26 }).container.setDepth(ct.hud + 2), this.input.keyboard?.once("keydown-ENTER", i), this.input.keyboard?.once("keydown-SPACE", i), ni(this, 300);
   }
   themeSelector(k, B, X) {
     const W = this.add.container(0, 0);
-    W.add(ct(this, k, B - 52, "Tageszeit", { size: 24, color: "#6b5f86", strokeThickness: 0 }));
+    W.add(ut(this, k, B - 52, "Aussehen", { size: 24, color: ot.muted, strokeThickness: 0 }));
     const V = (X - 16) / 2;
     let g = !1;
     const T = async (l) => {
-      g || l === vt(this).theme || (g = !0, t.forEach((f, a) => f.setLabel(Bt[a] === l ? "Lade …" : ee[Bt[a]].label)), await Ki(this, l), Yi(this, l), this.scene.restart());
+      g || l === mt(this).theme || (g = !0, t.forEach((f, a) => f.setLabel(Bt[a] === l ? "Lade …" : ee[Bt[a]].label)), await ts(this, l), qi(this, l), this.scene.restart());
     }, t = Bt.map((l, f) => {
-      const a = _t(this, k - X / 2 + V / 2 + f * (V + 16), B, V, 58, ee[l].label, () => {
+      const a = Ct(this, k - X / 2 + V / 2 + f * (V + 16), B, V, 58, ee[l].label, () => {
         T(l);
       }, { size: 24 });
-      return a.setActive(l === vt(this).theme), W.add(a.container), a;
+      return a.setActive(l === mt(this).theme), W.add(a.container), a;
     });
     return this.input.keyboard?.on("keydown-T", () => {
-      const l = Bt.indexOf(vt(this).theme);
+      const l = Bt.indexOf(mt(this).theme);
       T(Bt[(l + 1) % Bt.length]);
     }), W;
   }
   tiltButton(k, B, X) {
     let W = null;
-    const V = () => `Neigen: ${W ?? (vt(this).tilt ? "an" : "aus")}`, g = _t(this, k, B, X, 54, V(), async () => {
-      const T = vt(this);
+    const V = () => `Neigen: ${W ?? (mt(this).tilt ? "an" : "aus")}`, g = Ct(this, k, B, X, 54, V(), async () => {
+      const T = mt(this);
       if (!T.tilt) {
-        const t = Ut.tiltBlockedReason();
+        const t = Xt.tiltBlockedReason();
         if (t) {
           W = t, g.setLabel(V());
           return;
         }
-        if (!await Ut.requestTiltPermission()) return;
+        if (!await Xt.requestTiltPermission()) return;
         W = "prüfe …", g.setLabel(V());
-        const l = await Ut.probeTilt();
+        const l = await Xt.probeTilt();
         if (W = l ? null : "kein Sensor", !l) {
           g.setLabel(V());
           return;
@@ -28043,17 +28062,17 @@ Lande auf der richtigen Übersetzung!`;
       }
       T.tilt = !T.tilt, T.prefs.setTilt(T.tilt), W = null, g.setLabel(V()), g.setActive(T.tilt);
     }, { size: 22 });
-    return g.setActive(vt(this).tilt), vt(this).tilt && Ut.tiltBlockedReason() && (W = Ut.tiltBlockedReason(), g.setLabel(V())), g.container;
+    return g.setActive(mt(this).tilt), mt(this).tilt && Xt.tiltBlockedReason() && (W = Xt.tiltBlockedReason(), g.setLabel(V())), g.container;
   }
   listRow(k, B, X) {
-    const W = vt(this), V = this.add.container(0, 0), g = [{ id: Yt, title: W.builtin.meta.title ?? "Beispiel-Wortschatz", count: W.builtin.entries.length }, ...W.lists.index()], T = W.listId !== Yt && !W.listId.startsWith("privat-"), t = 150, l = T ? 64 : 0, f = 10, a = X - t - f - (T ? l + f : 0), n = k - X / 2, r = `${W.listTitle} · ${W.entries.length}${g.length > 1 ? "  ▸" : ""}`, e = _t(this, n + a / 2, B, a, 56, r, () => {
+    const W = mt(this), V = this.add.container(0, 0), g = [{ id: Yt, title: W.builtin.meta.title ?? "Beispiel-Wortschatz", count: W.builtin.entries.length }, ...W.lists.index()], T = W.listId !== Yt && !W.listId.startsWith("privat-"), t = 150, l = T ? 64 : 0, f = 10, a = X - t - f - (T ? l + f : 0), n = k - X / 2, r = `${W.listTitle} · ${W.entries.length}${g.length > 1 ? "  ▸" : ""}`, e = Ct(this, n + a / 2, B, a, 56, r, () => {
       if (g.length < 2) return;
       const o = g.findIndex((i) => i.id === W.listId);
       he(W, g[(o + 1) % g.length].id), this.scene.restart();
     }, { size: 21 });
     if (V.add(e.container), T) {
       let o = !1;
-      const i = _t(this, n + a + f + l / 2, B, l, 56, "✕", () => {
+      const i = Ct(this, n + a + f + l / 2, B, l, 56, "✕", () => {
         if (!o) {
           o = !0, i.setLabel("?"), i.setActive(!0), e.setLabel("Nochmal ✕ = Liste löschen"), this.time.delayedCall(2500, () => {
             i.container.active && (o = !1, i.setLabel("✕"), i.setActive(!1), e.setLabel(r));
@@ -28064,13 +28083,13 @@ Lande auf der richtigen Übersetzung!`;
       }, { size: 24 });
       V.add(i.container);
     }
-    const s = _t(this, k + X / 2 - t / 2, B, t, 56, "Import …", () => {
+    const s = Ct(this, k + X / 2 - t / 2, B, t, 56, "Import …", () => {
       this.startImport(s);
     }, { size: 21 });
     return V.add(s.container), V;
   }
   async startImport(k) {
-    const B = await As(".apkg,.colpkg,.txt,.tsv,.csv,.json");
+    const B = await Ps(".apkg,.colpkg,.txt,.tsv,.csv,.json");
     if (B) {
       k.setLabel("Lese …");
       try {
@@ -28079,11 +28098,11 @@ Lande auf der richtigen Übersetzung!`;
           this.importJson(new TextDecoder().decode(X), B.name);
           return;
         }
-        const W = /\.(apkg|colpkg)$/i.test(B.name) ? ms(X, await vs()) : xs(new TextDecoder().decode(X), B.name);
+        const W = /\.(apkg|colpkg)$/i.test(B.name) ? bs(X, await ws()) : Es(new TextDecoder().decode(X), B.name);
         k.setLabel("Import …"), this.scene.launch("Import", { deck: W, fileName: B.name }), this.scene.pause();
       } catch (X) {
         console.error(X), k.setLabel("Fehler");
-        const W = ct(this, st / 2, 1255, `Import fehlgeschlagen: ${X.message}`, { size: 18, color: "#c8323c", strokeThickness: 3, wrapWidth: st - 60 }).setDepth(lt.hud + 2);
+        const W = ut(this, st / 2, 1255, `Import fehlgeschlagen: ${X.message}`, { size: 18, color: ot.red, strokeThickness: 3, wrapWidth: st - 60 }).setDepth(ct.hud + 2);
         this.time.delayedCall(5e3, () => {
           W.destroy(), k.setLabel("Import …");
         });
@@ -28091,7 +28110,7 @@ Lande auf der richtigen Übersetzung!`;
     }
   }
   importJson(k, B) {
-    const X = vt(this), { meta: W, entries: V } = Fe(JSON.parse(k)), g = V.filter((l) => l && typeof l.source == "string" && typeof l.target == "string" && l.source.trim() && l.target.trim());
+    const X = mt(this), { meta: W, entries: V } = Fe(JSON.parse(k)), g = V.filter((l) => l && typeof l.source == "string" && typeof l.target == "string" && l.source.trim() && l.target.trim());
     if (g.length < 4) throw new Error("keine Wortliste im Spielformat");
     g.forEach((l, f) => l.id = String(l.id ?? `w${f}`));
     const T = W.title ?? B.replace(/\.json$/i, ""), t = `json-${De(`${T}|${g[0].id}`)}`;
@@ -28099,35 +28118,35 @@ Lande auf der richtigen Übersetzung!`;
     he(X, t), this.scene.restart();
   }
   startGame() {
-    this.cameras.main.fadeOut(220, 250, 247, 239), this.cameras.main.once(dt.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => this.scene.start("Game"));
+    Wi(this, 220), this.cameras.main.once(pt.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => this.scene.start("Game"));
   }
   update(k, B) {
     const X = Math.min(B, 50) / 1e3;
     this.bg.update(0, X);
-    const W = ve(vt(this).tempo);
+    const W = ve(mt(this).tempo);
     this.t = (this.t + X) % W.T;
     const V = W.jumpVelocity * this.t - 0.5 * W.gravity * this.t * this.t, g = 0.42;
     this.berry.y = this.berryBaseY - V * g;
-    const T = this.t / W.T, t = T < 0.08 || T > 0.96 ? wt.frames.land : T < 0.4 ? wt.frames.jump : wt.frames.idle;
+    const T = this.t / W.T, t = T < 0.08 || T > 0.96 ? bt.frames.land : T < 0.4 ? bt.frames.jump : bt.frames.idle;
     this.berry.texture.key !== t && this.berry.setTexture(t);
   }
 }
-class Cs extends dt.Scene {
+class Os extends pt.Scene {
   constructor() {
     super("Pause");
   }
   create() {
-    $t(this);
-    const k = vt(this), B = this.scene.get("Game"), X = st / 2, W = mt / 2 - 330, V = k.settings.allowMenu || k.onExit ? 670 : 580;
-    xe(this, 0.6).setDepth(lt.overlay), se(this, 60, W, st - 120, V, 34, 0.94).setDepth(lt.overlay);
-    const g = this.add.container(0, 0).setDepth(lt.overlay + 1);
-    g.add(ct(this, X, W + 70, "Pause", { size: 56 })), g.add(pi(this, X, W + 200, 540)), g.add(Le(this, X, W + 290, 540));
+    Qt(this);
+    const k = mt(this), B = this.scene.get("Game"), X = st / 2, W = yt / 2 - 330, V = k.settings.allowMenu || k.onExit ? 670 : 580;
+    xe(this, 0.6).setDepth(ct.overlay), se(this, 60, W, st - 120, V, 34, 0.94).setDepth(ct.overlay);
+    const g = this.add.container(0, 0).setDepth(ct.overlay + 1);
+    g.add(ut(this, X, W + 70, "Pause", { size: 56 })), g.add(mi(this, X, W + 200, 540)), g.add(Le(this, X, W + 290, 540));
     const T = () => {
       this.scene.stop(), this.scene.resume("Game");
     };
-    g.add(_t(this, X, W + 395, 420, 80, "Weiter", T, { size: 34, color: 10215546 }).container), g.add(_t(this, X, W + 495, 420, 72, "Neu starten", () => {
+    g.add(Ct(this, X, W + 395, 420, 80, "Weiter", T, { size: 34, color: 10215546 }).container), g.add(Ct(this, X, W + 495, 420, 72, "Neu starten", () => {
       B.endRound("quit"), this.scene.stop(), this.scene.stop("Game"), this.scene.start("Game");
-    }, { size: 28 }).container), (k.settings.allowMenu || k.onExit) && g.add(_t(this, X, W + 590, 420, 72, k.settings.allowMenu ? "Hauptmenü" : "Beenden", () => {
+    }, { size: 28 }).container), (k.settings.allowMenu || k.onExit) && g.add(Ct(this, X, W + 590, 420, 72, k.settings.allowMenu ? "Hauptmenü" : "Beenden", () => {
       B.endRound("quit"), this.scene.stop("Game"), k.settings.allowMenu ? this.scene.start("Menu") : (this.scene.stop(), k.onExit?.());
     }, { size: 28 }).container);
     const t = this.input.keyboard;
@@ -28135,27 +28154,27 @@ class Cs extends dt.Scene {
   }
 }
 const be = ["en", "de", "sv", "fr", "es", "it"];
-class Ms extends dt.Scene {
+class ks extends pt.Scene {
   constructor() {
     super("Import"), Q(this, "deck"), Q(this, "map"), Q(this, "fieldBtns", {}), Q(this, "preview", []), Q(this, "statsText"), Q(this, "errorText");
   }
   create(k) {
-    $t(this), this.deck = k.deck, this.map = bs(this.deck), this.preview = [];
-    const B = st / 2, X = 90, W = mt - 70;
-    xe(this, 0.7).setDepth(lt.overlay), se(this, 36, X, st - 72, W - X, 34, 0.96).setDepth(lt.overlay);
-    const V = this.add.container(0, 0).setDepth(lt.overlay + 1);
-    V.add(ct(this, B, X + 56, "Wortliste importieren", { size: 40 }));
-    const g = ct(this, B, X + 106, `„${this.deck.title}“ · ${this.deck.notes.length} Karten`, { size: 22, color: "#6b5f86", strokeThickness: 0 });
+    Qt(this), this.deck = k.deck, this.map = Cs(this.deck), this.preview = [];
+    const B = st / 2, X = 90, W = yt - 70;
+    xe(this, 0.7).setDepth(ct.overlay), se(this, 36, X, st - 72, W - X, 34, 0.96).setDepth(ct.overlay);
+    const V = this.add.container(0, 0).setDepth(ct.overlay + 1);
+    V.add(ut(this, B, X + 56, "Wortliste importieren", { size: 40 }));
+    const g = ut(this, B, X + 106, `„${this.deck.title}“ · ${this.deck.notes.length} Karten`, { size: 22, color: ot.muted, strokeThickness: 0 });
     It(g, st - 120, 22, 14), V.add(g);
     const T = X + 180;
-    V.add(ct(this, 80, T - 38, "Lernsprache (auf den Planken)", { size: 18, color: "#6b5f86", strokeThickness: 0 }).setOrigin(0, 0.5)), this.fieldBtns.target = _t(this, B, T, st - 140, 54, "", () => this.cycleField("target"), { size: 22 }), V.add(this.fieldBtns.target.container), V.add(ct(this, 80, T + 62, "Übersetzung (Frage oben)", { size: 18, color: "#6b5f86", strokeThickness: 0 }).setOrigin(0, 0.5)), this.fieldBtns.source = _t(this, B - 95, T + 100, st - 330, 54, "", () => this.cycleField("source"), { size: 22 }), this.fieldBtns.lang = _t(this, st - 70 - 85, T + 100, 170, 54, "", () => this.cycleLang(), { size: 22 }), V.add([this.fieldBtns.source.container, this.fieldBtns.lang.container]);
+    V.add(ut(this, 80, T - 38, "Lernsprache (auf den Planken)", { size: 18, color: ot.muted, strokeThickness: 0 }).setOrigin(0, 0.5)), this.fieldBtns.target = Ct(this, B, T, st - 140, 54, "", () => this.cycleField("target"), { size: 22 }), V.add(this.fieldBtns.target.container), V.add(ut(this, 80, T + 62, "Übersetzung (Frage oben)", { size: 18, color: ot.muted, strokeThickness: 0 }).setOrigin(0, 0.5)), this.fieldBtns.source = Ct(this, B - 95, T + 100, st - 330, 54, "", () => this.cycleField("source"), { size: 22 }), this.fieldBtns.lang = Ct(this, st - 70 - 85, T + 100, 170, 54, "", () => this.cycleLang(), { size: 22 }), V.add([this.fieldBtns.source.container, this.fieldBtns.lang.container]);
     const t = T + 160, l = this.add.graphics();
-    l.fillStyle(2826800, 0.06), l.fillRoundedRect(66, t, st - 132, 430, 22), V.add(l), V.add(ct(this, B, t + 30, "Vorschau", { size: 20, color: "#d17a00", strokeThickness: 0 }));
+    l.fillStyle(ot.tint, ot.tintAlpha), l.fillRoundedRect(66, t, st - 132, 430, 22), V.add(l), V.add(ut(this, B, t + 30, "Vorschau", { size: 20, color: ot.orange, strokeThickness: 0 }));
     for (let f = 0; f < 8; f++) {
-      const a = ct(this, B, t + 76 + f * 44, "", { size: 23, strokeThickness: 4 });
+      const a = ut(this, B, t + 76 + f * 44, "", { size: 23, strokeThickness: 4 });
       this.preview.push(a), V.add(a);
     }
-    this.statsText = ct(this, B, t + 460, "", { size: 19, color: "#4a4058", strokeThickness: 0, wrapWidth: st - 140 }), V.add(this.statsText), this.errorText = ct(this, B, W - 180, "", { size: 20, color: "#c8323c", strokeThickness: 0 }), V.add(this.errorText), V.add(_t(this, B, W - 118, 440, 80, "Übernehmen", () => this.accept(), { size: 32, color: 10215546 }).container), V.add(_t(this, B, W - 44, 300, 54, "Abbrechen", () => this.close(), { size: 22 }).container), this.refresh(), this.input.keyboard?.once("keydown-ESC", () => this.close());
+    this.statsText = ut(this, B, t + 460, "", { size: 19, color: ot.text2, strokeThickness: 0, wrapWidth: st - 140 }), V.add(this.statsText), this.errorText = ut(this, B, W - 180, "", { size: 20, color: ot.red, strokeThickness: 0 }), V.add(this.errorText), V.add(Ct(this, B, W - 118, 440, 80, "Übernehmen", () => this.accept(), { size: 32, color: 10215546 }).container), V.add(Ct(this, B, W - 44, 300, 54, "Abbrechen", () => this.close(), { size: 22 }).container), this.refresh(), this.input.keyboard?.once("keydown-ESC", () => this.close());
   }
   cycleField(k) {
     const B = this.deck.fieldNames.length, X = k === "target" ? this.map.source : this.map.target;
@@ -28172,7 +28191,7 @@ class Ms extends dt.Scene {
   refresh() {
     const k = this.deck.fieldNames;
     this.fieldBtns.target?.setLabel(`${ie(this.map.targetLang)}: Feld „${k[this.map.target]}“`), this.fieldBtns.source?.setLabel(`Feld „${k[this.map.source]}“`), this.fieldBtns.lang?.setLabel(ie(this.map.sourceLang));
-    const B = He(this.deck, this.map), X = Math.max(1, Math.floor(B.entries.length / this.preview.length));
+    const B = je(this.deck, this.map), X = Math.max(1, Math.floor(B.entries.length / this.preview.length));
     this.preview.forEach((T, t) => {
       const l = B.entries[t * X];
       T.setText(l ? `${l.source}  →  ${l.target}` : ""), It(T, st - 160, 23, 14);
@@ -28184,7 +28203,7 @@ class Ms extends dt.Scene {
 ${g} Wörter bringen ihren Lernstand aus Anki mit` : ""));
   }
   accept() {
-    const k = vt(this), B = He(this.deck, this.map);
+    const k = mt(this), B = je(this.deck, this.map);
     if (B.entries.length < 4) {
       this.errorText.setText("Zu wenige verwendbare Wörter – Felder prüfen.");
       return;
@@ -28200,21 +28219,21 @@ ${g} Wörter bringen ihren Lernstand aus Anki mit` : ""));
     this.scene.stop(), this.scene.resume("Menu");
   }
 }
-const je = 6279039, qe = 16762967, Ke = 14999528;
-class Rs extends dt.Scene {
+const qe = 6279039, Ke = 16762967, Ze = 14999528;
+class Ds extends pt.Scene {
   constructor() {
     super("Stats");
   }
   create() {
-    $t(this);
-    const k = vt(this), B = st / 2, X = 70, W = mt - 50;
-    xe(this, 0.7).setDepth(lt.overlay), se(this, 30, X, st - 60, W - X, 34, 0.96).setDepth(lt.overlay);
-    const V = this.add.container(0, 0).setDepth(lt.overlay + 1);
-    V.add(ct(this, B, X + 52, "Lernstand", { size: 44 }));
-    const g = ct(this, B, X + 100, k.listTitle, { size: 22, color: "#6b5f86", strokeThickness: 0 });
+    Qt(this);
+    const k = mt(this), B = st / 2, X = 70, W = yt - 50;
+    xe(this, 0.7).setDepth(ct.overlay), se(this, 30, X, st - 60, W - X, 34, 0.96).setDepth(ct.overlay);
+    const V = this.add.container(0, 0).setDepth(ct.overlay + 1);
+    V.add(ut(this, B, X + 52, "Lernstand", { size: 44 }));
+    const g = ut(this, B, X + 100, k.listTitle, { size: 22, color: ot.muted, strokeThickness: 0 });
     It(g, st - 120, 22, 14), V.add(g);
     const T = new ke(k.entries, { direction: k.settings.direction, levels: k.settings.levels, categories: k.settings.categories, repeatAfterRows: [3, 4] }).poolIds, t = new Set(T), l = k.entries.filter((m) => t.has(m.id)), f = k.progress, a = f.stats(T), n = k.prefs.getHighscore();
-    V.add(ct(this, B, X + 150, `${a.known} sicher · ${a.learning} in Arbeit · ${a.fresh} neu`, { size: 26 })), n && n.score > 0 && V.add(ct(this, B, X + 188, `Highscore ${n.score} · Rekordhöhe ${Math.max(n.bestMeters ?? 0, n.meters)} m`, { size: 19, color: "#d17a00", strokeThickness: 0 }));
+    V.add(ut(this, B, X + 150, `${a.known} sicher · ${a.learning} in Arbeit · ${a.fresh} neu`, { size: 26 })), n && n.score > 0 && V.add(ut(this, B, X + 188, `Highscore ${n.score} · Rekordhöhe ${Math.max(n.bestMeters ?? 0, n.meters)} m`, { size: 19, color: ot.orange, strokeThickness: 0 }));
     const r = this.add.graphics();
     V.add(r);
     const e = 250, s = st - 70 - e, o = [1, 2, 3, 4, 5], i = new Set(l.map((m) => m.level ?? 1)).size > 1;
@@ -28223,32 +28242,32 @@ class Rs extends dt.Scene {
       const x = m ? l.filter((E) => (E.level ?? 1) === m) : l;
       if (!x.length) continue;
       const w = f.stats(x.map((E) => E.id)), b = m ? `Stufe ${m}` : "Alle Wörter";
-      V.add(ct(this, 64, h - 12, b, { size: 22 }).setOrigin(0, 0.5)), m && V.add(ct(this, 64, h + 14, Ee.levelNames[m - 1], { size: 16, color: "#6b5f86", strokeThickness: 0 }).setOrigin(0, 0.5));
+      V.add(ut(this, 64, h - 12, b, { size: 22 }).setOrigin(0, 0.5)), m && V.add(ut(this, 64, h + 14, Ee.levelNames[m - 1], { size: 16, color: ot.muted, strokeThickness: 0 }).setOrigin(0, 0.5));
       const S = s * w.known / w.total, _ = s * w.learning / w.total;
-      r.fillStyle(Ke, 1).fillRoundedRect(e, h - 14, s, 28, 10), S + _ > 0 && r.fillStyle(qe, 1).fillRoundedRect(e, h - 14, Math.max(S + _, 12), 28, 10), S > 0 && r.fillStyle(je, 1).fillRoundedRect(e, h - 14, Math.max(S, 12), 28, 10), V.add(ct(this, e + s / 2, h, `${w.known} / ${w.total}`, { size: 17, strokeThickness: 3 })), h += 64;
+      r.fillStyle(Ze, 1).fillRoundedRect(e, h - 14, s, 28, 10), S + _ > 0 && r.fillStyle(Ke, 1).fillRoundedRect(e, h - 14, Math.max(S + _, 12), 28, 10), S > 0 && r.fillStyle(qe, 1).fillRoundedRect(e, h - 14, Math.max(S, 12), 28, 10), V.add(ut(this, e + s / 2, h, `${w.known} / ${w.total}`, { size: 17, strokeThickness: 3, color: ot.buttonText, stroke: ot.buttonTextStroke })), h += 64;
     }
-    const c = [[je, "sicher (3× richtig in Folge)"], [qe, "in Arbeit"], [Ke, "neu"]];
+    const c = [[qe, "sicher (3× richtig in Folge)"], [Ke, "in Arbeit"], [Ze, "neu"]];
     let d = 64;
     for (const [m, x] of c) {
       r.fillStyle(m, 1).fillRoundedRect(d, h - 8, 18, 18, 5);
-      const w = ct(this, d + 26, h, x, { size: 16, strokeThickness: 0, color: "#4a4058" }).setOrigin(0, 0.5);
+      const w = ut(this, d + 26, h, x, { size: 16, strokeThickness: 0, color: ot.text2 }).setOrigin(0, 0.5);
       V.add(w), d += 26 + w.width + 22;
     }
     h += 50;
     const u = l.map((m) => ({ e: m, p: f.get(m.id) })).filter((m) => m.p && m.p.wrong > 0).sort((m, x) => x.p.wrong - m.p.wrong || m.p.box - x.p.box).slice(0, 7);
-    V.add(ct(this, B, h, u.length ? "Oft falsch" : "Noch keine Fehler – weiter so!", { size: 22, color: u.length ? "#d17a00" : "#2f8a45", strokeThickness: 0 })), h += 40;
+    V.add(ut(this, B, h, u.length ? "Oft falsch" : "Noch keine Fehler – weiter so!", { size: 22, color: u.length ? ot.orange : ot.green, strokeThickness: 0 })), h += 40;
     for (const { e: m, p: x } of u) {
-      const w = ct(this, 70, h, `${m.source}  →  ${m.target}`, { size: 20, strokeThickness: 3 }).setOrigin(0, 0.5);
+      const w = ut(this, 70, h, `${m.source}  →  ${m.target}`, { size: 20, strokeThickness: 3 }).setOrigin(0, 0.5);
       It(w, st - 250, 20, 13);
       const b = x.box >= le ? "✓" : "";
-      V.add(w), V.add(ct(this, st - 70, h, `✗${x.wrong}  ✓${x.right} ${b}`, { size: 18, color: "#c8323c", strokeThickness: 3 }).setOrigin(1, 0.5)), h += 34;
+      V.add(w), V.add(ut(this, st - 70, h, `✗${x.wrong}  ✓${x.right} ${b}`, { size: 18, color: ot.red, strokeThickness: 3 }).setOrigin(1, 0.5)), h += 34;
     }
     const p = () => {
       this.scene.stop(), this.scene.resume("Menu");
     };
-    V.add(_t(this, B - 120, W - 50, 220, 64, "Zurück", p, { size: 26, color: 10215546 }).container);
+    V.add(Ct(this, B - 120, W - 50, 220, 64, "Zurück", p, { size: 26, color: 10215546 }).container);
     let v = !1;
-    const y = _t(this, B + 120, W - 50, 220, 64, "Zurücksetzen", () => {
+    const y = Ct(this, B + 120, W - 50, 220, 64, "Zurücksetzen", () => {
       if (!v) {
         v = !0, y.setLabel("Wirklich?"), y.setActive(!0), this.time.delayedCall(2500, () => {
           v = !1, y.setLabel("Zurücksetzen"), y.setActive(!1);
@@ -28260,7 +28279,7 @@ class Rs extends dt.Scene {
     V.add(y.container), this.input.keyboard?.once("keydown-ESC", p);
   }
 }
-class Ps {
+class Fs {
   constructor(k) {
     Q(this, "enabled"), Q(this, "ctx"), Q(this, "master"), Q(this, "noiseBuf"), Q(this, "lastJump", 0), this.enabled = k;
   }
@@ -28271,7 +28290,7 @@ class Ps {
         if (!k) return;
         this.ctx = new k();
         const B = this.ctx.createDynamicsCompressor();
-        B.threshold.value = -10, B.ratio.value = 3, B.connect(this.ctx.destination), this.master = this.ctx.createGain(), this.master.gain.value = Je.sfxVolume, this.master.connect(B);
+        B.threshold.value = -10, B.ratio.value = 3, B.connect(this.ctx.destination), this.master = this.ctx.createGain(), this.master.gain.value = ti.sfxVolume, this.master.connect(B);
         const X = Math.floor(this.ctx.sampleRate * 0.6);
         this.noiseBuf = this.ctx.createBuffer(1, X, this.ctx.sampleRate);
         const W = this.noiseBuf.getChannelData(0);
@@ -28359,12 +28378,12 @@ class Ps {
     }
   }
 }
-const Ls = { fi: "fi-FI", de: "de-DE", en: "en-GB", sv: "sv-SE", et: "et-EE", fr: "fr-FR", es: "es-ES", it: "it-IT" };
-function Ze(j) {
-  return Ls[j] ?? j;
+const Is = { fi: "fi-FI", de: "de-DE", en: "en-GB", sv: "sv-SE", et: "et-EE", fr: "fr-FR", es: "es-ES", it: "it-IT" };
+function $e(j) {
+  return Is[j] ?? j;
 }
-const Os = /^(eddy|flo|grandma|grandpa|reed|rocko|sandy|shelley)\b/i, ks = /\b(satu|onni|noora|harri|selma|google)\b/i;
-class Ds {
+const Bs = /^(eddy|flo|grandma|grandpa|reed|rocko|sandy|shelley)\b/i, Ns = /\b(satu|onni|noora|harri|selma|google)\b/i;
+class Ys {
   constructor(k, B, X) {
     if (Q(this, "enabled"), Q(this, "lang"), Q(this, "custom"), Q(this, "voice"), Q(this, "listeners", []), Q(this, "unlocked", !1), this.enabled = k, this.lang = B, this.custom = X, !X && this.supported) {
       const W = () => {
@@ -28398,9 +28417,9 @@ class Ds {
     return this.listeners.push(k), () => this.listeners = this.listeners.filter((B) => B !== k);
   }
   findVoice() {
-    const k = window.speechSynthesis.getVoices(), B = Ze(this.lang).toLowerCase(), X = this.lang.toLowerCase().split("-")[0], W = (t) => t.lang.toLowerCase().replace("_", "-"), V = k.filter((t) => W(t).split("-")[0] === X);
+    const k = window.speechSynthesis.getVoices(), B = $e(this.lang).toLowerCase(), X = this.lang.toLowerCase().split("-")[0], W = (t) => t.lang.toLowerCase().replace("_", "-"), V = k.filter((t) => W(t).split("-")[0] === X);
     if (!V.length) return;
-    const g = (t) => (W(t) === B ? 4 : 0) + (/natural|premium|enhanced|erweitert/i.test(t.name) ? 3 : 0) + (ks.test(t.name) ? 2 : 0) + (/online|neural/i.test(t.name) ? 1 : 0) - (Os.test(t.name) ? 10 : 0), T = [...V].sort((t, l) => g(l) - g(t))[0];
+    const g = (t) => (W(t) === B ? 4 : 0) + (/natural|premium|enhanced|erweitert/i.test(t.name) ? 3 : 0) + (Ns.test(t.name) ? 2 : 0) + (/online|neural/i.test(t.name) ? 1 : 0) - (Bs.test(t.name) ? 10 : 0), T = [...V].sort((t, l) => g(l) - g(t))[0];
     return console.info("[Mustikka Hyppy] Stimme für", this.lang, "→", T.name, `(${T.lang})`), T;
   }
   get voiceName() {
@@ -28415,14 +28434,14 @@ class Ds {
   speak(k) {
     if (!(!this.enabled || !k)) {
       if (this.custom) {
-        this.custom(k, Ze(this.lang));
+        this.custom(k, $e(this.lang));
         return;
       }
       if (!(!this.supported || !this.voice)) try {
         const B = window.speechSynthesis;
         B.cancel();
         const X = new SpeechSynthesisUtterance(k);
-        X.voice = this.voice, X.lang = this.voice.lang, X.rate = 0.9, X.volume = Je.speechVolume, B.speak(X);
+        X.voice = this.voice, X.lang = this.voice.lang, X.rate = 0.9, X.volume = ti.speechVolume, B.speak(X);
       } catch {
       }
     }
@@ -28434,14 +28453,14 @@ class Ds {
     }
   }
 }
-function fi() {
+function yi() {
   return typeof window < "u" && !!window.matchMedia?.("(pointer: coarse)").matches;
 }
-function Fs() {
+function zs() {
   const j = screen.orientation?.type;
   return j ? j.startsWith("landscape") : window.innerWidth > window.innerHeight;
 }
-function $e() {
+function Qe() {
   const j = screen.orientation;
   try {
     j?.lock?.("portrait").catch(() => {
@@ -28449,8 +28468,8 @@ function $e() {
   } catch {
   }
 }
-function Is(j, k, B) {
-  const X = fi();
+function Us(j, k, B) {
+  const X = yi();
   let W = null;
   const V = [];
   if (X) {
@@ -28476,28 +28495,28 @@ function Is(j, k, B) {
     } catch {
     }
   }, T = () => {
-    const f = X && Fs();
+    const f = X && zs();
     for (W && (W.style.display = f ? "flex" : "none"), f && B(), window.scrollTo(0, 0); V.length; ) clearTimeout(V.pop());
     for (const a of [0, 100, 300, 600, 1e3]) V.push(window.setTimeout(g, a));
   }, t = () => T();
   window.addEventListener("resize", t), window.addEventListener("orientationchange", t), screen.orientation?.addEventListener?.("change", t), window.visualViewport?.addEventListener("resize", t);
-  const l = () => $e();
-  return X && k.addEventListener("pointerdown", l, { once: !0 }), X && $e(), T(), () => {
+  const l = () => Qe();
+  return X && k.addEventListener("pointerdown", l, { once: !0 }), X && Qe(), T(), () => {
     for (window.removeEventListener("resize", t), window.removeEventListener("orientationchange", t), screen.orientation?.removeEventListener?.("change", t), window.visualViewport?.removeEventListener("resize", t), k.removeEventListener("pointerdown", l); V.length; ) clearTimeout(V.pop());
     W?.remove();
   };
 }
-function Ns(j) {
+function Ws(j) {
   const k = typeof j.parent == "string" ? document.getElementById(j.parent) : j.parent;
   if (!k) throw new Error("Mustikka Hyppy: parent-Element nicht gefunden");
-  const B = { ...ki, ...j.settings }, { meta: X, entries: W } = Fe(j.words);
+  const B = { ...Bi, ...j.settings }, { meta: X, entries: W } = Fe(j.words);
   if (X.sourceLang && !j.settings?.sourceLang && (B.sourceLang = X.sourceLang), X.targetLang && !j.settings?.targetLang && (B.targetLang = X.targetLang), W.length < 2) throw new Error("Mustikka Hyppy: mindestens 2 Vokabeln nötig");
-  const V = new Fi(B.storagePrefix), g = B.tempo && jt.includes(B.tempo) ? B.tempo : V.getTempo() ?? "normal";
+  const V = new Yi(B.storagePrefix), g = B.tempo && qt.includes(B.tempo) ? B.tempo : V.getTempo() ?? "normal";
   B.tempo && V.setTempo(g);
-  const T = B.theme && Bt.includes(B.theme) ? B.theme : V.getTheme() ?? "doodle";
-  B.theme && V.setTheme(T);
-  const t = { settings: B, entries: W, meta: X, prefs: V, tempo: g, tilt: B.tilt ?? V.getTilt() ?? !1, theme: T, sfx: new Ps(B.sound ?? V.getBool("sound") ?? !0), speech: new Ds(B.pronunciation ?? V.getBool("speech") ?? !0, B.targetLang, j.speak), progress: new si(j.progressStore ?? new ce(`${B.storagePrefix}.progress.${B.direction}`)), builtin: { meta: X, entries: W }, lists: new Ni(B.storagePrefix), listId: Yt, listTitle: X.title ?? "Beispiel-Wortschatz", customProgressStore: j.progressStore, debug: !!j.debug, debugSpeed: j.debugSpeed ?? 1, parentEl: k, onResult: j.onResult, onExit: j.onExit };
-  if (ri(t), B.allowImport) for (const c of j.extraLists ?? []) Bs(t, c.id, c.file);
+  const T = B.theme && Bt.includes(B.theme) ? B.theme : V.getTheme() ?? Di();
+  B.theme && V.setTheme(T), ri(T);
+  const t = { settings: B, entries: W, meta: X, prefs: V, tempo: g, tilt: B.tilt ?? V.getTilt() ?? !1, theme: T, sfx: new Fs(B.sound ?? V.getBool("sound") ?? !0), speech: new Ys(B.pronunciation ?? V.getBool("speech") ?? !0, B.targetLang, j.speak), progress: new oi(j.progressStore ?? new ce(`${B.storagePrefix}.progress.${B.direction}`)), builtin: { meta: X, entries: W }, lists: new ji(B.storagePrefix), listId: Yt, listTitle: X.title ?? "Beispiel-Wortschatz", customProgressStore: j.progressStore, debug: !!j.debug, debugSpeed: j.debugSpeed ?? 1, parentEl: k, onResult: j.onResult, onExit: j.onExit };
+  if (hi(t), B.allowImport) for (const c of j.extraLists ?? []) Xs(t, c.id, c.file);
   B.allowImport && he(t, t.lists.getActive());
   const l = () => {
     t.sfx.unlock(), t.speech.unlock();
@@ -28505,9 +28524,9 @@ function Ns(j) {
   for (const c of f) k.addEventListener(c, l);
   window.addEventListener("keydown", l);
   const a = k.getBoundingClientRect(), n = Math.min(window.devicePixelRatio || 1, 3);
-  let r = a.width || st, e = a.height || mt;
-  fi() && r > e && ([r, e] = [e, r]);
-  const s = Math.min(r / st, e / mt), o = dt.Math.Clamp(Math.round(s * n * 4) / 4, 1, 2.5), i = new dt.Game({ type: dt.AUTO, parent: k, width: Math.round(st * o), height: Math.round(mt * o), backgroundColor: "#faf7ef", scale: { mode: dt.Scale.FIT, autoCenter: dt.Scale.CENTER_BOTH }, render: { antialias: !0, roundPixels: !1, powerPreference: "high-performance" }, input: { activePointers: 3 }, audio: { noAudio: !0 }, disableContextMenu: !0, banner: !1, scene: [$i, _s, ns, Cs, Qi, Ms, Rs], callbacks: { preBoot: (c) => c.registry.set("ctx", t) } }), h = Is(i, k, () => {
+  let r = a.width || st, e = a.height || yt;
+  yi() && r > e && ([r, e] = [e, r]);
+  const s = Math.min(r / st, e / yt), o = pt.Math.Clamp(Math.round(s * n * 4) / 4, 1, 2.5), i = new pt.Game({ type: pt.AUTO, parent: k, width: Math.round(st * o), height: Math.round(yt * o), backgroundColor: ot.canvas, scale: { mode: pt.Scale.FIT, autoCenter: pt.Scale.CENTER_BOTH }, render: { antialias: !0, roundPixels: !1, powerPreference: "high-performance" }, input: { activePointers: 3 }, audio: { noAudio: !0 }, disableContextMenu: !0, banner: !1, scene: [is, Ls, cs, Os, ss, ks, Ds], callbacks: { preBoot: (c) => c.registry.set("ctx", t) } }), h = Us(i, k, () => {
     i.scene.isActive("Game") && !i.scene.isActive("Pause") && (i.scene.pause("Game"), i.scene.run("Pause"));
   });
   return { game: i, setTempo(c) {
@@ -28522,7 +28541,7 @@ function Ns(j) {
     window.removeEventListener("keydown", l), h(), t.speech.cancel(), t.sfx.suspend(), i.destroy(!0);
   } };
 }
-function Bs(j, k, B) {
+function Xs(j, k, B) {
   const { meta: X, entries: W } = Fe(B);
   if (W.length < 2) return;
   const V = !j.lists.load(k);
@@ -28535,5 +28554,5 @@ function Bs(j, k, B) {
   j.lists.getActive() === Yt && j.lists.setActive(k);
 }
 export {
-  Ns as createMustikkaHyppy
+  Ws as createMustikkaHyppy
 };
