@@ -3,23 +3,23 @@
 .games-intro{margin:0 6px 26px}
 .games-intro h1{font:800 clamp(30px,5vw,44px)/1.1 var(--heading);margin:8px 0 10px}
 .games-intro p{margin:0;color:var(--muted);line-height:1.55;max-width:560px}
-.game-card{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:24px;align-items:center;padding:22px;border:2px solid var(--ink);border-radius:20px;background:var(--paper);box-shadow:6px 6px 0 var(--lavender)}
-.game-card img{display:block;width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;border:2px solid var(--ink);border-radius:14px;background:#faf7ef}
+.game-card{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:24px;align-items:center;padding:22px;border:2px solid var(--line);border-radius:20px;background:var(--paper);box-shadow:6px 6px 0 var(--lavender)}
+.game-card img{display:block;width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;border:2px solid var(--line);border-radius:14px;background:var(--bg)}
 .game-card h2{margin:0 0 6px;font:800 26px/1.2 var(--heading)}
 .game-card>div>p{margin:0 0 14px;line-height:1.5}
 .game-decks{border:0;margin:0 0 14px;padding:0}
 .game-decks legend{padding:0;margin-bottom:8px;font-size:12px;font-weight:700;letter-spacing:1.5px;color:var(--purple)}
 .game-decks .choice-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.game-decks button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-height:58px;padding:9px 12px;text-align:left;border:2px solid var(--ink);border-radius:12px;background:var(--paper);box-shadow:2px 2px 0 var(--ink);font-weight:700}
+.game-decks button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-height:58px;padding:9px 12px;text-align:left;border:2px solid var(--line);border-radius:12px;background:var(--paper);box-shadow:2px 2px 0 var(--line);font-weight:700}
 .game-decks button small{font-weight:500;font-size:12px;color:var(--muted)}
 .game-decks button[aria-pressed="true"]{background:var(--lavender)}
 .game-progress{min-height:1.4em;margin:0 0 14px;font-size:13px;color:var(--muted)}
-.game-start{width:100%;min-height:54px;padding:12px 18px;border:2px solid var(--ink);border-radius:12px;background:var(--mint);font-weight:800;font-size:16px;box-shadow:3px 3px 0 var(--ink)}
-.game-start:not(:disabled):hover{transform:translateY(-1px);box-shadow:4px 4px 0 var(--ink)}
-.game-start:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.game-start{width:100%;min-height:54px;padding:12px 18px;border:2px solid var(--line);border-radius:12px;background:var(--mint);font-weight:800;font-size:16px;box-shadow:3px 3px 0 var(--line)}
+.game-start:not(:disabled):hover{transform:translateY(-1px);box-shadow:4px 4px 0 var(--line)}
+.game-start:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--line)}
 .game-start:disabled{opacity:.6}
 .games-more{margin:22px 6px 0;font-size:14px;color:var(--muted)}
-.game-overlay{position:fixed;inset:0;z-index:2000;background:#faf7ef;display:flex;align-items:center;justify-content:center}
+.game-overlay{position:fixed;inset:0;z-index:2000;background:var(--bg);display:flex;align-items:center;justify-content:center}
 .game-overlay[hidden]{display:none}
 .game-overlay.is-dark{background:#1c2042}
 .game-overlay.is-dark .game-loading{color:#b7b0dc}
