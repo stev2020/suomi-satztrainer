@@ -232,7 +232,7 @@ header{flex-wrap:wrap}
 .cr-feed-card.cr-feed-announcement{
  background:var(--lavender);
  border-top-color:var(--ink)!important;
- box-shadow:6px 6px 0 var(--orange);
+ box-shadow:6px 6px 0 var(--orange-shadow);
 }
 .cr-feed-card.cr-feed-announcement::after{background:var(--mint)}
 .cr-feed-announcement .cr-feed-type{background:var(--orange);color:var(--on-orange)}
@@ -268,7 +268,7 @@ header{flex-wrap:wrap}
 
 @media(max-width:640px){
  .cr-feed-card{padding:20px 17px;box-shadow:4px 4px 0 var(--mint)}
- .cr-feed-card.cr-feed-announcement{box-shadow:4px 4px 0 var(--orange)}
+ .cr-feed-card.cr-feed-announcement{box-shadow:4px 4px 0 var(--orange-shadow)}
  .cr-feed-card.cr-feed-question,.cr-feed-card.cr-feed-assignment{box-shadow:4px 4px 0 var(--purple)}
  .cr-feed-card.cr-feed-post{box-shadow:4px 4px 0 var(--mint)}
  .cr-feed-card::after{right:-62px;top:-65px;width:132px;height:132px}
