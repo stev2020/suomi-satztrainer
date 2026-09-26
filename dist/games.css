@@ -21,6 +21,8 @@
 .games-more{margin:22px 6px 0;font-size:14px;color:var(--muted)}
 .game-overlay{position:fixed;inset:0;z-index:2000;background:#faf7ef;display:flex;align-items:center;justify-content:center}
 .game-overlay[hidden]{display:none}
+.game-overlay.is-dark{background:#1c2042}
+.game-overlay.is-dark .game-loading{color:#b7b0dc}
 .game-stage{position:absolute;inset:0;touch-action:none;-webkit-user-select:none;user-select:none}
 .game-loading{position:absolute;z-index:1;font:600 18px/1.4 var(--heading);color:var(--muted)}
 body.game-open{overflow:hidden}

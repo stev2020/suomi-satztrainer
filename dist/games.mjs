@@ -115,12 +115,24 @@ function closeGame(fromHistory = false) {
   $('hyppy-start').focus();
 }
 
+// Aussehen des Spiels (Hell/Dunkel), damit der Ladebildschirm schon passt:
+// gespeicherte Wahl im Spiel, sonst heller/dunkler Modus des Geräts
+function hyppyTheme() {
+  try {
+    const saved = localStorage.getItem('suomi-hyppy.theme');
+    if (saved) return saved;
+  } catch {}
+  return typeof matchMedia === 'function' && matchMedia('(prefers-color-scheme: dark)').matches ? 'night' : 'doodle';
+}
+
 async function openGame() {
   if (instance || opening) return;
   opening = true;
   const start = $('hyppy-start');
   start.disabled = true;
-  $('game-overlay').hidden = false;
+  const overlay = $('game-overlay');
+  overlay.classList.toggle('is-dark', hyppyTheme() === 'night');
+  overlay.hidden = false;
   document.body.classList.add('game-open');
   $('game-loading').hidden = false;
   history.pushState({...(history.state || {}), suomiGame: true}, '');

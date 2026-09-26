@@ -23,7 +23,7 @@ fs.copyFileSync(path.join(game, 'vocab', 'de-fi-grundwortschatz.json'), path.joi
 fs.copyFileSync(path.join(game, 'art', 'cover.png'), path.join(target, 'cover.png'));
 const phaserLicense = path.join(game, 'node_modules', 'phaser', 'LICENSE.md');
 const licenses = [
-  'Mustikka Hyppy – eingebettet im Suomi-Satztrainer',
+  'Mustikka Hyppy – eingebettet in Vanamo',
   '',
   'Phaser (https://phaser.io) – MIT License:',
   fs.existsSync(phaserLicense) ? fs.readFileSync(phaserLicense, 'utf8') : 'Copyright (c) 2013-2025 Phaser Studio Inc.',
