@@ -2,6 +2,13 @@
 // {0}, {1} … sind Platzhalter für Werte, die im Code eingesetzt werden.
 // "Kontext|Text" unterscheidet gleiche deutsche Wörter mit verschiedener Bedeutung (siehe tc() in i18n.mjs).
 export default {
+ "Farben": "Colors",
+ "Farbpalette": "Color palette",
+ "Vanamo – Waldblume": "Vanamo – twinflower",
+ "Mustikka – Heidelbeere": "Mustikka – blueberry",
+ "Ruska – Herbstlaub": "Ruska – autumn leaves",
+ "Kaamos – Polarnacht": "Kaamos – polar night",
+ "Revontulet – Nordlicht": "Revontulet – northern lights",
  "Mein Fortschritt": "My progress",
  "(Name ändern": "(change name",
  "0 Sätze ausgewählt": "0 sentences selected",
