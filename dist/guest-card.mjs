@@ -112,7 +112,7 @@ export function createGuestCard(root,{sentences,level,onUnavailable}){
   box.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{exercise.selected.push(Number(b.dataset.add));renderBuild();renderActions();});
   box.querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>{exercise.selected=exercise.selected.filter(id=>id!==Number(b.dataset.remove));renderBuild();renderActions();});
   const feedback=stage.querySelector('.guest-feedback');
-  if(feedback)feedback.innerHTML=result===false?`Richtig ist: <span lang="de">${esc(sentence.translations[0].text)}</span>`:'';
+  if(feedback)feedback.innerHTML=result===true?'<span class="guest-right">Richtig!</span>':result===false?`Leider nicht, richtig ist: <span lang="de">${esc(sentence.translations[0].text)}</span>`:'';
   renderActions();
  }
 

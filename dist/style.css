@@ -383,3 +383,6 @@ header .header-nav button:hover,header .header-nav button.selected{background:va
 .word-tile{display:inline-flex;align-items:center;min-height:44px;box-sizing:border-box;padding:9px 14px;border:2px solid var(--line);border-radius:10px;background:var(--lavender);box-shadow:2px 2px 0 var(--line);font-weight:600;overflow-wrap:anywhere}
 .word-result.word-checked .word-solution{grid-column:auto;margin:12px 2px 0;padding:0;border:0;border-radius:0;background:none;font-size:15px;font-weight:400;line-height:1.5;color:var(--ink)}
 .word-solution>span{font-weight:700}
+.word-result.word-checked.correct .word-solution{font-weight:700;color:var(--good)}
+.guest-feedback>span{font-weight:700}
+.guest-feedback>.guest-right{color:var(--good)}

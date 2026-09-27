@@ -33,7 +33,7 @@ try{
   const expected=translation.normalize('NFC').split(/\s+/u).map(w=>w.replace(/^[\p{P}\p{S}]+|[\p{P}\p{S}]+$/gu,'')).filter(Boolean);
   for(const word of expected)await page.locator('.guest-bank button:not(:disabled)',{hasText:new RegExp(`^${word.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}$`)}).first().click();
   await page.locator('[data-guest="check"]').click();
-  assert.equal((await page.locator('.guest-feedback').textContent()).trim(),'','a correct answer only turns the box green');
+  assert.equal((await page.locator('.guest-feedback').textContent()).trim(),'Richtig!');
   assert.ok(await page.locator('.guest-answer.is-right').isVisible());
   // Schritt 3: Wort umdrehen
   await page.locator('[data-guest="step"]').click();await wait();
