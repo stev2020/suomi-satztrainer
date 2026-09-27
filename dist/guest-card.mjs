@@ -118,9 +118,9 @@ export function createGuestCard(root,{sentences,level,onUnavailable,sourceIcon=(
 
  function renderActions(){
   if(step===0)return;
-  const other=`<button type="button" class="guest-secondary" data-guest="other">${ICON_SHUFFLE}Anderer Satz</button>`;
-  if(step===1)actions.innerHTML=other+(result===null?`<button type="button" class="guest-check" data-guest="check" ${exercise.selected.length?'':'disabled'}>Prüfen</button>`:`<button type="button" class="guest-next" data-guest="step">Weiter: Wort merken →</button>`);
-  else actions.innerHTML=other+(flipped?`<button type="button" class="guest-next" data-guest="new">Nächster Satz →</button>`:`<button type="button" class="guest-next" data-guest="flip">Umdrehen</button>`);
+  const other=`<button type="button" class="guest-secondary guest-last" data-guest="other">${ICON_SHUFFLE}Anderer Satz</button>`;
+  if(step===1)actions.innerHTML=(result===null?`<button type="button" class="guest-check guest-first" data-guest="check" ${exercise.selected.length?'':'disabled'}>Prüfen</button>`:`<button type="button" class="guest-next guest-first" data-guest="step">Weiter: Wort merken →</button>`)+other;
+  else actions.innerHTML=(flipped?`<button type="button" class="guest-next guest-first" data-guest="new">Nächster Satz →</button>`:`<button type="button" class="guest-next guest-first" data-guest="flip">Umdrehen</button>`)+other;
  }
 
  function flip(){
