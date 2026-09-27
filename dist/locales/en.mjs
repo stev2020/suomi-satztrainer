@@ -2,6 +2,23 @@
 // {0}, {1} … sind Platzhalter für Werte, die im Code eingesetzt werden.
 // "Kontext|Text" unterscheidet gleiche deutsche Wörter mit verschiedener Bedeutung (siehe tc() in i18n.mjs).
 export default {
+ "Ein Satz zum Ausprobieren": "A sentence to try",
+ "Schritte": "Steps",
+ "Lesen": "Read",
+ "Satz bauen": "Build the sentence",
+ "Wort merken": "Remember a word",
+ "· Finnisch": "· Finnish",
+ "Anderer Satz": "Another sentence",
+ "Satz selbst bauen →": "Build it yourself →",
+ "Deine Übersetzung": "Your translation",
+ "Tippe die Wörter in der richtigen Reihenfolge an …": "Tap the words in the right order …",
+ "Genau so heißt der Satz.": "That's exactly what the sentence means.",
+ "Richtig ist:": "The correct answer is:",
+ "Weiter: Wort merken →": "Next: remember a word →",
+ "Nächster Satz →": "Next sentence →",
+ "Umdrehen": "Flip",
+ "Weißt du, was das Wort heißt? Tippe auf die Karte, um sie umzudrehen.": "Do you know what the word means? Tap the card to flip it.",
+ "{0} – Karte umdrehen": "{0} – flip card",
  "Farben": "Colors",
  "Level {0} · mit Konto": "Level {0} · with account",
  "Ohne Konto kannst du Level 1 ausprobieren.": "Without an account you can try Level 1.",
