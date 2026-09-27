@@ -11,6 +11,7 @@ import {addPerformanceEvent,buildLearningInsights,mergePerformanceEvents,validat
 import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './supabase-config.js';
 import {validateGames,mergeGames} from './games-progress.mjs';
 import {mountWordLookup,loadLexicon} from './word-lookup.mjs?v=2';
+import {createGuestCard} from './guest-card.mjs?v=1';
 import {buildDifficultDeck} from './difficult-words.mjs?v=2';
 import {buildEndingItems,indexLexicon,renderEndings} from './endings-practice.mjs?v=1';
 import {translationFeedbackMarkup} from './translation-feedback.mjs?v=1';
@@ -140,6 +141,8 @@ function renderDailyPlan(){
  renderLearningPath();
  $('daily-plan-note').textContent=stats.dueCount?'Bekannte, fällige Sätze – abwechslungsreich üben, ohne neue Sätze.':'Für heute ist alles wiederholt.';
  button.disabled=!ready||(!available&&!(dailySession?.active&&queue.length));
+ // Ohne Konto steht dort die Satzkarte; „Sätze wiederholen“ erscheint nur, wenn in dieser Sitzung etwas fällig ist.
+ document.querySelector('.home-daily').hidden=!accountActive()&&!!guestCard?.available&&!stats.dueCount&&!(dailySession?.active&&queue.length);
  button.textContent=dailySession?.active&&queue.length?'Wiederholung fortsetzen':available?`${available} ${available===1?'Satz':'Sätze'} wiederholen`:'Alles wiederholt';
  $('header-practice').disabled=button.disabled;
 }
@@ -725,7 +728,7 @@ function choosePathLevel(next){
 $('path-level').onchange=e=>choosePathLevel(Number(e.target.value));
 $('path-level-register').onclick=openRegister;
 // Abmelden: gesperrtes Level verlassen; An- und Abmelden: Levelauswahl neu zeichnen.
-if(typeof MutationObserver!=='undefined')new MutationObserver(()=>{if(!ready)return;if(levelLocked(level)){level=levels[0]||1;pathSession=null;guidedNew=false;dailySession=null;start();showView('home');}else{renderLearningPath();renderStats();}}).observe(document.body,{attributes:true,attributeFilter:['data-account']});
+if(typeof MutationObserver!=='undefined')new MutationObserver(()=>{if(typeof syncGuestHome==='function')syncGuestHome();if(!ready)return;if(levelLocked(level)){level=levels[0]||1;pathSession=null;guidedNew=false;dailySession=null;start();showView('home');}else{renderLearningPath();renderStats();}}).observe(document.body,{attributes:true,attributeFilter:['data-account']});
 $('path-next-level').onclick=()=>choosePathLevel(levels.find(n=>n>level));
 $('quick-verb-review').onclick=()=>{if(dailySession)finishDailySession();activity='verbs';syncControls();renderStats();$('home-review').click();};
 $('start-daily-session').onclick=startDailySession;
@@ -764,8 +767,12 @@ $('about').onclick=()=>$('about-dialog').showModal();$('close-about').onclick=()
 document.addEventListener('keydown',e=>{if($('practice-view').hidden||document.querySelector('dialog[open]')||(!$('classrooms-view')?.hidden)||!ready||['writing','verbs','suchsel','endings','dialogs'].includes(activity)||$('about-dialog').open||$('report-dialog').open||$('manage-dialog').open||e.ctrlKey||e.metaKey||e.altKey||e.repeat||['INPUT','SELECT','TEXTAREA'].includes(e.target.tagName))return;if(e.code==='Space'&&e.target.tagName!=='BUTTON'&&!revealed&&queue.length&&isTranslation()){e.preventDefault();$('reveal').click();}else if(revealed&&['1','2','3'].includes(e.key)){e.preventDefault();grade({1:'again',2:'hard',3:'easy'}[e.key]);}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stopAudio();else if(ready)renderStats();});
 // Sätze, Qualitätsliste und Grammatik gleichzeitig laden; die Startseite wartet nur auf die ersten beiden.
+// Ohne Konto zeigt die Startseite statt „Sätze wiederholen“ eine Satzkarte zum Ausprobieren.
+var guestCard=createGuestCard($('guest-card'),{sentences:()=>data,level:()=>levels[0]||1,onUnavailable:()=>syncGuestHome()});
+function syncGuestHome(){if(!guestCard)return;const guest=!accountActive()&&guestCard.available;$('guest-card').hidden=!guest;if(!guest)guestCard.stop();else if(ready)guestCard.start();if(ready)renderDailyPlan();else document.querySelector('.home-daily').hidden=guest;}
+syncGuestHome();
 const sentencesRequest=fetch('sentences.json'),exclusionsRequest=loadQualityExclusions();
 const grammarRequest=fetch('grammar.json').then(r=>r.ok?r.json():null).then(p=>{if(p){grammar=p.sentences||{};grammarAvailable=true;}}).catch(()=>{}).finally(()=>{grammarLoading=false;grammarLoaded();});
-try{const response=await sentencesRequest;if(!response.ok)throw new Error('load');const payload=await response.json();await exclusionsRequest;loadedSentenceIds=new Set([...(payload.sentences||[]),...(Array.isArray(payload.archived_sentences)?payload.archived_sentences:[])].filter(s=>s?.translations?.length).map(s=>s.id));data=qualityFilteredCards(payload.sentences);if(Array.isArray(payload.levels))levels=payload.levels.map(l=>l.id).filter(Number.isInteger);if(!levels.includes(level)||levelLocked(level))level=levels[0]||1;archived=qualityFilteredCards(Array.isArray(payload.archived_sentences)?payload.archived_sentences:[]);if(!Array.isArray(data)||!data.length)throw new Error('empty');ready=true;start();homeLoaded();if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});}catch{$('card').className='card empty';$('card').innerHTML='<h2>Die Sätze konnten nicht geladen werden.</h2><p>Prüfe deine Verbindung und lade die Seite erneut.</p>';$('actions').innerHTML='<button class="primary" id="retry">Erneut versuchen</button>';$('retry').onclick=()=>location.reload();$('total').textContent='Sätze nicht verfügbar';homeLoaded();}
+try{const response=await sentencesRequest;if(!response.ok)throw new Error('load');const payload=await response.json();await exclusionsRequest;loadedSentenceIds=new Set([...(payload.sentences||[]),...(Array.isArray(payload.archived_sentences)?payload.archived_sentences:[])].filter(s=>s?.translations?.length).map(s=>s.id));data=qualityFilteredCards(payload.sentences);if(Array.isArray(payload.levels))levels=payload.levels.map(l=>l.id).filter(Number.isInteger);if(!levels.includes(level)||levelLocked(level))level=levels[0]||1;archived=qualityFilteredCards(Array.isArray(payload.archived_sentences)?payload.archived_sentences:[]);if(!Array.isArray(data)||!data.length)throw new Error('empty');ready=true;start();homeLoaded();syncGuestHome();if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});}catch{$('card').className='card empty';$('card').innerHTML='<h2>Die Sätze konnten nicht geladen werden.</h2><p>Prüfe deine Verbindung und lade die Seite erneut.</p>';$('actions').innerHTML='<button class="primary" id="retry">Erneut versuchen</button>';$('retry').onclick=()=>location.reload();$('total').textContent='Sätze nicht verfügbar';homeLoaded();}
 mountWordLookup([$('practice-view')]);
 window.suomiDifficultDeck=async()=>buildDifficultDeck({lexicon:await loadLexicon(),reviews:memory.reviews,events:memory.performanceEvents,missed:[...endingsState.missed]});
