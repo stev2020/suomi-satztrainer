@@ -7,6 +7,7 @@ export default {
  "Vanamo – Waldblume": "Vanamo – twinflower",
  "Mustikka – Heidelbeere": "Mustikka – blueberry",
  "Ruska – Herbstlaub": "Ruska – autumn leaves",
+ "Tunturi – Fjell": "Tunturi – fell",
  "Kaamos – Polarnacht": "Kaamos – polar night",
  "Revontulet – Nordlicht": "Revontulet – northern lights",
  "Mein Fortschritt": "My progress",
