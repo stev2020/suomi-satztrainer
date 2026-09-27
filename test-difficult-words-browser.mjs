@@ -13,9 +13,9 @@ try{
  await context.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());
  const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
  await page.goto(origin);
- await page.locator('#start-new-sentences:not([disabled])').waitFor();
+ await page.locator('#start-new-sentences:not([disabled])').waitFor({state:'attached'});
  // Looking words up in an exercise must not create difficult words.
- await page.locator('#start-new-sentences').click();
+ await page.evaluate(()=>{const t=document.getElementById('path-toggle');if(t&&!t.hidden&&t.getAttribute('aria-expanded')==='false')t.click();});await page.locator('#start-new-sentences').click();
  if(await page.locator('#guest-continue').isVisible())await page.locator('#guest-continue').click();
   if(await page.locator('#cycle-next').isVisible())await page.locator('#cycle-next').click();
  await page.locator('#card .fi-word').first().click();

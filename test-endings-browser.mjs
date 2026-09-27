@@ -31,8 +31,8 @@ try{
   const context=await browser.newContext({viewport,serviceWorkers:'block',locale:'de-DE'});
   await context.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());
   const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
-  await page.goto(origin);
-  await page.locator('#start-new-sentences:not([disabled])').waitFor();
+  await page.goto(origin);await page.evaluate(()=>{document.body.dataset.account='authenticated';});
+  await page.locator('#start-new-sentences:not([disabled])').waitFor({state:'attached'});
   await page.locator('#more-exercises > summary').click();
   await page.locator('[data-home-activity="endings"]').click();
   assert.equal(await page.locator('#continue-title').textContent(),'Endungen');

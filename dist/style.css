@@ -107,6 +107,16 @@ header{flex-wrap:wrap}.report-error{align-self:center;margin:18px 0 0;padding:7p
 .home-new button{min-height:48px;padding:12px 20px;background:var(--mint);border:2px solid var(--line);border-radius:12px;font-weight:700}
 .path-heading{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .path-tag{font-size:12px;font-weight:700;color:var(--muted)}
+.home-new .path-toggle{display:grid;place-items:center;flex:0 0 40px;width:40px!important;height:40px;min-height:0!important;padding:0!important;margin-left:auto;background:var(--paper)!important;border-radius:50%!important;color:var(--ink);align-self:center}
+.home-new .path-toggle[hidden]{display:none}
+.path-toggle svg{transition:transform .25s ease}
+.home-new.is-collapsible .path-heading{cursor:pointer;align-items:center;flex-wrap:nowrap}
+.home-new.is-collapsible .path-tag{display:none}
+.home-new.is-collapsible .path-heading h2{margin:0}
+.home-new.is-collapsible:not(.is-collapsed) .path-heading{margin-bottom:10px}
+.home-new.is-collapsible:not(.is-collapsed) .path-toggle svg{transform:rotate(180deg)}
+.home-new.is-collapsed>:not(.path-heading),.home-new.is-collapsed .path-tag{display:none}
+.home-new.is-collapsed{padding-block:18px}
 .home-new h3{font-size:24px;line-height:1.25;margin:10px 0;overflow-wrap:anywhere}
 .home-new #path-goal{margin-bottom:12px}.home-new #new-sentences-note{font-size:14px;color:var(--muted)}
 .path-progress-wrap{margin:20px 0 16px}.path-progress-wrap label{display:block;font-size:13px;margin-bottom:8px}
@@ -441,3 +451,7 @@ header .header-nav button:hover,header .header-nav button.selected{background:va
 
 .guest-actions .guest-first{margin-left:0}
 .guest-actions .guest-last{margin-left:auto}
+
+/* Ohne Konto: nur Übersetzen, andere Übungsarten ausgegraut */
+[data-home-activity].is-locked,[data-activity].is-locked{opacity:.45;filter:grayscale(1);box-shadow:none}
+[data-home-activity].is-locked:hover,[data-activity].is-locked:hover{transform:none}

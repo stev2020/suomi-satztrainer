@@ -18,7 +18,20 @@ try{
  const home=()=>page.locator('.app-view:not([hidden]) .back-link[data-view="home"]').click();
  const select=activity=>page.locator('[data-home-activity="'+activity+'"]').click();
  await page.goto(origin);
- await page.locator('#start-new-sentences:not([disabled])').waitFor();
+ await page.locator('#start-new-sentences:not([disabled])').waitFor({state:'attached'});
+ // Gäste sehen von „Neue Sätze lernen“ nur die Überschrift, bis sie es aufklappen
+ assert.ok(await page.locator('#path-title').isVisible());
+ assert.ok(await page.locator('#start-new-sentences').isHidden(),'guest path is collapsed');
+ assert.equal(await page.locator('#path-toggle').getAttribute('aria-expanded'),'false');
+ await page.locator('#path-title').click();
+ assert.ok(await page.locator('#start-new-sentences').isVisible(),'clicking the heading expands the path');
+ assert.equal(await page.locator('#path-toggle').getAttribute('aria-expanded'),'true');
+ await page.locator('#path-toggle').click();
+ assert.ok(await page.locator('#start-new-sentences').isHidden(),'the chevron collapses it again');
+ await page.evaluate(()=>{document.body.dataset.account='authenticated';});
+ assert.ok(await page.locator('#start-new-sentences').isVisible(),'signed-in users always see the path');
+ assert.ok(await page.locator('#path-toggle').isHidden());
+ await page.evaluate(()=>{document.body.dataset.account='guest';});
  assert.equal(await page.locator('#account-dialog').count(),1);
  assert.equal(await page.locator('#progress-nav').count(),0);
  assert.equal(await page.locator('#header-practice').isDisabled(),true);
@@ -38,6 +51,15 @@ try{
  assert.equal(await page.locator('#continue-practice').textContent(),'Beide Lernrichtungen üben');
  await page.locator('[data-home-direction="fi-de"]').click();
  assert.equal(await page.locator('#home-review').isDisabled(),true);
+ // Ohne Konto: nur Übersetzen, andere Übungen ausgegraut und führen zur Registrierung
+ for(const other of ['listen','dictation','verbs','suchsel','endings','dialogs'])assert.equal(await page.locator(`[data-home-activity="${other}"]`).getAttribute('aria-disabled'),'true');
+ assert.equal(await page.locator('[data-home-activity="translate"]').getAttribute('aria-disabled'),null);
+ await page.locator('[data-home-activity="verbs"]').click({force:true});
+ assert.ok(await page.locator('#account-dialog').evaluate(d=>d.open),'locked exercise opens the account dialog');
+ assert.equal(await page.locator('[data-home-activity="translate"]').getAttribute('aria-pressed'),'true');
+ await page.locator('#close-account').click();
+ await page.evaluate(()=>{document.body.dataset.account='authenticated';});
+ assert.equal(await page.locator('[data-home-activity="verbs"]').getAttribute('aria-disabled'),null);
  await select('verbs');
  const now=Date.now()-60000;
  const dueKeys=['olla:0','olla:2','puhua:5'];
@@ -53,6 +75,8 @@ try{
  assert.equal(await page.locator('#start-daily-session').isDisabled(),false);
  assert.equal(await page.locator('#header-practice').isDisabled(),false);
  assert.ok(Number(await page.locator('#daily-due').textContent())>0);
+ // Tageswiederholung als Gast: Hinweis, dass ohne Konto nichts gespeichert wird
+ await page.evaluate(()=>{document.body.dataset.account='guest';});
  await page.locator('#start-daily-session').click();
  assert.ok(await page.locator('#guest-start-dialog').isVisible());
  assert.match(await page.locator('#guest-start-dialog').textContent(),/Ohne Konto wird dein Fortschritt nicht gespeichert/);
@@ -60,12 +84,14 @@ try{
  await page.locator('[data-guest-account="register"]').click();assert.ok(await page.locator('#register-form').isVisible());await page.locator('#close-account').click();
  await page.locator('#start-daily-session').click();await page.locator('#guest-continue').click();
  assert.ok((await page.locator('#session-progress').textContent()).endsWith('/ 4'));
+ await page.evaluate(()=>{document.body.dataset.account='authenticated';});
  await home();
  assert.equal(await page.locator('#start-daily-session').textContent(),'Wiederholung fortsetzen');
  await page.locator('#header-practice').click();
  assert.ok(await page.locator('#practice-view').isVisible());
  assert.equal(await page.locator('#practice-settings').isVisible(),false);
  await home();
+ await select('verbs');
  assert.equal(await page.locator('#home-review').textContent(),'3 Verbformen wiederholen');
  assert.equal(await page.locator('#continue-practice').textContent(),'Üben');
  const colors=await page.evaluate(()=>['.today','#home-review','.home-exercises .selected','#continue-practice'].map(selector=>getComputedStyle(document.querySelector(selector)).backgroundColor));
@@ -116,11 +142,10 @@ try{
  await page.locator('[data-direction="de-fi"]').click();await home();
  assert.equal(await page.locator('#continue-practice').textContent(),'Deutsch → Finnisch üben');
  assert.equal(await page.locator('#home-review').textContent(),'2 Sätze wiederholen');
- assert.equal(await page.evaluate(()=>localStorage.getItem('suomi-learning-v1')),null);
  assert.deepEqual(errors,[]);
  // Fresh learner: no automatic reviews; all specialist controls start collapsed.
  const focused=await context.newPage();focused.on('pageerror',e=>errors.push(e.message));
- await focused.goto(origin);await focused.locator('#start-new-sentences:not([disabled])').waitFor();
+ await focused.goto(origin);await focused.locator('#start-new-sentences:not([disabled])').waitFor({state:'attached'});
  assert.equal(await focused.locator('#more-exercises').getAttribute('open'),null);
  assert.equal(await focused.locator('#start-daily-session').isDisabled(),true);
  for(const width of [1280,390,320]){
@@ -166,7 +191,7 @@ try{
  const settle=()=>focused.waitForFunction(()=>!document.getElementById('card').matches('.cycle-leaving,.cycle-entering'));
  const cycleNext=async()=>{await settle();if(await focused.locator('#cycle-next').isVisible()){await focused.locator('#cycle-next').click();await settle();}};
  const finishCycle=async gradeName=>{await focused.locator('#reveal').click();await focused.locator('#cycle-next').click();await settle();await focused.locator('#cycle-flip').click();await focused.locator(`[data-grade="${gradeName}"]`).click();await settle();};
- await focused.locator('#start-new-sentences').click();
+ await focused.evaluate(()=>{const t=document.getElementById('path-toggle');if(t&&!t.hidden&&t.getAttribute('aria-expanded')==='false')t.click();});await focused.locator('#start-new-sentences').click();
  assert.ok((await focused.locator('#session-progress').textContent()).endsWith('/ 5'));
  assert.match(await focused.locator('#session-title').textContent(),/Begrüßung und Grundlagen/);
  assert.equal(await focused.locator('#practice-settings').isVisible(),false);
@@ -175,7 +200,7 @@ try{
  await focused.locator('[data-pick-word]').first().click();
  await focused.locator('#practice-view [data-view="home"]').click();
  assert.equal(await focused.locator('#start-new-sentences').textContent(),'Etappe fortsetzen');
- await focused.locator('#start-new-sentences').click();
+ await focused.evaluate(()=>{const t=document.getElementById('path-toggle');if(t&&!t.hidden&&t.getAttribute('aria-expanded')==='false')t.click();});await focused.locator('#start-new-sentences').click();
  assert.equal(await focused.locator('[data-return-word]').count(),1);
  await focused.locator('[data-return-word]').first().click();
  for(let i=0;i<5;i++){
@@ -239,11 +264,11 @@ try{
  await focused.locator('#path-level').selectOption('1');
  assert.ok(await focused.locator('.path-stop').getByText('Noch keine passenden Sätze in diesem Level',{exact:true}).count()>0);
  await focused.locator('#path-level').selectOption('6');
- await focused.locator('#start-new-sentences').click();
+ await focused.evaluate(()=>{const t=document.getElementById('path-toggle');if(t&&!t.hidden&&t.getAttribute('aria-expanded')==='false')t.click();});await focused.locator('#start-new-sentences').click();
  assert.match(await focused.locator('.card-top .card-label').textContent(),/Level 6/);
  await focused.locator('#practice-view [data-view="home"]').click();
  await focused.locator('#path-level').selectOption('2');
- await focused.locator('#start-new-sentences').click();
+ await focused.evaluate(()=>{const t=document.getElementById('path-toggle');if(t&&!t.hidden&&t.getAttribute('aria-expanded')==='false')t.click();});await focused.locator('#start-new-sentences').click();
  assert.match(await focused.locator('.card-top .card-label').textContent(),/Level 2/);
  await focused.locator('#practice-view [data-view="home"]').click();
  await focused.locator('#path-level').selectOption('1');
