@@ -132,7 +132,7 @@ function renderDailyPlan(){
  $('daily-due').textContent=stats.dueCount;
  renderLearningPath();
  $('daily-plan-note').textContent=stats.dueCount?'Bekannte, fällige Sätze – abwechslungsreich üben, ohne neue Sätze.':'Für heute ist alles wiederholt.';
- $('daily-plan-level').textContent=`Level ${level}`;
+ const levelSelect=$('daily-plan-level');levelSelect.innerHTML=levels.map(n=>`<option value="${n}" ${n===level?'selected':''}>Level ${n}</option>`).join('');levelSelect.value=String(level);levelSelect.disabled=!ready;
  button.disabled=!ready||(!available&&!(dailySession?.active&&queue.length));
  button.textContent=dailySession?.active&&queue.length?'Wiederholung fortsetzen':available?`${available} ${available===1?'Satz':'Sätze'} wiederholen`:'Alles wiederholt';
  $('header-practice').disabled=button.disabled;
@@ -709,6 +709,7 @@ function choosePathLevel(next){
  start();showView('home');
 }
 $('path-level').onchange=e=>choosePathLevel(Number(e.target.value));
+$('daily-plan-level').onchange=e=>choosePathLevel(Number(e.target.value));
 $('path-next-level').onclick=()=>choosePathLevel(levels.find(n=>n>level));
 $('quick-verb-review').onclick=()=>{if(dailySession)finishDailySession();activity='verbs';syncControls();renderStats();$('home-review').click();};
 $('start-daily-session').onclick=startDailySession;

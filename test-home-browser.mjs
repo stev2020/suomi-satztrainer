@@ -50,7 +50,7 @@ try{
  for(const [kind,count] of [['fi-de',1],['de-fi',2],['listen',3],['dictation',4]])for(const s of sentences.slice(0,count))state.reviews[s.id+':'+kind]={due:now,interval:0,repetitions:2,updatedAt:now};
  await page.evaluate(state=>window.suomiLearningState.applyCloud(state),state);
  assert.ok(await page.locator('.home-daily').isVisible());
- assert.equal(await page.locator('#daily-plan-level').textContent(),'Level 1');
+ assert.equal(await page.locator('#daily-plan-level').inputValue(),'1');
  assert.equal(await page.locator('#start-daily-session').isDisabled(),false);
  assert.equal(await page.locator('#header-practice').isDisabled(),false);
  assert.ok(Number(await page.locator('#daily-due').textContent())>0);
@@ -207,7 +207,7 @@ try{
  assert.ok(await focused.locator('#path-next-level').isVisible());
  await focused.locator('#path-next-level').click();
  assert.equal(await focused.locator('#path-level').inputValue(),'2');
- assert.equal(await focused.locator('#daily-plan-level').textContent(),'Level 2');
+ assert.equal(await focused.locator('#daily-plan-level').inputValue(),'2');
  assert.match(await focused.locator('#path-progress-text').textContent(),/Level 2 · 0 von/);
  await focused.locator('#path-level').selectOption('6');
  assert.equal(await focused.locator('.path-stop').count(),14);
