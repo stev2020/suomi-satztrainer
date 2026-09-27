@@ -30,7 +30,9 @@ assert.ok(!finnishSentenceMatches('on täällä','Hän on täällä.'),'writing 
 assert.ok(!finnishSentenceMatches('ovat täällä','He ovat täällä.'),'writing comparison requires he');
 assert.ok(!finnishSentenceMatches('Sinä olen nälkäinen','Minä olen nälkäinen.'),'writing comparison rejects a wrong subject pronoun');
 {const tomi={text:'Tomi on lyhyt.',translations:[{text:'Tomi ist klein.'}]},tom={text:'Tom juo.',translations:[{text:'Tom trinkt.'}]};
- for(let i=0;i<50;i++){const w=createWordExercise(tomi,'de',[tomi,tom]);assert.ok(!w.tokens.some(t=>t.text==='Tom'),'near-identical names are not offered as distractors');}}
+ for(let i=0;i<50;i++){const w=createWordExercise(tomi,'de',[tomi,tom]);assert.ok(!w.tokens.some(t=>t.text==='Tom'),'near-identical names are not offered as distractors');}
+ const mari={text:'Mari laulaa.',translations:[{text:'Mari singt.'}]},mary={text:'Mary juo.',translations:[{text:'Mary trinkt.'}]};
+ for(let i=0;i<50;i++){const w=createWordExercise(mari,'de',[mari,mary]);assert.ok(!w.tokens.some(t=>t.text==='Mary'),'Mari/Mary are not offered as distractors');}}
 console.log('Word exercise unit tests passed');
 
 function normalizedForTest(word){return word.toLocaleLowerCase('fi').normalize('NFC');}

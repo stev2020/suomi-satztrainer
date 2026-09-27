@@ -25,20 +25,23 @@ def apply_corrections(cards,archived):
   assert sid in byid,sid
   byid[sid]['archive_reason']='Fehler im finnischen Satz: '+reason
  return [s for s in cards if s['id'] not in remove],archived+[byid[sid] for sid in sorted(remove)]
-NAME_FORMS={'Tom':('Tom','Toms'),'Tomi':('Tomi','Tomis')}
+# Finnish Tatoeba uses both Tom and Tomi, Mari and Mary (and rarely Maria). Inflected forms such as
+# Tomin fit Tom and Tomi; Maria is always the partitive of Mari here. The German text uses the same
+# name as the Finnish sentence (2026-09-27). Each group: German pattern, rules (Finnish pattern → name).
+NAME_GROUPS=[
+ (r'\bTomi?s?\b',[(r'\bTom(?!i)\w*','Tom'),(r'\bTomi','Tomi')]),
+ (r'\bMar(?:ia|ie|i|y)s?\b',[(r'\bMary\w*','Mary'),(r'\bMaria[a-zäö]+','Maria'),(r'\bMari\w*','Mari')]),
+]
 def align_names(cards):
- """Finnish Tatoeba uses both Tom and Tomi (inflected forms like Tomin fit either). The German
- text uses the same name as the Finnish sentence: nominative Tom → Tom, otherwise Tomi (2026-09-27)."""
  changed=0
  for s in cards:
-  if re.search(r'\bTom(?!i)\w*',s['text']):name='Tom'
-  elif re.search(r'\bTomi',s['text']):name='Tomi'
-  else:continue
-  nom,gen=NAME_FORMS[name]
-  for t in s['translations']:
-   new=re.sub(r'\bTomis?\b|\bToms?\b',lambda m:gen if m.group().endswith('s') else nom,t['text'])
-   if new!=t['text']:
-    t.setdefault('name_aligned',{'from':t['text'],'name':name,'on':'2026-09-27'});t['text']=new;changed+=1
+  for german,rules in NAME_GROUPS:
+   name=next((n for pattern,n in rules if re.search(pattern,s['text'])),None)
+   if not name:continue
+   for t in s['translations']:
+    new=re.sub(german,lambda m:name+'s' if m.group().endswith('s') and m.group()!=name else name,t['text'])
+    if new!=t['text']:
+     t.setdefault('name_aligned',{'from':t['text'],'names':[],'on':'2026-09-27'})['names'].append(name);t['text']=new;changed+=1
  return changed
 def main():
  rows=json.loads((ROOT/'sources/full-audio-candidates.json').read_text())
