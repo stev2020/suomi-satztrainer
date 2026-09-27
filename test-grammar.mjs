@@ -18,7 +18,7 @@ const ctx=vm.createContext({tc:(context,text)=>text,GRAMMAR_TOPICS,topicNotes,fi
 let app=fs.readFileSync(new URL('./dist/app.js',import.meta.url),'utf8').replace(/^import .*\n/gm,'');
 ctx.window={addEventListener(){},removeEventListener(){}};
 ctx.document.body={dataset:{account:'authenticated'}};
-app=app.slice(0,app.indexOf("try{const response=await fetch('sentences.json')"));
+app=app.slice(0,app.indexOf("// Sätze, Qualitätsliste und Grammatik gleichzeitig laden"));
 vm.runInContext(app,ctx);
 vm.runInContext(`data=payload.sentences;archived=payload.archived_sentences;grammar=fixtureGrammar;grammarAvailable=true;ready=true;activity='grammar';direction='de-fi';`,ctx);
 for(const topic of GRAMMAR_TOPICS){
