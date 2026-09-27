@@ -2,6 +2,9 @@
 // {0}, {1} … sind Platzhalter für Werte, die im Code eingesetzt werden.
 // "Kontext|Text" unterscheidet gleiche deutsche Wörter mit verschiedener Bedeutung (siehe tc() in i18n.mjs).
 export default {
+ "Weiter: Satz bauen →": "Next: build the sentence →",
+ "Alle Bedeutungen zeigen": "Show all meanings",
+ "Bedeutungen ausblenden": "Hide meanings",
  "Karte umdrehen": "Flip card",
  "Leider nicht, richtig ist:": "Not quite, the correct answer is:",
  "Richtig:": "Correct:",

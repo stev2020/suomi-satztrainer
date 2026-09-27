@@ -345,7 +345,7 @@ header .header-nav button:hover,header .header-nav button.selected{background:va
 .guest-flip[aria-pressed="true"] .guest-flip-inner{transform:rotateY(180deg)}
 .guest-face{grid-area:1/1;display:grid;place-items:center;min-height:120px;padding:18px;border:2px solid var(--line);border-radius:16px;box-shadow:4px 4px 0 var(--line);backface-visibility:hidden;-webkit-backface-visibility:hidden;font:700 clamp(30px,5vw,42px)/1.1 var(--heading);text-align:center;overflow-wrap:anywhere}
 .guest-front{background:var(--mint);color:var(--ink)}
-.guest-back{background:var(--lavender);color:var(--heading-accent);transform:rotateY(180deg)}
+.guest-back{background:var(--lavender);color:var(--purple-ink);transform:rotateY(180deg)}
 .guest-flip:focus-visible{outline:3px solid var(--purple);outline-offset:6px;border-radius:18px}
 .guest-flip-note{margin:0;text-align:center;font-size:14px;color:var(--muted)}
 .guest-flip-note b{color:var(--ink)}
@@ -406,3 +406,18 @@ header .header-nav button:hover,header .header-nav button.selected{background:va
 
 .card .sentence-tap{cursor:pointer;transition:transform .15s,box-shadow .15s}
 .card .sentence-tap:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--line)}
+
+/* Lernpfad-Dreischritt in der Übungskarte */
+.card-top .cycle-steps{margin:0 auto}
+.cycle-stage{margin:20px 0 8px;gap:18px}
+.cycle-card .guest-words{justify-content:center}
+.cycle-card .guest-translation{text-align:center}
+.cycle-card .guest-context{text-align:center}
+.cycle-word{display:flex;padding:0;border:0;background:none;box-shadow:none;min-height:0;color:inherit;text-align:left;font:inherit;cursor:pointer}
+.gloss-on-tap .guest-fi{font-size:clamp(24px,3.2vw,32px)}
+.gloss-on-tap .guest-gloss{visibility:hidden}
+.gloss-on-tap .cycle-word.show .guest-gloss,.gloss-on-tap.all .guest-gloss{visibility:visible}
+.cycle-gloss-all{align-self:center;font-size:14px}
+.cycle-grades{display:flex;gap:10px;width:100%;margin:0}
+.cycle-grades .grade{flex:1}
+@media(max-width:700px){.card-top .cycle-steps li:not(.current){font-size:0;gap:0}.card-top{flex-wrap:wrap;gap:8px}}

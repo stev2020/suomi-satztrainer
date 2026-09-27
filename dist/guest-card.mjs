@@ -40,11 +40,11 @@ export function guestPool(sentences,level){
 }
 
 // Wort für Schritt 3: lieber Nomen, dann Adjektive, Verben, Adverbien; keine Namen.
-export function flipWordIndex(infos){
+export function flipWordIndex(infos,used=new Set()){
  const rank=info=>{
   if(!info||/Name/.test(info.meaning||''))return 9;
   const kind=(info.form||'').split('·')[0].trim();
-  return ({Nomen:0,Adjektiv:1,Verb:2,Adverb:3}[kind]??5);
+  return ({Nomen:0,Adjektiv:1,Verb:2,Adverb:3}[kind]??5)+(used.has(info.lemma)?4:0);
  };
  let best=0;infos.forEach((info,i)=>{if(rank(info)<rank(infos[best]))best=i;});
  return best;
