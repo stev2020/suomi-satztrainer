@@ -3,6 +3,12 @@
 // "Kontext|Text" unterscheidet gleiche deutsche Wörter mit verschiedener Bedeutung (siehe tc() in i18n.mjs).
 export default {
  "Farben": "Colors",
+ "Level {0} · mit Konto": "Level {0} · with account",
+ "Ohne Konto kannst du Level 1 ausprobieren.": "Without an account you can try Level 1.",
+ "Kostenlos registrieren": "Sign up for free",
+ "für alle Level.": "for all levels.",
+ "Mit Konto weiter zum nächsten Level": "Continue to the next level with an account",
+ "Mit kostenlosem Konto": "With a free account",
  "Die Grammatikhilfe wird geladen …": "Loading grammar help …",
  "Die Grammatikhilfen werden geladen …": "Loading grammar help …",
  "Farbpalette": "Color palette",
