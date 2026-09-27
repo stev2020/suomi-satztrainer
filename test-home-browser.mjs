@@ -163,8 +163,9 @@ try{
  assert.equal(Object.keys(afterReview.reviews).length,3);
  for(const s of reviewSentences)assert.ok(afterReview.reviews[s.id+':fi-de'].due>Date.now());
  // Each new sentence: 1 read (glosses + translation), 2 build, 3 flip one word, then grade.
- const cycleNext=async()=>{if(await focused.locator('#cycle-next').isVisible())await focused.locator('#cycle-next').click();};
- const finishCycle=async gradeName=>{await focused.locator('#reveal').click();await focused.locator('#cycle-next').click();await focused.locator('#cycle-flip').click();await focused.locator(`[data-grade="${gradeName}"]`).click();};
+ const settle=()=>focused.waitForFunction(()=>!document.getElementById('card').matches('.cycle-leaving,.cycle-entering'));
+ const cycleNext=async()=>{await settle();if(await focused.locator('#cycle-next').isVisible()){await focused.locator('#cycle-next').click();await settle();}};
+ const finishCycle=async gradeName=>{await focused.locator('#reveal').click();await focused.locator('#cycle-next').click();await settle();await focused.locator('#cycle-flip').click();await focused.locator(`[data-grade="${gradeName}"]`).click();await settle();};
  await focused.locator('#start-new-sentences').click();
  assert.ok((await focused.locator('#session-progress').textContent()).endsWith('/ 5'));
  assert.match(await focused.locator('#session-title').textContent(),/Begrüßung und Grundlagen/);

@@ -17,9 +17,11 @@ try{
   await page.locator('#start-new-sentences').click();
   if(await page.locator('#guest-continue').isVisible())await page.locator('#guest-continue').click();
   const reviews=()=>page.evaluate(()=>Object.keys(window.suomiLearningState.snapshot().reviews).length);
-  const step=()=>page.locator('.cycle-steps li.current').textContent().then(t=>t.replace(/\d/,'').trim());
+  // Schrittwechsel sind animiert: erst warten, bis die Karte wieder ruht.
+  const settle=()=>page.waitForFunction(()=>!document.getElementById('card').matches('.cycle-leaving,.cycle-entering'));
+  const step=async()=>{await settle();return page.locator('.cycle-steps li.current').textContent().then(t=>t.replace(/\d/,'').trim());};
   const build=async()=>{const hint=await page.locator('#word-hint').textContent(),extra=Number(hint.match(/(\d) W/)[1]),count=await page.locator('[data-pick-word]').count();for(let i=0;i<count-extra;i++)await page.locator(`[data-pick-word="${i}"]`).click();await page.locator('#reveal').click();};
-  const full=async g=>{await page.locator('#cycle-next').click();await build();await page.locator('#cycle-next').click();await page.locator('#cycle-flip').click();await page.locator(`[data-grade="${g}"]`).click();};
+  const full=async g=>{await settle();await page.locator('#cycle-next').click();await settle();await build();await page.locator('#cycle-next').click();await settle();await page.locator('#cycle-flip').click();await page.locator(`[data-grade="${g}"]`).click();await settle();};
   // Schritt 1
   assert.equal(await step(),'Lesen');
   assert.ok(await page.locator('.cycle-words .guest-gloss').first().isVisible());
@@ -40,11 +42,12 @@ try{
   await page.locator('#cycle-flip').click();
   assert.equal(await page.locator('#cycle-flip').getAttribute('aria-pressed'),'true');
   assert.match(await page.locator('.guest-flip-note').textContent(),/Grundform/);
-  await page.locator('[data-grade="again"]').click();
+  if(reducedMotion!=='reduce'){await page.locator('[data-grade="again"]').click();await page.locator('#card.cycle-leaving').waitFor();}else await page.locator('[data-grade="again"]').click();
+  await settle();
   assert.equal(await reviews(),before+1);
   // Nächster Satz beginnt wieder mit Lesen; der „Nochmal“-Satz kommt später ohne Dreischritt zurück
   assert.equal(await step(),'Lesen');
-  await full('easy');await full('easy');
+  await full('easy');await full('easy');await settle();
   assert.equal(await page.locator('#cycle-next').count(),0,'repeated sentence skips the cycle');
   assert.ok(await page.locator('#word-bank').isVisible());
   assert.ok(first.length>0);
