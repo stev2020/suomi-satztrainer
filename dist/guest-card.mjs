@@ -89,7 +89,7 @@ export function createGuestCard(root,{sentences,level,onUnavailable,sourceIcon=(
   audioButton.hidden=!sentence?.audios?.length;
   if(step===0){
    stage.innerHTML=`<div class="guest-words" lang="fi">${wordsMarkup()}</div><p class="guest-translation guest-l3" lang="de">${esc(sentence.translations[0].text)}${sourceIcon(sentence.translations[0])}</p>`;
-   actions.innerHTML=`<button type="button" class="guest-secondary" data-guest="other">${ICON_SHUFFLE}Anderer Satz</button><button type="button" class="guest-next" data-guest="step">Satz selbst bauen →</button>`;
+   actions.innerHTML=`<button type="button" class="guest-next guest-first" data-guest="step">Satz selbst bauen →</button><button type="button" class="guest-secondary guest-last" data-guest="other">${ICON_SHUFFLE}Anderer Satz</button>`;
   }else if(step===1){
    stage.innerHTML=`<p class="guest-sentence guest-l1" lang="fi">${esc(sentence.text)}${sourceIcon(sentence)}</p><div class="guest-build guest-l2"></div><p class="guest-feedback guest-l3" aria-live="polite"></p>`;
    renderBuild();

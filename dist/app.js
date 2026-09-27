@@ -11,7 +11,7 @@ import {addPerformanceEvent,buildLearningInsights,mergePerformanceEvents,validat
 import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './supabase-config.js';
 import {validateGames,mergeGames} from './games-progress.mjs';
 import {mountWordLookup,loadLexicon,lookupForSentence,splitSentence} from './word-lookup.mjs?v=2';
-import {createGuestCard,shortGloss,flipWordIndex} from './guest-card.mjs?v=5';
+import {createGuestCard,shortGloss,flipWordIndex} from './guest-card.mjs?v=6';
 import {buildDifficultDeck} from './difficult-words.mjs?v=2';
 import {buildEndingItems,indexLexicon,renderEndings} from './endings-practice.mjs?v=1';
 import {translationFeedbackMarkup} from './translation-feedback.mjs?v=1';
