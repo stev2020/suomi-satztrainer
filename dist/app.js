@@ -348,6 +348,9 @@ function flipMarkup(s,front){
  return `<div class="sentence-flip is-flipped ${animate?'animate':''}" role="button" tabindex="0" aria-pressed="true" aria-label="Karte umdrehen"><div class="sentence-flip-inner"><p class="sentence sentence-front" lang="${fiFront?'fi':'de'}">${escape(front)}${sourceIcon(shown)}</p><div class="sentence sentence-back">${back}</div></div></div>${fiFront?translationProvenanceBadge(s.translations[0]):''}`;
 }
 function bindSentenceFlip(){
+ // Vor dem Aufdecken: Antippen der Satzkachel deckt die Übersetzung auf (wie der Knopf); Wörter öffnen weiter die Wortinfo.
+ const tile=!revealed&&activity==='translate'&&!isWordPractice()?document.querySelector('#card .sentence'):null;
+ if(tile){tile.classList?.add?.('sentence-tap');tile.onclick=e=>{if(e.target.closest('button,a,.fi-word'))return;$('reveal')?.click();};}
  const card=document.querySelector('#card .sentence-flip');if(!card)return;
  const toggle=()=>{card.classList.remove('animate');const on=!card.classList.contains('is-flipped');card.classList.toggle('is-flipped',on);card.setAttribute('aria-pressed',String(on));};
  card.onclick=e=>{if(e.target.closest('button,a,.fi-word'))return;toggle();};

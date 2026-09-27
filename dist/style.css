@@ -403,3 +403,6 @@ header .header-nav button:hover,header .header-nav button.selected{background:va
 .sentence-flip-inner>:not(.sentence){backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .guest-fi .sentence-source-icon{font-size:.5em;vertical-align:.9em;margin-left:.2em}
 .guest-sentence .sentence-source-icon{font-size:.6em;vertical-align:.5em}
+
+.card .sentence-tap{cursor:pointer;transition:transform .15s,box-shadow .15s}
+.card .sentence-tap:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--line)}

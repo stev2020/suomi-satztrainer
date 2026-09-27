@@ -19,7 +19,8 @@ try{
  await page.locator('#continue-practice').click();
  const skip=page.getByText('Ohne Konto fortfahren');if(await skip.count())await skip.first().click();
  const text=(await page.locator('#card .sentence').first().textContent()).trim();
- await page.locator('#reveal').click();
+ // Antippen der Kachel (nicht eines Wortes) deckt auf wie der Knopf
+ await page.locator('#card .sentence').click({position:{x:6,y:6}});
  const flip=page.locator('#card .sentence-flip');
  assert.equal(await flip.getAttribute('aria-pressed'),'true');
  assert.equal(await page.locator('#card .translation').isHidden(),true,'no separate translation box');
@@ -31,5 +32,5 @@ try{
  assert.equal(await flip.getAttribute('aria-pressed'),'true');
  assert.ok(await page.locator('#grade-again').isVisible());
  assert.deepEqual(errors,[]);
- console.log('Umdrehen beim Übersetzen: Kachel dreht zur Übersetzung, Klick und Enter drehen zurück, Bewertung sichtbar.');
+ console.log('Umdrehen beim Übersetzen: Antippen deckt auf, Kachel dreht zur Übersetzung, Klick und Enter drehen zurück, Bewertung sichtbar.');
 }finally{await browser?.close();server.kill();}
