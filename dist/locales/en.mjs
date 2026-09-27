@@ -3,6 +3,8 @@
 // "Kontext|Text" unterscheidet gleiche deutsche Wörter mit verschiedener Bedeutung (siehe tc() in i18n.mjs).
 export default {
  "Farben": "Colors",
+ "Die Grammatikhilfe wird geladen …": "Loading grammar help …",
+ "Die Grammatikhilfen werden geladen …": "Loading grammar help …",
  "Farbpalette": "Color palette",
  "Vanamo – Waldblume": "Vanamo – twinflower",
  "Mustikka – Heidelbeere": "Mustikka – blueberry",

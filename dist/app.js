@@ -29,7 +29,7 @@ if(!hasStoredSession())try{localStorage.removeItem(STORE);}catch{}
 const REPORT_CATEGORIES={translation:'Übersetzung falsch',unnatural:'Unnatürlich formuliert',outdated:'Veraltet oder ungebräuchlich',inappropriate:'Ungeeignet oder anstößig',duplicate:'Doppelter Satz',grammar:'Grammatikhilfe',audio:'Aufnahme',level:'Falsches Level',other:'Sonstiges'};
 let memory={reviews:{},favorites:[],daily:{},prefs:{},reports:{},writingRatings:{},verbProgress:{},performanceEvents:[],games:{}};
 try{const saved=hasStoredSession()?JSON.parse(localStorage.getItem(STORE)):null;if(saved&&typeof saved==='object'){for(const k of ['reviews','daily','prefs'])if(saved[k]&&typeof saved[k]==='object'&&!Array.isArray(saved[k]))memory[k]=saved[k];if(Array.isArray(saved.favorites))memory.favorites=saved.favorites.filter(Number.isInteger);if(saved.verbProgress)try{memory.verbProgress=validateVerbProgress(saved.verbProgress);}catch{}if(saved.performanceEvents)try{memory.performanceEvents=validatePerformanceEvents(saved.performanceEvents);}catch{}if(saved.writingRatings)try{memory.writingRatings=validateWritingRatings(saved.writingRatings);}catch{}if(saved.reports)try{memory.reports=validateReports(saved.reports);}catch{}if(saved.games)memory.games=validateGames(saved.games);}}catch{}
-let grammar={},grammarAvailable=false,loadedSentenceIds=new Set();
+let grammar={},grammarAvailable=false,grammarLoading=true,loadedSentenceIds=new Set();
 const qualityExclusions={sentences:new Set(),translations:new Set()};
 const qualityTranslationKey=(sentenceId,translationId)=>`${sentenceId}:${translationId}`;
 const qualitySourceKind=item=>['english_bridge','finnish_adaptation'].includes(item?.origin)?'app_generated':item?.origin==='tatoeba_via_english'?'indirect_tatoeba':item?.origin==='teacher_created'?'editorial':item?.id?'direct_tatoeba':'unknown';
@@ -316,7 +316,7 @@ function syncControls(){
  if(activity==='grammar'){
   const topic=GRAMMAR_TOPICS.find(t=>t.id===grammarTopic);
   $('grammar-topic').innerHTML=GRAMMAR_TOPICS.map(t=>{const count=data.filter(s=>s.level===level&&(!audioOnly||s.audios.length)&&topicNotes(s,grammar,t.id).length).length;return `<option value="${t.id}" ${t.id===grammarTopic?'selected':''}>${t.label} · ${count} Sätze</option>`;}).join('');
-  $('grammar-help').textContent=grammarAvailable?`${topic.hint} Bis zu 10 Sätze pro Runde, auch bereits gelernte. Bewertungen zählen zur gewählten Lernrichtung.`:'Die Grammatikhilfen konnten nicht geladen werden. Bitte lade die Seite bei bestehender Verbindung neu.';
+  $('grammar-help').textContent=grammarLoading?'Die Grammatikhilfen werden geladen …':grammarAvailable?`${topic.hint} Bis zu 10 Sätze pro Runde, auch bereits gelernte. Bewertungen zählen zur gewählten Lernrichtung.`:'Die Grammatikhilfen konnten nicht geladen werden. Bitte lade die Seite bei bestehender Verbindung neu.';
  }
  $('practice-toolbar').hidden=['writing','verbs','suchsel','endings','dialogs'].includes(activity);$('learning-modes').hidden=['writing','grammar','verbs','endings','dialogs'].includes(activity);$('writing-help').hidden=activity!=='writing';$('writing-review-controls').hidden=activity!=='writing';$('writing-history').hidden=true;
  $('direction-group').hidden=!isTranslation();
@@ -456,11 +456,18 @@ function answerGrammarNotes(s,notes,answer){
   return expected.some((_,start)=>focus.every((word,k)=>expected[start+k]===word)&&focus.some((_,k)=>changed.has(start+k)));
  }).sort((a,b)=>tokenize(a.focus).length-tokenize(b.focus).length).slice(0,2);
 }
+// Grammatik kommt nach dem Start an: offene Übung ohne Neustart aktualisieren.
+function grammarLoaded(){
+ if(!ready||$('practice-view').hidden)return;
+ if(activity==='grammar'){syncControls();if(!queue.length){start();render();}return;}
+ const box=$('card')?.querySelector('details.grammar');
+ if(box&&revealed&&queue[0]&&!['writing','verbs','endings','dialogs','suchsel'].includes(activity))box.outerHTML=grammarMarkup(queue[0]);
+}
 function grammarMarkup(s,writingAnswer=null){
  if(!revealed&&writingAnswer===null)return '';
  const entry=grammar[String(s.id)];
  const notes=entry?.sentence===s.text?(activity==='grammar'&&writingAnswer===null?topicNotes(s,grammar,grammarTopic):entry.notes):[];
- if(!notes?.length)return `<details class="grammar"><summary>Grammatik verstehen und Hinweise <span>0</span></summary><p>${grammarAvailable?'Für diesen Satz ist noch keine Grammatikhilfe hinterlegt.':'Die Grammatikhilfe ist gerade nicht verfügbar. Lade die Seite bei bestehender Verbindung neu.'}</p></details>`;
+ if(!notes?.length)return `<details class="grammar"><summary>Grammatik verstehen und Hinweise <span>0</span></summary><p>${grammarAvailable?'Für diesen Satz ist noch keine Grammatikhilfe hinterlegt.':grammarLoading?'Die Grammatikhilfe wird geladen …':'Die Grammatikhilfe ist gerade nicht verfügbar. Lade die Seite bei bestehender Verbindung neu.'}</p></details>`;
  const answer=writingAnswer!==null?writingAnswer:activity==='dictation'||(isTranslation()&&cardDirection(s)==='de-fi')?draft:'';
  const relevant=answerGrammarNotes(s,notes,answer),other=notes.filter(n=>!relevant.includes(n));
  const noteMarkup=n=>`<article lang="de"><h3>${escape(n.title)}</h3><p class="grammar-focus" lang="fi">${escape(n.focus)}</p><p>${escape(n.text)}</p></article>`;
@@ -747,6 +754,9 @@ $('audio-only').onchange=e=>{audioOnly=e.target.checked;start();};document.query
 $('about').onclick=()=>$('about-dialog').showModal();$('close-about').onclick=()=>$('about-dialog').close();$('about-dialog').onclick=e=>{if(e.target===$('about-dialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}};
 document.addEventListener('keydown',e=>{if($('practice-view').hidden||document.querySelector('dialog[open]')||(!$('classrooms-view')?.hidden)||!ready||['writing','verbs','suchsel','endings','dialogs'].includes(activity)||$('about-dialog').open||$('report-dialog').open||$('manage-dialog').open||e.ctrlKey||e.metaKey||e.altKey||e.repeat||['INPUT','SELECT','TEXTAREA'].includes(e.target.tagName))return;if(e.code==='Space'&&e.target.tagName!=='BUTTON'&&!revealed&&queue.length&&isTranslation()){e.preventDefault();$('reveal').click();}else if(revealed&&['1','2','3'].includes(e.key)){e.preventDefault();grade({1:'again',2:'hard',3:'easy'}[e.key]);}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stopAudio();else if(ready)renderStats();});
-try{const response=await fetch('sentences.json');if(!response.ok)throw new Error('load');const payload=await response.json();await loadQualityExclusions();loadedSentenceIds=new Set([...(payload.sentences||[]),...(Array.isArray(payload.archived_sentences)?payload.archived_sentences:[])].filter(s=>s?.translations?.length).map(s=>s.id));data=qualityFilteredCards(payload.sentences);if(Array.isArray(payload.levels))levels=payload.levels.map(l=>l.id).filter(Number.isInteger);if(!levels.includes(level))level=levels[0]||1;archived=qualityFilteredCards(Array.isArray(payload.archived_sentences)?payload.archived_sentences:[]);if(!Array.isArray(data)||!data.length)throw new Error('empty');try{const g=await fetch('grammar.json');if(g.ok){const payload=await g.json();grammar=payload.sentences||{};grammarAvailable=true;}}catch{}ready=true;start();homeLoaded();if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});}catch{$('card').className='card empty';$('card').innerHTML='<h2>Die Sätze konnten nicht geladen werden.</h2><p>Prüfe deine Verbindung und lade die Seite erneut.</p>';$('actions').innerHTML='<button class="primary" id="retry">Erneut versuchen</button>';$('retry').onclick=()=>location.reload();$('total').textContent='Sätze nicht verfügbar';homeLoaded();}
+// Sätze, Qualitätsliste und Grammatik gleichzeitig laden; die Startseite wartet nur auf die ersten beiden.
+const sentencesRequest=fetch('sentences.json'),exclusionsRequest=loadQualityExclusions();
+const grammarRequest=fetch('grammar.json').then(r=>r.ok?r.json():null).then(p=>{if(p){grammar=p.sentences||{};grammarAvailable=true;}}).catch(()=>{}).finally(()=>{grammarLoading=false;grammarLoaded();});
+try{const response=await sentencesRequest;if(!response.ok)throw new Error('load');const payload=await response.json();await exclusionsRequest;loadedSentenceIds=new Set([...(payload.sentences||[]),...(Array.isArray(payload.archived_sentences)?payload.archived_sentences:[])].filter(s=>s?.translations?.length).map(s=>s.id));data=qualityFilteredCards(payload.sentences);if(Array.isArray(payload.levels))levels=payload.levels.map(l=>l.id).filter(Number.isInteger);if(!levels.includes(level))level=levels[0]||1;archived=qualityFilteredCards(Array.isArray(payload.archived_sentences)?payload.archived_sentences:[]);if(!Array.isArray(data)||!data.length)throw new Error('empty');ready=true;start();homeLoaded();if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});}catch{$('card').className='card empty';$('card').innerHTML='<h2>Die Sätze konnten nicht geladen werden.</h2><p>Prüfe deine Verbindung und lade die Seite erneut.</p>';$('actions').innerHTML='<button class="primary" id="retry">Erneut versuchen</button>';$('retry').onclick=()=>location.reload();$('total').textContent='Sätze nicht verfügbar';homeLoaded();}
 mountWordLookup([$('practice-view')]);
 window.suomiDifficultDeck=async()=>buildDifficultDeck({lexicon:await loadLexicon(),reviews:memory.reviews,events:memory.performanceEvents,missed:[...endingsState.missed]});
