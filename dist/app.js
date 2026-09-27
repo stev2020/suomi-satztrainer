@@ -142,7 +142,10 @@ function renderDailyPlan(){
  $('daily-plan-note').textContent=stats.dueCount?'Bekannte, fällige Sätze – abwechslungsreich üben, ohne neue Sätze.':'Für heute ist alles wiederholt.';
  button.disabled=!ready||(!available&&!(dailySession?.active&&queue.length));
  // Ohne Konto steht dort die Satzkarte; „Sätze wiederholen“ erscheint nur, wenn in dieser Sitzung etwas fällig ist.
- document.querySelector('.home-daily').hidden=!accountActive()&&!!guestCard?.available&&!stats.dueCount&&!(dailySession?.active&&queue.length);
+ // Satzkarte und „Sätze wiederholen“ immer aus demselben Kontostand ableiten, damit nie beides falsch zusammen steht.
+ const card=typeof guestCard==='undefined'?null:guestCard,guest=!accountActive()&&!!card?.available;
+ if(card){$('guest-card').hidden=!guest;if(guest)card.start();else card.stop();}
+ document.querySelector('.home-daily').hidden=guest&&!stats.dueCount&&!(dailySession?.active&&queue.length);
  button.textContent=dailySession?.active&&queue.length?'Wiederholung fortsetzen':available?`${available} ${available===1?'Satz':'Sätze'} wiederholen`:'Alles wiederholt';
  $('header-practice').disabled=button.disabled;
 }
