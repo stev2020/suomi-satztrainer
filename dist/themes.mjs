@@ -10,7 +10,7 @@ export const THEMES=[
  {id:'mustikka',name:'Mustikka',hint:'Heidelbeere',dark:false,color:'#3e4a8c'},
  {id:'ruska',name:'Ruska',hint:'Herbstlaub',dark:false,color:'#b4532a'},
  {id:'kaamos',name:'Kaamos',hint:'Polarnacht',dark:true,color:'#1f2b4d'},
- {id:'revontulet',name:'Revontulet',hint:'Nordlicht',dark:true,color:'#2bb38a'},
+ {id:'revontulet',name:'Revontulet',hint:'Nordlicht',dark:true,color:'#a63efa'},
 ];
 export const STORAGE_KEY='vanamo-theme';
 const DEFAULT_LIGHT='vanamo',DEFAULT_DARK='kaamos';
