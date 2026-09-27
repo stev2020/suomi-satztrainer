@@ -21,6 +21,8 @@ try{
  await page.locator('#card .fi-word').first().click();
  await page.locator('.word-popover:not([hidden])').waitFor();
  assert.equal((await page.evaluate(()=>window.suomiDifficultDeck())).entries.length,0,'Nachschlagen zählt nicht');
+ // Hyppy gibt es nur mit Konto
+ await page.evaluate(()=>{document.body.dataset.account='authenticated';});
  await page.locator('#games-nav').click();
  assert.equal(await page.locator('[data-hyppy-deck]').count(),2,'keine eigene dritte Liste mehr');
  await page.waitForFunction(()=>document.getElementById('hyppy-grund-info').textContent==='669 Wörter und Wendungen');
