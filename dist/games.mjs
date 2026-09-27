@@ -1,4 +1,4 @@
-import './i18n.mjs?v=1';
+import './i18n.mjs?v=2';
 // Games-Bereich: Spielauswahl und Start von Mustikka Hyppy (Vokabel-Sprungspiel).
 // Das Spiel selbst liegt fertig gebaut unter games/hyppy/ (siehe scripts/update-hyppy.mjs)
 // und wird erst beim ersten Start geladen.
@@ -94,7 +94,25 @@ function knownCount(deck) {
 let deck = 'grund', instance = null, opening = false;
 try { if (DECKS[localStorage.getItem(DECK_KEY)]) deck = localStorage.getItem(DECK_KEY); } catch {}
 
+// Mustikka Hyppy gibt es nur mit Konto. Gäste sehen einen kurzen Spielablauf als Video.
+const isGuest = () => typeof document !== 'undefined' && document.body?.dataset.account !== 'authenticated';
+function openRegister() {
+  if (window.suomiOpenAccount) window.suomiOpenAccount('register');
+  else { $('account-button')?.click(); setTimeout(() => document.querySelector('[data-account-tab="register"]')?.click(), 0); }
+}
+function syncPreview() {
+  const video = $('hyppy-preview');
+  if (!video) return;
+  const visible = isGuest() && !$('games-view')?.hidden && !document.hidden;
+  const still = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  video.controls = still;
+  if (visible && !still) { video.preload = 'auto'; video.play()?.catch?.(() => { video.controls = true; }); }
+  else video.pause();
+}
+
 function renderCard() {
+  $('hyppy-start').textContent = isGuest() ? 'Anmelden und spielen' : 'Spielen';
+  syncPreview();
   document.querySelectorAll('[data-hyppy-deck]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.hyppyDeck === deck)));
   const n = knownCount(deck);
   const where = accountUser() ? 'in deinem Konto' : 'nur in diesem Browser – mit Konto wird er gespeichert';
@@ -126,6 +144,7 @@ function hyppyTheme() {
 }
 
 async function openGame() {
+  if (isGuest()) { openRegister(); return; }
   if (instance || opening) return;
   opening = true;
   const start = $('hyppy-start');
@@ -168,6 +187,10 @@ function bind() {
   window.addEventListener('popstate', () => { if ($('game-overlay') && !$('game-overlay').hidden) closeGame(true); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('game-overlay').hidden && instance?.game?.scene?.isActive('Menu')) closeGame(); });
   $('games-nav')?.addEventListener('click', renderCard);
+  // An-/Abmelden und Wechsel der Ansicht: Knopf und Vorschau anpassen
+  new MutationObserver(renderCard).observe(document.body, {attributes: true, attributeFilter: ['data-account']});
+  new MutationObserver(syncPreview).observe($('games-view'), {attributes: true, attributeFilter: ['hidden']});
+  document.addEventListener('visibilitychange', syncPreview);
   renderCard();
 }
 
