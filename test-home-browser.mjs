@@ -50,7 +50,6 @@ try{
  for(const [kind,count] of [['fi-de',1],['de-fi',2],['listen',3],['dictation',4]])for(const s of sentences.slice(0,count))state.reviews[s.id+':'+kind]={due:now,interval:0,repetitions:2,updatedAt:now};
  await page.evaluate(state=>window.suomiLearningState.applyCloud(state),state);
  assert.ok(await page.locator('.home-daily').isVisible());
- assert.equal(await page.locator('#daily-plan-level').inputValue(),'1');
  assert.equal(await page.locator('#start-daily-session').isDisabled(),false);
  assert.equal(await page.locator('#header-practice').isDisabled(),false);
  assert.ok(Number(await page.locator('#daily-due').textContent())>0);
@@ -207,8 +206,14 @@ try{
  assert.ok(await focused.locator('#path-next-level').isVisible());
  await focused.locator('#path-next-level').click();
  assert.equal(await focused.locator('#path-level').inputValue(),'2');
- assert.equal(await focused.locator('#daily-plan-level').inputValue(),'2');
  assert.match(await focused.locator('#path-progress-text').textContent(),/Level 2 · 0 von/);
+ // Reviews cover every level: due Level-1 sentences stay on the home card while Level 2 is selected.
+ const mixed=await focused.evaluate(()=>window.suomiLearningState.snapshot());
+ for(const id of levelOneIds.slice(0,2))mixed.reviews[id+':fi-de']={due:Date.now()-1000,repetitions:1,interval:1,updatedAt:Date.now()+1000};
+ await focused.evaluate(state=>window.suomiLearningState.applyCloud(state),mixed);
+ assert.equal(await focused.locator('#path-level').inputValue(),'2');
+ assert.equal(await focused.locator('#daily-due').textContent(),'2');
+ assert.equal(await focused.locator('#start-daily-session').isDisabled(),false);
  await focused.locator('#path-level').selectOption('6');
  assert.equal(await focused.locator('.path-stop').count(),14);
  // Level 6 was topped up (level fill 2026-09-25); Level 1 still has empty topics (slang, emergency).
@@ -226,5 +231,5 @@ try{
  assert.equal(await focused.locator('#start-new-sentences').isDisabled(),true);
  assert.deepEqual(errors,[]);
  await context.close();
- console.log('PASS: live cloud apply without reload, daily round, home selector, scoped review counts and launches, due-only verb round, preserved draft, identical colors, mobile layout, other exercises and guest privacy.');
+ console.log('PASS: live cloud apply without reload, daily round, home selector, review counts across levels and launches, due-only verb round, preserved draft, identical colors, mobile layout, other exercises and guest privacy.');
 }finally{await browser?.close();server.kill();}

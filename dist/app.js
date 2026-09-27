@@ -6,7 +6,7 @@ import {VERBS} from './verbs-data.mjs';
 import {PRONOUNS,validateVerbProgress,mergeVerbProgress,markAsked,markAnswered,answerMatches,createVerbSession,chooseCombination,verbSummary} from './verb-practice.mjs';
 import {GRAMMAR_TOPICS,topicNotes} from './grammar-topics.mjs';
 import {reviewPlan,dueSentences,unseenSentences,lastPracticed} from './review-plan.mjs';
-import {everydayPathState,homeReviewPool} from './learning-path.mjs';
+import {everydayPathState} from './learning-path.mjs';
 import {addPerformanceEvent,buildLearningInsights,mergePerformanceEvents,validatePerformanceEvents} from './learning-insights.mjs';
 import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './supabase-config.js';
 import {validateGames,mergeGames} from './games-progress.mjs';
@@ -100,7 +100,7 @@ function prepareAudio(url){
 function preloadQueueAudio(){if($('practice-view')?.hidden)return;const urls=queue.slice(0,3).map(s=>s.audios?.[0]?.download_url).filter(Boolean);for(const url of new Set(urls))prepareAudio(url);}
 function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function dailyPlan(){
- return reviewPlan(homeReviewPool([...data,...archived],level),memory.reviews,null,{translationOffset:reviewTranslationCount});
+ return reviewPlan([...data,...archived],memory.reviews,null,{translationOffset:reviewTranslationCount});
 }
 let reviewTranslationCount=0,guidedNew=false,pathSession=null;
 const pathState=()=>{const cards=[...data,...archived],available=new Set(cards.filter(s=>s.translations?.length).map(s=>s.id));return everydayPathState(cards,memory.reviews,level,new Set([...loadedSentenceIds].filter(id=>!available.has(id))));};
@@ -124,7 +124,7 @@ function renderLearningPath(){
  }).join('');
 }
 function dailyPlanStats(){
- return {dueCount:dueSentences(homeReviewPool([...data,...archived],level),memory.reviews,null).length,newCount:unseenSentences(data,memory.reviews,level).length};
+ return {dueCount:dueSentences([...data,...archived],memory.reviews,null).length,newCount:unseenSentences(data,memory.reviews,level).length};
 }
 function renderDailyPlan(){
  const button=$('start-daily-session');if(!button)return;
@@ -132,7 +132,6 @@ function renderDailyPlan(){
  $('daily-due').textContent=stats.dueCount;
  renderLearningPath();
  $('daily-plan-note').textContent=stats.dueCount?'Bekannte, fällige Sätze – abwechslungsreich üben, ohne neue Sätze.':'Für heute ist alles wiederholt.';
- const levelSelect=$('daily-plan-level');levelSelect.innerHTML=levels.map(n=>`<option value="${n}" ${n===level?'selected':''}>Level ${n}</option>`).join('');levelSelect.value=String(level);levelSelect.disabled=!ready;
  button.disabled=!ready||(!available&&!(dailySession?.active&&queue.length));
  button.textContent=dailySession?.active&&queue.length?'Wiederholung fortsetzen':available?`${available} ${available===1?'Satz':'Sätze'} wiederholen`:'Alles wiederholt';
  $('header-practice').disabled=button.disabled;
@@ -709,7 +708,6 @@ function choosePathLevel(next){
  start();showView('home');
 }
 $('path-level').onchange=e=>choosePathLevel(Number(e.target.value));
-$('daily-plan-level').onchange=e=>choosePathLevel(Number(e.target.value));
 $('path-next-level').onclick=()=>choosePathLevel(levels.find(n=>n>level));
 $('quick-verb-review').onclick=()=>{if(dailySession)finishDailySession();activity='verbs';syncControls();renderStats();$('home-review').click();};
 $('start-daily-session').onclick=startDailySession;
