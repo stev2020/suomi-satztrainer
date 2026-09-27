@@ -26,5 +26,9 @@
 .game-stage{position:absolute;inset:0;touch-action:none;-webkit-user-select:none;user-select:none}
 .game-loading{position:absolute;z-index:1;font:600 18px/1.4 var(--heading);color:var(--muted)}
 body.game-open{overflow:hidden}
-@media(max-width:700px){.game-card{grid-template-columns:minmax(0,1fr);padding:18px;gap:16px;box-shadow:4px 4px 0 var(--lavender)}}
+.game-preview,.game-guest-note{display:none}
+body:not([data-account="authenticated"]) .game-cover,body:not([data-account="authenticated"]) .game-decks,body:not([data-account="authenticated"]) .game-progress{display:none}
+body:not([data-account="authenticated"]) .game-preview{display:block;width:min(100%,250px);height:auto;aspect-ratio:9/16;justify-self:center;object-fit:cover;border:2px solid var(--line);border-radius:18px;background:#fbf8ef;box-shadow:4px 4px 0 var(--line)}
+body:not([data-account="authenticated"]) .game-guest-note{display:block;margin:0 0 16px;padding:12px 14px;border-radius:12px;background:var(--lavender-tint);line-height:1.5}
+@media(max-width:700px){.game-card{grid-template-columns:minmax(0,1fr);padding:18px;gap:16px;box-shadow:4px 4px 0 var(--lavender)}body:not([data-account="authenticated"]) .game-preview{width:min(100%,210px)}}
 @media(max-width:380px){.game-decks .choice-row{grid-template-columns:1fr}}

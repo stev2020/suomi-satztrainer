@@ -18,6 +18,22 @@ try{
   assert.ok(await page.locator('#home-view').isHidden());
   assert.equal(await page.locator('#games-nav').getAttribute('aria-current'),'page');
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'no horizontal scroll');
+  // Gäste: Vorschauvideo statt Spiel, der Knopf führt zur Registrierung
+  assert.ok(await page.locator('#hyppy-preview').isVisible(),'guests see the gameplay preview');
+  assert.ok(await page.locator('.game-cover').isHidden());
+  assert.ok(await page.locator('.game-decks').isHidden());
+  assert.equal((await page.locator('#hyppy-start').textContent()).trim(),'Anmelden und spielen');
+  await page.waitForFunction(()=>{const v=document.getElementById('hyppy-preview');return !v.paused&&v.currentTime>0.3;},null,{timeout:10000});
+  await page.locator('#hyppy-start').click();
+  await page.waitForTimeout(400);
+  assert.equal(await page.locator('#game-stage canvas').count(),0,'guests cannot start the game');
+  assert.ok(await page.locator('#game-overlay').isHidden());
+  assert.ok(await page.locator('#account-dialog').evaluate(d=>d.open),'the button opens the account dialog');
+  await page.keyboard.press('Escape');
+  await page.evaluate(()=>{for(const d of document.querySelectorAll('dialog[open]'))d.close();document.body.dataset.account='authenticated';});
+  assert.equal((await page.locator('#hyppy-start').textContent()).trim(),'Spielen');
+  assert.ok(await page.locator('#hyppy-preview').isHidden());
+  assert.ok(await page.locator('.game-cover').isVisible());
   await page.locator('[data-hyppy-deck="verben"]').click();
   assert.equal(await page.locator('[data-hyppy-deck="verben"]').getAttribute('aria-pressed'),'true');
   assert.match(await page.locator('#hyppy-progress').textContent(),/Browser/);
