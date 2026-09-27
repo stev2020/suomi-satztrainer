@@ -368,3 +368,18 @@ header .header-nav button:hover,header .header-nav button.selected{background:va
 @keyframes guest-in{0%{transform:translateX(var(--travel)) skewX(22deg) scaleX(1.45);filter:blur(8px);opacity:.3}55%{transform:translateX(calc(var(--travel)*-.02)) skewX(-6deg) scaleX(.96);filter:blur(.6px);opacity:1}80%{transform:translateX(calc(var(--travel)*.004)) skewX(2deg) scaleX(1.01);filter:none}100%{transform:none;filter:none;opacity:1}}
 @media (prefers-reduced-motion:reduce){.guest-stage.is-leaving *,.guest-stage.is-entering *{animation:none!important}.guest-flip-inner{transition:none}}
 @media(max-width:700px){.guest-card{padding:20px 18px;box-shadow:4px 4px 0 var(--orange-shadow)}.guest-steps li{padding-right:6px}.guest-steps li:not(.current){font-size:0;gap:0}.guest-actions button{flex:1 1 auto;justify-content:center}.guest-audio span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}.guest-audio{padding:8px 11px}.guest-next,.guest-check{margin-left:0}}
+
+/* Übungskarte im Stil der Satzkarte: die Karte bleibt hell, nur der Satz liegt auf einer grünen Kachel */
+.card{background:var(--paper)}
+.card .sentence{display:block;width:fit-content;max-width:100%;box-sizing:border-box;margin:24px auto 18px;padding:12px 26px 14px;border:2px solid var(--line);border-radius:16px;background:var(--mint);box-shadow:4px 4px 0 var(--line)}
+.card.revealed .sentence{margin-left:auto;margin-right:auto}
+.guest-sentence{align-self:flex-start;max-width:100%;box-sizing:border-box;padding:10px 22px 12px;border:2px solid var(--line);border-radius:16px;background:var(--mint);box-shadow:4px 4px 0 var(--line)}
+/* Satz bauen, ausgewertet: nur grüner oder roter Antwortsatz, bei Fehlern die Lösung darunter */
+.card .word-result.word-checked,.card.revealed .word-result.word-checked{display:block;max-width:none;margin:20px 0 8px;padding:0;border:0;border-radius:0;background:none;box-shadow:none}
+.word-result.word-checked:before{content:none}
+.word-checked .word-answer{margin:0;min-height:0;align-items:center}
+.word-answer.is-right{border-style:solid;border-color:var(--good);background:var(--good-tint)}
+.word-answer.is-wrong{border-style:solid;border-color:var(--bad);background:var(--bad-tint)}
+.word-tile{display:inline-flex;align-items:center;min-height:44px;box-sizing:border-box;padding:9px 14px;border:2px solid var(--line);border-radius:10px;background:var(--lavender);box-shadow:2px 2px 0 var(--line);font-weight:600;overflow-wrap:anywhere}
+.word-result.word-checked .word-solution{grid-column:auto;margin:12px 2px 0;padding:0;border:0;border-radius:0;background:none;font-size:15px;font-weight:400;line-height:1.5;color:var(--ink)}
+.word-solution>span{font-weight:700}
