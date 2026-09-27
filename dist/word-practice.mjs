@@ -25,7 +25,9 @@ export function createWordExercise(sentence,language,corpus,random=Math.random){
  const excluded=new Set(expected.map(normalized));
  const fallback=language==='fi'?['tänään','huomenna','kirja','pöytä','aina','ulkona','joskus','kissa']:['heute','morgen','Buch','Tisch','immer','draußen','manchmal','Katze'];
  const candidates=new Map();
- for(const word of [...corpus.flatMap(s=>sentenceWords(textOf(s))),...fallback])if(!excluded.has(normalized(word)))candidates.set(normalized(word),word);
+ // Near-identical forms (Tom/Tomi, Buch/Buches) would be a trick, not a distractor.
+ const confusable=word=>{const w=normalized(word);return excluded.has(w)||[...excluded].some(e=>Math.min(e.length,w.length)>=3&&Math.abs(e.length-w.length)<=2&&(e.startsWith(w)||w.startsWith(e)));};
+ for(const word of [...corpus.flatMap(s=>sentenceWords(textOf(s))),...fallback])if(!confusable(word))candidates.set(normalized(word),word);
  const extras=shuffle([...candidates.values()],random).slice(0,1+Math.floor(random()*2));
  const tokens=shuffle([...expected,...extras].map((text,id)=>({text,id})),random);
  // Even with unlucky randomness, never present the complete answer in order.

@@ -8,7 +8,7 @@
 // von rechts; Satz, Wortbedeutungen und Übersetzung laufen in eigenen Tempi (siehe style.css).
 // Nutzt die Wortanalyse (lexicon.json) und die Satzbausteine der Wortübung.
 import {loadLexicon,lookupForSentence,splitSentence} from './word-lookup.mjs?v=2';
-import {createWordExercise,wordAnswerMatches,sentenceWords} from './word-practice.mjs?v=59';
+import {createWordExercise,wordAnswerMatches,sentenceWords} from './word-practice.mjs?v=60';
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const reducedMotion=()=>typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;

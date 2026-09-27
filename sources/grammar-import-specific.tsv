@@ -236,7 +236,7 @@
 2675680	on	Formen von olla	olla bedeutet „sein“: olen „ich bin“, olet „du bist“, on „ist“, olemme „wir sind“, olette „ihr seid/Sie sind“, ovat „sie sind“. Vor einem Partizip dient olla auch als Hilfsverb; in Besitz- und Existenzsätzen wird oft „haben“ oder „es gibt“ übersetzt.
 2675680	minun käsilaukkuni	Meine Handtasche	käsilaukku bedeutet „Handtasche“. Mit minun („mein“) und -ni am Nomen wird der Besitz ausgedrückt: minun käsilaukkuni.
 2680817	Haluan	Verbform: haluta	haluan gehört zu haluta („wollen“): erste Person Singular (ich) im Präsens. Die Verbform zeigt die Person; das Präsens kann je nach Zusammenhang auch Zukünftiges bezeichnen.
-2680817	tavata Tomin	Jemanden treffen	tavata („treffen“) steht nach haluan als Infinitiv. Tomin ist hier das ganze Objekt in der -n-Form von Tom, kein Besitzer.
+2680817	tavata Tomin	Jemanden treffen	tavata („treffen“) steht nach haluan als Infinitiv. Tomin ist hier das ganze Objekt in der -n-Form von Tomi, kein Besitzer.
 2681443	on	Formen von olla	olla bedeutet „sein“: olen „ich bin“, olet „du bist“, on „ist“, olemme „wir sind“, olette „ihr seid/Sie sind“, ovat „sie sind“. Vor einem Partizip dient olla auch als Hilfsverb; in Besitz- und Existenzsätzen wird oft „haben“ oder „es gibt“ übersetzt.
 2681443	Hän	Personalpronomen	minä „ich“, sinä „du“, hän „er/sie“, me „wir“, te „ihr/Sie“, he „sie (Mehrzahl)“: Finnisch unterscheidet bei hän kein männliches oder weibliches Geschlecht. In der ersten und zweiten Person kann die Verbendung das Pronomen oft ersetzen.
 2682702	Haluan	Verbform: haluta	haluan gehört zu haluta („wollen“): erste Person Singular (ich) im Präsens. Die Verbform zeigt die Person; das Präsens kann je nach Zusammenhang auch Zukünftiges bezeichnen.
@@ -876,7 +876,7 @@
 2666362	kauppaan	Illativ: in etwas hinein	kauppa („Laden“) → kauppaan: Illativ auf Vokaldehnung + -n. Er gibt das Ziel an („in den Laden“).
 2666718	Asutko	Verbform: asua	asua („wohnen“) → asut („du wohnst“) + Fragepartikel -ko: asutko? = „wohnst du?“.
 2666718	täällä	Ortsadverb	täällä bedeutet „hier“ (wo?).
-2668209	Tomin kanssa	Nachgestelltes Verhältniswort	kanssa („mit“) steht nach dem Wort, und dieses steht im Genitiv: Tom → Tomin kanssa („mit Tom“).
+2668209	Tomin kanssa	Nachgestelltes Verhältniswort	kanssa („mit“) steht nach dem Wort, und dieses steht im Genitiv: Tomi → Tomin kanssa („mit Tomi“).
 2668209	Menen	Verbform: mennä	mennä („gehen“) → menen: erste Person Singular im Präsens.
 2668799	Anna se minulle	Aufforderung: geben	anna ist die Aufforderung von antaa („geben“). se („es“) ist das Objekt, minulle (Allativ von minä) der Empfänger.
 2668854	Lue	Aufforderung	lukea („lesen“) → lue: Aufforderung an eine Person. k fällt im Stamm weg.
@@ -914,7 +914,7 @@
 2740005	En löydä sanoja	Verneinung	löytää („finden“) → en löydä. Das Objekt steht in der Verneinung im Partitiv: sana („Wort“) → sanoja (Partitiv Plural).
 2748165	kouluun	Richtung: wohin? (Illativ)	koulu („Schule“) → kouluun: Illativ („in die Schule“).
 2748165	ei tule	Verneinungsverb	tulla („kommen“) → ei tule: dritte Person Singular verneint. tänään bedeutet „heute“.
-2748217	ei ole Tomin	Besitz ausdrücken	Tomin ist der Genitiv von Tom. Olla + Genitiv drückt aus, wem etwas gehört: kirja on Tomin = „das Buch gehört Tom“.
+2748217	ei ole Tomin	Besitz ausdrücken	Tomin ist der Genitiv von Tomi. Olla + Genitiv drückt aus, wem etwas gehört: kirja on Tomin = „das Buch gehört Tomi“.
 2748217	Tämä kirja	Auf etwas verweisen	tämä („dieser/diese/dieses“) steht vor dem Nomen und zeigt auf etwas Nahes.
 2750860	ranskalaista kahvia	Adjektiv im Partitiv	rakastaa verlangt ein Partitivobjekt: kahvi → kahvia. Das Adjektiv ranskalainen passt sich an: ranskalaista.
 2757670	pitää hauskaa	Feste Wendung	pitää hauskaa bedeutet „Spaß haben“. hauskaa ist der Partitiv von hauska („lustig“).
@@ -927,7 +927,7 @@
 2764962	ruokalistan	Ganzes Objekt	ruokalista („Speisekarte“) → ruokalistan: ganzes Objekt auf -n.
 2768197	oppia uimaan	Richtung beim zweiten Verb	oppia („lernen“) verlangt das zweite Verb auf -maan: uida → uimaan („schwimmen lernen“).
 2768197	haluaa	Verbform: haluta	haluta („wollen“) → haluaa: dritte Person Singular im Präsens.
-2786293	Tomin takia	Nachgestelltes Verhältniswort	takia („wegen“) steht nach dem Wort im Genitiv: Tom → Tomin takia.
+2786293	Tomin takia	Nachgestelltes Verhältniswort	takia („wegen“) steht nach dem Wort im Genitiv: Tomi → Tomin takia.
 2786293	täällä	Ortsadverb	täällä bedeutet „hier“ (wo?).
 2786311	sairaana	Essiv: Zeitpunkt oder Rolle	sairas („krank“) → sairaana: Essiv auf -na. Er beschreibt einen vorübergehenden Zustand: Tom ist (gerade) krank.
 2797351	Bostoniin	Richtung: wohin? (Illativ)	Boston → Bostoniin: Illativ. Nach tervetuloa steht das Ziel im Illativ: „willkommen in Boston“.
@@ -1039,9 +1039,9 @@
 3276636	Kirjasi	Besitzendung	kirja („Buch“) + -si („dein“) ergibt kirjasi („dein Buch“).
 3276636	tässä	Ortsadverb	tässä („hier“) ist der Inessiv von tämä und bezeichnet eine Stelle ganz in der Nähe.
 3277885	Anna	Aufforderung: geben	antaa („geben, lassen“) → anna: Aufforderung. Mit Genitiv und Grundform bedeutet sie „lass jemanden etwas tun“.
-3277885	Tomin puhua	Name mit -n	Tom → Tomin (Genitiv) nennt, wer etwas tun darf; puhua („sprechen“) steht in der Grundform: „lass Tom sprechen“.
+3277885	Tomin puhua	Name mit -n	Tomi → Tomin (Genitiv) nennt, wer etwas tun darf; puhua („sprechen“) steht in der Grundform: „lass Tomi sprechen“.
 3279177	Tunnen	Ich-Form im Präsens	tuntea („kennen“) → tunnen („ich kenne“). Im Stamm wird nt zu nn.
-3279177	Tomin	Name mit -n	Tom → Tomin: Der Name ist das ganze Objekt und bekommt deshalb -n.
+3279177	Tomin	Name mit -n	Tomi → Tomin: Der Name ist das ganze Objekt und bekommt deshalb -n.
 3280632	En osaa lukea	Erlernte Fähigkeit	en osaa („ich kann nicht“) + Grundform lukea („lesen“). osata meint Können im Sinne von Fähigkeit, etwa bei einer fremden Schrift.
 3280632	tätä kirjettä	Hinweiswort im Partitiv	tämä kirje („dieser Brief“) → tätä kirjettä: Partitiv, weil der Satz verneint ist.
 3281388	Oletteko	Frage mit olla	olette („ihr seid“) + -ko ergibt Oletteko („seid ihr?“).
@@ -1080,7 +1080,7 @@
 3333707	mitään	Partitiv: Sprache, Menge oder Objekt	mikään → mitään (Partitiv). In verneinten Sätzen bedeutet es „nichts“.
 3335360	Et voi käyttää	Verneinungsverb	et = „du nicht“; voida → voi ohne Personalendung. Danach steht die Grundform käyttää („benutzen“).
 3335360	tätä	Hinweiswort im Partitiv	tämä → tätä (Partitiv). Nach verneintem Verb steht das Objekt im Partitiv.
-3337228	Tomin veli	Name mit -n	Tom → Tomin (Genitiv): Tomin veli = „Toms Bruder“.
+3337228	Tomin veli	Name mit -n	Tomi → Tomin (Genitiv): Tomin veli = „Tomis Bruder“.
 3337228	olemme ystäviä	Partitiv: Sprache, Menge oder Objekt	ystävä → ystäviä (Partitiv Plural). Bei Beschreibungen mehrerer Personen steht das Nomen nach olla im Partitiv Plural.
 3340404	en osaa	Erlernte Fähigkeit	osata („können, beherrschen“) → en osaa („ich kann nicht“). osata steht für gelerntes Können.
 3340404	puhua ruotsia	Sprachbezeichnung im Partitiv	Nach osaa folgt die Grundform puhua; die Sprache steht im Partitiv: ruotsia.
@@ -1153,7 +1153,7 @@
 3390327	vielä	Zeitlicher Blickwinkel	In der Verneinung bedeutet vielä „noch nicht“.
 3390366	nukutko	Ja/Nein- oder Mengenfrage	nukkua → nukut („du schläfst“) + -ko → nukutko? kk wird vor der Endung -t zu k.
 3390462	Voinko	Verbfrage: voida	voida („können, dürfen“) → voin + -ko: „kann/darf ich?“. Danach folgt die Grundform ottaa.
-3390462	Tomin mukaan	Name mit -n	ottaa mukaan heißt „mitnehmen“. Tom steht als ganzes Objekt mit -n: Tomin.
+3390462	Tomin mukaan	Name mit -n	ottaa mukaan heißt „mitnehmen“. Tomi steht als ganzes Objekt mit -n: Tomin.
 3391455	Kello on	Zeitangabe	Die Uhrzeit wird mit kello on + Zahl ausgedrückt: kello on seitsemän = „es ist sieben Uhr“.
 3391455	jo	Zeitlicher Blickwinkel	jo bedeutet „schon“.
 3392709	hyvä uimaan	Grad oder Art ausdrücken	olla hyvä + Verbform auf -maan bedeutet „gut in etwas sein“. uida → uimaan; deutsch passt „kann gut schwimmen“.
@@ -1389,7 +1389,7 @@
 9978006	viikonloppuna	Essiv: Zeitpunkt oder Rolle	viikonloppu („Wochenende“) → viikonloppuna. Der Essiv auf -na gibt hier den Zeitpunkt an: „am Wochenende“.
 9991529	Onko sinulla huonetta	Besitz ausdrücken	sinä → sinulla + onko: „hast du?“. huone („Zimmer“) → huonetta: In der Frage nach Vorhandenem steht der Partitiv.
 10014118	Onko tämä	Frage mit olla	on + -ko → onko („ist?“). tämä bedeutet „dies/das“.
-10014118	Tomin koira	Name mit -n	Tomi → Tomin: Der Genitiv auf -n zeigt den Besitzer („Toms Hund“).
+10014118	Tomin koira	Name mit -n	Tomi → Tomin: Der Genitiv auf -n zeigt den Besitzer („Tomis Hund“).
 10029614	Tänään on	Zeitangabe	tänään („heute“) + on: So nennt man das Datum. 12.8. bedeutet Tag.Monat und wird kahdestoista kahdeksatta gelesen.
 10048493	Miksi	Grund oder Art erfragen	miksi bedeutet „warum“.
 10048493	sairaalaan	Richtung: wohin? (Illativ)	sairaala („Krankenhaus“) → sairaalaan („ins Krankenhaus“). Der Illativ verlängert den Endvokal und hängt -n an.
@@ -1832,9 +1832,9 @@
 3399179	Ajattelin mennä	Einfache Vergangenheit (Imperfekti)	ajatella („denken“) → ajattelin. Mit einem Infinitiv bedeutet es „ich hatte vor, zu …“.
 3399179	tulikin	Partikel für Fokus und Einordnung	tuli („kam“) + -kin: Die Endung zeigt hier, dass etwas unerwartet dazwischenkam: „dann kam doch Arbeit“.
 3399179	enkä voikaan	Verneinungsverb	en + -kä ergibt enkä („und … nicht“). -kaan an voi zeigt, dass der Plan nun doch nicht klappt: „und kann doch nicht“.
-3401578	Tomilta varastettiin	Passiv in der Vergangenheit	varastaa („stehlen“) → varastettiin: Passiv Imperfekti ohne genannten Täter. Tomilta (Ablativ auf -lta) nennt den Bestohlenen: „Tom wurde … gestohlen“.
+3401578	Tomilta varastettiin	Passiv in der Vergangenheit	varastaa („stehlen“) → varastettiin: Passiv Imperfekti ohne genannten Täter. Tomilta (Ablativ auf -lta) nennt den Bestohlenen: „Tomi wurde … gestohlen“.
 3401578	joutui hipsimään	Zwang mit joutua	joutua („geraten, müssen“) → joutui, mit dem Infinitiv auf -maan: „musste (notgedrungen)“. hipsiä bedeutet „schleichen, auf Zehenspitzen gehen“.
-3401578	alushoususillaan	Kleidung mit -sillaan	Wörter wie sukkasillaan („auf Socken“) beschreiben, dass man nur dieses Kleidungsstück trägt. alushousut → alushoususillaan: „nur in Unterhosen“; -an bezieht sich auf Tom.
+3401578	alushoususillaan	Kleidung mit -sillaan	Wörter wie sukkasillaan („auf Socken“) beschreiben, dass man nur dieses Kleidungsstück trägt. alushousut → alushoususillaan: „nur in Unterhosen“; -an bezieht sich auf Tomi.
 3407236	esperantoa äidinkielenään puhuvalla	Partizip als Attribut	puhua → puhuva („sprechend“), hier im Adessiv puhuvalla, passend zu Sakaguchilla. äidinkieli → äidinkielenään: Essiv mit Besitzendung, „als seine Muttersprache“.
 3407236	Sakaguchilla on	Besitz ausdrücken	Besitz: Adessiv auf -lla plus on („hat“). Auch die vorangestellten Attribute (Saksalaisella, puhuvalla) stehen im Adessiv.
 3435712	hyödyllisempi	Vergleich	hyödyllinen („nützlich“) → hyödyllisempi: Komparativ mit -mpi. Der Stamm lautet hyödyllise-.
