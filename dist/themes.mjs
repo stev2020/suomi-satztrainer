@@ -9,6 +9,7 @@ export const THEMES=[
  {id:'vanamo',name:'Vanamo',hint:'Waldblume',dark:false,color:'#65478b'},
  {id:'mustikka',name:'Mustikka',hint:'Heidelbeere',dark:false,color:'#3e4a8c'},
  {id:'ruska',name:'Ruska',hint:'Herbstlaub',dark:false,color:'#b4532a'},
+ {id:'tunturi',name:'Tunturi',hint:'Fjell',dark:false,color:'#589099'},
  {id:'kaamos',name:'Kaamos',hint:'Polarnacht',dark:true,color:'#1f2b4d'},
  {id:'revontulet',name:'Revontulet',hint:'Nordlicht',dark:true,color:'#a63efa'},
 ];
