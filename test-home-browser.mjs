@@ -162,10 +162,15 @@ try{
  const afterReview=await focused.evaluate(()=>window.suomiLearningState.snapshot());
  assert.equal(Object.keys(afterReview.reviews).length,3);
  for(const s of reviewSentences)assert.ok(afterReview.reviews[s.id+':fi-de'].due>Date.now());
+ // Each new sentence: 1 read (glosses + translation), 2 build, 3 flip one word, then grade.
+ const cycleNext=async()=>{if(await focused.locator('#cycle-next').isVisible())await focused.locator('#cycle-next').click();};
+ const finishCycle=async gradeName=>{await focused.locator('#reveal').click();await focused.locator('#cycle-next').click();await focused.locator('#cycle-flip').click();await focused.locator(`[data-grade="${gradeName}"]`).click();};
  await focused.locator('#start-new-sentences').click();
  assert.ok((await focused.locator('#session-progress').textContent()).endsWith('/ 5'));
  assert.match(await focused.locator('#session-title').textContent(),/Begrüßung und Grundlagen/);
  assert.equal(await focused.locator('#practice-settings').isVisible(),false);
+ assert.ok(await focused.locator('.cycle-words .guest-gloss').first().isVisible(),'step 1 shows word meanings');
+ await cycleNext();
  await focused.locator('[data-pick-word]').first().click();
  await focused.locator('#practice-view [data-view="home"]').click();
  assert.equal(await focused.locator('#start-new-sentences').textContent(),'Etappe fortsetzen');
@@ -173,16 +178,17 @@ try{
  assert.equal(await focused.locator('[data-return-word]').count(),1);
  await focused.locator('[data-return-word]').first().click();
  for(let i=0;i<5;i++){
+  await cycleNext();
   assert.ok(await focused.locator('#word-bank').isVisible());
-  await focused.locator('[data-pick-word]').first().click();await focused.locator('#reveal').click();
-  await focused.locator('[data-grade="easy"]').click();
+  await focused.locator('[data-pick-word]').first().click();
+  await finishCycle('easy');
  }
  assert.equal(Object.keys((await focused.evaluate(()=>window.suomiLearningState.snapshot())).reviews).length,8);
  await focused.locator('#next-session').click();
  assert.ok((await focused.locator('#session-progress').textContent()).endsWith('/ 5'));
  assert.match(await focused.locator('#session-title').textContent(),/Begrüßung und Grundlagen · Teil 2/);
  for(let i=0;i<5;i++){
-  await focused.locator('[data-pick-word]').first().click();await focused.locator('#reveal').click();await focused.locator('[data-grade="easy"]').click();
+  await cycleNext();await focused.locator('[data-pick-word]').first().click();await finishCycle('easy');
  }
  assert.match(await focused.locator('#card h2').textContent(),/Begrüßung und Grundlagen geschafft/);
  await focused.locator('#next-session').click();

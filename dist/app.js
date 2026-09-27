@@ -1,7 +1,7 @@
 import {tc} from './i18n.mjs?v=1';
 import {canSearch,createSearch} from './wordsearch.mjs';
 import {mountSearch,searchInstructions} from './wordsearch-ui.mjs?v=63';
-import {createWordExercise,wordAnswerMatches,finnishSentenceMatches} from './word-practice.mjs?v=59';
+import {createWordExercise,wordAnswerMatches,finnishSentenceMatches,sentenceWords} from './word-practice.mjs?v=59';
 import {VERBS} from './verbs-data.mjs';
 import {PRONOUNS,validateVerbProgress,mergeVerbProgress,markAsked,markAnswered,answerMatches,createVerbSession,chooseCombination,verbSummary} from './verb-practice.mjs';
 import {GRAMMAR_TOPICS,topicNotes} from './grammar-topics.mjs';
@@ -10,8 +10,8 @@ import {everydayPathState} from './learning-path.mjs';
 import {addPerformanceEvent,buildLearningInsights,mergePerformanceEvents,validatePerformanceEvents} from './learning-insights.mjs';
 import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './supabase-config.js';
 import {validateGames,mergeGames} from './games-progress.mjs';
-import {mountWordLookup,loadLexicon} from './word-lookup.mjs?v=2';
-import {createGuestCard} from './guest-card.mjs?v=4';
+import {mountWordLookup,loadLexicon,lookupForSentence,splitSentence} from './word-lookup.mjs?v=2';
+import {createGuestCard,shortGloss,flipWordIndex} from './guest-card.mjs?v=5';
 import {buildDifficultDeck} from './difficult-words.mjs?v=2';
 import {buildEndingItems,indexLexicon,renderEndings} from './endings-practice.mjs?v=1';
 import {translationFeedbackMarkup} from './translation-feedback.mjs?v=1';
@@ -600,6 +600,56 @@ function renderDialogSession(){
  const topicTitle=id=>(LEVEL_PATHS[level]||LEVEL_PATHS[1]).find(t=>t.id===id)?.title||'';
  renderDialogs({card:$('card'),actions:$('actions'),notice:$('notice'),level,state:dialogState,topicTitle,rerender:()=>{if(activity==='dialogs')render();},onLine:()=>{memory.daily[day()]=(Number(memory.daily[day()])||0)+1;persist();}});
 }
+// Lernpfad: jeder neue Satz in drei Schritten – 1 Lesen, 2 Satz bauen, 3 Wort merken (wie die Satzkarte der Startseite).
+// Schritt 2 ist die bisherige Wortübung; bewertet wird erst nach Schritt 3. Wiederholungen bleiben einschrittig.
+let cycleStep=0,cycleFlipped=false,cycleAnimate=false;const cycleDone=new Set(),cycleWords=new Set();
+const CYCLE_STEPS=['Lesen','Satz bauen','Wort merken'];
+function inCycle(s){return !!s&&guidedNew&&activity==='translate'&&!cycleDone.has(s.id);}
+function resetCycle(){cycleStep=0;cycleFlipped=false;cycleAnimate=false;cycleDone.clear();cycleWords.clear();}
+function cycleStepsMarkup(){return `<ol class="guest-steps cycle-steps" aria-label="Schritte">${CYCLE_STEPS.map((label,i)=>`<li class="${i===cycleStep?'current':i<cycleStep?'done':''}" ${i===cycleStep?'aria-current="step"':''}><span aria-hidden="true">${i+1}</span>${label}</li>`).join('')}</ol>`;}
+function favoriteMarkup(s){const saved=memory.favorites.includes(s.id);return `<button class="favorite ${saved?'saved':''}" id="favorite" aria-label="${saved?'Aus Favoriten entfernen':'Als Favorit speichern'}" aria-pressed="${saved}">${saved?'★':'☆'}</button>`;}
+function bindFavorite(s){const b=$('favorite');if(!b)return;b.onclick=()=>{const i=memory.favorites.indexOf(s.id);if(i<0)memory.favorites.push(s.id);else memory.favorites.splice(i,1);persist();renderStats();const active=memory.favorites.includes(s.id);b.classList.toggle('saved',active);b.textContent=active?'★':'☆';b.setAttribute('aria-pressed',active);b.setAttribute('aria-label',active?'Aus Favoriten entfernen':'Als Favorit speichern');guestSaveHint();};}
+function cycleStage(inner){
+ const animate=cycleAnimate;cycleAnimate=false;
+ if(animate)setTimeout(()=>$('card')?.querySelector('.guest-stage')?.classList.remove('is-entering'),900);
+ return `<div class="guest-stage cycle-stage ${animate?'is-entering':''}">${inner}</div>`;
+}
+function renderCycle(s){
+ const infos=lookupForSentence(s.text);
+ if(!infos){loadLexicon().then(()=>{if(queue[0]===s&&cycleStep!==1)render();}).catch(()=>{cycleDone.add(s.id);render();});$('card').className='card cycle-card';$('card').innerHTML=`<div class="card-top"><span class="card-label">Finnisch <span>·</span> Level ${s.level}</span>${cycleStepsMarkup()}</div><p class="sentence" lang="fi">${escape(s.text)}</p>`;return true;}
+ $('card').className='card cycle-card';$('card').style.setProperty('--travel',`${Math.max($('card').offsetWidth,320)+80}px`);
+ const top=`<div class="card-top"><span class="card-label">Finnisch <span>·</span> Level ${s.level}${s.level_assessment?.status==='estimated'?' · geschätzt':''}</span>${cycleStepsMarkup()}${favoriteMarkup(s)}</div>`;
+ if(cycleStep===0){
+  const long=sentenceWords(s.text).length>7,cols=[];
+  for(const p of splitSentence(s.text)){
+   if(p.index!==undefined)cols.push({fi:escape(p.text),gloss:shortGloss(infos[p.index])});
+   else if(p.text.trim()&&cols.length)cols[cols.length-1].fi+=escape(p.text);
+   else if(p.text.trim())cols.push({fi:escape(p.text),gloss:''});
+  }
+  if(cols.length)cols[cols.length-1].fi+=sourceIcon(s);
+  const tag=long?'button type="button"':'span',end=long?'button':'span';
+  const words=cols.map(c=>`<${tag} class="guest-word cycle-word"><span class="guest-fi guest-l1">${c.fi}</span><span class="guest-gloss guest-l2" lang="de">${escape(c.gloss)}</span></${end}>`).join('');
+  $('card').innerHTML=top+cycleStage(`<div class="guest-words cycle-words ${long?'gloss-on-tap':''}" lang="fi">${words}</div>${long?'<button type="button" class="link-button cycle-gloss-all" id="cycle-gloss-all">Alle Bedeutungen zeigen</button>':''}<p class="guest-translation guest-l3" lang="de">${escape(s.translations[0].text)}${sourceIcon(s.translations[0])}</p>`)+audioMarkup(s);
+  if(long){$('card').querySelectorAll('.cycle-word').forEach(b=>b.onclick=e=>{if(e.target.closest('.sentence-source-icon'))return;b.classList.toggle('show');});$('cycle-gloss-all').onclick=()=>{const box=$('card').querySelector('.cycle-words');const on=!box.classList.contains('all');box.classList.toggle('all',on);$('cycle-gloss-all').textContent=on?'Bedeutungen ausblenden':'Alle Bedeutungen zeigen';};}
+  $('actions').innerHTML='<button class="primary" id="cycle-next">Weiter: Satz bauen →</button>';
+  $('cycle-next').onclick=()=>{cycleStep=1;cycleAnimate=true;render();};
+ }else{
+  const i=flipWordIndex(infos,cycleWords),info=infos[i],word=sentenceWords(s.text)[i];
+  const context=splitSentence(s.text).map(p=>p.index===i?`<mark>${escape(p.text)}</mark>`:escape(p.text)).join('');
+  const note=cycleFlipped?`Grundform <b lang="fi">${escape(info.lemma)}</b> · ${escape(info.meaning)}`:'Weißt du, was das Wort heißt? Tippe auf die Karte, um sie umzudrehen.';
+  $('card').innerHTML=top+cycleStage(`<p class="guest-context guest-l1" lang="fi">${context}</p><div class="guest-flip-wrap guest-l2"><button type="button" id="cycle-flip" class="guest-flip" aria-pressed="${cycleFlipped}" aria-label="${escape(word)} – Karte umdrehen"><span class="guest-flip-inner"><span class="guest-face guest-front" lang="fi">${escape(word)}</span><span class="guest-face guest-back" lang="de">${escape(shortGloss(info))}</span></span></button></div><p class="guest-flip-note guest-l3">${note}</p>`);
+  const flip=()=>{cycleFlipped=!cycleFlipped;cycleWords.add(info.lemma);const b=$('cycle-flip');b.setAttribute('aria-pressed',String(cycleFlipped));$('card').querySelector('.guest-flip-note').innerHTML=cycleFlipped?`Grundform <b lang="fi">${escape(info.lemma)}</b> · ${escape(info.meaning)}`:'Weißt du, was das Wort heißt? Tippe auf die Karte, um sie umzudrehen.';cycleGrades(s);};
+  $('cycle-flip').onclick=flip;cycleGrades(s);
+ }
+ bindFavorite(s);
+ if($('play-audio')){$('play-audio').onclick=()=>play(s);$('speed').onchange=e=>{speed=Number(e.target.value);if(player)player.playbackRate=speed;persist();};}
+ return true;
+}
+function cycleGrades(s){
+ if(!cycleFlipped){$('actions').innerHTML='<button class="primary" id="cycle-flip-button">Umdrehen</button>';$('cycle-flip-button').onclick=()=>$('cycle-flip').click();return;}
+ $('actions').innerHTML='<div class="inline-grades cycle-grades"><button class="grade" id="grade-again" data-grade="again">Nochmal<span>Jetzt gleich wiederholen</span></button><button class="grade" data-grade="hard">Schwer<span>Morgen wiederholen</span></button><button class="grade easy" data-grade="easy">Leicht<span>In '+easyDays(s)+' Tagen wiederholen</span></button></div>';
+ document.querySelectorAll('[data-grade]').forEach(b=>b.onclick=()=>grade(b.dataset.grade));
+}
 function render(){applyDailyCard();if(activity==='verbs'){renderVerbSession();return;}if(activity==='endings'){renderEndingsSession();return;}if(activity==='dialogs'){renderDialogSession();return;}if(activity==='writing'){renderWritingSession();return;}$('writing-history').hidden=true;stopAudio();renderStats();preloadQueueAudio();const s=queue[0];$('actions').innerHTML='';$('keyboard-note').hidden=!s;$('keyboard-note').textContent=isTranslation()?'Nach dem Vergleich: 1 / 2 / 3 zum Bewerten':'Aufnahme beliebig oft anhören · Nach dem Aufdecken: 1 / 2 / 3 zum Bewerten';
  if(!s&&guidedNew&&pathSession&&initialCount){
   const state=pathState(),topic=state.topics.find(t=>t.id===pathSession.topic.id);
@@ -611,8 +661,10 @@ function render(){applyDailyCard();if(activity==='verbs'){renderVerbSession();re
  }
  if(!s){$('card').className='card empty';if(dailySession?.active&&initialCount){const mix=dailySession.mix;$('card').innerHTML=`<span class="complete-mark">✓</span><h2>Heutige Runde geschafft.</h2><p>${completed} Aufgaben erledigt · ${mix.translate} Übersetzen · ${mix.listen} Hören · ${mix.dictation} Diktat${mix.suchsel?' · '+mix.suchsel+' Wortsel':''}</p><p>Nur fällige Sätze – ohne neue Inhalte.</p>`;$('actions').innerHTML='<button class="primary" id="finish-daily-session">Zur Startseite</button>';$('finish-daily-session').onclick=finishDailySession;}else if(initialCount){$('card').innerHTML='<span class="complete-mark">✓</span><h2>Gut gemacht.</h2><p>Deine Lerneinheit ist geschafft. Dein nächster Satz wartet schon.</p>';$('actions').innerHTML='<div class="completion-actions"><button class="primary completion-home" id="completion-home">Zur Startseite</button><button class="primary" id="next-session">Nächste Lerneinheit</button></div>';$('completion-home').onclick=()=>showView('home');$('next-session').onclick=guidedNew?startNewSentences:start;}else{let title='Alles für heute wiederholt.',text='Hier erscheinen die Sätze, sobald deine nächste Wiederholung fällig ist.';if(mode==='new'){title='In diesem Level ist alles entdeckt.';text='Wiederhole deine Sätze oder wechsle zum nächsten Level.';}if(mode==='favorites'){title='Deine Lieblingssätze warten hier.';text='Markiere einen Satz mit dem Stern auf der Lernkarte.';}if((audioOnly||!isTranslation())&&!base(mode!=='new').length){title='Hier gibt es noch keine Aufnahme.';text=isTranslation()?'Schalte „Nur mit Audio“ aus oder wähle ein anderes Level.':'Wähle ein anderes Level oder die Übungsart Übersetzen.';}if(activity==='grammar'){title=grammarAvailable?'Keine passenden Sätze in dieser Auswahl.':'Grammatikhilfen nicht verfügbar.';text=grammarAvailable?'Wähle ein anderes Grammatikthema oder Level. Falls aktiv, schalte „Nur mit Audio“ aus.':'Lade die Seite bei bestehender Verbindung neu.';}$('card').innerHTML=`<h2>${title}</h2><p>${text}</p>`;}return;}
  if(activity==='suchsel'){renderSearchCard(s);return;}
+ if(inCycle(s)&&cycleStep!==1&&renderCycle(s))return;
  $('card').className=`card${revealed?' revealed':''}`;const saved=memory.favorites.includes(s.id),front=!isTranslation()?(revealed?s.text:''):cardDirection(s)==='fi-de'?s.text:s.translations[0].text;
  $('card').innerHTML=`<div class="card-top"><span class="card-label">${!isTranslation()?(activity==='listen'?'Hörmodus':'Diktat'):cardDirection(s)==='fi-de'?'Finnisch':'Deutsch'} <span>·</span> Level ${s.level}${s.level_assessment?.status==='estimated'?' · geschätzt':''}</span><button class="favorite ${saved?'saved':''}" id="favorite" aria-label="${saved?'Aus Favoriten entfernen':'Als Favorit speichern'}" aria-pressed="${saved}">${saved?'★':'☆'}</button></div>${questionMarkup(s,front)}${audioMarkup(s)}${dictationMarkup(s)}${translationDraftMarkup(s)}${revealed?`<div class="translation ${activity==='translate'&&!isWordPractice()?'hard-translation-solution':activity==='listen'?'listening-solution-card':''}" ${isWordPractice()||activity==='dictation'||flipReveal(s)?'hidden':''}><span class="card-label" style="justify-content:center">${isTranslation()?'Vorlage · ':''}${!isTranslation()||cardDirection(s)==='fi-de'?'Deutsch':'Finnisch'}</span>${!isTranslation()||cardDirection(s)==='fi-de'?s.translations.map((t,i)=>`<p lang="de" class="${i?'variant':''}">${escape(t.text)}${sourceIcon(t)}</p>${i===0?translationProvenanceBadge(t):''}`).join(''):`<p lang="fi">${escape(s.text)}${sourceIcon(s)}</p>`}</div><div id="inline-grades" class="actions inline-grades" aria-label="Antwort bewerten"></div>${grammarMarkup(s)}${translationNote(s)?`<p class="bridge-note">${escape(translationNote(s))}</p>`:''}<details class="sources"><summary>Quellen &amp; Aufnahmen</summary><p>Finnisch: ${source(s)}</p>${s.translations.map(t=>`<p>Deutsch: ${source(t)}</p>`).join('')}${s.audios.map(a=>`<p>Aufnahme: <a href="${safeURL(a.attribution_url||`https://tatoeba.org/en/user/profile/${encodeURIComponent(a.author)}`)}" target="_blank" rel="noopener">${escape(a.author)}</a> · <a href="${safeURL(licenseURL(a.license))}" target="_blank" rel="noopener">${escape(a.license)}</a></p>`).join('')}</details>`:''}`;bindSentenceFlip();
+ if(inCycle(s)){$('card').querySelector('.card-top .favorite')?.insertAdjacentHTML('beforebegin',cycleStepsMarkup());$('card').classList.add('cycle-card');}
  if(revealed){
   $('card').insertAdjacentHTML('beforeend',`<button id="report-error" class="report-error">${Object.values(memory.reports).some(r=>r.sentenceId===s.id)?'Hinweis bearbeiten':'Fehler melden'}</button>`);
   $('report-error').onclick=()=>openReport(s);
@@ -622,12 +674,13 @@ function render(){applyDailyCard();if(activity==='verbs'){renderVerbSession();re
  const inputId=activity==='dictation'?'dictation-input':isTranslation()&&!isWordPractice()&&cardDirection(s)==='de-fi'?'translation-input':null;
  if(inputId&&!revealed){const input=$(inputId);input.value=draft;input.oninput=e=>{draft=e.target.value;$('notice').textContent='';};document.querySelectorAll('[data-letter]').forEach(b=>{b.onmousedown=e=>e.preventDefault();b.onclick=()=>{const pos=input.selectionStart,limit=activity==='dictation'?500:2000;if(input.value.length-(input.selectionEnd-pos)>=limit)return;input.setRangeText(b.dataset.letter,pos,input.selectionEnd,'end');draft=input.value;input.focus();};});}
  if(isWordPractice())bindWordPractice();
- if(!revealed){$('actions').innerHTML='<button class="primary" id="reveal">'+(isWordPractice()?'Prüfen':activity==='dictation'?'Diktat vergleichen':activity==='listen'?'Satz & Übersetzung aufdecken':'Übersetzung anzeigen')+'</button>';$('reveal').onclick=()=>{if(isWordPractice()){if(!wordExercise.selected.length){$('notice').textContent='Wähle zuerst Wörter für deinen Satz aus.';return;}draft=wordExercise.selected.map(id=>wordExercise.tokens.find(t=>t.id===id).text).join(' ');}if(activity==='dictation'&&!draft.trim()){$('notice').textContent='Schreibe zuerst auf, was du gehört hast.';$(inputId).focus();return;}$('notice').textContent='';revealed=true;render();$('grade-again').focus({preventScroll:true});};}
+ if(!revealed){$('actions').innerHTML='<button class="primary" id="reveal">'+(isWordPractice()?'Prüfen':activity==='dictation'?'Diktat vergleichen':activity==='listen'?'Satz & Übersetzung aufdecken':'Übersetzung anzeigen')+'</button>';$('reveal').onclick=()=>{if(isWordPractice()){if(!wordExercise.selected.length){$('notice').textContent='Wähle zuerst Wörter für deinen Satz aus.';return;}draft=wordExercise.selected.map(id=>wordExercise.tokens.find(t=>t.id===id).text).join(' ');}if(activity==='dictation'&&!draft.trim()){$('notice').textContent='Schreibe zuerst auf, was du gehört hast.';$(inputId).focus();return;}$('notice').textContent='';revealed=true;render();($('grade-again')||$('cycle-next'))?.focus({preventScroll:true});};}
+ else if(inCycle(s)){const target=$('inline-grades')||$('actions');target.innerHTML='<button class="primary cycle-next" id="cycle-next">Weiter: Wort merken →</button>';$('cycle-next').onclick=()=>{cycleStep=2;cycleFlipped=false;cycleAnimate=true;render();};}
  else{const gradeTarget=$('inline-grades')||$('actions');gradeTarget.innerHTML='<button class="grade" id="grade-again" data-grade="again">Nochmal<span>Jetzt gleich wiederholen</span></button><button class="grade" data-grade="hard">Schwer<span>Morgen wiederholen</span></button><button class="grade easy" data-grade="easy">Leicht<span>In '+easyDays(s)+' Tagen wiederholen</span></button>';document.querySelectorAll('[data-grade]').forEach(b=>b.onclick=()=>grade(b.dataset.grade));}
 }
 function licenseURL(license){if(license==='CC0 1.0')return 'https://creativecommons.org/publicdomain/zero/1.0/';const m=license.match(/^CC (BY(?:-[A-Z]+)*) ([\d.]+)(?: (FR))?$/i);return m?`https://creativecommons.org/licenses/${m[1].toLowerCase()}/${m[2]}/${m[3]?'fr/':''}`:'https://tatoeba.org/en/terms_of_use';}
 function easyDays(s){return Math.min(180,Math.max(3,Math.round((Number(review(s)?.interval)||0)*2.5)));}
-function grade(g){if(activity==='writing')return;if(!revealed||!queue.length)return;const s=queue.shift(),interval=g==='again'?0:g==='hard'?1:easyDays(s),now=Date.now();memory.performanceEvents=addPerformanceEvent(memory.performanceEvents,{kind:'sentence',sentenceId:s.id,activity,direction:cardDirection(s),difficulty,grade:g,grammarTopic:activity==='grammar'?grammarTopic:'',at:now});memory.reviews[key(s)]={due:now+interval*86400000,interval,repetitions:(Number(review(s)?.repetitions)||0)+1,updatedAt:now};memory.daily[day()]=(Number(memory.daily[day()])||0)+1;if(dailySession?.active&&activity==='translate'&&!s.translationCounted){reviewTranslationCount++;s.translationCounted=true;}if(g==='again')queue.splice(Math.min(2,queue.length),0,s);completed++;wordExercise=null;searchPuzzle=null;revealed=false;playedAudioCard=null;draft='';persist();render();guestSaveHint();$('reveal')?.focus({preventScroll:true});}
+function grade(g){if(activity==='writing')return;if(!revealed||!queue.length)return;if(inCycle(queue[0])&&!(cycleStep===2&&cycleFlipped))return;if(inCycle(queue[0])){cycleDone.add(queue[0].id);cycleStep=0;cycleFlipped=false;cycleAnimate=true;}const s=queue.shift(),interval=g==='again'?0:g==='hard'?1:easyDays(s),now=Date.now();memory.performanceEvents=addPerformanceEvent(memory.performanceEvents,{kind:'sentence',sentenceId:s.id,activity,direction:cardDirection(s),difficulty,grade:g,grammarTopic:activity==='grammar'?grammarTopic:'',at:now});memory.reviews[key(s)]={due:now+interval*86400000,interval,repetitions:(Number(review(s)?.repetitions)||0)+1,updatedAt:now};memory.daily[day()]=(Number(memory.daily[day()])||0)+1;if(dailySession?.active&&activity==='translate'&&!s.translationCounted){reviewTranslationCount++;s.translationCounted=true;}if(g==='again')queue.splice(Math.min(2,queue.length),0,s);completed++;wordExercise=null;searchPuzzle=null;revealed=false;playedAudioCard=null;draft='';persist();render();guestSaveHint();$('reveal')?.focus({preventScroll:true});}
 async function play(s){const a=s.audios[0],b=$('play-audio');if(player&&!player.paused){stopAudio();return;}stopAudio();const current=prepareAudio(a.download_url);if(!current)return;player=current;current.currentTime=0;current.playbackRate=speed;current.preservesPitch=true;setAudioButtonLabel(b,current.readyState>=3?'Startet …':'Lädt …');const reset=()=>{if(player===current&&$('play-audio')===b)setAudioButtonLabel(b,restingAudioLabel(b));};current.onended=reset;current.onerror=()=>{if(player!==current)return;audioCache.delete(a.download_url);reset();$('notice').textContent='Die Aufnahme ist gerade nicht erreichbar. Versuche den Link „Audiodatei“ oder prüfe deine Internetverbindung.';};try{await current.play();if(player===current){playedAudioCard=s;b.dataset.played='true';setAudioButtonLabel(b,'Anhalten');}}catch{if(player!==current)return;audioCache.delete(a.download_url);reset();$('notice').textContent='Die Aufnahme konnte nicht abgespielt werden. Du kannst sie über „Audiodatei“ öffnen.';}}
 // Portable backups accept only known, bounded fields. Imported text is always escaped.
 function objectRecord(value){if(!value||typeof value!=='object'||Array.isArray(value))throw new Error('Ungültige Datenstruktur.');return value;}
@@ -739,7 +792,7 @@ function startNewSentences(){
  const state=pathState(),pool=state.lesson?.remaining||[];
  if(!pool.length){renderDailyPlan();showView('home');return;}
  pathSession={level,topic:state.topic,lesson:state.lesson};
- dailySession=null;guidedNew=true;activity='translate';direction='fi-de';difficulty='easy';mode='new';
+ dailySession=null;guidedNew=true;activity='translate';direction='fi-de';difficulty='easy';mode='new';resetCycle();
  stopAudio();queue=pool.map(s=>({...s,practiceDirection:'fi-de'}));
  initialCount=queue.length;completed=0;revealed=false;wordExercise=null;searchPuzzle=null;draft='';playedAudioCard=null;
  syncControls();persist();showView('practice');render();
@@ -790,7 +843,7 @@ $('audio-only').checked=audioOnly;
 $('levels').onclick=e=>{const b=e.target.closest('[data-level]');if(b&&levelLocked(Number(b.dataset.level))){openRegister();return;}if(b){if(activity==='verbs')activity='translate';level=Number(b.dataset.level);start();showView('practice');}};
 $('audio-only').onchange=e=>{audioOnly=e.target.checked;start();};document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;start();});
 $('about').onclick=()=>$('about-dialog').showModal();$('close-about').onclick=()=>$('about-dialog').close();$('about-dialog').onclick=e=>{if(e.target===$('about-dialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}};
-document.addEventListener('keydown',e=>{if($('practice-view').hidden||document.querySelector('dialog[open]')||(!$('classrooms-view')?.hidden)||!ready||['writing','verbs','suchsel','endings','dialogs'].includes(activity)||$('about-dialog').open||$('report-dialog').open||$('manage-dialog').open||e.ctrlKey||e.metaKey||e.altKey||e.repeat||['INPUT','SELECT','TEXTAREA'].includes(e.target.tagName))return;if(e.code==='Space'&&e.target.tagName!=='BUTTON'&&!revealed&&queue.length&&isTranslation()){e.preventDefault();$('reveal').click();}else if(revealed&&['1','2','3'].includes(e.key)){e.preventDefault();grade({1:'again',2:'hard',3:'easy'}[e.key]);}});
+document.addEventListener('keydown',e=>{if($('practice-view').hidden||document.querySelector('dialog[open]')||(!$('classrooms-view')?.hidden)||!ready||['writing','verbs','suchsel','endings','dialogs'].includes(activity)||$('about-dialog').open||$('report-dialog').open||$('manage-dialog').open||e.ctrlKey||e.metaKey||e.altKey||e.repeat||['INPUT','SELECT','TEXTAREA'].includes(e.target.tagName))return;const cs=queue[0];if(inCycle(cs)&&cycleStep!==1){if(e.code==='Space'&&e.target.tagName!=='BUTTON'){e.preventDefault();(cycleStep===0?$('cycle-next'):cycleFlipped?null:$('cycle-flip'))?.click();return;}if(!(cycleStep===2&&cycleFlipped&&['1','2','3'].includes(e.key)))return;}else if(inCycle(cs)&&revealed&&['1','2','3'].includes(e.key))return;if(e.code==='Space'&&e.target.tagName!=='BUTTON'&&!revealed&&queue.length&&isTranslation()){e.preventDefault();$('reveal').click();}else if(revealed&&['1','2','3'].includes(e.key)){e.preventDefault();grade({1:'again',2:'hard',3:'easy'}[e.key]);}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stopAudio();else if(ready)renderStats();});
 // Sätze, Qualitätsliste und Grammatik gleichzeitig laden; die Startseite wartet nur auf die ersten beiden.
 // Ohne Konto zeigt die Startseite statt „Sätze wiederholen“ eine Satzkarte zum Ausprobieren.

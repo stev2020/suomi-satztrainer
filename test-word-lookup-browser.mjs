@@ -15,6 +15,7 @@ try{
   await page.goto(origin);
   await page.locator('#start-new-sentences:not([disabled])').click();
   if(await page.locator('#guest-continue').isVisible())await page.locator('#guest-continue').click();
+  if(await page.locator('#cycle-next').isVisible())await page.locator('#cycle-next').click();
   const sentence=page.locator('#card p.sentence[lang="fi"]');
   await sentence.locator('.fi-word').first().waitFor();
   const text=await sentence.getAttribute('data-words');

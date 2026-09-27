@@ -17,6 +17,7 @@ try{
  // Looking words up in an exercise must not create difficult words.
  await page.locator('#start-new-sentences').click();
  if(await page.locator('#guest-continue').isVisible())await page.locator('#guest-continue').click();
+  if(await page.locator('#cycle-next').isVisible())await page.locator('#cycle-next').click();
  await page.locator('#card .fi-word').first().click();
  await page.locator('.word-popover:not([hidden])').waitFor();
  assert.equal((await page.evaluate(()=>window.suomiDifficultDeck())).entries.length,0,'Nachschlagen zählt nicht');
