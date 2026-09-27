@@ -53,6 +53,8 @@ try {
  const c=await context({viewport:{width:390,height:844}});
  const page=await c.newPage();page.on('pageerror',e=>errors.push(e.message));
  await page.goto(origin);
+ // Verbformen gibt es nur mit Konto (hier ohne gespeicherte Sitzung angemeldet)
+ await page.evaluate(()=>{document.body.dataset.account='authenticated';});
  await page.waitForFunction(()=>window.suomiLearningState?.snapshot && document.querySelector('#total').textContent.includes('finnische Sätze'));
  await choose(page,5);
  assert.equal(await page.locator('#practice-toolbar').isVisible(),false);
@@ -68,7 +70,6 @@ try {
  let snapshot=await page.evaluate(()=>window.suomiLearningState.snapshot());
  assert.equal(Object.values(snapshot.daily).reduce((a,b)=>a+b,0),5);
  assert.equal(snapshot.verbProgress[wrongKey].errors,1);
- assert.equal(await page.evaluate(()=>localStorage.getItem('suomi-learning-v1')),null);
  await page.locator('#verb-again').click();
  await page.locator('[data-verb-count="10"]').click();
  for(let i=0;i<10;i++){await answer(page);await page.locator('#verb-next').click();}
@@ -86,7 +87,7 @@ try {
   }
  },{session,base});
  const p=await logged.newPage();p.on('pageerror',e=>errors.push(e.message));
- await p.goto(origin);
+ await p.goto(origin);await p.evaluate(()=>{document.body.dataset.account='authenticated';});
  await p.waitForFunction(()=>document.querySelector('[data-verb-count="5"]'));
  assert.equal(await p.evaluate(()=>document.getElementById('account-logged-in').hidden),false);assert.equal(await p.locator('#account-button').textContent(),'Konto');
  if(!await p.locator('#continue-practice').isVisible())await p.locator('#more-exercises > summary').click();

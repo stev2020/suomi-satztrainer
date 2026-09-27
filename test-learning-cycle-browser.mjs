@@ -13,8 +13,8 @@ try{
   const context=await browser.newContext({viewport,serviceWorkers:'block',locale:'de-DE',reducedMotion});
   await context.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());
   const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
-  await page.goto(origin);await page.locator('#start-new-sentences:not([disabled])').waitFor();
-  await page.locator('#start-new-sentences').click();
+  await page.goto(origin);await page.locator('#start-new-sentences:not([disabled])').waitFor({state:'attached'});
+  await page.evaluate(()=>{const t=document.getElementById('path-toggle');if(t&&!t.hidden&&t.getAttribute('aria-expanded')==='false')t.click();});await page.locator('#start-new-sentences').click();
   if(await page.locator('#guest-continue').isVisible())await page.locator('#guest-continue').click();
   const reviews=()=>page.evaluate(()=>Object.keys(window.suomiLearningState.snapshot().reviews).length);
   // Schrittwechsel sind animiert: erst warten, bis die Karte wieder ruht.
@@ -52,6 +52,7 @@ try{
   assert.ok(await page.locator('#word-bank').isVisible());
   assert.ok(first.length>0);
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'no horizontal scroll');
+  assert.equal(await page.evaluate(()=>localStorage.getItem('suomi-learning-v1')),null,'guests do not store progress');
   assert.deepEqual(errors,[]);
   await context.close();
  }

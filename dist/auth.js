@@ -1,4 +1,4 @@
-import {uiLocale} from './i18n.mjs?v=2';
+import {uiLocale} from './i18n.mjs?v=3';
 import {mergeVerbProgress} from './verb-practice.mjs';
 import {mergePerformanceEvents} from './learning-insights.mjs';
 import {mergeGames} from './games-progress.mjs';
@@ -235,7 +235,7 @@ export const accountUser=()=>session?.user||null;
 export {request as accountRequest};
 window.suomiAccountUser=()=>session?.user||null;
 window.suomiAccountRequest=request;
-import('./classrooms.js?v=74').catch(()=>{});
-import('./quality-review.js?v=3').catch(()=>{});
+import('./classrooms.js?v=75').catch(()=>{});
+import('./quality-review.js?v=4').catch(()=>{});
 if(session?.user&&configured())refreshSession().then(async ok=>{if(!ok)return;try{await pullAndMerge();}catch(err){syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true);status(err.message,true);}}).catch(syncError).finally(()=>{syncReady=true;if(syncQueued)scheduleSync()});
 else syncReady=true;
