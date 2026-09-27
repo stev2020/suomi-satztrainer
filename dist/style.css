@@ -183,6 +183,10 @@ header .header-nav button:hover,header .header-nav button.selected{background:va
 .home-view.is-loading :is(#path-current-title,#path-goal,#new-sentences-note,#daily-plan-note){border-radius:6px;background:color-mix(in srgb,var(--ink) 7%,transparent);animation:home-loading 1.2s ease-in-out infinite alternate}
 @keyframes home-loading{to{opacity:.45}}
 @media (prefers-reduced-motion:reduce){.home-view.is-loading *{animation:none!important}}
+.path-level-hint{margin:-4px 0 14px;font-size:13px;color:var(--muted)}
+.link-button,.home-new button.link-button{display:inline;min-height:0;padding:0;border:0;background:none;box-shadow:none;font:inherit;font-weight:700;color:var(--purple);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.level.locked{opacity:.7}
+.level.locked .level-number{border-style:dashed}
 /* Deaktiviert deckend statt durchsichtig, sonst scheint der Kreis der Tageskarte durch */
 .home-daily-action button:disabled{opacity:1;background:color-mix(in srgb,var(--orange) 50%,var(--lavender));color:color-mix(in srgb,var(--on-orange) 55%,var(--lavender));border-color:color-mix(in srgb,var(--line) 55%,var(--lavender));box-shadow:3px 3px 0 color-mix(in srgb,var(--line) 55%,var(--lavender))}
 @media(max-width:700px){.home-daily{grid-template-columns:minmax(0,1fr);gap:18px;margin-bottom:26px;padding:22px 20px;box-shadow:4px 4px 0 var(--orange-shadow)}.home-new{box-shadow:4px 4px 0 var(--mint)}.home-daily:after{right:-55px;top:-62px}.home-daily-copy>p{margin-top:48px}.home-daily-action{min-width:0}.home-daily-action>span{align-self:flex-start}.home-daily-action button{width:100%}}

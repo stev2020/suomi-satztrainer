@@ -204,6 +204,18 @@ try{
  assert.equal(await focused.locator('#path-progress-text').textContent(),`Level 1 · ${levelOneIds.length} von ${levelOneIds.length} Sätzen kennengelernt`);
  assert.equal(await focused.locator('.path-stop.complete').count(),EVERYDAY_PATH.filter(t=>t.lessons.length).length+1);
  assert.ok(await focused.locator('#path-next-level').isVisible());
+ // Guests can only try Level 1: higher levels are disabled and lead to registration.
+ assert.ok(await focused.locator('#path-level-hint').isVisible());
+ assert.equal(await focused.locator('#path-level option[value="2"]').isDisabled(),true);
+ assert.equal(await focused.locator('#path-level option[value="1"]').isDisabled(),false);
+ await focused.locator('#path-next-level').click();
+ assert.equal(await focused.locator('#path-level').inputValue(),'1');
+ assert.ok(await focused.locator('#account-dialog').isVisible());
+ await focused.keyboard.press('Escape');
+ // Signed in, all levels are open.
+ await focused.evaluate(()=>{document.body.dataset.account='authenticated';});
+ await focused.locator('#path-level-hint').waitFor({state:'hidden'});
+ assert.equal(await focused.locator('#path-level option[value="2"]').isDisabled(),false);
  await focused.locator('#path-next-level').click();
  assert.equal(await focused.locator('#path-level').inputValue(),'2');
  assert.match(await focused.locator('#path-progress-text').textContent(),/Level 2 · 0 von/);
@@ -231,5 +243,5 @@ try{
  assert.equal(await focused.locator('#start-new-sentences').isDisabled(),true);
  assert.deepEqual(errors,[]);
  await context.close();
- console.log('PASS: live cloud apply without reload, daily round, home selector, review counts across levels and launches, due-only verb round, preserved draft, identical colors, mobile layout, other exercises and guest privacy.');
+ console.log('PASS: live cloud apply without reload, daily round, home selector, review counts across levels and launches, guest Level-1 lock, due-only verb round, preserved draft, identical colors, mobile layout, other exercises and guest privacy.');
 }finally{await browser?.close();server.kill();}
