@@ -438,3 +438,6 @@ header .header-nav button:hover,header .header-nav button.selected{background:va
 .card.cycle-entering .cycle-stage .guest-l3{animation:guest-in .78s cubic-bezier(.12,.8,.25,1) .04s both}
 .card{--travel:900px}
 @media (prefers-reduced-motion:reduce){.card.cycle-leaving *,.card.cycle-entering *{animation:none!important}}
+
+.guest-actions .guest-first{margin-left:0}
+.guest-actions .guest-last{margin-left:auto}
