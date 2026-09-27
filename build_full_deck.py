@@ -2,7 +2,7 @@
 Pinned to the 2026-09-05 Tatoeba exports, checked 2026-09-10.
 Run python build_full_deck.py. Existing grammar annotations remain unchanged.
 """
-import json,copy,collections
+import json,copy,collections,re
 from pathlib import Path
 from level_import import assign
 ROOT=Path(__file__).parent
@@ -25,6 +25,21 @@ def apply_corrections(cards,archived):
   assert sid in byid,sid
   byid[sid]['archive_reason']='Fehler im finnischen Satz: '+reason
  return [s for s in cards if s['id'] not in remove],archived+[byid[sid] for sid in sorted(remove)]
+NAME_FORMS={'Tom':('Tom','Toms'),'Tomi':('Tomi','Tomis')}
+def align_names(cards):
+ """Finnish Tatoeba uses both Tom and Tomi (inflected forms like Tomin fit either). The German
+ text uses the same name as the Finnish sentence: nominative Tom → Tom, otherwise Tomi (2026-09-27)."""
+ changed=0
+ for s in cards:
+  if re.search(r'\bTom(?!i)\w*',s['text']):name='Tom'
+  elif re.search(r'\bTomi',s['text']):name='Tomi'
+  else:continue
+  nom,gen=NAME_FORMS[name]
+  for t in s['translations']:
+   new=re.sub(r'\bTomis?\b|\bToms?\b',lambda m:gen if m.group().endswith('s') else nom,t['text'])
+   if new!=t['text']:
+    t.setdefault('name_aligned',{'from':t['text'],'name':name,'on':'2026-09-27'});t['text']=new;changed+=1
+ return changed
 def main():
  rows=json.loads((ROOT/'sources/full-audio-candidates.json').read_text())
  previous=json.loads((ROOT/'sources/pre-full-import-deck.json').read_text())
@@ -79,6 +94,7 @@ def main():
   existing_ids.add(s['id']);existing_texts.add(normalize(s['text']))
   card=copy.deepcopy(s);card.pop('topic',None);cards.append(card)
  cards,archived=apply_corrections(cards,archived)
+ aligned=align_names(cards)
  cards.sort(key=lambda s:(s['level'],s['id']))
  out={'source':'https://tatoeba.org/en/downloads','retrieved':'2026-09-11','export_date':'2026-09-05','level_method':'Previous editorial levels retained; new levels provisionally estimated from vocabulary and grammar. Not certified CEFR.','levels':[{'id':n,'title':f'Level {n}'} for n in range(1,7)],'import_summary':{'audio_source_sentences':len(rows),'licensed_audio_sentences':sum(bool(s['audios']) for s in cards),'unlicensed_audio_sentences':sum(s.get('audio_status')=='license_missing' for s in cards),'previous_active_sentences':len(previous['sentences'])},'sentences':cards,'archived_sentences':archived}
  assert len(rows)==4253 and len(imported)==4253
@@ -88,5 +104,6 @@ def main():
  assert all(sid in {s['id'] for s in cards+archived} for sid in known)
  (ROOT/'dist/sentences.json').write_text(json.dumps(out,ensure_ascii=False,separators=(',',':'))+'\n')
  print('active',len(cards),'archive',len(archived),'audio',sum(bool(s['audios']) for s in cards),'levels',collections.Counter(s['level'] for s in cards))
+ print('names aligned',aligned)
  print('translation types',collections.Counter(s['translations'][0].get('origin','direct') for s in cards))
 if __name__=='__main__':main()
