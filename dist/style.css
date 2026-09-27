@@ -386,3 +386,20 @@ header .header-nav button:hover,header .header-nav button.selected{background:va
 .word-result.word-checked.correct .word-solution{font-weight:700;color:var(--good)}
 .guest-feedback>span{font-weight:700}
 .guest-feedback>.guest-right{color:var(--good)}
+
+/* Übersetzen ohne Eingabe: die Satzkachel dreht sich zur Übersetzung (Klick dreht zurück) */
+.sentence-flip{display:grid;width:fit-content;max-width:100%;margin:24px auto 18px;perspective:1100px;cursor:pointer;border-radius:16px}
+.sentence-flip:focus-visible{outline:3px solid var(--purple);outline-offset:6px}
+.sentence-flip-inner{display:grid;transform-style:preserve-3d;transition:transform .75s cubic-bezier(.3,1.45,.55,1)}
+.sentence-flip.is-flipped .sentence-flip-inner{transform:rotateY(180deg)}
+.sentence-flip.animate .sentence-flip-inner{animation:sentence-flip .8s cubic-bezier(.3,1.45,.55,1) both}
+@keyframes sentence-flip{from{transform:rotateY(0)}to{transform:rotateY(180deg)}}
+.card .sentence-flip .sentence,.card.revealed .sentence-flip .sentence{grid-area:1/1;width:auto;margin:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center}
+.card .sentence-flip .sentence-back{transform:rotateY(180deg);background:var(--lavender)}
+.sentence-back p{margin:0}
+.sentence-back .variant{margin-top:4px;font-size:.62em;color:var(--ink-soft)}
+.sentence-flip+.translation-provenance{display:flex;margin:-6px auto 12px}
+@media (prefers-reduced-motion:reduce){.sentence-flip-inner{transition:none}.sentence-flip.animate .sentence-flip-inner{animation:none}}
+.sentence-flip-inner>:not(.sentence){backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.guest-fi .sentence-source-icon{font-size:.5em;vertical-align:.9em;margin-left:.2em}
+.guest-sentence .sentence-source-icon{font-size:.6em;vertical-align:.5em}

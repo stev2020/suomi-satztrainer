@@ -50,7 +50,7 @@ export function flipWordIndex(infos){
  return best;
 }
 
-export function createGuestCard(root,{sentences,level,onUnavailable}){
+export function createGuestCard(root,{sentences,level,onUnavailable,sourceIcon=()=>''}){
  if(!root)return {start(){},stop(){},get available(){return false;}};
  let failed=false,pool=[],recent=[],sentence=null,infos=[],step=0,exercise=null,result=null,flipped=false,busy=false,audio=null,started=false;
  root.innerHTML=`<h2 id="guest-card-title" class="sr-only">Ein Satz zum Ausprobieren</h2>
@@ -77,7 +77,7 @@ export function createGuestCard(root,{sentences,level,onUnavailable}){
    else if(p.text.trim()&&cols.length)cols[cols.length-1].fi+=p.text;
    else if(p.text.trim())cols.push({fi:p.text,gloss:''});
   }
-  return cols.map(c=>`<span class="guest-word"><span class="guest-fi guest-l1">${esc(c.fi)}</span><span class="guest-gloss guest-l2" lang="de">${esc(c.gloss)}</span></span>`).join('');
+  return cols.map((c,i)=>`<span class="guest-word"><span class="guest-fi guest-l1">${esc(c.fi)}${i===cols.length-1?sourceIcon(sentence):''}</span><span class="guest-gloss guest-l2" lang="de">${esc(c.gloss)}</span></span>`).join('');
  }
 
  function renderSteps(){
@@ -88,10 +88,10 @@ export function createGuestCard(root,{sentences,level,onUnavailable}){
   renderSteps();
   audioButton.hidden=!sentence?.audios?.length;
   if(step===0){
-   stage.innerHTML=`<div class="guest-words" lang="fi">${wordsMarkup()}</div><p class="guest-translation guest-l3" lang="de">${esc(sentence.translations[0].text)}</p>`;
+   stage.innerHTML=`<div class="guest-words" lang="fi">${wordsMarkup()}</div><p class="guest-translation guest-l3" lang="de">${esc(sentence.translations[0].text)}${sourceIcon(sentence.translations[0])}</p>`;
    actions.innerHTML=`<button type="button" class="guest-secondary" data-guest="other">${ICON_SHUFFLE}Anderer Satz</button><button type="button" class="guest-next" data-guest="step">Satz selbst bauen →</button>`;
   }else if(step===1){
-   stage.innerHTML=`<p class="guest-sentence guest-l1" lang="fi">${esc(sentence.text)}</p><div class="guest-build guest-l2"></div><p class="guest-feedback guest-l3" aria-live="polite"></p>`;
+   stage.innerHTML=`<p class="guest-sentence guest-l1" lang="fi">${esc(sentence.text)}${sourceIcon(sentence)}</p><div class="guest-build guest-l2"></div><p class="guest-feedback guest-l3" aria-live="polite"></p>`;
    renderBuild();
   }else{
    const i=flipWordIndex(infos),info=infos[i],word=sentenceWords(sentence.text)[i];
