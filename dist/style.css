@@ -421,3 +421,20 @@ header .header-nav button:hover,header .header-nav button.selected{background:va
 .cycle-grades{display:flex;gap:10px;width:100%;margin:0}
 .cycle-grades .grade{flex:1}
 @media(max-width:700px){.card-top .cycle-steps li:not(.current){font-size:0;gap:0}.card-top{flex-wrap:wrap;gap:8px}}
+
+/* Dreischritt: Schrittwechsel mit Gleitanimation (drei Tempi; Ebenen der Lese- und Wortkarte eigens) */
+.card.cycle-leaving,.card.cycle-entering{overflow:hidden}
+.card.cycle-leaving>:not(.card-top):not(.cycle-stage){animation:guest-out .44s cubic-bezier(.55,0,.95,.45) both}
+.card.cycle-leaving>:nth-child(n+3):not(.cycle-stage){animation-duration:.52s;animation-delay:.04s}
+.card.cycle-leaving>:nth-child(n+4):not(.cycle-stage){animation-duration:.58s;animation-delay:.06s}
+.card.cycle-leaving .cycle-stage .guest-l1{animation:guest-out .42s cubic-bezier(.55,0,.95,.45) both}
+.card.cycle-leaving .cycle-stage .guest-l2{animation:guest-out .52s cubic-bezier(.55,0,.95,.45) .05s both}
+.card.cycle-leaving .cycle-stage .guest-l3{animation:guest-out .58s cubic-bezier(.55,0,.95,.45) .06s both}
+.card.cycle-entering>:not(.card-top):not(.cycle-stage){animation:guest-in .58s cubic-bezier(.12,.8,.25,1) both}
+.card.cycle-entering>:nth-child(n+3):not(.cycle-stage){animation-duration:.68s;animation-delay:.04s}
+.card.cycle-entering>:nth-child(n+4):not(.cycle-stage){animation-duration:.78s;animation-delay:.06s}
+.card.cycle-entering .cycle-stage .guest-l1{animation:guest-in .56s cubic-bezier(.12,.8,.25,1) both}
+.card.cycle-entering .cycle-stage .guest-l2{animation:guest-in .68s cubic-bezier(.12,.8,.25,1) .04s both}
+.card.cycle-entering .cycle-stage .guest-l3{animation:guest-in .78s cubic-bezier(.12,.8,.25,1) .04s both}
+.card{--travel:900px}
+@media (prefers-reduced-motion:reduce){.card.cycle-leaving *,.card.cycle-entering *{animation:none!important}}
