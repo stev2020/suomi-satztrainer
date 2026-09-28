@@ -1,6 +1,6 @@
 import {tc} from './i18n.mjs?v=3';
 import {canSearch,createSearch} from './wordsearch.mjs';
-import {mountSearch,searchInstructions} from './wordsearch-ui.mjs?v=63';
+import {mountSearch,searchInstructions} from './wordsearch-ui.mjs?v=64';
 import {createWordExercise,wordAnswerMatches,finnishSentenceMatches,sentenceWords} from './word-practice.mjs?v=61';
 import {VERBS} from './verbs-data.mjs';
 import {PRONOUNS,validateVerbProgress,mergeVerbProgress,markAsked,markAnswered,answerMatches,createVerbSession,chooseCombination,verbSummary} from './verb-practice.mjs';
