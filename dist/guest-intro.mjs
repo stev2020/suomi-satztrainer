@@ -6,17 +6,18 @@
 //   3. beides gleitet an seinen Platz oben links,
 //   4. der finnische Satz der Satzkarte erscheint allein,
 //   5. danach wächst die Karte um ihn herum auf, der Rest der Seite blendet ein.
+// Logo und „vanamo“ im Header stehen von Anfang an.
 // Ein Klick, Tipp, Scrollen oder Tastendruck springt sofort zum fertigen Zustand.
 // Der Inline-Schnipsel in index.html setzt vorher `intro-pending` (versteckt die Seite
 // ohne Aufblitzen); dieses Modul übernimmt ab dort und räumt am Ende alles wieder weg.
 
+// Pausen zählen jeweils ab dem Moment, in dem der vorige Schritt fertig zu sehen ist.
 const T={
- lead:0,        // „Ein bisschen Finnisch.“ blendet ein
- tail:1200,     // „Jeden Tag.“ blendet ein
- move:2500,     // Überschrift gleitet an ihren Platz
+ fadeMs:800,        // Einblenden einer Zeile
+ tailGap:400,       // „Ein bisschen Finnisch.“ steht allein, dann kommt „Jeden Tag.“
+ moveGap:500,       // beide Zeilen stehen, dann gleiten sie an ihren Platz
  moveMs:1000,
- fadeMs:800,
- sentenceHold:1200, // Satz steht allein, bevor die Karte aufwächst
+ sentenceGap:300,   // Satz steht allein, dann wächst die Karte
  cardWait:4000      // so lange höchstens auf die Satzkarte warten
 };
 const EASE_MOVE='cubic-bezier(.65,0,.25,1)',EASE_OUT='cubic-bezier(.2,.7,.2,1)';
@@ -24,6 +25,17 @@ const SEEN='vanamo-intro-seen';
 
 const html=document.documentElement;
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+// Wartet `ms` *sichtbare* Zeit: Hänger des Browsers (z. B. während die Satzdaten verarbeitet
+// werden – auf dem Handy spürbar) zählen nicht mit, sonst kämen Schritte zu schnell hintereinander.
+function hold(ms){
+ return new Promise(resolve=>{
+  let seen=0,last=performance.now();
+  const tick=now=>{seen+=Math.min(now-last,50);last=now;if(seen>=ms)resolve();else requestAnimationFrame(tick);};
+  requestAnimationFrame(tick);
+ });
+}
+const finished=a=>a.finished.catch(()=>{});
 
 async function waitFor(check,timeout){
  const end=performance.now()+timeout;
@@ -73,11 +85,13 @@ export async function runGuestIntro(){
  h1.style.transformOrigin=`${(left+right)/2-el.left}px ${(top+bottom)/2-el.top}px`;
  const big=`translate(${vw/2-(left+right)/2}px,${vh/2-(top+bottom)/2}px) scale(${scale})`;
  h1.style.transform=big;
- play(lead,fadeIn,{duration:T.fadeMs,delay:T.lead,easing:EASE_OUT,fill:'both'});
- play(tail,fadeIn,{duration:T.fadeMs,delay:T.tail,easing:EASE_OUT,fill:'both'});
- await sleep(T.move);if(done)return;
+ await hold(50);if(done)return; // erst zeichnen lassen, dann starten
+ await finished(play(lead,fadeIn,{duration:T.fadeMs,easing:EASE_OUT,fill:'both'}));
+ await hold(T.tailGap);if(done)return;
+ await finished(play(tail,fadeIn,{duration:T.fadeMs,easing:EASE_OUT,fill:'both'}));
+ await hold(T.moveGap);if(done)return;
  const move=play(h1,[{transform:big},{transform:'none'}],{duration:T.moveMs,easing:EASE_MOVE,fill:'forwards'});
- await move.finished.catch(()=>{});if(done)return;
+ await finished(move);if(done)return;
  h1.style.transform='';h1.style.transformOrigin='';
 
  // Satzkarte: erst nur der finnische Satz, dann wächst die Karte drumherum.
@@ -85,8 +99,9 @@ export async function runGuestIntro(){
  const ready=()=>card&&!card.hidden&&!card.classList.contains('is-loading')&&card.querySelector('.guest-fi');
  if(await waitFor(ready,T.cardWait)&&!done){
   card.classList.add('intro-bare','intro-shown');
-  card.querySelectorAll('.guest-fi').forEach((word,i)=>play(word,[{opacity:0,transform:'translateY(14px)'},{opacity:1,transform:'none'}],{duration:700,delay:i*110,easing:EASE_OUT,fill:'both'}));
-  await sleep(T.sentenceHold);if(done)return;
+  const words=[...card.querySelectorAll('.guest-fi')].map((word,i)=>play(word,[{opacity:0,transform:'translateY(14px)'},{opacity:1,transform:'none'}],{duration:700,delay:i*110,easing:EASE_OUT,fill:'both'}));
+  await Promise.all(words.map(finished));if(done)return;
+  await hold(T.sentenceGap);if(done)return;
   card.classList.add('intro-growing');
   card.classList.remove('intro-bare');
   play(card,[{transform:'scale(.97)'},{transform:'none'}],{duration:700,easing:EASE_OUT});
@@ -94,7 +109,7 @@ export async function runGuestIntro(){
  if(done)return;
 
  // Restliche Seite gestaffelt einblenden (Reihenfolge = Lesereihenfolge).
- const rest=[...document.querySelectorAll('header, #home-view .today, #home-view>:not(.intro), .page-tools, footer')].filter(el=>!el.hidden&&!el.classList.contains('intro-shown'));
+ const rest=[...document.querySelectorAll('header .header-nav, #home-view .today, #home-view>:not(.intro), .page-tools, footer')].filter(el=>!el.hidden&&!el.classList.contains('intro-shown'));
  rest.forEach((el,i)=>play(el,[{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'none'}],{duration:650,delay:120+i*90,easing:EASE_OUT,fill:'backwards'}));
  html.classList.remove('intro-pending');
  await sleep(120+rest.length*90+700);
