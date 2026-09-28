@@ -468,3 +468,21 @@ html.intro-running,.intro-running body{overflow:hidden}
 .guest-card.intro-growing{transition:border-color .6s ease,background-color .6s ease,box-shadow .7s ease}
 .guest-card.intro-growing :is(.guest-top,.guest-actions,.guest-gloss,.guest-translation,.sentence-source-icon){transition:opacity .6s ease .25s}
 .guest-card.intro-growing .guest-fi{transition:border-bottom-color .6s ease .2s}
+
+/* Satzkarte für Gäste: Zähler und Abschluss nach fünf Sätzen */
+.guest-count{margin-left:auto;font-size:12px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+.guest-count:empty{display:none}
+.guest-count+.guest-audio{margin-left:0}
+.guest-card.is-finished .guest-top{display:none}
+.guest-finale{display:flex;flex-direction:column;gap:12px}
+.guest-finale-kicker{margin:0;font-size:12px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:var(--heading-accent)}
+.guest-finale-title{margin:0;font:700 clamp(28px,4.4vw,40px)/1.1 var(--heading);letter-spacing:-.8px;color:var(--ink)}
+.guest-finale-list{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 0;padding:0;list-style:none}
+.guest-finale-list li{padding:6px 12px;border:1.5px solid var(--line);border-radius:999px;background:var(--lavender);font:600 15px/1.3 var(--heading);animation:guest-chip .5s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(.45s + var(--i)*90ms)}
+.guest-finale-text{margin:4px 0 0;max-width:520px;line-height:1.55;color:var(--ink-soft)}
+.guest-to-path span{display:inline-block;animation:guest-nudge 1.4s ease-in-out 1.6s 3}
+@keyframes guest-chip{from{opacity:0;transform:translateY(10px) scale(.9)}to{opacity:1;transform:none}}
+@keyframes guest-nudge{0%,100%{transform:none}50%{transform:translateY(4px)}}
+#start-new-sentences.cta-pulse{animation:cta-pulse 1.25s ease-out 2}
+@keyframes cta-pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--mint) 90%,transparent)}100%{box-shadow:0 0 0 14px transparent}}
+@media (prefers-reduced-motion:reduce){.guest-finale-list li,.guest-to-path span,#start-new-sentences.cta-pulse{animation:none}}
