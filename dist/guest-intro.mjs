@@ -1,0 +1,104 @@
+// Vanamo – Intro auf der Startseite für Besucher ohne Konto.
+//
+// Ablauf (nur beim ersten Aufruf pro Tab, nicht bei „Bewegung reduzieren“):
+//   1. „Ein bisschen Finnisch.“ erscheint groß in der Bildschirmmitte,
+//   2. kurz danach „Jeden Tag.“,
+//   3. beides gleitet an seinen Platz oben links,
+//   4. der finnische Satz der Satzkarte erscheint allein,
+//   5. danach wächst die Karte um ihn herum auf, der Rest der Seite blendet ein.
+// Ein Klick, Tipp, Scrollen oder Tastendruck springt sofort zum fertigen Zustand.
+// Der Inline-Schnipsel in index.html setzt vorher `intro-pending` (versteckt die Seite
+// ohne Aufblitzen); dieses Modul übernimmt ab dort und räumt am Ende alles wieder weg.
+
+const T={
+ lead:0,        // „Ein bisschen Finnisch.“ blendet ein
+ tail:1200,     // „Jeden Tag.“ blendet ein
+ move:2500,     // Überschrift gleitet an ihren Platz
+ moveMs:1000,
+ fadeMs:800,
+ sentenceHold:1200, // Satz steht allein, bevor die Karte aufwächst
+ cardWait:4000      // so lange höchstens auf die Satzkarte warten
+};
+const EASE_MOVE='cubic-bezier(.65,0,.25,1)',EASE_OUT='cubic-bezier(.2,.7,.2,1)';
+const SEEN='vanamo-intro-seen';
+
+const html=document.documentElement;
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+async function waitFor(check,timeout){
+ const end=performance.now()+timeout;
+ while(!check()){if(performance.now()>end)return false;await sleep(60);}
+ return true;
+}
+
+export async function runGuestIntro(){
+ if(!html.classList.contains('intro-pending'))return;
+ const h1=document.querySelector('#home-view .intro h1');
+ const lead=h1?.querySelector('.intro-lead'),tail=h1?.querySelector('.intro-tail');
+ if(!h1||!lead||!tail||typeof h1.animate!=='function'){html.classList.remove('intro-pending');return;}
+ html.classList.add('intro-running');
+ try{sessionStorage.setItem(SEEN,'1');}catch{}
+
+ const animations=[],controller=new AbortController();
+ let done=false;
+ const play=(el,frames,options)=>{const a=el.animate(frames,options);animations.push(a);return a;};
+
+ // Sofort zum Endzustand – auch der normale Abschluss läuft hier durch.
+ function finish(){
+  if(done)return;done=true;
+  controller.abort();
+  animations.forEach(a=>a.cancel());
+  h1.style.transform='';h1.style.transformOrigin='';
+  const card=document.getElementById('guest-card');
+  card?.classList.remove('intro-bare','intro-growing','intro-shown');
+  html.classList.remove('intro-pending','intro-running');
+ }
+ for(const type of ['pointerdown','keydown','wheel','touchstart'])addEventListener(type,finish,{signal:controller.signal,passive:true});
+ setTimeout(finish,15000); // Sicherheitsnetz
+
+ // Übersetzung und Schriften abwarten, sonst stimmen die Maße nicht.
+ await waitFor(()=>!html.classList.contains('i18n-pending'),3000);
+ try{await Promise.race([document.fonts?.ready,sleep(1500)]);}catch{}
+ if(done)return;
+
+ scrollTo(0,0);
+ const vw=innerWidth,vh=innerHeight;
+ const fadeIn=[{opacity:0,transform:'translateY(.35em)',filter:'blur(6px)'},{opacity:1,transform:'none',filter:'blur(0)'}];
+ // FLIP: Endposition des Textes messen (nicht des ganzen Blocks), dann groß in die Mitte
+ // setzen und von dort zurückgleiten. Umbrüche bleiben dabei genau wie am Ende.
+ const el=h1.getBoundingClientRect(),rects=[...lead.getClientRects(),...tail.getClientRects()];
+ const left=Math.min(...rects.map(r=>r.left)),right=Math.max(...rects.map(r=>r.right));
+ const top=Math.min(...rects.map(r=>r.top)),bottom=Math.max(...rects.map(r=>r.bottom));
+ const scale=Math.max(1,Math.min(vw*.86/(right-left),vh*.5/(bottom-top),4));
+ h1.style.transformOrigin=`${(left+right)/2-el.left}px ${(top+bottom)/2-el.top}px`;
+ const big=`translate(${vw/2-(left+right)/2}px,${vh/2-(top+bottom)/2}px) scale(${scale})`;
+ h1.style.transform=big;
+ play(lead,fadeIn,{duration:T.fadeMs,delay:T.lead,easing:EASE_OUT,fill:'both'});
+ play(tail,fadeIn,{duration:T.fadeMs,delay:T.tail,easing:EASE_OUT,fill:'both'});
+ await sleep(T.move);if(done)return;
+ const move=play(h1,[{transform:big},{transform:'none'}],{duration:T.moveMs,easing:EASE_MOVE,fill:'forwards'});
+ await move.finished.catch(()=>{});if(done)return;
+ h1.style.transform='';h1.style.transformOrigin='';
+
+ // Satzkarte: erst nur der finnische Satz, dann wächst die Karte drumherum.
+ const card=document.getElementById('guest-card');
+ const ready=()=>card&&!card.hidden&&!card.classList.contains('is-loading')&&card.querySelector('.guest-fi');
+ if(await waitFor(ready,T.cardWait)&&!done){
+  card.classList.add('intro-bare','intro-shown');
+  card.querySelectorAll('.guest-fi').forEach((word,i)=>play(word,[{opacity:0,transform:'translateY(14px)'},{opacity:1,transform:'none'}],{duration:700,delay:i*110,easing:EASE_OUT,fill:'both'}));
+  await sleep(T.sentenceHold);if(done)return;
+  card.classList.add('intro-growing');
+  card.classList.remove('intro-bare');
+  play(card,[{transform:'scale(.97)'},{transform:'none'}],{duration:700,easing:EASE_OUT});
+ }
+ if(done)return;
+
+ // Restliche Seite gestaffelt einblenden (Reihenfolge = Lesereihenfolge).
+ const rest=[...document.querySelectorAll('header, #home-view .today, #home-view>:not(.intro), .page-tools, footer')].filter(el=>!el.hidden&&!el.classList.contains('intro-shown'));
+ rest.forEach((el,i)=>play(el,[{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'none'}],{duration:650,delay:120+i*90,easing:EASE_OUT,fill:'backwards'}));
+ html.classList.remove('intro-pending');
+ await sleep(120+rest.length*90+700);
+ finish();
+}
+
+runGuestIntro();
