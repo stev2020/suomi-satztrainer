@@ -457,7 +457,7 @@ header .header-nav button:hover,header .header-nav button.selected{background:va
 [data-home-activity].is-locked:hover,[data-activity].is-locked:hover{transform:none}
 
 /* Intro für Gäste (guest-intro.mjs): Seite zuerst verborgen, Überschrift groß in der Mitte */
-.intro-pending :is(header,footer,.page-tools,#home-view .today,#home-view>:not(.intro):not(.intro-shown)){opacity:0}
+.intro-pending :is(header .header-nav,footer,.page-tools,#home-view .today,#home-view>:not(.intro):not(.intro-shown)){opacity:0}
 .intro-pending:not(.intro-running) #home-view .intro h1{opacity:0}
 .intro-running #home-view .intro h1{opacity:1;position:relative;z-index:20;pointer-events:none}
 .intro-running #home-view .intro h1>span{opacity:0}

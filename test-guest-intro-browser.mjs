@@ -29,7 +29,9 @@ try{
  await page.goto(origin+'/?intro');
  await page.waitForFunction(()=>document.documentElement.classList.contains('intro-running'));
  await page.waitForTimeout(600);
- assert.equal(await opacity(page,'header'),0,'header hidden during intro');
+ assert.equal(await opacity(page,'header .header-nav'),0,'header navigation hidden during intro');
+ assert.equal(await opacity(page,'header'),1,'logo and name stay visible from the start');
+ assert.equal(await opacity(page,'header .brand'),1);
  assert.equal(await opacity(page,'#home-view .today'),0);
  const scale=await page.locator('#home-view .intro h1').evaluate(el=>new DOMMatrix(getComputedStyle(el).transform).a);
  assert.ok(scale>1.5,`headline starts large (scale ${scale})`);
@@ -42,6 +44,22 @@ try{
  assert.equal(await page.locator('#home-view .intro h1').evaluate(el=>el.style.transform),'');
  assert.equal(await opacity(page,'header'),1);
  assert.equal(await page.evaluate(()=>sessionStorage.getItem('vanamo-intro-seen')),'1');
+ await page.context().close();
+
+ // Handy mit Hänger: Blockiert der Browser, während „Ein bisschen Finnisch.“ einblendet
+ // (z. B. beim Verarbeiten der Satzdaten), kommt „Jeden Tag.“ trotzdem erst mit sichtbarem Abstand.
+ page=await newPage({viewport:{width:390,height:780},isMobile:true,hasTouch:true});
+ await page.addInitScript(()=>{
+  window.__introLog=[];const animate=Element.prototype.animate;
+  Element.prototype.animate=function(...args){if(this.matches?.('.intro-lead,.intro-tail'))window.__introLog.push([this.className,performance.now()]);return animate.apply(this,args);};
+ });
+ await page.goto(origin+'/?intro');
+ await page.waitForFunction(()=>window.__introLog.length>=1);
+ const blockEnd=await page.evaluate(()=>new Promise(resolve=>setTimeout(()=>{const end=performance.now()+1000;while(performance.now()<end){}resolve(performance.now());},200)));
+ await page.waitForFunction(()=>window.__introLog.length>=2,null,{timeout:8000});
+ const log=Object.fromEntries(await page.evaluate(()=>window.__introLog));
+ assert.ok(log['intro-tail']-blockEnd>=350,`tail waits for visible time after the stall (${Math.round(log['intro-tail']-blockEnd)} ms)`);
+ assert.ok(log['intro-tail']-log['intro-lead']>=1150,`gap lead → tail ${Math.round(log['intro-tail']-log['intro-lead'])} ms`);
  await page.context().close();
 
  // Klick überspringt sofort.
