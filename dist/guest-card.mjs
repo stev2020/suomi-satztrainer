@@ -115,14 +115,18 @@ export function createGuestCard(root,{sentences,level,onUnavailable,onFinished,o
   }
  }
 
+ // Das Ergebnis (grün/rot) wird genau einmal animiert – beim Prüfen, nicht bei späterem Neuzeichnen.
+ const animatedChecks=new WeakSet();
  function renderBuild(){
   const box=stage.querySelector('.guest-build');if(!box)return;
   const chosen=exercise.selected.map(id=>exercise.tokens.find(t=>t.id===id));
-  box.innerHTML=`<div class="word-answer guest-answer ${result===true?'is-right':result===false?'is-wrong':''}" lang="de" aria-label="${result===true?'Richtig':result===false?'Nicht ganz richtig':'Deine Übersetzung'}">${chosen.length?chosen.map(t=>`<button type="button" data-remove="${t.id}" ${result!==null?'disabled':''}>${esc(t.text)}</button>`).join(''):'<span class="guest-placeholder">Tippe die Wörter in der richtigen Reihenfolge an …</span>'}</div>
+  const animate=result!==null&&!animatedChecks.has(exercise);if(animate)animatedChecks.add(exercise);
+  box.innerHTML=`<div class="word-answer guest-answer ${result===true?'is-right':result===false?'is-wrong':''}${animate?' check-anim':''}" lang="de" aria-label="${result===true?'Richtig':result===false?'Nicht ganz richtig':'Deine Übersetzung'}">${chosen.length?chosen.map((t,i)=>`<button type="button" data-remove="${t.id}" style="--i:${i}" ${result!==null?'disabled':''}>${esc(t.text)}</button>`).join(''):'<span class="guest-placeholder">Tippe die Wörter in der richtigen Reihenfolge an …</span>'}</div>
 <div class="word-bank guest-bank" lang="de">${exercise.tokens.map(t=>`<button type="button" data-add="${t.id}" ${exercise.selected.includes(t.id)||result!==null?'disabled':''}>${esc(t.text)}</button>`).join('')}</div>`;
   box.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{exercise.selected.push(Number(b.dataset.add));renderBuild();renderActions();});
   box.querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>{exercise.selected=exercise.selected.filter(id=>id!==Number(b.dataset.remove));renderBuild();renderActions();});
   const feedback=stage.querySelector('.guest-feedback');
+  if(feedback)feedback.classList.toggle('check-anim',animate);
   if(feedback)feedback.innerHTML=result===true?'<span class="guest-right">Richtig!</span>':result===false?`Leider nicht, richtig ist: <span lang="de">${esc(sentence.translations[0].text)}</span>`:'';
   renderActions();
  }

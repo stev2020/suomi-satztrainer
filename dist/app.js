@@ -11,7 +11,7 @@ import {addPerformanceEvent,buildLearningInsights,mergePerformanceEvents,validat
 import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './supabase-config.js';
 import {validateGames,mergeGames} from './games-progress.mjs';
 import {mountWordLookup,loadLexicon,lookupForSentence,splitSentence} from './word-lookup.mjs?v=2';
-import {createGuestCard,shortGloss,flipWordIndex} from './guest-card.mjs?v=10';
+import {createGuestCard,shortGloss,flipWordIndex} from './guest-card.mjs?v=11';
 import {buildDifficultDeck} from './difficult-words.mjs?v=2';
 import {buildEndingItems,indexLexicon,renderEndings} from './endings-practice.mjs?v=1';
 import {translationFeedbackMarkup} from './translation-feedback.mjs?v=1';
@@ -440,6 +440,7 @@ function renderWritingSession(){
  $('writing-history').hidden=count===0;$('writing-history').innerHTML=count?`<h2 id="writing-history-title">Deine bisherigen Antworten</h2><ol>${session.answers.map((answer,i)=>`<li><p lang="de">${escape(session.items[i].translations[0].text)}${sourceIcon(session.items[i].translations[0])}</p><p lang="fi" class="writing-history-answer">${escape(answer)}</p></li>`).join('')}</ol>`:'';
 }
 
+const animatedWordChecks=new WeakSet();
 function wordPracticeMarkup(s){
  const language=cardDirection(s)==='fi-de'?'de':'fi';
  if(!wordExercise)wordExercise=createWordExercise(s,language,data);
@@ -447,8 +448,10 @@ function wordPracticeMarkup(s){
  if(revealed){
   // Wie auf der Satzkarte der Startseite: der Antwortsatz wird grün oder rot, darunter „Richtig!“ bzw. die Lösung.
   const correct=wordAnswerMatches(w),solution=language==='de'?s.translations[0]:s;
-  const tiles=w.selected.map(id=>w.tokens.find(t=>t.id===id)).filter(Boolean).map(t=>`<span class="word-tile">${escape(t.text)}</span>`).join('');
-  return `<div class="word-result word-checked ${correct?'correct':'incorrect'}"><div class="word-answer ${correct?'is-right':'is-wrong'}" lang="${language}">${tiles||'<span class="word-placeholder">–</span>'}</div><p class="word-solution">${correct?'Richtig!':`Leider nicht, richtig ist: <span lang="${language}">${escape(solution.text)}${sourceIcon(solution)}</span>`}</p></div>`;}
+  const tiles=w.selected.map(id=>w.tokens.find(t=>t.id===id)).filter(Boolean).map((t,i)=>`<span class="word-tile" style="--i:${i}">${escape(t.text)}</span>`).join('');
+  // Grün/Rot nur beim ersten Anzeigen nach dem Prüfen animieren, nicht bei jedem Neuzeichnen.
+  const animate=!animatedWordChecks.has(w);animatedWordChecks.add(w);
+  return `<div class="word-result word-checked ${correct?'correct':'incorrect'}${animate?' check-anim':''}"><div class="word-answer ${correct?'is-right':'is-wrong'}" lang="${language}">${tiles||'<span class="word-placeholder">–</span>'}</div><p class="word-solution">${correct?'Richtig!':`Leider nicht, richtig ist: <span lang="${language}">${escape(solution.text)}${sourceIcon(solution)}</span>`}</p></div>`;}
  return `<div class="word-practice"><p id="word-hint">Bilde die Übersetzung auf ${language==='de'?'Deutsch':'Finnisch'}. ${w.tokens.length-w.expected.length===1?'1 Wort gehört':'2 Wörter gehören'} nicht dazu. Klicke ein Wort im Antwortsatz an, um es zurückzulegen.</p><div id="word-answer" class="word-answer" role="group" aria-label="Dein Antwortsatz" lang="${language}"></div><div id="word-bank" class="word-bank" role="group" aria-label="Verfügbare Wörter" data-i18n-attrs lang="${language}" aria-describedby="word-hint"></div></div>`;
 }
 function bindWordPractice(){

@@ -10,6 +10,8 @@ try{
  browser=await chromium.launch({headless:true,...(process.env.PW_CHROMIUM?{executablePath:process.env.PW_CHROMIUM}:{})});
  for(const viewport of [{width:1280,height:900},{width:390,height:844}]){
   const context=await browser.newContext({viewport,serviceWorkers:'block',locale:'de-DE'});
+  // Die fünf Probesätze der Gäste-Satzkarte gelten als erledigt, damit der Lernpfad sichtbar ist.
+  await context.addInitScript(()=>sessionStorage.setItem('vanamo-guest-sentences',JSON.stringify(['a','b','c','d','e'])));
   await context.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());
   const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
   await page.goto(origin);
