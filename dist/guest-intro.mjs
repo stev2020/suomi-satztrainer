@@ -96,8 +96,9 @@ export async function runGuestIntro(){
 
  // Satzkarte: erst nur der finnische Satz, dann wächst die Karte drumherum.
  const card=document.getElementById('guest-card');
- const ready=()=>card&&!card.hidden&&!card.classList.contains('is-loading')&&card.querySelector('.guest-fi');
- if(await waitFor(ready,T.cardWait)&&!done){
+ const ready=()=>card&&!card.hidden&&!card.classList.contains('is-loading')&&card.querySelector('.guest-fi,.guest-finale');
+ // Nach den fünf Gast-Sätzen zeigt die Karte den Abschluss – dann blendet sie einfach mit dem Rest ein.
+ if(await waitFor(ready,T.cardWait)&&!done&&card.querySelector('.guest-fi')){
   card.classList.add('intro-bare','intro-shown');
   const words=[...card.querySelectorAll('.guest-fi')].map((word,i)=>play(word,[{opacity:0,transform:'translateY(14px)'},{opacity:1,transform:'none'}],{duration:700,delay:i*110,easing:EASE_OUT,fill:'both'}));
   await Promise.all(words.map(finished));if(done)return;

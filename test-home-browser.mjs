@@ -14,20 +14,23 @@ try{
  browser=await chromium.launch({headless:true,...(process.env.PW_CHROMIUM?{executablePath:process.env.PW_CHROMIUM}:{})});
  const context=await browser.newContext({viewport:{width:1280,height:1000},serviceWorkers:'block',locale:'de-DE'});
  await context.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());
+ // Die fünf Probesätze gelten hier als erledigt, damit „Neue Sätze lernen“ auch für Gäste da ist.
+ await context.addInitScript(()=>sessionStorage.setItem('vanamo-guest-sentences',JSON.stringify(['a','b','c','d','e'])));
  const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
  const home=()=>page.locator('.app-view:not([hidden]) .back-link[data-view="home"]').click();
  const select=activity=>page.locator('[data-home-activity="'+activity+'"]').click();
  await page.goto(origin);
  await page.locator('#start-new-sentences:not([disabled])').waitFor({state:'attached'});
- // Gäste sehen von „Neue Sätze lernen“ nur die Überschrift, bis sie es aufklappen
+ // Nach den fünf Probesätzen erscheint „Neue Sätze lernen“ für Gäste aufgeklappt; einklappbar bleibt es.
+ await page.locator('.guest-finale').waitFor();
  assert.ok(await page.locator('#path-title').isVisible());
- assert.ok(await page.locator('#start-new-sentences').isHidden(),'guest path is collapsed');
- assert.equal(await page.locator('#path-toggle').getAttribute('aria-expanded'),'false');
- await page.locator('#path-title').click();
- assert.ok(await page.locator('#start-new-sentences').isVisible(),'clicking the heading expands the path');
+ assert.ok(await page.locator('#start-new-sentences').isVisible(),'guest path is open after the five sentences');
  assert.equal(await page.locator('#path-toggle').getAttribute('aria-expanded'),'true');
  await page.locator('#path-toggle').click();
- assert.ok(await page.locator('#start-new-sentences').isHidden(),'the chevron collapses it again');
+ assert.ok(await page.locator('#start-new-sentences').isHidden(),'the chevron collapses it');
+ await page.locator('#path-title').click();
+ assert.ok(await page.locator('#start-new-sentences').isVisible(),'clicking the heading expands it again');
+ await page.locator('#path-toggle').click();
  await page.evaluate(()=>{document.body.dataset.account='authenticated';});
  assert.ok(await page.locator('#start-new-sentences').isVisible(),'signed-in users always see the path');
  assert.ok(await page.locator('#path-toggle').isHidden());

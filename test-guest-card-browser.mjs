@@ -47,6 +47,34 @@ try{
   assert.ok(await page.locator('.guest-words').isVisible());
   assert.equal(await page.locator('.guest-steps li.current').textContent().then(t=>t.replace(/\d/,'').trim()),'Lesen');
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'no horizontal scroll');
+  // Fünf Sätze, dann Abschluss mit Weg zum Lernpfad; „Neue Sätze lernen“ erst dann sichtbar
+  assert.ok(await page.locator('.home-new').isHidden(),'path box hidden while the guest tries sentences');
+  assert.equal(await page.locator('.guest-count').textContent(),'2/5');
+  for(const n of [3,4,5]){await page.locator('[data-guest="other"]').click();await wait();assert.equal(await page.locator('.guest-count').textContent(),`${n}/5`);}
+  assert.equal(await page.locator('[data-guest="other"]').count(),0,'no “another sentence” on the last one');
+  assert.ok(await page.locator('.home-new').isHidden());
+  await page.locator('[data-guest="step"]').click();await wait();
+  await page.locator('.guest-bank button').first().click();await page.locator('[data-guest="check"]').click();
+  await page.locator('[data-guest="step"]').click();await wait();
+  await page.locator('.guest-flip').click();
+  assert.equal((await page.locator('[data-guest="finish"]').textContent()).trim(),'Geschafft →');
+  await page.locator('[data-guest="finish"]').click();await wait();
+  assert.ok(await page.locator('.guest-finale').isVisible());
+  assert.equal(await page.locator('.guest-finale-list li').count(),5,'the five sentences are shown');
+  assert.ok(await page.locator('.guest-top').isHidden());
+  await page.locator('.home-new').waitFor({state:'visible'});
+  await page.waitForFunction(()=>!document.querySelector('.home-new').getAnimations().length);
+  assert.ok(await page.locator('#start-new-sentences').isVisible(),'path box appears opened');
+  await page.locator('[data-guest="path"]').click();
+  await page.waitForFunction(()=>document.activeElement?.id==='start-new-sentences');
+  // Neu laden: Abschluss bleibt, Box ist da
+  await page.reload();
+  await page.locator('#guest-card:not(.is-loading)').waitFor();
+  assert.ok(await page.locator('.guest-finale').isVisible());
+  assert.ok(await page.locator('.home-new').isVisible());
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'no horizontal scroll at the finale');
+  if(process.env.SHOTS){await page.waitForTimeout(1800);}
+  if(process.env.SHOTS)await page.screenshot({path:`${process.env.SHOTS}/finale-${viewport.width}.png`,fullPage:true});
   // Angemeldet: wieder „Sätze wiederholen“
   await page.evaluate(()=>{document.body.dataset.account='authenticated';});
   await page.locator('#guest-card').waitFor({state:'hidden'});

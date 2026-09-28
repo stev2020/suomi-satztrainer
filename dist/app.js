@@ -11,7 +11,7 @@ import {addPerformanceEvent,buildLearningInsights,mergePerformanceEvents,validat
 import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './supabase-config.js';
 import {validateGames,mergeGames} from './games-progress.mjs';
 import {mountWordLookup,loadLexicon,lookupForSentence,splitSentence} from './word-lookup.mjs?v=2';
-import {createGuestCard,shortGloss,flipWordIndex} from './guest-card.mjs?v=9';
+import {createGuestCard,shortGloss,flipWordIndex} from './guest-card.mjs?v=10';
 import {buildDifficultDeck} from './difficult-words.mjs?v=2';
 import {buildEndingItems,indexLexicon,renderEndings} from './endings-practice.mjs?v=1';
 import {translationFeedbackMarkup} from './translation-feedback.mjs?v=1';
@@ -865,12 +865,26 @@ document.addEventListener('keydown',e=>{if($('practice-view').hidden||document.q
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stopAudio();else if(ready)renderStats();});
 // Sätze, Qualitätsliste und Grammatik gleichzeitig laden; die Startseite wartet nur auf die ersten beiden.
 // Ohne Konto zeigt die Startseite statt „Sätze wiederholen“ eine Satzkarte zum Ausprobieren.
-var guestCard=createGuestCard($('guest-card'),{sentences:()=>data,level:()=>levels[0]||1,onUnavailable:()=>syncGuestHome(),sourceIcon:s=>sourceIcon(s)});
+var guestCard=createGuestCard($('guest-card'),{sentences:()=>data,level:()=>levels[0]||1,onUnavailable:()=>syncGuestHome(),onFinished:({animate})=>revealGuestPath(animate),onPathRequest:()=>pointToGuestPath(),sourceIcon:s=>sourceIcon(s)});
 // Gäste: „Neue Sätze lernen“ zeigt nur die Überschrift, bis man es aufklappt (gilt für diesen Besuch).
 var pathOpenedByGuest=false;
 function syncPathCollapse(guest){const section=document.querySelector?.('.home-new'),toggle=$('path-toggle');if(!section||!toggle)return;const collapsed=guest&&!pathOpenedByGuest;section.classList?.toggle('is-collapsed',collapsed);section.classList?.toggle('is-collapsible',guest);toggle.hidden=!guest;toggle.setAttribute('aria-expanded',String(!collapsed));toggle.setAttribute('aria-label',collapsed?'Neue Sätze lernen aufklappen':'Neue Sätze lernen einklappen');}
 if(typeof document!=='undefined'&&document.querySelector?.('.home-new .path-heading'))document.querySelector('.home-new .path-heading').addEventListener('click',()=>{if($('path-toggle').hidden)return;pathOpenedByGuest=$('path-toggle').getAttribute('aria-expanded')==='false';syncPathCollapse(true);});
-function syncGuestHome(){syncActivityLocks();syncHeaderPractice();if(!guestCard)return;const guest=!accountActive()&&guestCard.available;syncPathCollapse(guest);$('guest-card').hidden=!guest;if(!guest)guestCard.stop();else if(ready)guestCard.start();if(ready)renderDailyPlan();else document.querySelector('.home-daily').hidden=guest;}
+// Gäste sehen „Neue Sätze lernen“ erst, wenn sie ihre fünf Sätze auf der Satzkarte durch haben.
+function syncGuestPathVisibility(guest){const section=document.querySelector?.('.home-new');if(section)section.hidden=guest&&!guestCard.finished;}
+function revealGuestPath(animate){
+ pathOpenedByGuest=true;syncGuestHome();
+ const section=document.querySelector('.home-new');if(!animate||section.hidden||typeof section.animate!=='function'||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ // Die Box wächst unter der Karte auf, ihr Inhalt folgt gestaffelt, zuletzt pulsiert „Lernpfad starten“.
+ const cs=getComputedStyle(section),h=section.offsetHeight,ease='cubic-bezier(.2,.8,.2,1)';
+ section.style.overflow='hidden';
+ section.animate([{height:'0px',paddingTop:'0px',paddingBottom:'0px',borderTopWidth:'0px',borderBottomWidth:'0px',marginBottom:'0px',opacity:0,transform:'translateY(18px) scale(.97)'},{height:h+'px',paddingTop:cs.paddingTop,paddingBottom:cs.paddingBottom,borderTopWidth:cs.borderTopWidth,borderBottomWidth:cs.borderBottomWidth,marginBottom:cs.marginBottom,opacity:1,transform:'none'}],{duration:650,easing:ease}).finished.then(()=>{section.style.overflow='';}).catch(()=>{section.style.overflow='';});
+ [...section.children].filter(el=>!el.hidden&&el.offsetParent).forEach((el,i)=>el.animate([{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'none'}],{duration:500,delay:320+i*70,easing:ease,fill:'backwards'}));
+ setTimeout(()=>pulseStart(),1100);
+}
+function pulseStart(){const b=$('start-new-sentences');if(!b)return;b.classList.remove('cta-pulse');void b.offsetWidth;b.classList.add('cta-pulse');setTimeout(()=>b.classList.remove('cta-pulse'),2600);}
+function pointToGuestPath(){const section=document.querySelector('.home-new');if(!section||section.hidden)return;section.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'});pulseStart();setTimeout(()=>$('start-new-sentences')?.focus({preventScroll:true}),500);}
+function syncGuestHome(){syncActivityLocks();syncHeaderPractice();if(!guestCard)return;const guest=!accountActive()&&guestCard.available;syncPathCollapse(guest);syncGuestPathVisibility(guest);$('guest-card').hidden=!guest;if(!guest)guestCard.stop();else if(ready)guestCard.start();if(ready)renderDailyPlan();else document.querySelector('.home-daily').hidden=guest;}
 syncGuestHome();
 const sentencesRequest=fetch('sentences.json'),exclusionsRequest=loadQualityExclusions();
 const grammarRequest=fetch('grammar.json').then(r=>r.ok?r.json():null).then(p=>{if(p){grammar=p.sentences||{};grammarAvailable=true;}}).catch(()=>{}).finally(()=>{grammarLoading=false;grammarLoaded();});
