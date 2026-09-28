@@ -151,7 +151,10 @@ function renderDailyPlan(){
  document.querySelector('.home-daily').hidden=guest&&!stats.dueCount&&!(dailySession?.active&&queue.length);
  button.textContent=dailySession?.active&&queue.length?'Wiederholung fortsetzen':available?`${available} ${available===1?'Satz':'Sätze'} wiederholen`:'Alles wiederholt';
  $('header-practice').disabled=button.disabled;
+ syncHeaderPractice();
 }
+// Ohne Konto gibt es nichts zu wiederholen – „Üben“ im Header nur für angemeldete Nutzer zeigen.
+function syncHeaderPractice(){const b=$('header-practice');if(b)b.hidden=!accountActive();}
 function applyDailyCard(){
  if(!dailySession?.active||!queue.length)return;
  const card=queue[0];activity=card.dailyActivity;direction=card.dailyActivity==='translate'?'random':direction;difficulty=card.dailyDifficulty||'hard';mode='review';
@@ -867,7 +870,7 @@ var guestCard=createGuestCard($('guest-card'),{sentences:()=>data,level:()=>leve
 var pathOpenedByGuest=false;
 function syncPathCollapse(guest){const section=document.querySelector?.('.home-new'),toggle=$('path-toggle');if(!section||!toggle)return;const collapsed=guest&&!pathOpenedByGuest;section.classList?.toggle('is-collapsed',collapsed);section.classList?.toggle('is-collapsible',guest);toggle.hidden=!guest;toggle.setAttribute('aria-expanded',String(!collapsed));toggle.setAttribute('aria-label',collapsed?'Neue Sätze lernen aufklappen':'Neue Sätze lernen einklappen');}
 if(typeof document!=='undefined'&&document.querySelector?.('.home-new .path-heading'))document.querySelector('.home-new .path-heading').addEventListener('click',()=>{if($('path-toggle').hidden)return;pathOpenedByGuest=$('path-toggle').getAttribute('aria-expanded')==='false';syncPathCollapse(true);});
-function syncGuestHome(){syncActivityLocks();if(!guestCard)return;const guest=!accountActive()&&guestCard.available;syncPathCollapse(guest);$('guest-card').hidden=!guest;if(!guest)guestCard.stop();else if(ready)guestCard.start();if(ready)renderDailyPlan();else document.querySelector('.home-daily').hidden=guest;}
+function syncGuestHome(){syncActivityLocks();syncHeaderPractice();if(!guestCard)return;const guest=!accountActive()&&guestCard.available;syncPathCollapse(guest);$('guest-card').hidden=!guest;if(!guest)guestCard.stop();else if(ready)guestCard.start();if(ready)renderDailyPlan();else document.querySelector('.home-daily').hidden=guest;}
 syncGuestHome();
 const sentencesRequest=fetch('sentences.json'),exclusionsRequest=loadQualityExclusions();
 const grammarRequest=fetch('grammar.json').then(r=>r.ok?r.json():null).then(p=>{if(p){grammar=p.sentences||{};grammarAvailable=true;}}).catch(()=>{}).finally(()=>{grammarLoading=false;grammarLoaded();});

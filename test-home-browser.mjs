@@ -34,7 +34,12 @@ try{
  await page.evaluate(()=>{document.body.dataset.account='guest';});
  assert.equal(await page.locator('#account-dialog').count(),1);
  assert.equal(await page.locator('#progress-nav').count(),0);
+ // Ohne Konto kein „Üben“ im Header – es gäbe nichts zu wiederholen
+ assert.ok(await page.locator('#header-practice').isHidden(),'guests do not see the header practice button');
+ await page.evaluate(()=>{document.body.dataset.account='authenticated';});
+ assert.ok(await page.locator('#header-practice').isVisible(),'signed-in users see the header practice button');
  assert.equal(await page.locator('#header-practice').isDisabled(),true);
+ await page.evaluate(()=>{document.body.dataset.account='guest';});
  assert.equal(await page.locator('#account-button').textContent(),'Anmelden / Registrieren');
  assert.ok(await page.locator('#storage-account-link').isVisible());
  await page.locator('#storage-account-link').click();assert.ok(await page.locator('#login-form').isVisible());await page.locator('#close-account').click();
