@@ -222,6 +222,8 @@ export default {
  "Dein Hinweis (optional": "Your note (optional",
  "Dein Konto": "Your account",
  "Dein Konto, Lernstand, Beiträge, Abgaben, Meldungen und Mitgliedschaften werden unwiderruflich gelöscht. Eigene Klassenräume kannst du an eine dort aktive Lehrkraft übergeben; ohne Übergabe werden sie mitsamt allen Inhalten gelöscht.": "Your account, progress, posts, submissions, reports and memberships will be permanently deleted. You can hand over your own classrooms to a teacher who is active there; without a handover they will be deleted along with all their content.",
+ "Dein Lernpfad ·": "Your learning path ·",
+ "Level für neue Sätze": "Level for new sentences",
  "Dein Lernpfad · Level 1": "Your learning path · Level 1",
  "Dein Lernpfad · Level {0}": "Your learning path · Level {0}",
  "Dein Lernstand konnte gerade nicht lokal zwischengespeichert werden.": "Your progress couldn't be cached locally just now.",
