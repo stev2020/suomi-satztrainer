@@ -51,7 +51,7 @@ for(const s of data.filter(s=>s.level===level).slice(0,5))memory.reviews[s.id+':
 activity='writing';start();assert.equal(activity,'writing');assert($('practice-toolbar').hidden);
 `,ctx);
 await vm.runInContext(`activity='listen';start();globalThis.audioButton=$('play-audio');audioButton.dataset={};play(queue[0]);`,ctx);
-vm.runInContext(`assert.equal(audioButton.querySelector('span').textContent,'Anhalten');player.onended();assert.equal(audioButton.querySelector('span').textContent,'Wiederholen');assert(audioMarkup(queue[0]).includes('<span>Wiederholen</span>'));`,ctx);
+vm.runInContext(`assert.equal(audioButton.querySelector('span').textContent,'Anhalten');player.onended();assert.equal(audioButton.querySelector('span').textContent,'Wiederholen');assert(audioMarkup(queue[0]).includes('<span class="sr-only">Wiederholen</span>')&&!audioMarkup(queue[0]).includes('Audiodatei'));`,ctx);
 vm.runInContext(`
 const feedbackSentence={id:354158,text:'Sinä olet ihminen.',practiceDirection:'de-fi'};
 const feedbackNotes=fixtureGrammar['354158'].notes;
