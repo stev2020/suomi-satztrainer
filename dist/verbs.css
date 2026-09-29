@@ -37,7 +37,7 @@
 #verb-result-title:focus{outline:none}
 .verb-prompt{display:flex;align-items:center;justify-content:space-between;gap:16px 20px;flex-wrap:wrap;margin:20px 0 4px}
 .verb-card h2.verb-question{display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;margin:0;font-weight:600;line-height:1.15}
-.verb-pronoun{position:relative;display:inline-block;min-width:2.7em;text-align:center;padding:.08em .45em .14em;border:2px solid var(--line);border-radius:12px;background:var(--lavender);box-shadow:3px 3px 0 var(--line);font-size:.78em}
+.verb-pronoun{position:relative;display:inline-block;min-width:3.2em;text-align:center;padding:.08em .45em .14em;border:2px solid var(--line);border-radius:12px;background:var(--lavender);box-shadow:3px 3px 0 var(--line);font-size:.78em}
 .verb-sep,.verb-paren{display:none}
 .verb-question .verb-meaning-inline{flex-basis:100%;margin-top:6px;font-size:1rem;font-style:italic;font-weight:500;color:var(--ink-soft)}
 .verb-card input{border-color:var(--line);box-shadow:3px 3px 0 var(--line);font-size:1.2rem}
@@ -51,6 +51,8 @@
 .verb-card .verb-counts button{min-height:64px;font-size:1.05rem}
 .verb-pronoun.rolling{color:transparent}
 .verb-pronoun.rolling::after{content:attr(data-roll);position:absolute;inset:0;display:grid;place-items:center;padding-bottom:.06em;color:var(--ink)}
+#verb-input-hint{transition:opacity .25s}
+.verb-card.verb-rolling #verb-input-hint{opacity:0}
 .verb-pronoun.landed{animation:verb-land .35s ease-out}
 @keyframes verb-land{0%{transform:scale(1)}40%{transform:scale(1.18) rotate(-3deg);background:var(--orange)}100%{transform:scale(1)}}
 @keyframes verb-rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
