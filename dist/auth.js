@@ -215,7 +215,7 @@ function bind(){
   if($('storage-account-link'))$('storage-account-link').onclick=()=>openAccount('login');
   $('close-account').onclick=()=>$('account-dialog').close();
   document.querySelectorAll('[data-account-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-account-tab]').forEach(x=>x.classList.toggle('selected',x===b));for(const n of ['login','register','recover'])$(n+'-form').hidden=b.dataset.accountTab!==n;$('recovery-result').hidden=true;status('')});
-  $('login-form').onsubmit=async e=>{e.preventDefault();try{status('Anmeldung …');await login($('login-name').value,$('login-password').value)}catch(err){status(err.message,true)}};
+  $('login-form').onsubmit=async e=>{e.preventDefault();try{status('Anmeldung …');await login($('login-name').value,$('login-password').value);status('');$('login-password').value='';$('account-dialog').close();window.dispatchEvent(new CustomEvent('vanamo:view',{detail:'home'}));window.scrollTo?.(0,0)}catch(err){status(err.message,true)}};
   $('register-form').onsubmit=async e=>{e.preventDefault();try{status('Konto wird erstellt …');showRecovery(await register($('register-name').value,$('register-password').value));status('Konto erstellt und angemeldet.')}catch(err){status(err.message,true)}};
   $('recover-form').onsubmit=async e=>{e.preventDefault();try{status('Konto wird wiederhergestellt …');showRecovery(await recover($('recover-name').value,$('recover-code').value,$('recover-password').value));status('Passwort geändert. Der alte Wiederherstellungscode ist ungültig.')}catch(err){status(err.message,true)}};
   $('logout').onclick=async()=>{await logout()};
