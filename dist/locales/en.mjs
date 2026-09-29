@@ -362,6 +362,7 @@ export default {
  "Etappe geschafft!": "Stage complete!",
  "Etappe {0} von {1}": "Stage {0} of {1}",
  "Etappe {0} von {1} · {2}{3}": "Stage {0} of {1} · {2}{3}",
+ "{0} ({1}/{2})": "{0} ({1}/{2})",
  "Exakte Dublette": "Exact duplicate",
  "FI → DE": "FI → DE",
  "Falsch beantwortete Lücken kommen in der nächsten Runde zuerst.": "Gaps you got wrong come first in the next round.",
