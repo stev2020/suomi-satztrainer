@@ -57,22 +57,44 @@ export function practiceStreak(daily={},date=new Date()){
 }
 
 const RING_C=2*Math.PI*19;
+export const GOAL_CHOICES=[5,10,20,30,50];
+const DETAILS_KEY='vanamo-today-open';
+const CHEVRON='<svg class="today-chevron" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 let shownCount=null;
-export function renderToday(box,{count,daily,account,date=new Date(),goal=DAILY_GOAL}){
+function readOpen(){try{return localStorage.getItem(DETAILS_KEY)==='1';}catch{return false;}}
+function saveOpen(on){try{localStorage.setItem(DETAILS_KEY,on?'1':'0');}catch{}}
+// Angemeldete: Ring + „heute geübt“; ein Klick auf die Box klappt Woche und Serie auf,
+// ein Klick auf die Zahl im Ring öffnet die Auswahl fürs Tagesziel.
+export function renderToday(box,{count,daily,account,date=new Date(),goal=DAILY_GOAL,onGoalChange}){
  if(!box)return;
  const counter=box.querySelector('#today-count');
  box.classList.toggle('is-account',account);
  if(!account){if(counter)counter.textContent=count;shownCount=null;return;}
+ box._onGoalChange=onGoalChange;
  if(!box.querySelector('.today-ring')){
   const label=box.querySelector(':scope>div');
-  box.insertAdjacentHTML('afterbegin',`<span class="today-ring"><svg viewBox="0 0 44 44" aria-hidden="true"><circle class="today-ring-track" cx="22" cy="22" r="19"/><circle class="today-ring-fill" cx="22" cy="22" r="19" stroke-dasharray="${RING_C.toFixed(2)}" stroke-dashoffset="${RING_C.toFixed(2)}"/></svg></span>`);
+  box.insertAdjacentHTML('afterbegin',`<button type="button" class="today-ring" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 44 44" aria-hidden="true"><circle class="today-ring-track" cx="22" cy="22" r="19"/><circle class="today-ring-fill" cx="22" cy="22" r="19" stroke-dasharray="${RING_C.toFixed(2)}" stroke-dashoffset="${RING_C.toFixed(2)}"/></svg></button>`);
   box.querySelector('.today-ring').append(counter);
-  if(label){label.classList.add('today-label');label.insertAdjacentHTML('beforeend','<small class="today-goal"></small>');}
-  box.insertAdjacentHTML('beforeend','<ol class="today-week" aria-label="Diese Woche"></ol><p class="today-streak"></p>');
+  if(label){label.classList.add('today-label');label.innerHTML=`<button type="button" class="today-toggle" aria-expanded="false" aria-controls="today-details">heute geübt${CHEVRON}</button>`;}
+  box.insertAdjacentHTML('beforeend',`<div class="today-details" id="today-details" hidden><ol class="today-week" aria-label="Diese Woche"></ol><p class="today-streak"></p></div><div class="today-goal-picker" role="group" aria-label="Tagesziel wählen" hidden><p>Tagesziel</p><div>${GOAL_CHOICES.map(n=>`<button type="button" data-goal="${n}">${n}</button>`).join('')}</div></div>`);
+  const ring=box.querySelector('.today-ring'),picker=box.querySelector('.today-goal-picker'),toggle=box.querySelector('.today-toggle'),details=box.querySelector('.today-details');
+  const setOpen=on=>{details.hidden=!on;toggle?.setAttribute('aria-expanded',String(on));box.classList.toggle('details-open',on);};
+  const setPicker=on=>{picker.hidden=!on;ring.setAttribute('aria-expanded',String(on));if(on)picker.querySelector('[aria-pressed="true"]')?.focus();};
+  setOpen(readOpen());
+  box.addEventListener('click',e=>{
+   const choice=e.target.closest('[data-goal]');
+   if(choice){const n=Number(choice.dataset.goal);setPicker(false);ring.focus();box._onGoalChange?.(n);return;}
+   if(e.target.closest('.today-goal-picker'))return;
+   if(e.target.closest('.today-ring')){setPicker(picker.hidden);return;}
+   const on=details.hidden;setOpen(on);saveOpen(on);
+  });
+  box.addEventListener('keydown',e=>{if(e.key==='Escape'&&!picker.hidden){setPicker(false);ring.focus();}});
+  document.addEventListener('click',e=>{if(!picker.hidden&&!box.contains(e.target))setPicker(false);});
  }
  const reached=count>=goal,fill=box.querySelector('.today-ring-fill');
- box.querySelector('.today-goal').textContent=reached?'Ziel erreicht!':`Ziel ${goal}`;
  box.classList.toggle('goal-reached',reached);
+ box.querySelector('.today-ring').setAttribute('aria-label',`${count} heute geübt, Tagesziel ${goal}${reached?' erreicht':''}. Tagesziel ändern`);
+ box.querySelectorAll('[data-goal]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.goal)===goal)));
  const offset=(RING_C*(1-Math.min(1,count/goal))).toFixed(2);
  requestAnimationFrame(()=>requestAnimationFrame(()=>fill.setAttribute('stroke-dashoffset',offset)));
  box.querySelector('.today-week').innerHTML=weekActivity(daily,date).map(d=>`<li class="${d.count?'done':''}${d.today?' is-today':''}${d.future?' future':''}" title="${d.long}${d.count?`: ${d.count} geübt`:''}"><span aria-hidden="true">${d.short}</span><span class="sr-only">${d.long}${d.count?': geübt':d.future?'':': nicht geübt'}</span></li>`).join('');
