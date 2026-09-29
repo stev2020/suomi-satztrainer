@@ -118,7 +118,11 @@ function renderLearningPath(){
  $('path-level-hint').hidden=accountActive();
  $('path-next-level').textContent=accountActive()?'Zum nächsten Level':'Mit Konto weiter zum nächsten Level';
  $('path-level').disabled=!ready;
- $('path-tag').textContent=`Dein Lernpfad · Level ${level}`;
+ // Angemeldete wählen das Level direkt im Lernpfad-Etikett; Gäste behalten die eigene Zeile mit Registrierungs-Hinweis.
+ const account=accountActive(),levelHome=account?$('path-tag'):$('path-level-control');
+ if($('path-level').parentElement!==levelHome)levelHome.append($('path-level'));
+ $('path-level-control').hidden=account;
+ $('path-tag-text').textContent=account?'Dein Lernpfad ·':`Dein Lernpfad · Level ${level}`;
  $('start-new-sentences').disabled=!ready||(!active&&!state.lesson?.remaining.length);
  $('start-new-sentences').textContent=active?'Etappe fortsetzen':state.complete?'Levelpfad geschafft':state.seen?'Weiterlernen':'Lernpfad starten';
  $('path-current-title').textContent=topic?.title||`Lernpfad für Level ${level} geschafft!`;
