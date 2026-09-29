@@ -564,7 +564,6 @@ html.intro-running,.intro-running body{overflow:hidden}
 .daily-sentence-tools{display:flex;gap:8px;margin-left:auto}
 .daily-sentence-tools button{display:grid;place-items:center;width:40px;height:40px;min-height:0;padding:0;border:2px solid var(--line);border-radius:10px;background:var(--paper);box-shadow:2px 2px 0 var(--line);color:var(--ink)}
 .daily-sentence-tools button:hover,.daily-audio.playing{background:var(--lavender)}
-.daily-other:active svg{transform:rotate(-120deg);transition:transform .2s}
 .daily-sentence .guest-words{gap:6px 18px;padding-top:4px}
 .daily-source{align-self:flex-start;padding-top:6px}
 .daily-sentence .guest-fi{font-size:clamp(24px,3.4vw,32px);letter-spacing:-.5px}
