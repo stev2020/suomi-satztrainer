@@ -18,7 +18,7 @@ try{
  await context.addInitScript(()=>sessionStorage.setItem('vanamo-guest-sentences',JSON.stringify(['a','b','c','d','e'])));
  const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
  const home=()=>page.locator('.app-view:not([hidden]) .back-link[data-view="home"]').click();
- const select=activity=>page.locator('[data-home-activity="'+activity+'"]').click();
+ const select=activity=>page.locator('[data-home-activity="'+activity+'"]').evaluate(el=>el.click()); // Verbformen-Kachel ist ausgeblendet (eigene Karte), bleibt aber im DOM
  await page.goto(origin);
  await page.locator('#start-new-sentences:not([disabled])').waitFor({state:'attached'});
  // Nach den fünf Probesätzen erscheint „Neue Sätze lernen“ für Gäste aufgeklappt; einklappbar bleibt es.
@@ -62,7 +62,7 @@ try{
  // Ohne Konto: nur Übersetzen, andere Übungen ausgegraut und führen zur Registrierung
  for(const other of ['listen','dictation','verbs','suchsel','endings','dialogs'])assert.equal(await page.locator(`[data-home-activity="${other}"]`).getAttribute('aria-disabled'),'true');
  assert.equal(await page.locator('[data-home-activity="translate"]').getAttribute('aria-disabled'),null);
- await page.locator('[data-home-activity="verbs"]').click({force:true});
+ await page.locator('[data-home-activity="listen"]').click({force:true});
  assert.ok(await page.locator('#account-dialog').evaluate(d=>d.open),'locked exercise opens the account dialog');
  assert.equal(await page.locator('[data-home-activity="translate"]').getAttribute('aria-pressed'),'true');
  await page.locator('#close-account').click();
@@ -109,7 +109,7 @@ try{
  for(const width of [390,320]){
   await page.setViewportSize({width,height:844});
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
-  for(const button of await page.locator('.home-exercises button').all())assert.ok(await button.isVisible());
+  for(const button of await page.locator('.home-exercises button:not([hidden])').all())assert.ok(await button.isVisible());
   assert.equal(await page.locator('#home-direction-control').isVisible(),false);
   if(width===390&&process.env.HOME_SCREENSHOTS)await page.screenshot({path:process.env.HOME_SCREENSHOTS+'/home-mobile.png',fullPage:true});
  }
