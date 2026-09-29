@@ -1,4 +1,4 @@
-import {tc} from './i18n.mjs?v=9';
+import {tc} from './i18n.mjs?v=10';
 import {canSearch,createSearch} from './wordsearch.mjs';
 import {mountSearch,searchInstructions} from './wordsearch-ui.mjs?v=64';
 import {createWordExercise,wordAnswerMatches,finnishSentenceMatches,sentenceWords} from './word-practice.mjs?v=61';
@@ -197,8 +197,8 @@ function renderStats(){
  const verbStats=verbSummary(VERBS,memory.verbProgress);
  $('verb-progress-summary').textContent=`${verbStats.seen} von ${verbStats.total} Formen gesehen · ${verbStats.secure} sicher · ${verbStats.due} zum Wiederholen`;
  $('home-verbs').hidden=activityLocked('verbs');
- $('quick-verb-review').textContent=verbStats.due?`${verbStats.due} ${verbStats.due===1?'Verbform':'Verbformen'} wiederholen`:'Verbformen üben';
- $('quick-verb-review').dataset.due=String(verbStats.due);
+ $('quick-verb-review').textContent='Verbformen üben';
+ $('home-verbs-note').textContent=!verbStats.seen?'Lerne die ersten Formen kennen':verbStats.due?`${verbStats.due} zum Wiederholen · dazu neue Formen`:'Alles wiederholt · weiter mit neuen Formen';
  if(typeof renderHomeExtras==='function')renderHomeExtras();else $('today-count').textContent=memory.daily[day()]||0;
  $('total').textContent=`${data.length} finnische Sätze`;
  $('audio-total').textContent=`${data.filter(s=>s.audios.length).length} mit Originalaufnahme`;
@@ -877,7 +877,7 @@ $('path-level-register').onclick=openRegister;
 // Abmelden: gesperrtes Level verlassen; An- und Abmelden: Levelauswahl neu zeichnen.
 if(typeof MutationObserver!=='undefined')new MutationObserver(()=>{if(typeof syncGuestHome==='function')syncGuestHome();if(!ready)return;syncActivityLocks();if(activityLocked(activity)&&!levelLocked(level)){start();}if(levelLocked(level)){level=levels[0]||1;pathSession=null;guidedNew=false;dailySession=null;start();showView('home');}else{renderLearningPath();renderStats();}}).observe(document.body,{attributes:true,attributeFilter:['data-account']});
 $('path-next-level').onclick=()=>choosePathLevel(levels.find(n=>n>level));
-$('quick-verb-review').onclick=()=>{if(dailySession)finishDailySession();const due=Number($('quick-verb-review').dataset.due)>0;activity='verbs';syncControls();renderStats();$(due?'home-review':'continue-practice').click();};
+$('quick-verb-review').onclick=()=>{if(dailySession)finishDailySession();activity='verbs';syncControls();renderStats();$('continue-practice').click();};
 $('start-daily-session').onclick=startDailySession;if($('home-favorites'))$('home-favorites').onclick=startFavorites;
 $('header-practice').onclick=startDailySession;
 $('home-choose').onclick=()=>{if(dailySession?.active||guidedNew){dailySession=null;mode='new';start();}showView('practice',true);$('practice-settings').querySelector('summary')?.focus();};
