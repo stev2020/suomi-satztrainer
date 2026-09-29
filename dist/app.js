@@ -12,6 +12,7 @@ import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './supabase-config.js';
 import {validateGames,mergeGames} from './games-progress.mjs';
 import {mountWordLookup,loadLexicon,lookupForSentence,splitSentence} from './word-lookup.mjs?v=2';
 import {createGuestCard,shortGloss,flipWordIndex} from './guest-card.mjs?v=11';
+import {renderGreeting,renderToday,createDailySentence,animateProgress} from './home-extras.mjs?v=1';
 import {buildDifficultDeck} from './difficult-words.mjs?v=2';
 import {buildEndingItems,indexLexicon,renderEndings} from './endings-practice.mjs?v=1';
 import {translationFeedbackMarkup} from './translation-feedback.mjs?v=1';
@@ -120,7 +121,7 @@ function renderLearningPath(){
  $('path-level').disabled=!ready;
  // Angemeldete wählen das Level direkt im Lernpfad-Etikett; Gäste behalten die eigene Zeile mit Registrierungs-Hinweis.
  const account=accountActive(),levelHome=account?$('path-tag'):$('path-level-control');
- if($('path-level').parentElement!==levelHome)levelHome.append($('path-level'));
+ if(levelHome?.append&&$('path-level').parentElement!==levelHome)levelHome.append($('path-level'));
  $('path-level-control').hidden=account;
  $('path-tag-text').textContent=account?'Dein Lernpfad ·':`Dein Lernpfad · Level ${level}`;
  $('start-new-sentences').disabled=!ready||(!active&&!state.lesson?.remaining.length);
@@ -129,7 +130,7 @@ function renderLearningPath(){
  $('new-sentences-note').textContent=lesson?`Etappe ${lesson.index+1} von ${topic.lessons.length} · ${lesson.title}${active?'':` · ${lesson.remaining.length} neue Sätze`}`:'Alle verfügbaren Themen dieses Levels kennengelernt. Wiederhole deine Sätze oder wechsle zum nächsten Level.';
  $('path-goal').textContent=topic?.goal||'Dein bisheriger Fortschritt bleibt beim Levelwechsel erhalten.';
  $('path-progress-text').textContent=`Level ${level} · ${state.seen} von ${state.total} Sätzen kennengelernt`;
- $('path-progress').max=Math.max(1,state.total);$('path-progress').value=state.seen;
+ $('path-progress').max=Math.max(1,state.total);if(typeof animateProgress==='function')animateProgress($('path-progress'),state.seen);else $('path-progress').value=state.seen;
  $('path-next-level').hidden=!state.complete||!levels.some(n=>n>level);
  $('path-overview').innerHTML=state.topics.map((topic,index)=>{
   const current=active?topic.id===pathSession.topic.id:topic.id===state.topic?.id;
@@ -144,7 +145,8 @@ function homeLoaded(){const home=$('home-view');home.classList.remove('is-loadin
 function renderDailyPlan(){
  const button=$('start-daily-session');if(!button)return;
  const stats=dailyPlanStats(),available=Math.min(10,stats.dueCount);
- $('daily-due').textContent=stats.dueCount;
+ if($('daily-due').textContent!==String(stats.dueCount)){$('daily-due').textContent=stats.dueCount;const chip=$('daily-due').parentElement;if(chip?.classList?.add){chip.classList.remove('bump');void chip.offsetWidth;chip.classList.add('bump');}}
+ document.querySelector('.home-daily').classList.toggle('all-done',ready&&accountActive()&&!stats.dueCount&&!(dailySession?.active&&queue.length));
  renderLearningPath();
  $('daily-plan-note').textContent=stats.dueCount?'Bekannte, fällige Sätze – abwechslungsreich üben, ohne neue Sätze.':'Für heute ist alles wiederholt.';
  button.disabled=!ready||(!available&&!(dailySession?.active&&queue.length));
@@ -182,7 +184,7 @@ function renderStats(){
  $('verb-progress-summary').textContent=`${verbStats.seen} von ${verbStats.total} Formen gesehen · ${verbStats.secure} sicher · ${verbStats.due} zum Wiederholen`;
  $('quick-verb-review').hidden=!verbStats.due||activityLocked('verbs');
  $('quick-verb-review').textContent=`${verbStats.due} ${verbStats.due===1?'Verbform':'Verbformen'} wiederholen`;
- $('today-count').textContent=memory.daily[day()]||0;
+ if(typeof renderHomeExtras==='function')renderHomeExtras();else $('today-count').textContent=memory.daily[day()]||0;
  $('total').textContent=`${data.length} finnische Sätze`;
  $('audio-total').textContent=`${data.filter(s=>s.audios.length).length} mit Originalaufnahme`;
  renderLearningInsights();
@@ -895,6 +897,17 @@ document.addEventListener('keydown',e=>{if($('practice-view').hidden||document.q
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stopAudio();else if(ready)renderStats();});
 // Sätze, Qualitätsliste und Grammatik gleichzeitig laden; die Startseite wartet nur auf die ersten beiden.
 // Ohne Konto zeigt die Startseite statt „Sätze wiederholen“ eine Satzkarte zum Ausprobieren.
+// Angemeldete: Begrüßung, Tagesziel mit Woche/Serie und „Satz des Tages“ (siehe home-extras.mjs).
+function accountName(){try{return JSON.parse(localStorage.getItem('suomi-auth-session-v1')||'null')?.user?.user_metadata?.username||'';}catch{return '';}}
+var dailySentence=null;
+function renderHomeExtras(){
+ if(typeof memory==='undefined'||!memory)return;
+ const account=accountActive();
+ renderGreeting(document.querySelector('#home-view .intro h1'),{account,name:accountName()});
+ renderToday(document.querySelector('#home-view .today'),{count:memory.daily[day()]||0,daily:memory.daily,account});
+ if(!dailySentence&&$('daily-sentence'))dailySentence=createDailySentence($('daily-sentence'),{sentences:()=>data,learnedIds:()=>new Set(Object.keys(memory.reviews||{}).map(k=>Number(k.split(':')[0]))),fallbackLevel:()=>levels[0]||1,sourceIcon:s=>sourceIcon(s)});
+ dailySentence?.render({account,ready});
+}
 var guestCard=createGuestCard($('guest-card'),{sentences:()=>data,level:()=>levels[0]||1,onUnavailable:()=>syncGuestHome(),onFinished:({animate})=>revealGuestPath(animate),onPathRequest:()=>pointToGuestPath(),sourceIcon:s=>sourceIcon(s)});
 // Gäste: „Neue Sätze lernen“ zeigt nur die Überschrift, bis man es aufklappt (gilt für diesen Besuch).
 var pathOpenedByGuest=false;
@@ -914,7 +927,7 @@ function revealGuestPath(animate){
 }
 function pulseStart(){const b=$('start-new-sentences');if(!b)return;b.classList.remove('cta-pulse');void b.offsetWidth;b.classList.add('cta-pulse');setTimeout(()=>b.classList.remove('cta-pulse'),2600);}
 function pointToGuestPath(){const section=document.querySelector('.home-new');if(!section||section.hidden)return;section.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'});pulseStart();setTimeout(()=>$('start-new-sentences')?.focus({preventScroll:true}),500);}
-function syncGuestHome(){syncActivityLocks();syncHeaderPractice();if(!guestCard)return;const guest=!accountActive()&&guestCard.available;syncPathCollapse(guest);syncGuestPathVisibility(guest);$('guest-card').hidden=!guest;if(!guest)guestCard.stop();else if(ready)guestCard.start();if(ready)renderDailyPlan();else document.querySelector('.home-daily').hidden=guest;}
+function syncGuestHome(){if(typeof renderHomeExtras==='function')renderHomeExtras();syncActivityLocks();syncHeaderPractice();if(!guestCard)return;const guest=!accountActive()&&guestCard.available;syncPathCollapse(guest);syncGuestPathVisibility(guest);$('guest-card').hidden=!guest;if(!guest)guestCard.stop();else if(ready)guestCard.start();if(ready)renderDailyPlan();else document.querySelector('.home-daily').hidden=guest;}
 syncGuestHome();
 const sentencesRequest=fetch('sentences.json'),exclusionsRequest=loadQualityExclusions();
 const grammarRequest=fetch('grammar.json').then(r=>r.ok?r.json():null).then(p=>{if(p){grammar=p.sentences||{};grammarAvailable=true;}}).catch(()=>{}).finally(()=>{grammarLoading=false;grammarLoaded();});

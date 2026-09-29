@@ -509,3 +509,68 @@ html.intro-running,.intro-running body{overflow:hidden}
 @media(pointer:coarse){.path-tag select{min-height:38px}}
 .path-tag select:focus-visible{outline:3px solid var(--mint);outline-offset:2px}
 .path-tag select:disabled{cursor:default;box-shadow:none}
+/* Startseite für Angemeldete: Begrüßung, Tagesziel, Satz des Tages, Zustände (home-extras.mjs) */
+.intro h1.is-greeting{position:relative}
+.greeting{display:grid;padding:0;border:0;background:none;box-shadow:none;min-height:0;color:inherit;font:inherit;text-align:left;cursor:pointer;perspective:800px}
+.greeting-face{grid-area:1/1;transition:opacity .35s ease,transform .45s ease;backface-visibility:hidden}
+.greeting-de{opacity:0;transform:rotateX(90deg)}
+.greeting[aria-pressed="true"] .greeting-fi{opacity:0;transform:rotateX(-90deg)}
+.greeting[aria-pressed="true"] .greeting-de{opacity:1;transform:none}
+.greeting .intro-lead{color:var(--ink)}
+.greeting .intro-tail{color:var(--heading-accent)}
+.greeting-fi .intro-lead{border-bottom:3px dotted color-mix(in srgb,var(--heading-accent) 45%,transparent)}
+.greeting-hint{display:block;margin-top:8px;font:600 12px/1.3 'DM Sans',sans-serif;letter-spacing:0;color:var(--ink-soft);transition:opacity .3s}
+.greeting-used .greeting-hint{opacity:0}
+.today.is-account{display:grid;grid-template-columns:auto auto;align-items:center;gap:8px 10px}
+.today-ring{position:relative;display:grid;place-items:center;width:58px;height:58px}
+.today-ring svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+.today-ring circle{fill:none;stroke-width:4.5}
+.today-ring-track{stroke:color-mix(in srgb,var(--line) 18%,transparent)}
+.today-ring-fill{stroke:var(--heading-accent);stroke-linecap:round;transition:stroke-dashoffset .9s cubic-bezier(.2,.8,.2,1)}
+.today.is-account .today-ring>span{font:700 24px/1 var(--heading)}
+.today.goal-reached .today-ring-fill{stroke:var(--good)}
+.today.goal-reached .today-ring{animation:today-pop .5s ease-out}
+.today-label{font-weight:700;font-size:14px}
+.today-goal{display:block;margin-top:2px;font-size:12px;font-weight:600;color:var(--ink-soft)}
+.today.goal-reached .today-goal{color:var(--good)}
+.today-week{grid-column:1/-1;display:flex;gap:4px;margin:0;padding:0;list-style:none}
+.today-week li{display:grid;place-items:center;width:22px;height:22px;border:1.5px solid color-mix(in srgb,var(--line) 35%,transparent);border-radius:50%;font-size:10px;font-weight:700;color:var(--ink-soft);background:var(--paper)}
+.today-week li.done{border-color:var(--line);background:var(--heading-accent);color:var(--paper)}
+.today-week li.is-today{box-shadow:0 0 0 2px var(--orange)}
+.today-week li.future{opacity:.45}
+.today-streak{grid-column:1/-1;display:flex;align-items:center;gap:5px;margin:0;font-size:12px;font-weight:700;color:var(--ink)}
+.today-flame{width:10px;height:13px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:linear-gradient(to top,var(--orange),#f6c343);transform-origin:50% 100%;animation:today-flicker 1.6s ease-in-out infinite}
+@keyframes today-flicker{0%,100%{transform:scale(1) rotate(-3deg)}50%{transform:scale(1.12,1.06) rotate(3deg)}}
+@keyframes today-pop{0%{transform:scale(1)}45%{transform:scale(1.15)}100%{transform:scale(1)}}
+.daily-sentence{position:relative;max-width:720px;margin:0 auto 26px;padding:18px 22px 20px;border:2px solid var(--line);border-radius:18px;background:var(--paper);box-shadow:5px 5px 0 var(--heading-accent)}
+.daily-sentence-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.daily-sentence h2{margin:0;font:800 20px/1.2 var(--heading);color:var(--heading-accent)}
+.daily-sentence-note{font-size:12px;font-weight:700;color:var(--ink-soft)}
+.daily-sentence-tools{display:flex;gap:8px;margin-left:auto}
+.daily-sentence-tools button{display:grid;place-items:center;width:40px;height:40px;min-height:0;padding:0;border:2px solid var(--line);border-radius:10px;background:var(--paper);box-shadow:2px 2px 0 var(--line);color:var(--ink)}
+.daily-sentence-tools button:hover,.daily-audio.playing{background:var(--lavender)}
+.daily-other:active svg{transform:rotate(-120deg);transition:transform .2s}
+.daily-sentence .guest-words{gap:6px 18px;padding-top:4px}
+.daily-source{align-self:flex-start;padding-top:6px}
+.daily-sentence .guest-fi{font-size:clamp(24px,3.4vw,32px);letter-spacing:-.5px}
+.daily-sentence .guest-gloss{font-size:14px;min-height:1.3em}
+.daily-sentence .cycle-word.show .guest-gloss,.daily-sentence .daily-words.all .guest-gloss{animation:daily-gloss .3s ease-out}
+@keyframes daily-gloss{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.daily-sentence-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px 16px;flex-wrap:wrap;margin-top:12px}
+.daily-tip{margin:0;font-size:13px;color:var(--ink-soft)}
+.daily-reveal{min-height:40px;padding:8px 14px;border:2px solid var(--line);border-radius:10px;background:var(--lavender);box-shadow:2px 2px 0 var(--line);font-size:14px;font-weight:700;color:var(--ink)}
+.daily-translation{margin:0;font-size:18px;font-weight:600}
+.daily-translation.is-new{animation:daily-flip .45s ease-out}
+@keyframes daily-flip{from{opacity:0;transform:rotateX(80deg)}to{opacity:1;transform:none}}
+.daily-sentence.is-entering .cycle-word{animation:daily-word .45s ease-out both;animation-delay:calc(var(--i)*70ms)}
+@keyframes daily-word{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.home-daily-done{display:none}
+.home-daily.all-done #start-daily-session{display:none}
+.home-daily.all-done .home-daily-done{display:flex;align-items:center;gap:12px;margin:0;padding:10px 16px 10px 10px;border:2px solid var(--line);border-radius:14px;background:var(--paper);box-shadow:3px 3px 0 var(--line);animation:today-pop .5s ease-out}
+.home-daily-check{display:grid;place-items:center;width:40px;height:40px;border:2px solid var(--line);border-radius:50%;background:var(--good-soft);color:var(--good);font-size:22px;font-weight:800}
+.home-daily-done-text{display:grid;gap:1px}
+.home-daily-done-text strong{font:800 18px/1.2 var(--heading);color:var(--heading-accent)}
+.home-daily-done-text small{font-size:12px;color:var(--ink-soft)}
+.home-daily-stats span.bump{animation:today-pop .45s ease-out}
+@media(max-width:700px){.daily-sentence{padding:16px 16px 18px;box-shadow:4px 4px 0 var(--heading-accent)}.today-ring{width:50px;height:50px}.today.is-account .today-ring>span{font-size:21px}.today.is-account{grid-template-columns:auto;justify-items:center;gap:6px}.today.is-account .today-label{text-align:center;font-size:11px;max-width:none}.today-week{gap:2px}.today-week li{width:17px;height:17px;font-size:8px}.today-streak{font-size:11px}}
+@media(prefers-reduced-motion:reduce){.today-flame,.today.goal-reached .today-ring,.home-daily.all-done .home-daily-done,.daily-sentence.is-entering .cycle-word,.daily-translation.is-new,.home-daily-stats span.bump{animation:none!important}.today-ring-fill,.greeting-face{transition:none}}
