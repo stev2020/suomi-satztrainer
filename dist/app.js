@@ -526,12 +526,19 @@ function saveVerbProgress(progress,answered=false,event=null) {
  try { commitLearning({...memory,verbProgress:progress,daily,performanceEvents}); return true; }
  catch { $('notice').textContent='Dein Lernstand konnte nicht gespeichert werden. Bitte versuche es erneut.'; return false; }
 }
+// Brings the exercise card to the top of the screen before focusing. A plain focus() made the
+// browser jump to the focused button/input at the bottom, so the question and the pronoun roll were off screen.
+function focusVerbView(el){
+ const card=$('card');
+ if(card){const top=card.getBoundingClientRect().top;if(top<0||top>innerHeight*.4)scrollTo({top:Math.max(0,top+scrollY-12),behavior:'auto'});}
+ el?.focus({preventScroll:true});
+}
 function nextVerbQuestion() {
  const item=chooseCombination(VERBS,memory.verbProgress,verbSession);
  if(!item)return;
  if(!saveVerbProgress(markAsked(memory.verbProgress,item.key)))return;
  verbSession.current=item;verbSession.draft='';verbSession.checked=false;
- verbSession.history.push(item.key);render();$('verb-input')?.focus();
+ verbSession.history.push(item.key);render();focusVerbView($('verb-input'));
 }
 function submitVerbAnswer() {
  const session=verbSession;
@@ -544,18 +551,18 @@ function submitVerbAnswer() {
  const answeredIndex=session.answers.length;
  session.answers.push({verb,person,answer,correct});
  if(!correct){session.retries=session.retries.filter(r=>r.key!==key);session.retries.push({key,after:answeredIndex+3});}
- $('notice').textContent='';render();guestSaveHint();$('verb-next')?.focus();
+ $('notice').textContent='';render();guestSaveHint();focusVerbView($('verb-next'));
 }
 // Marks the personal ending (minä -n, sinä -t, me -mme, te -tte, he -vat/-vät) so the pattern stands out.
 function verbFormMarkup(form,person){const m=[/n$/,/t$/,null,/mme$/,/tte$/,/v[aä]t$/][person]?.exec(form);return m&&m.index>0?escape(form.slice(0,m.index))+'<span class="verb-ending">'+escape(m[0])+'</span>':escape(form);}
 // Slot-machine reveal of the pronoun. The real pronoun stays in the DOM (screen readers, tests); only a CSS overlay rolls.
 function rollVerbPronoun(el,target){
  if(!el||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
- const delays=[45,50,55,65,75,90,110,135,165],others=PRONOUNS.filter(p=>p!==target);let last=target,step=0;
- el.classList.add('rolling');
+ const delays=[40,40,45,45,50,55,60,70,80,95,110,130,155,185,220],others=PRONOUNS.filter(p=>p!==target);let last=target,step=0;
+ const card=el.closest('.verb-card');el.classList.add('rolling');card?.classList.add('verb-rolling');
  const tick=()=>{
   if(!el.isConnected)return;
-  if(step>=delays.length){el.classList.remove('rolling');el.removeAttribute('data-roll');el.classList.add('landed');return;}
+  if(step>=delays.length){card?.classList.remove('verb-rolling');el.classList.remove('rolling');el.removeAttribute('data-roll');el.classList.add('landed');return;}
   const pool=others.filter(p=>p!==last);last=pool[Math.floor(Math.random()*pool.length)];el.dataset.roll=last;
   setTimeout(tick,delays[step++]);
  };
@@ -583,7 +590,7 @@ function renderVerbSession() {
  $('verb-form').onsubmit=e=>{e.preventDefault();submitVerbAnswer();};
  card.querySelectorAll('[data-verb-letter]').forEach(b=>b.onclick=()=>{if(input.value.length>=100)return;input.setRangeText(b.dataset.verbLetter,input.selectionStart,input.selectionEnd,'end');session.draft=input.value;input.focus();});
  $('actions').innerHTML=`${session.checked?`<button type="button" class="primary" id="verb-next">${session.answers.length===session.count?'Auswertung':'Weiter'}</button>`:''}<button type="button" class="quiet" id="verb-abort">Runde beenden</button>`;
- if(session.checked)$('verb-next').onclick=()=>{if(session!==verbSession||!session.checked)return;if(session.answers.length>=session.count){session.current=null;render();$('verb-result-title')?.focus();}else nextVerbQuestion();};
+ if(session.checked)$('verb-next').onclick=()=>{if(session!==verbSession||!session.checked)return;if(session.answers.length>=session.count){session.current=null;render();focusVerbView($('verb-result-title'));}else nextVerbQuestion();};
  $('verb-abort').onclick=()=>{verbSession=null;render();};
 }
 
