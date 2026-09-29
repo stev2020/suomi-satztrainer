@@ -1,4 +1,4 @@
-import {tc} from './i18n.mjs?v=3';
+import {tc} from './i18n.mjs?v=4';
 import {canSearch,createSearch} from './wordsearch.mjs';
 import {mountSearch,searchInstructions} from './wordsearch-ui.mjs?v=64';
 import {createWordExercise,wordAnswerMatches,finnishSentenceMatches,sentenceWords} from './word-practice.mjs?v=61';
@@ -127,8 +127,9 @@ function renderLearningPath(){
  $('start-new-sentences').disabled=!ready||(!active&&!state.lesson?.remaining.length);
  $('start-new-sentences').textContent=active?'Etappe fortsetzen':state.complete?'Levelpfad geschafft':state.seen?'Weiterlernen':'Lernpfad starten';
  $('path-current-title').textContent=topic?.title||`Lernpfad für Level ${level} geschafft!`;
- $('new-sentences-note').textContent=lesson?`Etappe ${lesson.index+1} von ${topic.lessons.length} · ${lesson.title}${active?'':` · ${lesson.remaining.length} neue Sätze`}`:'Alle verfügbaren Themen dieses Levels kennengelernt. Wiederhole deine Sätze oder wechsle zum nächsten Level.';
- $('path-goal').textContent=topic?.goal||'Dein bisheriger Fortschritt bleibt beim Levelwechsel erhalten.';
+ $('new-sentences-note').hidden=!!lesson;
+ $('new-sentences-note').textContent=lesson?'':'Alle verfügbaren Themen dieses Levels kennengelernt. Wiederhole deine Sätze oder wechsle zum nächsten Level.';
+ $('path-goal').textContent=(topic?.goal||'Dein bisheriger Fortschritt bleibt beim Levelwechsel erhalten.')+(lesson?` (${lesson.index+1}/${topic.lessons.length})`:'');
  $('path-progress-text').textContent=`Level ${level} · ${state.seen} von ${state.total} Sätzen kennengelernt`;
  $('path-progress').max=Math.max(1,state.total);if(typeof animateProgress==='function')animateProgress($('path-progress'),state.seen);else $('path-progress').value=state.seen;
  $('path-next-level').hidden=!state.complete||!levels.some(n=>n>level);

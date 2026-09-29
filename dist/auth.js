@@ -1,4 +1,4 @@
-import {uiLocale} from './i18n.mjs?v=3';
+import {uiLocale} from './i18n.mjs?v=4';
 import {mergeVerbProgress} from './verb-practice.mjs';
 import {mergePerformanceEvents} from './learning-insights.mjs';
 import {mergeGames} from './games-progress.mjs';
