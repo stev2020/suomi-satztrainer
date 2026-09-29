@@ -12,7 +12,7 @@ import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './supabase-config.js';
 import {validateGames,mergeGames} from './games-progress.mjs';
 import {mountWordLookup,loadLexicon,lookupForSentence,splitSentence} from './word-lookup.mjs?v=2';
 import {createGuestCard,shortGloss,flipWordIndex} from './guest-card.mjs?v=11';
-import {renderGreeting,renderToday,createDailySentence,animateProgress} from './home-extras.mjs?v=1';
+import {renderGreeting,renderToday,createDailySentence,animateProgress,GOAL_CHOICES,DAILY_GOAL} from './home-extras.mjs?v=2';
 import {buildDifficultDeck} from './difficult-words.mjs?v=2';
 import {buildEndingItems,indexLexicon,renderEndings} from './endings-practice.mjs?v=1';
 import {translationFeedbackMarkup} from './translation-feedback.mjs?v=1';
@@ -65,6 +65,7 @@ const endingsState={level:null,items:null,index:null,session:null,missed:new Set
 let grammarTopic=GRAMMAR_TOPICS.some(t=>t.id===memory.prefs.grammarTopic)?memory.prefs.grammarTopic:'negation';
 let searchDifficulty=memory.prefs.searchDifficulty==='hard'?'hard':'easy',searchPuzzle=null;
 let difficulty=memory.prefs.difficulty==='easy'?'easy':'hard',wordExercise=null;
+let dailyGoal=GOAL_CHOICES.includes(memory.prefs.dailyGoal)?memory.prefs.dailyGoal:DAILY_GOAL;
 const isWordPractice=()=>activity==='translate'&&difficulty==='easy';
 const isTranslation=()=>['translate','grammar'].includes(activity);
 const matchesTopic=s=>topicNotes(s,grammar,grammarTopic).length>0;
@@ -90,7 +91,7 @@ const studyDirections=()=>isTranslation()&&direction==='random'?['fi-de','de-fi'
 const eligibleDirections=(s,selection=mode)=>studyDirections().filter(dir=>selection==='new'?!review(s,dir):selection==='review'?due(s,dir):memory.favorites.includes(s.id));
 const base=(includeArchived=false)=>(includeArchived?[...data,...archived]:data).filter(s=>s.level===level&&(activity==='suchsel'?canSearch(s):(!(audioOnly||!isTranslation())||s.audios.length))&&(activity!=='grammar'||matchesTopic(s)));
 const filtered=()=>activity==='grammar'?base():base(mode!=='new').filter(s=>eligibleDirections(s).length);
-function persist(){const saved=dailySession?.previous||{};memory.prefs={level,direction:saved.direction||direction,audioOnly,activity:saved.activity||activity,speed,grammarTopic,difficulty:saved.difficulty||difficulty,searchDifficulty};try{if(accountActive()){localStorage.setItem(STORE,JSON.stringify(memory));window.dispatchEvent(new Event('suomi-learning-changed'));}else localStorage.removeItem(STORE);}catch{if(accountActive())$('notice').textContent='Dein Lernstand konnte gerade nicht lokal zwischengespeichert werden.';}}
+function persist(){const saved=dailySession?.previous||{};memory.prefs={level,direction:saved.direction||direction,audioOnly,activity:saved.activity||activity,speed,grammarTopic,difficulty:saved.difficulty||difficulty,searchDifficulty,dailyGoal};try{if(accountActive()){localStorage.setItem(STORE,JSON.stringify(memory));window.dispatchEvent(new Event('suomi-learning-changed'));}else localStorage.removeItem(STORE);}catch{if(accountActive())$('notice').textContent='Dein Lernstand konnte gerade nicht lokal zwischengespeichert werden.';}}
 let guestSaveNoticeShown=false;
 function guestSaveHint(){if(accountActive()||guestExerciseAccepted||guestSaveNoticeShown)return;guestSaveNoticeShown=true;const n=$('notice');if(n)n.textContent='Du übst ohne Konto. Dein Fortschritt wird nicht gespeichert. Registriere dich kostenlos, um ihn zu behalten.';}
 const restingAudioLabel=b=>b?.dataset.played==='true'?'Wiederholen':'Anhören';
@@ -753,7 +754,7 @@ function validateBackup(input){
  for(const [k,r] of reviews){objectRecord(r);if(!/^[1-9]\d{0,15}:(fi-de|de-fi|listen|dictation|suchsel)$/.test(k)||!validInt(Number(k.split(':')[0]))||!validInt(r.due,8640000000000000)||!validInt(r.interval,180)||!validInt(r.repetitions,10000000)||(r.updatedAt!==undefined&&!validInt(r.updatedAt,8640000000000000)))throw new Error('Die Sicherung enthält eine ungültige Bewertung.');out.reviews[k]={due:r.due,interval:r.interval,repetitions:r.repetitions,...(r.updatedAt===undefined?{}:{updatedAt:r.updatedAt})};}
  if(!Array.isArray(m.favorites)||m.favorites.length>100000||m.favorites.some(id=>!Number.isSafeInteger(id)||id<1))throw new Error('Ungültige Favoriten.');out.favorites=[...new Set(m.favorites)];
  const daily=Object.entries(objectRecord(m.daily));if(daily.length>50000)throw new Error('Zu viele Tageswerte.');for(const [date,n] of daily){if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||!Number.isFinite(Date.parse(date))||new Date(date).toISOString().slice(0,10)!==date||!validInt(n,10000000))throw new Error('Ungültiger Tagesfortschritt.');out.daily[date]=n;}
- const p=objectRecord(m.prefs);if(!Number.isInteger(p.level)||p.level<1||p.level>1000||!['fi-de','de-fi','random'].includes(p.direction)||typeof p.audioOnly!=='boolean'||!['translate','listen','dictation','writing','grammar','verbs','suchsel','endings','dialogs'].includes(p.activity)||![.5,.75,1].includes(p.speed))throw new Error('Ungültige Lerneinstellungen.');out.prefs={searchDifficulty:p.searchDifficulty==='hard'?'hard':'easy',difficulty:p.difficulty==='easy'?'easy':'hard',level:p.level,direction:p.direction,audioOnly:p.audioOnly,activity:p.activity,speed:p.speed,grammarTopic:GRAMMAR_TOPICS.some(t=>t.id===p.grammarTopic)?p.grammarTopic:'negation'};out.reports=validateReports(m.reports||{});out.writingRatings=validateWritingRatings(m.writingRatings||{});out.verbProgress=validateVerbProgress(m.verbProgress||{});out.performanceEvents=validatePerformanceEvents(m.performanceEvents||[]);return out;
+ const p=objectRecord(m.prefs);if(!Number.isInteger(p.level)||p.level<1||p.level>1000||!['fi-de','de-fi','random'].includes(p.direction)||typeof p.audioOnly!=='boolean'||!['translate','listen','dictation','writing','grammar','verbs','suchsel','endings','dialogs'].includes(p.activity)||![.5,.75,1].includes(p.speed))throw new Error('Ungültige Lerneinstellungen.');out.prefs={searchDifficulty:p.searchDifficulty==='hard'?'hard':'easy',difficulty:p.difficulty==='easy'?'easy':'hard',level:p.level,direction:p.direction,audioOnly:p.audioOnly,activity:p.activity,speed:p.speed,grammarTopic:GRAMMAR_TOPICS.some(t=>t.id===p.grammarTopic)?p.grammarTopic:'negation',dailyGoal:GOAL_CHOICES.includes(p.dailyGoal)?p.dailyGoal:DAILY_GOAL};out.reports=validateReports(m.reports||{});out.writingRatings=validateWritingRatings(m.writingRatings||{});out.verbProgress=validateVerbProgress(m.verbProgress||{});out.performanceEvents=validatePerformanceEvents(m.performanceEvents||[]);return out;
 }
 function mergeLearning(current,incoming){
  const out={reviews:{...current.reviews},favorites:[...new Set([...current.favorites,...incoming.favorites])],daily:{...current.daily},prefs:{...incoming.prefs},reports:{...current.reports},writingRatings:{...current.writingRatings},verbProgress:mergeVerbProgress(current.verbProgress,incoming.verbProgress),performanceEvents:mergePerformanceEvents(current.performanceEvents||[],incoming.performanceEvents||[]),games:mergeGames(current.games,incoming.games)};
@@ -764,7 +765,7 @@ function mergeLearning(current,incoming){
  return out;
 }
 function commitLearning(candidate,notify=true){if(accountActive())localStorage.setItem(STORE,JSON.stringify(candidate));else localStorage.removeItem(STORE);memory=candidate;if(notify&&accountActive())window.dispatchEvent(new Event('suomi-learning-changed'));}
-function learningSnapshot(){return JSON.parse(JSON.stringify({...memory,prefs:{level,direction,audioOnly,activity,speed,grammarTopic,difficulty,searchDifficulty}}));}
+function learningSnapshot(){return JSON.parse(JSON.stringify({...memory,prefs:{level,direction,audioOnly,activity,speed,grammarTopic,difficulty,searchDifficulty,dailyGoal}}));}
 window.suomiLearningState={snapshot:learningSnapshot,
  // Spiele (games.mjs): Lernstand je Spiel und Wortliste lesen/speichern
  gameProgress:(game,deck)=>JSON.parse(JSON.stringify(memory.games?.[game]?.[deck]||{})),
@@ -800,7 +801,7 @@ $('report-form').onsubmit=async e=>{e.preventDefault();if(!reportSentence)return
   submit.disabled=false;
  }catch(err){submit.disabled=false;$('report-status').textContent=`Der Hinweis bleibt in deinem Konto gespeichert, konnte aber noch nicht zentral eingereicht werden: ${err.message}`;}
 };
-$('export-backup').onclick=()=>{if(!accountActive()){$('backup-status').textContent='Bitte melde dich an, um deinen Lernstand dauerhaft zu speichern oder zu exportieren.';return;}try{downloadJSON(`suomi-sicherung-${day()}.json`,{format:'suomi-backup',version:1,exportedAt:new Date().toISOString(),learning:{...memory,prefs:{level,direction,audioOnly,activity,speed,grammarTopic,difficulty,searchDifficulty}}});$('backup-status').textContent='Download gestartet. Bewahre die Datei für einen Gerätewechsel auf.';}catch{$('backup-status').textContent='Der Download konnte nicht gestartet werden. Bitte versuche es erneut.';}};
+$('export-backup').onclick=()=>{if(!accountActive()){$('backup-status').textContent='Bitte melde dich an, um deinen Lernstand dauerhaft zu speichern oder zu exportieren.';return;}try{downloadJSON(`suomi-sicherung-${day()}.json`,{format:'suomi-backup',version:1,exportedAt:new Date().toISOString(),learning:{...memory,prefs:{level,direction,audioOnly,activity,speed,grammarTopic,difficulty,searchDifficulty,dailyGoal}}});$('backup-status').textContent='Download gestartet. Bewahre die Datei für einen Gerätewechsel auf.';}catch{$('backup-status').textContent='Der Download konnte nicht gestartet werden. Bitte versuche es erneut.';}};
 $('export-reports').onclick=()=>{if(!accountActive()){$('backup-status').textContent='Bitte melde dich an, um Hinweise dauerhaft zu speichern oder zu exportieren.';return;}try{downloadJSON(`suomi-hinweise-${day()}.json`,{format:'suomi-reports',version:1,exportedAt:new Date().toISOString(),reports:Object.values(memory.reports)});$('backup-status').textContent='Download gestartet. Hänge die Hinweise-Datei hier im Chat an, um die Korrekturen anzustoßen.';}catch{$('backup-status').textContent='Der Download konnte nicht gestartet werden.';}};
 $('import-backup').onchange=async e=>{if(!accountActive()){$('backup-status').textContent='Bitte melde dich an, um eine Sicherung zu importieren.';e.target.value='';return;}const sequence=++importSequence;pendingBackup=null;$('import-preview').hidden=true;$('backup-status').textContent='';const file=e.target.files?.[0];if(!file)return;try{if(file.size>20*1024*1024)throw new Error('Die Datei ist zu groß. Bitte verwende eine Vanamo-Sicherung bis 20 MB.');const text=await file.text();if(sequence!==importSequence)return;const parsed=JSON.parse(text,(key,value)=>{if(['__proto__','constructor','prototype'].includes(key))throw new Error('Ungültige Datenfelder.');return value;});pendingBackup=validateBackup(parsed);$('import-summary').textContent=`Bereit zum Import: ${Object.keys(pendingBackup.reviews).length} Bewertungen, ${pendingBackup.favorites.length} Favoriten und ${Object.keys(pendingBackup.reports).length} Hinweise. Einstellungen aus der Sicherung werden übernommen; eine neue Lerneinheit beginnt.`;$('import-preview').hidden=false;}catch(err){if(sequence!==importSequence)return;pendingBackup=null;$('backup-status').textContent=err instanceof SyntaxError?'Die Datei enthält keine lesbare Sicherung. Dein Lernstand bleibt erhalten.':`${err.message} Dein Lernstand bleibt erhalten.`;}};
 $('cancel-import').onclick=()=>{clearImport();$('backup-status').textContent='Import abgebrochen.';};
@@ -906,7 +907,7 @@ function renderHomeExtras(){
  if(typeof memory==='undefined'||!memory)return;
  const account=accountActive();
  renderGreeting(document.querySelector('#home-view .intro h1'),{account,name:accountName()});
- renderToday(document.querySelector('#home-view .today'),{count:memory.daily[day()]||0,daily:memory.daily,account});
+ renderToday(document.querySelector('#home-view .today'),{count:memory.daily[day()]||0,daily:memory.daily,account,goal:dailyGoal,onGoalChange:n=>{dailyGoal=n;persist();renderHomeExtras();}});
  if(!dailySentence&&$('daily-sentence'))dailySentence=createDailySentence($('daily-sentence'),{sentences:()=>data,learnedIds:()=>new Set(Object.keys(memory.reviews||{}).map(k=>Number(k.split(':')[0]))),fallbackLevel:()=>levels[0]||1,sourceIcon:s=>sourceIcon(s)});
  dailySentence?.render({account,ready});
 }
