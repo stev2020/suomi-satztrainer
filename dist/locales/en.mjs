@@ -376,6 +376,8 @@ export default {
  "Fast richtig": "Almost right",
  "Fast wie die Vorlage – {0}": "Almost like the reference – {0}",
  "Favoriten": "Favorites",
+ "Favoriten üben": "Practise favorites",
+ "Deine Favoriten · alle Level": "Your favorites · all levels",
  "Favoriten und Lernstand werden nur mit einem Konto dauerhaft gespeichert und zwischen Geräten synchronisiert. Ohne Konto bleiben Änderungen nur bis zum Neuladen oder Schließen der Seite erhalten. Nach dem ersten Laden stehen die Sätze auch offline bereit; Audio benötigt eine Internetverbindung.": "Favorites and progress are only saved permanently and synced between devices with an account. Without an account, changes are only kept until you reload or close the page. After the first load, the sentences are also available offline; audio needs an internet connection.",
  "Das Rätsel ist breiter als der Bildschirm. Mit zwei Fingern seitlich schieben.": "The puzzle is wider than the screen. Swipe sideways with two fingers.",
  "Einzahl": "Singular",
