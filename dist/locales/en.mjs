@@ -20,6 +20,7 @@ export default {
  "Satz selbst bauen →": "Build it yourself →",
  "Deine Übersetzung": "Your translation",
  "Tippe die Wörter in der richtigen Reihenfolge an …": "Tap the words in the right order …",
+ "Tippe die Wörter in der richtigen Reihenfolge an. {0} nicht dazu.": "Tap the words in the right order. {0} not part of it.",
  "Genau so heißt der Satz.": "That's exactly what the sentence means.",
  "Richtig ist:": "The correct answer is:",
  "Weiter: Wort merken →": "Next: remember a word →",
