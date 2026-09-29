@@ -1,4 +1,4 @@
-import {tc} from './i18n.mjs?v=5';
+import {tc} from './i18n.mjs?v=6';
 import {canSearch,createSearch} from './wordsearch.mjs';
 import {mountSearch,searchInstructions} from './wordsearch-ui.mjs?v=64';
 import {createWordExercise,wordAnswerMatches,finnishSentenceMatches,sentenceWords} from './word-practice.mjs?v=61';
@@ -461,13 +461,15 @@ function wordPracticeMarkup(s){
   // Grün/Rot nur beim ersten Anzeigen nach dem Prüfen animieren, nicht bei jedem Neuzeichnen.
   const animate=!animatedWordChecks.has(w);animatedWordChecks.add(w);
   return `<div class="word-result word-checked ${correct?'correct':'incorrect'}${animate?' check-anim':''}"><div class="word-answer ${correct?'is-right':'is-wrong'}" lang="${language}">${tiles||'<span class="word-placeholder">–</span>'}</div><p class="word-solution">${correct?'Richtig!':`Leider nicht, richtig ist: <span lang="${language}">${escape(solution.text)}${sourceIcon(solution)}</span>`}</p></div>`;}
- return `<div class="word-practice"><p id="word-hint">Bilde die Übersetzung auf ${language==='de'?'Deutsch':'Finnisch'}. ${w.tokens.length-w.expected.length===1?'1 Wort gehört':'2 Wörter gehören'} nicht dazu. Klicke ein Wort im Antwortsatz an, um es zurückzulegen.</p><div id="word-answer" class="word-answer" role="group" aria-label="Dein Antwortsatz" lang="${language}"></div><div id="word-bank" class="word-bank" role="group" aria-label="Verfügbare Wörter" data-i18n-attrs lang="${language}" aria-describedby="word-hint"></div></div>`;
+ return `<div class="word-practice"><p id="word-hint" class="sr-only">${wordHint(w)}</p><div id="word-answer" class="word-answer" role="group" aria-label="Dein Antwortsatz" lang="${language}"></div><div id="word-bank" class="word-bank" role="group" aria-label="Verfügbare Wörter" data-i18n-attrs lang="${language}" aria-describedby="word-hint"></div></div>`;
 }
+// Die Anleitung steht im leeren Antwortfeld (wie auf der Gastkarte); für Screenreader zusätzlich unsichtbar davor.
+const wordHint=w=>`Tippe die Wörter in der richtigen Reihenfolge an. ${w.tokens.length-w.expected.length===1?'1 Wort gehört':'2 Wörter gehören'} nicht dazu.`;
 function bindWordPractice(){
  if(revealed)return;
  const w=wordExercise;
  const update=()=>{
-  $('word-answer').innerHTML=w.selected.length?w.selected.map(id=>{const t=w.tokens.find(t=>t.id===id);return `<button type="button" data-return-word="${id}" data-i18n-attrs aria-label="${escape(t.text)} zurücklegen">${escape(t.text)}</button>`;}).join(''):'<span class="word-placeholder" data-i18n>Dein Satz erscheint hier …</span>';
+  $('word-answer').innerHTML=w.selected.length?w.selected.map(id=>{const t=w.tokens.find(t=>t.id===id);return `<button type="button" data-return-word="${id}" data-i18n-attrs aria-label="${escape(t.text)} zurücklegen">${escape(t.text)}</button>`;}).join(''):`<span class="word-placeholder" aria-hidden="true" data-i18n>${wordHint(w)}</span>`;
   $('word-bank').innerHTML=w.tokens.map(t=>`<button type="button" data-pick-word="${t.id}" ${w.selected.includes(t.id)?'disabled':''}>${escape(t.text)}</button>`).join('');
   document.querySelectorAll('[data-pick-word]').forEach(b=>b.onclick=()=>{const id=Number(b.dataset.pickWord);if(w.selected.includes(id))return;w.selected.push(id);$('notice').textContent='';update();const next=document.querySelector('#word-bank button:not(:disabled)');(next||$('reveal'))?.focus({preventScroll:true});});
   document.querySelectorAll('[data-return-word]').forEach(b=>b.onclick=()=>{const id=Number(b.dataset.returnWord);w.selected=w.selected.filter(value=>value!==id);update();document.querySelector(`[data-pick-word="${id}"]`)?.focus({preventScroll:true});});
