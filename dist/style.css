@@ -134,7 +134,7 @@ header{flex-wrap:wrap}.report-error{align-self:center;margin:18px 0 0;padding:7p
 .home-new .path-explanation{font-size:13px;color:var(--muted);margin:0;line-height:1.6}
 .home-verbs{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 18px;max-width:720px;margin:0 auto 24px;padding:18px 22px;border:2px solid var(--line);border-radius:18px;background:var(--mint);box-shadow:5px 5px 0 var(--heading-accent)}
 .home-verbs[hidden]{display:none}
-.home-verbs h2{margin:0;font:700 24px/1.2 var(--heading);color:var(--heading-accent)}
+.home-verbs h2{margin:0;font:700 24px/1.2 var(--heading);color:var(--ink)}
 #home-verbs-note{margin:3px 0 0;font-size:13px;color:var(--ink-soft)}
 .quick-verb-review{min-height:48px;padding:10px 20px;border:2px solid var(--line);border-radius:12px;background:var(--lavender);color:var(--ink);font-size:16px;font-weight:700;box-shadow:3px 3px 0 var(--line);transition:transform .15s,box-shadow .15s}
 .quick-verb-review:hover{transform:translateY(-1px);box-shadow:4px 4px 0 var(--line)}
