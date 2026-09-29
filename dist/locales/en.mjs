@@ -880,7 +880,7 @@ export default {
  "Weitere Sätze": "More sentences",
  "Weitere Übungen und Einstellungen": "More exercises and settings",
  "Weitere Übungen": "More exercises",
- "Hören · Diktat · Verbformen · Wortsel · Endungen · Dialoge": "Listening · Dictation · Verb forms · Word search · Endings · Dialogues",
+ "Hören · Diktat · Wortsel · Endungen · Dialoge": "Listening · Dictation · Word search · Endings · Dialogues",
  "Verbformen üben": "Practise verb forms",
  "Weiterlernen": "Keep learning",
  "Welche Form? · Präsens": "Which form? · present tense",

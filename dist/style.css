@@ -79,7 +79,8 @@ header{flex-wrap:wrap}.report-error{align-self:center;margin:18px 0 0;padding:7p
 
 /* Calm home and focused navigation. */
 .app-view{max-width:860px;margin:0 auto}.home-view{padding-top:14px}.home-launch{max-width:720px;margin:0 auto}.home-exercise-title{font:700 23px/1.3 'DM Sans',sans-serif;margin:0 0 16px}
-.home-exercises{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:22px}
+.home-exercises{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:22px 0}
+.home-exercises button[hidden]{display:none}
 .home-exercises button{display:flex;align-items:center;justify-content:center;gap:9px;min-width:0;min-height:68px;padding:12px 8px;border:2px solid var(--line);border-radius:12px;background:var(--paper);font-size:14px;font-weight:700;box-shadow:2px 2px 0 var(--line)}
 .home-exercises svg{flex:0 0 24px;width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .home-exercises button.selected{background:var(--lavender)}
@@ -131,10 +132,10 @@ header{flex-wrap:wrap}.report-error{align-self:center;margin:18px 0 0;padding:7p
 .path-stop.upcoming .path-number{border-color:color-mix(in srgb,var(--line) 38%,transparent);color:var(--muted)}
 .path-stop h4{margin:2px 0 4px;font-size:15px;line-height:1.4}.home-new .path-stop p{font-size:12px;margin:0;color:var(--muted)}
 .home-new .path-explanation{font-size:13px;color:var(--muted);margin:0;line-height:1.6}
-.home-verbs{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 18px;max-width:720px;margin:0 auto 24px;padding:18px 22px;border:2px solid var(--line);border-radius:18px;background:color-mix(in srgb,var(--orange) 16%,var(--paper));box-shadow:5px 5px 0 var(--heading-accent)}
+.home-verbs{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 18px;max-width:720px;margin:0 auto 24px;padding:18px 22px;border:2px solid var(--line);border-radius:18px;background:var(--mint);box-shadow:5px 5px 0 var(--heading-accent)}
 .home-verbs[hidden]{display:none}
 .home-verbs h2{margin:0;font:700 24px/1.2 var(--heading);color:var(--heading-accent)}
-.quick-verb-review{min-height:48px;padding:10px 20px;border:2px solid var(--line);border-radius:12px;background:var(--orange);color:var(--ink);font-size:16px;font-weight:700;box-shadow:3px 3px 0 var(--line);transition:transform .15s,box-shadow .15s}
+.quick-verb-review{min-height:48px;padding:10px 20px;border:2px solid var(--line);border-radius:12px;background:var(--lavender);color:var(--ink);font-size:16px;font-weight:700;box-shadow:3px 3px 0 var(--line);transition:transform .15s,box-shadow .15s}
 .quick-verb-review:hover{transform:translateY(-1px);box-shadow:4px 4px 0 var(--line)}
 @media(max-width:480px){.home-verbs{padding:16px 18px}.quick-verb-review{flex:1 1 100%}}
 .home-more>summary{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 22px;border:2px solid var(--line);border-radius:18px;background:var(--paper);box-shadow:5px 5px 0 var(--line);cursor:pointer;list-style:none;transition:transform .15s,box-shadow .15s}
@@ -179,7 +180,7 @@ header .header-nav button:hover,header .header-nav button.selected{background:va
 .search-level-note,.search-instructions{font-size:14px;color:var(--muted)}.search-count{font-weight:700}.search-card,#search-puzzle,.search-scroll{min-width:0;width:100%}.search-scroll{max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;padding:4px 2px 12px}.search-grid{display:grid;grid-template-columns:repeat(var(--search-size),minmax(28px,1fr));width:100%;min-width:calc(var(--search-size)*28px);border:1px solid var(--line);background:var(--paper);touch-action:none;user-select:none;-webkit-user-select:none}
 .search-grid button{min-width:0;height:clamp(28px,4vw,42px);padding:0;border:1px solid color-mix(in srgb,var(--line) 19%,transparent);border-radius:0;background:transparent;font-size:clamp(15px,2.5vw,21px);font-weight:600;line-height:1;color:var(--ink);touch-action:none}.search-grid button.found{background:var(--lavender)}.search-grid button.preview{background:var(--orange);color:var(--on-orange)}.search-grid button.anchor,.search-grid button.hint{box-shadow:inset 0 0 0 3px var(--purple);background:var(--paper)}.search-grid button:focus-visible{outline-offset:-3px;position:relative;z-index:1}
 .search-feedback{min-height:1.6em;font-size:14px}.search-found{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.search-found span{background:var(--lavender);border:1px solid var(--line);border-radius:8px;padding:4px 9px;overflow-wrap:anywhere}.search-hint-text{font-size:14px;overflow-wrap:anywhere}.search-solution{border-top:2px solid color-mix(in srgb,var(--line) 25%,transparent);padding-top:16px}.search-solution h2{font-size:22px}
-@media(max-width:700px){.home-exercises{grid-template-columns:repeat(2,minmax(0,1fr))}.home-exercises button:last-child{grid-column:1/-1}.search-card{padding:16px 12px}}
+@media(max-width:700px){.home-exercises{grid-template-columns:repeat(2,minmax(0,1fr))}.search-card{padding:16px 12px}}
 
 
 /* Per-sentence Tatoeba attribution link. */
