@@ -122,6 +122,7 @@ export function animateProgress(el,value){
 }
 
 // ---------- Satz des Tages ----------
+const DAILY_KEY='vanamo-daily-sentence';
 const hash=text=>{let h=2166136261;for(const c of text){h^=c.codePointAt(0);h=Math.imul(h,16777619);}return h>>>0;};
 function fits(s){
  if(!s?.translations?.length||s.hidden)return false;
@@ -131,7 +132,7 @@ function fits(s){
 }
 
 export function createDailySentence(root,{sentences,learnedIds,fallbackLevel=()=>1,sourceIcon=()=>''}){
- let lexicon=null,sentence=null,offset=0,audio=null,revealed=false,poolKey='',pool=[],own=false;
+ let lexicon=null,sentence=null,audio=null,revealed=false,poolKey='',pool=[],own=false;
  if(!root)return {render(){}};
  const stopAudio=()=>{if(audio){audio.pause();audio=null;}root.querySelector('.daily-audio')?.classList.remove('playing');};
  function buildPool(){
@@ -141,10 +142,19 @@ export function createDailySentence(root,{sentences,learnedIds,fallbackLevel=()=
   own=mine.length>0;
   pool=own?mine:all.filter(s=>s.level===fallbackLevel()).filter(fits).slice(0,400);
  }
+ // Ein Satz pro Tag: beim ersten Anzeigen festgehalten, damit er sich nicht ändert,
+ // wenn im Laufe des Tages neue Sätze dazukommen. Am nächsten Tag wird neu gewählt.
  function pick(){
+  const today=dayKey(new Date());
+  let saved=null;try{saved=JSON.parse(localStorage.getItem(DAILY_KEY)||'null');}catch{}
+  if(saved?.day===today){
+   const kept=(sentences()||[]).find(s=>s.id===saved.id);
+   if(kept&&fits(kept)){own=!!saved.own;return kept;}
+  }
   if(!pool.length)return null;
-  const base=hash(dayKey(new Date())+(own?'m':'f'));
-  return pool[(base+offset)%pool.length];
+  const chosen=pool[hash(today+(own?'m':'f'))%pool.length];
+  try{localStorage.setItem(DAILY_KEY,JSON.stringify({day:today,id:chosen.id,own}));}catch{}
+  return chosen;
  }
  function markup(){
   const infos=lookupForSentence(sentence.text)||[],cols=[];
@@ -155,7 +165,7 @@ export function createDailySentence(root,{sentences,learnedIds,fallbackLevel=()=
   }
   const words=cols.map((c,i)=>`<button type="button" class="guest-word cycle-word" style="--i:${i}" aria-label="${c.fi.replace(/<[^>]*>/g,'')}: Bedeutung zeigen"><span class="guest-fi">${c.fi}</span><span class="guest-gloss" lang="de">${esc(c.gloss)}</span></button>`).join('');
   const t=sentence.translations[0];
-  return `<div class="daily-sentence-top"><h2 id="daily-sentence-title">Satz des Tages</h2><span class="daily-sentence-note">${own?'aus deinen Sätzen':'zum Kennenlernen'}</span><span class="daily-sentence-tools">${sentence.audios?.length?'<button type="button" class="daily-audio" aria-label="Anhören"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4 5 9H2v6h3l6 5V4Z"/><path d="M15 8a6 6 0 0 1 0 8M18 4a11 11 0 0 1 0 16"/></svg></button>':''}${pool.length>1?'<button type="button" class="daily-other" aria-label="Anderer Satz"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg></button>':''}</span></div>
+  return `<div class="daily-sentence-top"><h2 id="daily-sentence-title">Satz des Tages</h2><span class="daily-sentence-note">${own?'aus deinen Sätzen':'zum Kennenlernen'}</span><span class="daily-sentence-tools">${sentence.audios?.length?'<button type="button" class="daily-audio" aria-label="Anhören"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4 5 9H2v6h3l6 5V4Z"/><path d="M15 8a6 6 0 0 1 0 8M18 4a11 11 0 0 1 0 16"/></svg></button>':''}</span></div>
 <div class="guest-words gloss-on-tap daily-words" lang="fi">${words}<span class="daily-source">${sourceIcon(sentence)}</span></div>
 <div class="daily-sentence-bottom">${revealed?`<p class="daily-translation" lang="de">${esc(t.text)}${sourceIcon(t)}</p>`:'<p class="daily-tip">Tippe auf ein Wort für seine Bedeutung.</p><button type="button" class="daily-reveal">Übersetzung zeigen</button>'}</div>`;
  }
@@ -164,8 +174,7 @@ export function createDailySentence(root,{sentences,learnedIds,fallbackLevel=()=
   if(animate)setTimeout(()=>root.classList.remove('is-entering'),900);
   root.querySelectorAll('.cycle-word').forEach(b=>b.onclick=e=>{if(e.target.closest('.sentence-source-icon'))return;b.classList.toggle('show');});
   root.querySelector('.daily-reveal')?.addEventListener('click',()=>{revealed=true;paint(false);root.querySelector('.daily-translation')?.classList.add('is-new');root.querySelector('.daily-words')?.classList.add('all');});
-  root.querySelector('.daily-other')?.addEventListener('click',()=>{stopAudio();offset++;revealed=false;sentence=pick();paint(true);});
-  const a=root.querySelector('.daily-audio');
+    const a=root.querySelector('.daily-audio');
   if(a)a.onclick=()=>{if(audio){stopAudio();return;}const url=sentence?.audios?.[0]?.download_url;if(!url)return;audio=new Audio(url);a.classList.add('playing');audio.onended=stopAudio;audio.onerror=stopAudio;audio.play().catch(stopAudio);};
  }
  return {
