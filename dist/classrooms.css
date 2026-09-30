@@ -265,6 +265,9 @@ header{flex-wrap:wrap}
 .cr-feed-card.cr-feed-assignment::after{background:var(--lavender)}
 .cr-feed-assignment .cr-feed-type{background:var(--purple);color:var(--on-accent)}
 .cr-feed-assignment .cr-state{background:var(--paper);box-shadow:2px 2px 0 var(--line)}
+/* Nordlicht: Aufgaben in dunklem Petrol mit hellem Sand-Akzent statt Braun */
+:root[data-theme=revontulet] .cr-feed-card.cr-feed-assignment{box-shadow:6px 6px 0 var(--warm-ink)}
+:root[data-theme=revontulet] .cr-feed-assignment .cr-feed-type{background:var(--warm-ink);color:var(--bg)}
 
 @media(max-width:640px){
  .cr-feed-card{padding:20px 17px;box-shadow:4px 4px 0 var(--mint)}
