@@ -5,13 +5,14 @@ import vm from 'node:vm';
 import {mergeVerbProgress} from './dist/verb-practice.mjs';
 import {mergePerformanceEvents} from './dist/learning-insights.mjs';
 import {mergeGames} from './dist/games-progress.mjs';
+import {mergeEndingsProgress} from './dist/endings-progress.mjs';
 
 const source=fs.readFileSync(new URL('./dist/auth.js',import.meta.url),'utf8');
 const start=source.indexOf('function mergeLearning(');
 const end=source.indexOf('\nasync function cloudLearning',start);
 assert(start>=0&&end>start,'mergeLearning implementation found');
 
-const context={mergeVerbProgress,mergePerformanceEvents,mergeGames};
+const context={mergeVerbProgress,mergePerformanceEvents,mergeGames,mergeEndingsProgress};
 vm.createContext(context);
 vm.runInContext(`${source.slice(start,end)}\nthis.mergeLearning=mergeLearning;`,context);
 
@@ -27,6 +28,12 @@ const gm=context.mergeLearning({...local,games:{hyppy:{grund:{a:{box:1,right:1,w
 assert.equal(gm.games.hyppy.grund.a.last,500,'newer game answer from this device wins');
 assert.equal(gm.games.hyppy.grund.b.last,900,'newer game answer from the cloud wins');
 assert.ok(gm.games.hyppy.verbs.c,'decks only known to one side survive');
+const ending=(updatedAt,streak)=>({attempts:2,errors:streak?0:1,streak,firstAt:50,due:updatedAt+1,updatedAt});
+const em=context.mergeLearning({...local,endingsProgress:{'5:1':ending(900,1),'6:0':ending(100,1)}},{...cloud,endingsProgress:{'5:1':ending(400,0),'6:0':ending(800,0),'7:2':ending(10,1)}});
+assert.equal(em.endingsProgress['5:1'].updatedAt,900,'newer endings answer from this device wins');
+assert.equal(em.endingsProgress['6:0'].updatedAt,800,'newer endings answer from the cloud wins');
+assert.ok(em.endingsProgress['7:2'],'endings only known to the cloud survive');
+assert.ok(context.mergeLearning(local,{...cloud,endingsProgress:{'7:2':ending(10,1)}}).endingsProgress['7:2'],'older app versions without endings keep cloud progress');
 
 const mergeBeforeWrite=source.indexOf('const cloud=await cloudLearning()');
 const cloudWrite=source.indexOf("request('/rest/v1/learning_state?on_conflict=user_id'",mergeBeforeWrite);
@@ -42,7 +49,7 @@ function harness(){
   let remote=structuredClone(current),postGate=null,getGate=null,fail=false;
   const calls=[],timers=new Map(),storage=new Map();let timerId=0;
   const elements=new Map();
-  const sandbox={uiLocale:'de-DE',mergeVerbProgress,mergePerformanceEvents,mergeGames,console,URL,TextEncoder,
+  const sandbox={uiLocale:'de-DE',mergeVerbProgress,mergePerformanceEvents,mergeGames,mergeEndingsProgress,console,URL,TextEncoder,
     SUPABASE_URL:'https://test.supabase.co',SUPABASE_PUBLISHABLE_KEY:'test-public-key',
     document:{hidden:false,getElementById:id=>{if(!elements.has(id))elements.set(id,{textContent:'',classList:{toggle(){}}});return elements.get(id)}},
     localStorage:{getItem:key=>storage.get(key)||null,setItem:(key,value)=>storage.set(key,value),removeItem:key=>storage.delete(key)},
