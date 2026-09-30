@@ -44,14 +44,28 @@ let grammar={},grammarAvailable=false,grammarLoading=true,loadedSentenceIds=new 
 const qualityExclusions={sentences:new Set(),translations:new Set()};
 const qualityTranslationKey=(sentenceId,translationId)=>`${sentenceId}:${translationId}`;
 const qualitySourceKind=item=>['english_bridge','finnish_adaptation'].includes(item?.origin)?'app_generated':item?.origin==='tatoeba_via_english'?'indirect_tatoeba':item?.origin==='teacher_created'?'editorial':item?.id?'direct_tatoeba':'unknown';
+// Gesperrte Sätze (Qualitätsprüfung) kommen von Supabase. Damit ein langsamer oder gerade
+// aufwachender Server die Startseite nicht aufhält, gilt zuerst die zuletzt gespeicherte Liste;
+// die frische Antwort wird höchstens kurz abgewartet und sonst still nachgezogen (siehe unten).
+const QUALITY_CACHE='vanamo-quality-exclusions';
+function applyQualityExclusions(value){
+ const sentences=new Set(),translations=new Set();
+ for(const id of value?.sentence_ids||[])if(Number.isSafeInteger(Number(id)))sentences.add(Number(id));
+ for(const pair of value?.translations||[])if(Number.isSafeInteger(Number(pair?.sentence_id))&&Number.isSafeInteger(Number(pair?.translation_id)))translations.add(qualityTranslationKey(Number(pair.sentence_id),Number(pair.translation_id)));
+ const changed=sentences.size!==qualityExclusions.sentences.size||translations.size!==qualityExclusions.translations.size||[...sentences].some(id=>!qualityExclusions.sentences.has(id))||[...translations].some(k=>!qualityExclusions.translations.has(k));
+ qualityExclusions.sentences=sentences;qualityExclusions.translations=translations;
+ return changed;
+}
+let qualityCached=false;
+try{const cached=JSON.parse(localStorage.getItem(QUALITY_CACHE)||'null');if(cached){applyQualityExclusions(cached);qualityCached=true;}}catch{}
 async function loadQualityExclusions(){
  try{
   const response=await fetch(`${SUPABASE_URL}/rest/v1/rpc/sentence_quality_exclusions`,{method:'POST',headers:{apikey:SUPABASE_PUBLISHABLE_KEY,'Content-Type':'application/json'},body:'{}'});
-  if(!response.ok)return;
+  if(!response.ok)return false;
   const value=await response.json();
-  for(const id of value?.sentence_ids||[])if(Number.isSafeInteger(Number(id)))qualityExclusions.sentences.add(Number(id));
-  for(const pair of value?.translations||[])if(Number.isSafeInteger(Number(pair?.sentence_id))&&Number.isSafeInteger(Number(pair?.translation_id)))qualityExclusions.translations.add(qualityTranslationKey(Number(pair.sentence_id),Number(pair.translation_id)));
- }catch{}
+  try{localStorage.setItem(QUALITY_CACHE,JSON.stringify({sentence_ids:value?.sentence_ids||[],translations:value?.translations||[]}));}catch{}
+  return applyQualityExclusions(value);
+ }catch{return false;}
 }
 function qualityFilteredCards(cards){
  const reports=Object.values(memory.reports);
@@ -115,6 +129,12 @@ function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Ma
 // „Wiederholen“: fällige Sätze, dazu fällige und ein paar neue Verbformen und Endungen (siehe daily-mix.mjs).
 const learnedSentenceIds=()=>new Set(Object.keys(memory.reviews||{}).map(k=>Number(k.split(':')[0])));
 // Alle Lücken für „Wiederholen“ (alle Level), einmal gebaut, sobald die Wortanalyse geladen ist.
+function buildDailyEndings(lexicon=getLexicon()){
+ if(dailyEndings||!lexicon||!ready)return;
+ const all=[...data,...archived];
+ dailyEndings={items:buildEndingItems(lexicon,all,null),index:indexLexicon(lexicon,all)};
+ dailyEndings.byId=new Map(dailyEndings.items.map(i=>[i.id,i]));
+}
 let dailyEndings=null,dailyEndingsLoading=false;
 function allEndingItems(){
  if(dailyEndings)return dailyEndings.items;
@@ -124,10 +144,14 @@ function allEndingItems(){
   if(!dailyEndingsLoading&&ready&&!activityLocked('endings')){dailyEndingsLoading=true;loadLexicon().then(()=>{if(ready)renderDailyPlan();}).catch(()=>{}).finally(()=>{dailyEndingsLoading=false;});}
   return null;
  }
- const all=[...data,...archived];
- dailyEndings={items:buildEndingItems(lexicon,all,null),index:indexLexicon(lexicon,all)};
- dailyEndings.byId=new Map(dailyEndings.items.map(i=>[i.id,i]));
- return dailyEndings.items;
+ // Aufbau kostet spürbar Rechenzeit (auf dem Handy mehrere hundert ms): nicht mitten im Start,
+ // sondern wenn der Browser Luft hat; danach „Wiederholen“ neu berechnen.
+ if(!dailyEndingsLoading){
+  dailyEndingsLoading=true;
+  const build=()=>{dailyEndingsLoading=false;if(dailyEndings)return;buildDailyEndings(lexicon);if(ready)renderDailyPlan();};
+  if(typeof requestIdleCallback==='function')requestIdleCallback(build,{timeout:2000});else setTimeout(build,300);
+ }
+ return null;
 }
 function extrasPlan(){
  const none={due:[],fresh:[],dueTotal:0};
@@ -139,6 +163,8 @@ function extrasPlan(){
  return {verbs,endings:endingsFinal,sentencesDue};
 }
 function dailyPlan(){
+ // Beim Start der Runde nicht auf den Aufbau im Hintergrund warten.
+ if(!activityLocked('endings'))buildDailyEndings();
  const sentences=reviewPlan([...data,...archived],memory.reviews,null,{translationOffset:reviewTranslationCount});
  const {verbs,endings}=extrasPlan();
  const others=[...alternate(verbs.due.map(verbCard),endings.due.map(endingCard)),...alternate(verbs.fresh.map(verbCard),endings.fresh.map(endingCard))];
@@ -1078,7 +1104,13 @@ function pointToGuestPath(){const section=document.querySelector('.home-new');if
 function syncGuestHome(){if(typeof renderHomeExtras==='function')renderHomeExtras();syncActivityLocks();syncHeaderPractice();if(!guestCard)return;const guest=!accountActive()&&guestCard.available;syncPathCollapse(guest);syncGuestPathVisibility(guest);$('guest-card').hidden=!guest;if(!guest)guestCard.stop();else if(ready)guestCard.start();if(ready)renderDailyPlan();else document.querySelector('.home-daily').hidden=guest;}
 syncGuestHome();
 const sentencesRequest=fetch('sentences.json'),exclusionsRequest=loadQualityExclusions();
+let rawSentences=[],rawArchived=[];
 const grammarRequest=fetch('grammar.json').then(r=>r.ok?r.json():null).then(p=>{if(p){grammar=p.sentences||{};grammarAvailable=true;}}).catch(()=>{}).finally(()=>{grammarLoading=false;grammarLoaded();});
-try{const response=await sentencesRequest;if(!response.ok)throw new Error('load');const payload=await response.json();await exclusionsRequest;loadedSentenceIds=new Set([...(payload.sentences||[]),...(Array.isArray(payload.archived_sentences)?payload.archived_sentences:[])].filter(s=>s?.translations?.length).map(s=>s.id));data=qualityFilteredCards(payload.sentences);if(Array.isArray(payload.levels))levels=payload.levels.map(l=>l.id).filter(Number.isInteger);if(!levels.includes(level)||levelLocked(level))level=levels[0]||1;archived=qualityFilteredCards(Array.isArray(payload.archived_sentences)?payload.archived_sentences:[]);if(!Array.isArray(data)||!data.length)throw new Error('empty');ready=true;start();homeLoaded();syncGuestHome();if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});}catch{$('card').className='card empty';$('card').innerHTML='<h2>Die Sätze konnten nicht geladen werden.</h2><p>Prüfe deine Verbindung und lade die Seite erneut.</p>';$('actions').innerHTML='<button class="primary" id="retry">Erneut versuchen</button>';$('retry').onclick=()=>location.reload();$('total').textContent='Sätze nicht verfügbar';homeLoaded();}
+try{const response=await sentencesRequest;if(!response.ok)throw new Error('load');const payload=await response.json();
+ // Mit gespeicherter Sperrliste gar nicht warten, sonst höchstens 1,5 s; Späteres wird nachgezogen.
+ const exclusionsInTime=await Promise.race([exclusionsRequest.then(()=>true),new Promise(r=>setTimeout(()=>r(false),qualityCached?0:1500))]);
+ rawSentences=payload.sentences;rawArchived=Array.isArray(payload.archived_sentences)?payload.archived_sentences:[];
+ if(!exclusionsInTime)exclusionsRequest.then(changed=>{if(!changed||!ready)return;data=qualityFilteredCards(rawSentences);archived=qualityFilteredCards(rawArchived);dailyEndings=null;renderStats();});
+ loadedSentenceIds=new Set([...(payload.sentences||[]),...(Array.isArray(payload.archived_sentences)?payload.archived_sentences:[])].filter(s=>s?.translations?.length).map(s=>s.id));data=qualityFilteredCards(payload.sentences);if(Array.isArray(payload.levels))levels=payload.levels.map(l=>l.id).filter(Number.isInteger);if(!levels.includes(level)||levelLocked(level))level=levels[0]||1;archived=qualityFilteredCards(Array.isArray(payload.archived_sentences)?payload.archived_sentences:[]);if(!Array.isArray(data)||!data.length)throw new Error('empty');ready=true;start();homeLoaded();syncGuestHome();if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});}catch{$('card').className='card empty';$('card').innerHTML='<h2>Die Sätze konnten nicht geladen werden.</h2><p>Prüfe deine Verbindung und lade die Seite erneut.</p>';$('actions').innerHTML='<button class="primary" id="retry">Erneut versuchen</button>';$('retry').onclick=()=>location.reload();$('total').textContent='Sätze nicht verfügbar';homeLoaded();}
 mountWordLookup([$('practice-view')]);
 window.suomiDifficultDeck=async()=>buildDifficultDeck({lexicon:await loadLexicon(),reviews:memory.reviews,events:memory.performanceEvents,missed:[...endingsState.missed]});
