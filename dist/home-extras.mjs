@@ -157,7 +157,8 @@ function fits(s){
  return infos.every(i=>i&&shortGloss(i)&&shortGloss(i).length<=24);
 }
 
-export function createDailySentence(root,{sentences,learnedIds,fallbackLevel=()=>1,sourceIcon=()=>''}){
+// userKey: Konto-ID – jedes Konto bekommt seinen eigenen Satz, auf allen Geräten derselbe.
+export function createDailySentence(root,{sentences,learnedIds,fallbackLevel=()=>1,sourceIcon=()=>'',userKey=()=>''}){
  let lexicon=null,sentence=null,audio=null,revealed=false,poolKey='',pool=[],own=false;
  if(!root)return {render(){}};
  const stopAudio=()=>{if(audio){audio.pause();audio=null;}root.querySelector('.daily-audio')?.classList.remove('playing');};
@@ -168,18 +169,19 @@ export function createDailySentence(root,{sentences,learnedIds,fallbackLevel=()=
   own=mine.length>0;
   pool=own?mine:all.filter(s=>s.level===fallbackLevel()).filter(fits).slice(0,400);
  }
- // Ein Satz pro Tag: beim ersten Anzeigen festgehalten, damit er sich nicht ändert,
+ // Ein Satz pro Tag und Konto: beim ersten Anzeigen festgehalten, damit er sich nicht ändert,
  // wenn im Laufe des Tages neue Sätze dazukommen. Am nächsten Tag wird neu gewählt.
  function pick(){
   const today=dayKey(new Date());
-  let saved=null;try{saved=JSON.parse(localStorage.getItem(DAILY_KEY)||'null');}catch{}
+  const user=String(userKey()||''),storeKey=user?`${DAILY_KEY}:${user}`:DAILY_KEY;
+  let saved=null;try{saved=JSON.parse(localStorage.getItem(storeKey)||'null');}catch{}
   if(saved?.day===today){
    const kept=(sentences()||[]).find(s=>s.id===saved.id);
    if(kept&&fits(kept)){own=!!saved.own;return kept;}
   }
   if(!pool.length)return null;
-  const chosen=pool[hash(today+(own?'m':'f'))%pool.length];
-  try{localStorage.setItem(DAILY_KEY,JSON.stringify({day:today,id:chosen.id,own}));}catch{}
+  const chosen=pool[hash(user+'|'+today+(own?'m':'f'))%pool.length];
+  try{localStorage.setItem(storeKey,JSON.stringify({day:today,id:chosen.id,own}));}catch{}
   return chosen;
  }
  function markup(){

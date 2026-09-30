@@ -14,7 +14,7 @@ import {mountWordLookup,loadLexicon,lookupForSentence,splitSentence,getLexicon} 
 import {planVerbs,planEndings,interleave,alternate,verbCard,endingCard} from './daily-mix.mjs?v=2';
 import {validateEndingsProgress,mergeEndingsProgress,markEndingAnswered,missedEndings} from './endings-progress.mjs?v=1';
 import {createGuestCard,shortGloss,flipWordIndex} from './guest-card.mjs?v=11';
-import {renderGreeting,renderToday,createDailySentence,animateProgress,GOAL_CHOICES,DAILY_GOAL} from './home-extras.mjs?v=4';
+import {renderGreeting,renderToday,createDailySentence,animateProgress,GOAL_CHOICES,DAILY_GOAL} from './home-extras.mjs?v=5';
 import {buildDifficultDeck} from './difficult-words.mjs?v=2';
 import {buildEndingItems,indexLexicon,renderEndings,hasEndingChoices} from './endings-practice.mjs?v=2';
 import {translationFeedbackMarkup} from './translation-feedback.mjs?v=1';
@@ -692,6 +692,8 @@ function renderVerbSession() {
  card.innerHTML=`<div class="card-top"><span class="card-label">Verbformen${session.daily?(session.dailyCard.dailyVerb.isNew&&!session.dailyCard.retry?' · <span class="verb-new-tag">Neu</span>':' · Wiederholen'):''}</span>${session.daily?'':`<span>${session.checked?session.answers.length:session.answers.length+1} von ${session.count}</span>`}</div><p class="verb-hint">Welche Form? · Präsens</p><div class="verb-prompt"><h2 class="verb-question" lang="fi"><span class="verb-pronoun">${PRONOUNS[person]}</span><span class="verb-sep"> · </span><span class="verb-infinitive">${escape(verb.id)}</span> <span class="verb-meaning-inline" lang="de"><span class="verb-paren">(</span>${escape(verb.de)}<span class="verb-paren">)</span></span></h2></div><form id="verb-form" ${session.checked?'hidden':''}><label for="verb-input">Deine Verbform</label><input id="verb-input" lang="fi" maxlength="100" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" aria-describedby="verb-input-hint" placeholder="Deine Antwort …" ${session.checked?'readonly':''} value="${escape(session.draft)}"><p class="verb-hint" id="verb-input-hint">${person===2||person===5?`Schreibe „${PRONOUNS[person]}“ zusammen mit der Verbform. Das Pronomen ist hier erforderlich.`:`Nur die Verbform oder mit „${PRONOUNS[person]}“.`} Achte auf ä, ö und doppelte Buchstaben.</p>${session.checked?'':`<div class="letter-buttons"><button type="button" data-verb-letter="ä" aria-label="ä einfügen">ä</button><button type="button" data-verb-letter="ö" aria-label="ö einfügen">ö</button></div><button class="primary" type="submit">Lösung prüfen</button>`}</form>${session.checked?`<div class="verb-solution-card ${session.correct?'correct':'incorrect'}"><div class="verb-feedback ${session.correct?'verb-correct':'verb-wrong'}" role="status">${session.correct?'Richtig!':`Noch nicht richtig. Die Lösung ist <strong lang="fi">${person===2||person===5?PRONOUNS[person]+' ':''}${escape(verb.forms[person])}</strong>.`}</div><div class="verb-answer-summary"><span>Deine Verbform</span><strong lang="fi">${escape(session.draft)}</strong></div><table class="verb-forms"><caption>Alle sechs Formen von <span lang="fi">${escape(verb.id)}</span><span class="verb-forms-legend" aria-hidden="true"><span>Einzahl</span><span>Mehrzahl</span></span></caption><thead><tr><th scope="col">Personalpronomen</th><th scope="col">Präsens</th></tr></thead><tbody>${PRONOUNS.map((p,i)=>`<tr class="${i===person?'verb-target':''}"><th scope="row" lang="fi">${p}</th><td lang="fi">${verbFormMarkup(verb.forms[i],i)}</td></tr>`).join('')}</tbody></table></div>`:''}`;
  if(!session.checked&&session.rolledFor!==session.answers.length){session.rolledFor=session.answers.length;rollVerbPronoun(card.querySelector('.verb-pronoun'),PRONOUNS[person]);}
  const input=$('verb-input');input.oninput=()=>{if(!session.checked)session.draft=input.value;};
+ // Neue Frage: direkt lostippen können – auch wenn davor eine Satzkarte war oder die Runde gerade startet.
+ if(!session.checked&&session.focusedFor!==session.answers.length){session.focusedFor=session.answers.length;requestAnimationFrame(()=>{const el=document.activeElement;if(input.isConnected&&!(el&&el!==input&&el.isConnected&&['INPUT','TEXTAREA','SELECT'].includes(el.tagName)))focusVerbView(input);});}
  $('verb-form').onsubmit=e=>{e.preventDefault();submitVerbAnswer();};
  card.querySelectorAll('[data-verb-letter]').forEach(b=>b.onclick=()=>{if(input.value.length>=100)return;input.setRangeText(b.dataset.verbLetter,input.selectionStart,input.selectionEnd,'end');session.draft=input.value;input.focus();});
  if(session.daily){
@@ -1014,13 +1016,14 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden)stopAudio()
 // Ohne Konto zeigt die Startseite statt „Sätze wiederholen“ eine Satzkarte zum Ausprobieren.
 // Angemeldete: Begrüßung, Tagesziel mit Woche/Serie und „Satz des Tages“ (siehe home-extras.mjs).
 function accountName(){try{return JSON.parse(localStorage.getItem('suomi-auth-session-v1')||'null')?.user?.user_metadata?.username||'';}catch{return '';}}
+function accountId(){try{return JSON.parse(localStorage.getItem('suomi-auth-session-v1')||'null')?.user?.id||'';}catch{return '';}}
 var dailySentence=null;
 function renderHomeExtras(){
  if(typeof memory==='undefined'||!memory)return;
  const account=accountActive();
  renderGreeting(document.querySelector('#home-view .intro h1'),{account,name:accountName()});
  renderToday(document.querySelector('#home-view .today'),{count:memory.daily[day()]||0,daily:memory.daily,account,goal:dailyGoal,onGoalChange:n=>{dailyGoal=n;persist();renderHomeExtras();}});
- if(!dailySentence&&$('daily-sentence'))dailySentence=createDailySentence($('daily-sentence'),{sentences:()=>data,learnedIds:()=>new Set(Object.keys(memory.reviews||{}).map(k=>Number(k.split(':')[0]))),fallbackLevel:()=>levels[0]||1,sourceIcon:s=>sourceIcon(s)});
+ if(!dailySentence&&$('daily-sentence'))dailySentence=createDailySentence($('daily-sentence'),{sentences:()=>data,learnedIds:()=>new Set(Object.keys(memory.reviews||{}).map(k=>Number(k.split(':')[0]))),fallbackLevel:()=>levels[0]||1,sourceIcon:s=>sourceIcon(s),userKey:accountId});
  dailySentence?.render({account,ready});
 }
 var guestCard=createGuestCard($('guest-card'),{sentences:()=>data,level:()=>levels[0]||1,onUnavailable:()=>syncGuestHome(),onFinished:({animate})=>revealGuestPath(animate),onPathRequest:()=>pointToGuestPath(),sourceIcon:s=>sourceIcon(s)});
