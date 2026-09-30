@@ -583,11 +583,12 @@ html.intro-running,.intro-running body{overflow:hidden}
 .today-flame{width:10px;height:13px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:linear-gradient(to top,var(--orange),#f6c343);transform-origin:50% 100%;animation:today-flicker 1.6s ease-in-out infinite}
 @keyframes today-flicker{0%,100%{transform:scale(1) rotate(-3deg)}50%{transform:scale(1.12,1.06) rotate(3deg)}}
 @keyframes today-pop{0%{transform:scale(1)}45%{transform:scale(1.15)}100%{transform:scale(1)}}
-.daily-sentence{position:relative;max-width:720px;margin:0 auto 26px;padding:18px 22px 20px;border:2px solid var(--line);border-radius:18px;background:var(--paper);box-shadow:5px 5px 0 var(--heading-accent)}
+/* Satz des Tages ohne Rahmen und Schatten: steht wie eine zweite Überschrift. Desktop auf der Textkante der Karten darunter, Handy bündig mit der Begrüßung. */
+.daily-sentence{position:relative;max-width:720px;margin:0 auto 26px;padding:18px 22px 20px;border:2px solid transparent;border-radius:18px;background:transparent}
 .daily-sentence-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-height:40px;margin-bottom:14px}
 .daily-sentence h2{margin:0;font:800 20px/1.2 var(--heading);color:var(--heading-accent)}
 .daily-sentence-note{font-size:12px;font-weight:700;color:var(--ink-soft)}
-.daily-sentence-tools{display:flex;gap:8px;margin-left:auto}
+.daily-sentence-tools{display:flex;gap:8px;margin-left:2px}
 .daily-sentence-tools button{display:grid;place-items:center;width:40px;height:40px;min-height:0;padding:0;border:2px solid var(--line);border-radius:10px;background:var(--paper);box-shadow:2px 2px 0 var(--line);color:var(--ink)}
 .daily-sentence-tools button:hover,.daily-audio.playing{background:var(--lavender)}
 .daily-sentence .guest-words{gap:6px 18px;padding-top:4px}
@@ -596,8 +597,8 @@ html.intro-running,.intro-running body{overflow:hidden}
 .daily-sentence .guest-gloss{font-size:14px;min-height:1.3em}
 .daily-sentence .cycle-word.show .guest-gloss,.daily-sentence .daily-words.all .guest-gloss{animation:daily-gloss .3s ease-out}
 @keyframes daily-gloss{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
-.daily-sentence-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px 16px;flex-wrap:wrap;margin-top:12px}
-.daily-reveal{margin-left:auto;min-height:40px;padding:8px 14px;border:2px solid var(--line);border-radius:10px;background:var(--lavender);box-shadow:2px 2px 0 var(--line);font-size:14px;font-weight:700;color:var(--ink)}
+.daily-sentence-bottom{display:flex;align-items:center;justify-content:flex-start;gap:10px 16px;flex-wrap:wrap;margin-top:12px}
+.daily-reveal{min-height:40px;padding:8px 14px;border:2px solid var(--line);border-radius:10px;background:var(--lavender);box-shadow:2px 2px 0 var(--line);font-size:14px;font-weight:700;color:var(--ink)}
 .daily-translation{margin:0;font-size:18px;font-weight:600}
 .daily-translation.is-new{animation:daily-flip .45s ease-out}
 @keyframes daily-flip{from{opacity:0;transform:rotateX(80deg)}to{opacity:1;transform:none}}
@@ -611,5 +612,5 @@ html.intro-running,.intro-running body{overflow:hidden}
 .home-daily-done-text strong{font:800 18px/1.2 var(--heading);color:var(--heading-accent)}
 .home-daily-done-text small{font-size:12px;color:var(--ink-soft)}
 .home-daily-stats span.bump{animation:today-pop .45s ease-out}
-@media(max-width:700px){.daily-sentence{padding:16px 16px 18px;box-shadow:4px 4px 0 var(--heading-accent)}.today-ring{width:50px;height:50px}.today.is-account .today-ring>span{font-size:21px}.today.is-account{grid-template-columns:auto;justify-items:center;gap:6px}.today.is-account .today-label{text-align:center;font-size:11px;max-width:none}.today-week{gap:2px}.today-week li{width:17px;height:17px;font-size:8px}.today-streak{font-size:11px}}
+@media(max-width:700px){.daily-sentence{padding:16px 0 18px}.today-ring{width:50px;height:50px}.today.is-account .today-ring>span{font-size:21px}.today.is-account{grid-template-columns:auto;justify-items:center;gap:6px}.today.is-account .today-label{text-align:center;font-size:11px;max-width:none}.today-week{gap:2px}.today-week li{width:17px;height:17px;font-size:8px}.today-streak{font-size:11px}}
 @media(prefers-reduced-motion:reduce){.today-flame,.today.goal-reached .today-ring,.home-daily.all-done .home-daily-done,.daily-sentence.is-entering .cycle-word,.daily-translation.is-new,.home-daily-stats span.bump{animation:none!important}.today-ring-fill,.greeting-face{transition:none}}
