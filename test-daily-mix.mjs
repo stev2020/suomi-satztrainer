@@ -38,26 +38,36 @@ assert.equal(planVerbs({verbs:VERBS,progress:{},sentencesDue:NEW_ONLY_BELOW-1,no
 // Fällige kommen nach Fälligkeit sortiert.
 const due=dueVerbKeys(VERBS,progress,now);assert.ok(due.every((v,i)=>!i||due[i-1].due<=v.due));
 
-// Bezug zu gelernten Sätzen: genaue Form aus dem Satz zuerst.
-const asua=VERBS.find(v=>v.id==='asua'),haluta=VERBS.find(v=>v.id==='haluta');
-const lexicon={lemmas:[['minä','ich'],['asua','wohnen'],['Helsinki','Helsinki'],['haluta','wollen']],forms:['x'],sentences:{
- '1':{s:'Minä asun Helsingissä.',w:[[0,0],[1,0],[2,0]]},
- '2':{s:'He haluavat kahvia.',w:[[3,0]]}}};
-const known=verbsInSentences(VERBS,lexicon,[1,2]);
+// Stufe: neue Formen nur aus den ersten fünf Verben (olla, tehdä, mennä, tulla, saada).
+const stage=new Set(VERBS.slice(0,5).map(v=>v.id));
+assert.ok(planVerbs({verbs:VERBS,progress:{},now}).fresh.every(v=>stage.has(v.verbId)),'new forms come from the first stage');
+// Bezug zu gelernten Sätzen: genaue Form aus dem Satz zuerst – innerhalb der Stufe.
+const olla=VERBS.find(v=>v.id==='olla'),menna=VERBS.find(v=>v.id==='mennä'),asua=VERBS.find(v=>v.id==='asua');
+const lexicon={lemmas:[['minä','ich'],['olla','sein'],['kotona','zu Hause'],['mennä','gehen'],['asua','wohnen'],['Helsinki','Helsinki']],forms:['x'],sentences:{
+ '1':{s:'Minä olen kotona.',w:[[0,0],[1,0],[2,0]]},
+ '2':{s:'He menevät kotiin.',w:[[3,0]]},
+ '3':{s:'Minä asun Helsingissä.',w:[[0,0],[4,0],[5,0]]}}};
+const known=verbsInSentences(VERBS,lexicon,[1,2,3]);
+assert.deepEqual([...known.get('olla')],[0]);
+assert.deepEqual([...known.get('mennä')],[5]);
 assert.deepEqual([...known.get('asua')],[0]);
-assert.deepEqual([...known.get('haluta')],[5]);
-const cands=newVerbCandidates(VERBS,{},{lexicon,learnedIds:[1,2],now});
-assert.deepEqual(cands.slice(0,2).map(c=>c.key).sort(),['asua:0','haluta:5']);
+const cands=newVerbCandidates(VERBS,{},{lexicon,learnedIds:[1,2,3],now});
+assert.deepEqual(cands.slice(0,2).map(c=>c.key).sort(),['mennä:5','olla:0']);
 assert.ok(cands.slice(0,2).every(c=>c.tier==='sentence'));
-// Schon gesehene Form → nächste Person desselben Verbs.
-const seen=markAsked({},'asua:0',now-2*DAY);
+assert.ok(!cands.some(c=>c.verbId==='asua'),'verbs outside the stage wait, even if they occur in own sentences');
+assert.equal(new Set(cands.slice(0,5).map(c=>c.verbId)).size,5,'first one form per verb');
+// Schon gesehene Form → andere Personen desselben Verbs bleiben Kandidaten.
+const seen=markAsked({},'olla:0',now-2*DAY);
 const next=newVerbCandidates(VERBS,seen,{lexicon,learnedIds:[1],now});
-assert.equal(next[0].verbId,'asua');assert.notEqual(next[0].person,0);assert.equal(next[0].tier,'verb');
+assert.ok(next.some(c=>c.verbId==='olla'&&c.person!==0));assert.ok(!next.some(c=>c.key==='olla:0'));
 // Nicht gelernter Satz zählt nicht.
 assert.equal(verbsInSentences(VERBS,lexicon,[]).size,0);
+// Fast alles in der Stufe gesehen → trotzdem genug neue Formen (nächste Stufe oder auffüllen).
+let most={};for(const v of VERBS.slice(0,5))for(let p=0;p<5;p++)most=markAsked(most,v.id+':'+p,now-3*DAY);
+assert.ok(newVerbCandidates(VERBS,most,{now}).length>=NEW_VERBS_PER_DAY);
 
 // Mischung: drei Sätze, zwei andere, Rest hinten.
 assert.deepEqual(interleave([1,2,3,4,5,6,7],['a','b','c']),[1,2,3,'a','b',4,5,6,'c',7]);
 assert.deepEqual(interleave([],['a','b']),['a','b']);
-assert.equal(asua.forms[0],'asun');assert.equal(haluta.forms[5],'haluavat');
+assert.equal(olla.forms[0],'olen');assert.equal(menna.forms[5],'menevät');assert.equal(asua.forms[0],'asun');
 console.log('Wiederholen-Mischung: fällige und neue Verbformen, Tageskontingent, Satzbezug und Reihenfolge geprüft.');

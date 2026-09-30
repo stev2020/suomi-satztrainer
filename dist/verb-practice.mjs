@@ -43,13 +43,28 @@ export function markAnswered(progress,key,correct,now = Date.now()) {
 export function answerMatches(answer,verb,person) {
   const normalize = s => String(s).normalize('NFC').toLocaleLowerCase('fi').trim().replace(/\s+/g,' ');
   const value = normalize(answer),expected = normalize(verb.forms[person]);
+  // Unpersönlich (täytyä): die ganze Wendung mit Genitiv, z. B. „minun täytyy“.
+  if (verb.impersonal) return value === expected;
   return value === PRONOUNS[person]+' '+expected || ((person!==2 && person!==5) && value === expected);
 }
 export function createVerbSession(count) {
   return {count:count===5?5:10,answers:[],current:null,draft:'',checked:false,correct:false,retries:[],history:[]};
 }
+// Stufen: Neue Formen kommen nur aus den ersten „unlocked“ Verben der Liste (die wichtigsten zuerst).
+// Die nächsten STAGE_SIZE Verben öffnen sich, sobald STAGE_UNLOCK der bisher offenen Formen gesehen wurden.
+export const STAGE_SIZE = 5;
+export const STAGE_UNLOCK = 2/3;
+export function unlockedVerbCount(verbs,progress = {}) {
+  let n = Math.min(STAGE_SIZE,verbs.length),seen = 0,counted = 0;
+  while (true) {
+    for (; counted < n; counted++) seen += PRONOUNS.filter((_,p) => progress[combinationKey(verbs[counted],p)]?.seen).length;
+    if (n >= verbs.length || seen < Math.ceil(n*PRONOUNS.length*STAGE_UNLOCK)) return n;
+    n = Math.min(verbs.length,n+STAGE_SIZE);
+  }
+}
 export function chooseCombination(verbs,progress,session,now = Date.now(),random = Math.random) {
   const index = session.answers.length;
+  const open = new Set(verbs.slice(0,unlockedVerbCount(verbs,progress)).map(v => v.id));
   const recent = new Set(session.history.slice(-2));
   const pick = list => list[Math.min(list.length-1,Math.floor(random()*list.length))];
   const all = verbs.flatMap(verb => PRONOUNS.map((_,person) => ({verb,person,key:combinationKey(verb,person)})));
@@ -61,7 +76,7 @@ export function chooseCombination(verbs,progress,session,now = Date.now(),random
   }
   // A mistake returns only after two intervening questions. A short round
   // never grows indefinitely; outstanding mistakes remain due next round.
-  const unseen = all.filter(item => !progress[item.key]?.seen && !recent.has(item.key));
+  const unseen = all.filter(item => !progress[item.key]?.seen && !recent.has(item.key) && open.has(item.verb.id));
   if (unseen.length && (index%5===0 || index%5===3)) return pick(unseen);
   const retry = session.retries.find(r => r.after <= index && !recent.has(r.key));
   if (retry) {
@@ -72,7 +87,7 @@ export function chooseCombination(verbs,progress,session,now = Date.now(),random
   const candidates = all.filter(item => !recent.has(item.key) && !session.retries.some(r => r.key===item.key && r.after>index));
   const pool = candidates.length ? candidates : all.filter(item => !recent.has(item.key));
   if (!pool.length) return null;
-  const fresh = pool.filter(item => !progress[item.key]?.seen);
+  const fresh = pool.filter(item => !progress[item.key]?.seen && open.has(item.verb.id));
   // Reserve two of every five positions for unseen forms so difficult verbs
   // cannot prevent coverage of the whole stock.
   if (fresh.length && (index%5===0 || index%5===3)) return pick(fresh);
@@ -80,7 +95,9 @@ export function chooseCombination(verbs,progress,session,now = Date.now(),random
     const records=PRONOUNS.map((_,p)=>progress[combinationKey(verb,p)]).filter(Boolean);
     return records.reduce((n,r)=>n+r.errors,0)>=2 && records.some(r=>r.attempts && r.streak<2);
   }).map(v=>v.id));
-  const relatedForms = fresh.filter(item=>difficultIds.has(item.verb.id));
+  // Schwierige Verben üben auch ihre anderen Personen – auch außerhalb der aktuellen Stufe.
+  const unseenInPool = pool.filter(item => !progress[item.key]?.seen);
+  const relatedForms = unseenInPool.filter(item=>difficultIds.has(item.verb.id));
   if(index%5===2 && relatedForms.length)return pick(relatedForms);
   const due = pool.filter(item => progress[item.key]?.seen && progress[item.key].due<=now);
   if (due.length) {
@@ -91,11 +108,13 @@ export function chooseCombination(verbs,progress,session,now = Date.now(),random
     const records = PRONOUNS.map((_,p)=>progress[combinationKey(verb,p)]).filter(Boolean);
     return records.reduce((n,r)=>n+r.errors,0)>=2 && records.some(r=>r.attempts && r.streak<2);
   }).map(v=>v.id));
-  const related = fresh.filter(item => difficult.has(item.verb.id));
+  const related = unseenInPool.filter(item => difficult.has(item.verb.id));
   if (related.length) return pick(related);
   if (fresh.length) return pick(fresh);
   // Everything has been seen: prefer the least secure, least recently asked
   // combinations while allowing practice ahead of the next due date.
+  const known = pool.filter(item => progress[item.key]?.seen || open.has(item.verb.id));
+  if (known.length) pool.splice(0,pool.length,...known);
   pool.sort((a,b)=>(progress[a.key]?.streak||0)-(progress[b.key]?.streak||0) ||
     (progress[a.key]?.lastAskedAt||0)-(progress[b.key]?.lastAskedAt||0));
   return pick(pool.slice(0,Math.min(12,pool.length)));

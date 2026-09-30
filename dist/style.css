@@ -617,3 +617,12 @@ html.intro-running,.intro-running body{overflow:hidden}
 /* „Wiederholen“ mit Verbformen (daily-mix.mjs) */
 .home-daily-stats span[hidden]{display:none}
 .verb-new-tag{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--mint);color:var(--ink);font-weight:800}
+/* Verbformen: Beispielsätze und Satzmuster unter der Formentabelle (verb-examples.mjs) */
+.verb-usage{margin-top:16px;padding-top:14px;border-top:1.5px dashed color-mix(in srgb,var(--line) 35%,transparent)}
+.verb-usage h3{margin:0 0 8px;font:800 12px/1.2 'DM Sans',sans-serif;letter-spacing:1.2px;text-transform:uppercase;color:var(--heading-accent)}
+.verb-usage ul{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.verb-usage li{display:grid;gap:2px}
+.verb-pattern{font-size:12px;font-weight:700;color:var(--ink-soft)}
+.verb-example{font:700 18px/1.3 var(--heading);color:var(--ink)}
+.verb-example-de{font-size:14px;color:var(--ink-soft)}
+.verb-usage-note{margin:10px 0 0;font-size:11px;color:var(--ink-soft)}

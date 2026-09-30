@@ -6,7 +6,8 @@ import {VERBS} from './dist/verbs-data.mjs';
 import {validateGames,mergeGames} from './dist/games-progress.mjs';
 
 const deck=verbDeck();
-assert.equal(deck.entries.length,VERBS.length*6,'six present forms per verb');
+assert.equal(deck.entries.length,VERBS.filter(v=>!v.impersonal).length*6,'six present forms per verb');
+assert.ok(!deck.entries.some(e=>e.lemma==='täytyä'),'impersonal phrases stay out of the game');
 assert.equal(new Set(deck.entries.map(e=>e.id)).size,deck.entries.length,'unique ids');
 const asun=deck.entries.find(e=>e.id==='asua-1');
 assert.deepEqual({source:asun.source,target:asun.target},{source:'ich (wohnen)',target:'asun'});
