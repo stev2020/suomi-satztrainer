@@ -78,6 +78,13 @@ export function endingChoices(item,index,random=Math.random){
  return shuffle([item.answer,...distractors.map(show)],random);
 }
 
+// Genug andere Formen für eine Auswahl aus drei? (ohne Zufall, nur Anzahl)
+export function hasEndingChoices(item,index){
+ const answer=norm(item.answer);
+ const attested=[...(index.byLemma.get(item.lemma)||new Map())].filter(([f,form])=>f!==answer&&degree(form)===degree(item.form)).map(([f])=>f);
+ return new Set([...attested,...synthetic(item.lemma)].filter(f=>f!==answer)).size>=2;
+}
+
 export const endingMatches=(answer,item)=>norm(answer)===norm(item.answer);
 
 // What the learner's (wrong) form is, if it occurs in the corpus for the same word.
@@ -92,6 +99,7 @@ function sentenceWithGap(item,content){
 }
 
 // UI -----------------------------------------------------------------------
+// ctx.daily = {tag, onNext}: eine einzelne Lücke innerhalb von „Wiederholen“ (ohne Zähler und Auswertung).
 
 export function renderEndings(ctx){
  const {card,actions,notice,level,difficulty,state}=ctx;
@@ -131,12 +139,12 @@ export function renderEndings(ctx){
   const own=!last.correct&&last.answer?describeAnswer(last.answer,item,state.index):null;
   body=`<div class="verb-solution-card ${last.correct?'correct':'incorrect'}"><div class="verb-feedback ${last.correct?'verb-correct':'verb-wrong'}" role="status">${last.correct?'Richtig!':`Die Form im Satz ist <strong lang="fi">${escape(item.answer)}</strong>.`}</div><p class="endings-explain"><b lang="fi">${escape(item.answer)}</b> = ${escape(item.form)}${item.here?` · hier: ${escape(item.here)}`:''}</p>${own?`<p class="endings-explain"><span lang="fi">${escape(last.answer)}</span> gibt es auch: ${escape(own.form)}. Im Satz passt aber die andere Form.</p>`:''}${!last.correct&&/^(Genitiv|Partitiv|Nominativ Plural)/u.test(item.case)?'<small>Beim Objekt sind manchmal mehrere Fälle möglich (Partitiv oder Genitiv/Nominativ). Dann ändert sich die Bedeutung leicht, z. B. „las ein Buch“ vs. „las das Buch zu Ende“.</small>':''}</div><p class="endings-full" lang="fi">${escape(item.sentence.text)}</p>`;
  }
- card.innerHTML=`<div class="card-top"><span class="card-label">Endungen · Level ${item.sentence.level}</span><span>${session.position+1} von ${session.items.length}</span></div><p class="sentence endings-sentence" lang="fi">${sentenceWithGap(item,gap)}</p><p class="endings-translation" lang="de">${escape(item.sentence.translations[0].text)}</p>${hint}${body}`;
+ card.innerHTML=`<div class="card-top"><span class="card-label">Endungen${ctx.daily?ctx.daily.tag:` · Level ${item.sentence.level}`}</span>${ctx.daily?'':`<span>${session.position+1} von ${session.items.length}</span>`}</div><p class="sentence endings-sentence" lang="fi">${sentenceWithGap(item,gap)}</p><p class="endings-translation" lang="de">${escape(item.sentence.translations[0].text)}</p>${hint}${body}`;
  const submit=answer=>{
   const correct=endingMatches(answer,item);
   session.answers.push({item,answer,correct});session.checked=true;
-  if(correct)state.missed.delete(item.id);else state.missed.add(item.id);
-  ctx.onAnswer?.(correct);ctx.rerender();
+  if(correct)state.missed?.delete(item.id);else state.missed?.add(item.id);
+  ctx.onAnswer?.(correct,item);ctx.rerender();
  };
  if(!session.checked){
   if(easy)card.querySelectorAll('[data-ending-choice]').forEach(b=>b.onclick=()=>submit(b.dataset.endingChoice));
@@ -149,8 +157,9 @@ export function renderEndings(ctx){
    input.focus();
   }
  }else{
-  actions.innerHTML=`<button type="button" class="primary" id="endings-next">${session.position+1<session.items.length?'Weiter':'Ergebnis ansehen'}</button>`;
+  actions.innerHTML=`<button type="button" class="primary" id="endings-next">${ctx.daily||session.position+1<session.items.length?'Weiter':'Ergebnis ansehen'}</button>`;
   const next=actions.querySelector('#endings-next');
+  if(ctx.daily){next.onclick=ctx.daily.onNext;next.focus();return;}
   next.onclick=()=>{session.position++;session.checked=false;session.draft='';session.showCase=false;session.choices=null;ctx.rerender();};
   next.focus();
  }

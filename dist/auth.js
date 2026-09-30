@@ -1,5 +1,6 @@
-import {uiLocale} from './i18n.mjs?v=11';
+import {uiLocale} from './i18n.mjs?v=12';
 import {mergeVerbProgress} from './verb-practice.mjs';
+import {mergeEndingsProgress} from './endings-progress.mjs?v=1';
 import {mergePerformanceEvents} from './learning-insights.mjs';
 import {mergeGames} from './games-progress.mjs';
 import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './supabase-config.js';
@@ -63,6 +64,7 @@ function mergeLearning(local,cloud){
   for(const [d,n] of Object.entries(local.daily||{}))out.daily[d]=Math.max(Number(out.daily[d])||0,Number(n)||0);
   for(const f of ['reports','writingRatings'])for(const [k,v] of Object.entries(local[f]||{}))if(!out[f][k]||(Number(v.updatedAt)||0)>(Number(out[f][k].updatedAt)||0))out[f][k]=v;
   out.verbProgress=mergeVerbProgress(cloud.verbProgress,local.verbProgress);
+  out.endingsProgress=mergeEndingsProgress(cloud.endingsProgress,local.endingsProgress);
   out.games=mergeGames(cloud.games,local.games);
   out.prefs={...(cloud.prefs||{}),...(local.prefs||{})};
   return out;
