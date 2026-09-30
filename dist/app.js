@@ -1,4 +1,4 @@
-import {tc} from './i18n.mjs?v=13';
+import {tc} from './i18n.mjs?v=14';
 import {canSearch,createSearch} from './wordsearch.mjs';
 import {mountSearch,searchInstructions} from './wordsearch-ui.mjs?v=64';
 import {createWordExercise,wordAnswerMatches,finnishSentenceMatches,sentenceWords} from './word-practice.mjs?v=61';
@@ -658,6 +658,28 @@ function submitVerbAnswer() {
  if(!correct){session.retries=session.retries.filter(r=>r.key!==key);session.retries.push({key,after:answeredIndex+3});}
  $('notice').textContent='';render();guestSaveHint();focusVerbView($('verb-next'));
 }
+// Startkarte der Verbübung: Beispiel, Kennzahlen, freigeschaltete Verben mit Fortschritt je Person, nächste Stufe.
+function verbStartMarkup(summary){
+ const progress=memory.verbProgress,now=Date.now(),open=unlockedVerbCount(VERBS,progress);
+ const state=(v,p)=>{const r=progress[v.id+':'+p];return !r?.seen?'':r.streak>=2?'secure':'seen';};
+ const seenIn=list=>list.reduce((n,v)=>n+PRONOUNS.filter((_,p)=>progress[v.id+':'+p]?.seen).length,0);
+ const needed=open<VERBS.length?Math.max(0,Math.ceil(open*6*2/3)-seenIn(VERBS.slice(0,open))):0;
+ const shown=VERBS.slice(Math.max(0,open-10),open),earlier=open-shown.length,next=VERBS.slice(open,open+5);
+ const chip=v=>{const states=PRONOUNS.map((_,p)=>state(v,p)),done=states.every(Boolean);
+  return `<li class="verb-chip${done?' is-done':''}"><span class="verb-chip-fi" lang="fi">${escape(v.id)}</span><span class="verb-chip-de">${escape(v.de)}</span><span class="verb-dots" role="img" aria-label="${states.filter(Boolean).length} von 6 Formen gesehen">${states.map(s=>`<i class="${s}"></i>`).join('')}</span></li>`;};
+ const lock='<svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>';
+ return `<span class="card-label">Verbformen · Präsens</span>
+<div class="verb-hero"><div><h2>Wie viele Formen möchtest du üben?</h2><p class="verb-hero-sub">${VERBS.length} Verben · Die wichtigsten zuerst · Neue Formen und gezielte Wiederholungen</p></div>
+<div class="verb-hero-demo" aria-hidden="true" lang="fi"><span class="verb-hero-pronoun">minä</span><span class="verb-hero-inf">olla</span><span class="verb-hero-arrow">→</span><span class="verb-hero-form">ole<span class="verb-ending">n</span></span></div></div>
+<div class="verb-stats"><div><strong>${summary.seen}</strong><span>gesehen</span></div><div><strong>${summary.secure}</strong><span>sicher</span></div><div><strong>${summary.due}</strong><span>fällig</span></div></div>
+<div class="verb-meter" aria-hidden="true"><span class="verb-meter-seen" style="width:${summary.total?summary.seen/summary.total*100:0}%"></span><span class="verb-meter-secure" style="width:${summary.total?summary.secure/summary.total*100:0}%"></span></div>
+<p class="verb-coverage">${summary.seen} von ${summary.total} Formen schon gesehen · ${summary.secure} sicher</p>
+<section class="verb-stage" aria-labelledby="verb-stage-title"><div class="verb-stage-head"><h3 id="verb-stage-title">Deine Verben</h3><span>${open} von ${VERBS.length} freigeschaltet</span></div>
+<ul class="verb-chips">${shown.map(chip).join('')}</ul>${earlier?`<p class="verb-stage-more">+ ${earlier} weitere schon freigeschaltet</p>`:''}
+${next.length?`<div class="verb-next"><span class="verb-next-label">${lock} Als Nächstes${needed?` · noch ${needed} ${needed===1?'Form':'Formen'}`:''}</span><ul>${next.map(v=>`<li lang="fi">${escape(v.id)}</li>`).join('')}</ul></div>`:''}</section>
+<div class="choice-buttons verb-counts" role="group" aria-label="Anzahl der Aufgaben"><button type="button" data-verb-count="5" data-exercise-start><strong>5 Aufgaben</strong><small>ca. 2 Minuten</small></button><button type="button" data-verb-count="10" data-exercise-start><strong>10 Aufgaben</strong><small>ca. 4 Minuten</small></button></div>
+<p class="verb-hint">Nach jeder Antwort siehst du alle sechs Formen – bei den wichtigsten Verben mit Satzmustern. Schwierige Formen kommen mit Abstand wieder.</p>`;
+}
 // Beispielsätze bzw. Satzmuster unter der Formentabelle (verb-examples.mjs).
 function verbUsageMarkup(verb){
  const usage=verbUsage(verb.id);if(!usage)return '';
@@ -685,7 +707,8 @@ function renderVerbSession() {
  const card=$('card'),session=verbSession,summary=verbSummary(VERBS,memory.verbProgress);
  card.className='card verb-card';
  if(!session){
-  card.innerHTML=`<span class="card-label">Verbformen · Präsens</span><h2>Wie viele Formen möchtest du üben?</h2><p>${VERBS.length} Verben · Die wichtigsten zuerst · Neue Formen und gezielte Wiederholungen</p><div class="verb-meter" aria-hidden="true"><span class="verb-meter-seen" style="width:${summary.total?summary.seen/summary.total*100:0}%"></span><span class="verb-meter-secure" style="width:${summary.total?summary.secure/summary.total*100:0}%"></span></div><p class="verb-coverage">${summary.seen} von ${summary.total} Formen schon gesehen · ${summary.secure} sicher</p><p class="verb-coverage">Freigeschaltet: ${unlockedVerbCount(VERBS,memory.verbProgress)} von ${VERBS.length} Verben · als Nächstes: <span lang="fi">${escape(VERBS.slice(0,unlockedVerbCount(VERBS,memory.verbProgress)).filter(v=>PRONOUNS.some((_,p)=>!memory.verbProgress[v.id+':'+p]?.seen)).slice(0,5).map(v=>v.id).join(', ')||'–')}</span></p><div class="choice-buttons verb-counts" role="group" aria-label="Anzahl der Aufgaben"><button type="button" data-verb-count="5" data-exercise-start>5 Aufgaben</button><button type="button" data-verb-count="10" data-exercise-start>10 Aufgaben</button></div><p class="verb-hint">Nach jeder Antwort siehst du alle sechs Formen. Schwierige Formen kommen mit Abstand wieder.</p>`;
+  card.className='card verb-card verb-start';
+  card.innerHTML=verbStartMarkup(summary);
   card.querySelectorAll('[data-verb-count]').forEach(b=>b.onclick=()=>{verbSession=createVerbSession(Number(b.dataset.verbCount));$('practice-settings').open=false;nextVerbQuestion();});
   return;
  }

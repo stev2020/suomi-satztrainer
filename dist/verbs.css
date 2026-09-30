@@ -87,3 +87,49 @@
 .verb-score span{font-size:20px;color:var(--ink-soft)}
 @media(max-width:520px){.verb-solution-card .verb-forms tr{flex-direction:column;align-items:flex-start;gap:1px;padding:8px 10px}.verb-solution-card .verb-forms tr th{flex:none;font-size:.78rem}.verb-solution-card .verb-forms tr td{font-size:1rem}.verb-forms-legend span:last-child{padding-left:8px}}
 @media(prefers-reduced-motion:reduce){.verb-pronoun,.verb-solution-card,.verb-solution-card:before,.verb-score{animation:none!important}}
+/* Startkarte der Verbübung (verbStartMarkup in app.js) */
+.verb-start{gap:0}
+.verb-hero{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:6px}
+.verb-start .verb-hero h2{margin:8px 0 6px;font-size:clamp(24px,3vw,30px);line-height:1.15}
+.verb-hero-sub{margin:0;color:var(--ink-soft);font-size:.95rem}
+.verb-hero-demo{flex-shrink:0;display:grid;grid-template-columns:auto auto;grid-template-areas:'p i' 'a f';align-items:center;gap:6px 10px;padding:12px 16px;border:2px solid var(--line);border-radius:14px;background:var(--paper);box-shadow:3px 3px 0 var(--line);transform:rotate(2deg)}
+.verb-hero-pronoun{padding:2px 10px;border:2px solid var(--line);border-radius:8px;background:var(--lavender);font:700 16px/1.2 var(--heading)}
+.verb-hero-inf{font:700 20px/1.2 var(--heading)}
+.verb-hero-pronoun{grid-area:p}.verb-hero-inf{grid-area:i}.verb-hero-form{grid-area:f}
+.verb-hero-arrow{grid-area:a;justify-self:end;color:var(--heading-accent);font-size:22px;font-weight:800;line-height:1}
+.verb-hero-form{font:800 26px/1.1 var(--heading);color:var(--ink)}
+.verb-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:20px}
+.verb-stats div{display:flex;flex-direction:column;gap:2px;padding:10px 14px;border:2px solid var(--line);border-radius:12px;background:var(--paper)}
+.verb-stats strong{font:800 26px/1 var(--heading)}
+.verb-stats span{font-size:12px;font-weight:700;color:var(--ink-soft)}
+.verb-stats div:nth-child(2){background:color-mix(in srgb,var(--mint) 55%,var(--paper))}
+.verb-stats div:nth-child(3){background:color-mix(in srgb,var(--lavender) 70%,var(--paper))}
+.verb-start .verb-meter{margin:14px 0 6px;height:10px}
+.verb-start .verb-coverage{margin:0;font-size:12px;color:var(--ink-soft)}
+.verb-stage{margin-top:20px;padding:14px 16px 16px;border:2px solid var(--line);border-radius:14px;background:var(--paper)}
+.verb-stage-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.verb-stage h3{margin:0;font:800 12px/1.2 'DM Sans',sans-serif;letter-spacing:1.2px;text-transform:uppercase;color:var(--heading-accent)}
+.verb-stage-head span{font-size:12px;font-weight:700;color:var(--ink-soft)}
+.verb-chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:8px;margin:0;padding:0;list-style:none}
+.verb-chip{display:flex;flex-direction:column;gap:3px;padding:9px 11px;border:1.5px solid var(--line);border-radius:11px;background:var(--bg)}
+.verb-chip.is-done{background:color-mix(in srgb,var(--mint) 45%,var(--paper))}
+.verb-chip-fi{font:700 17px/1.15 var(--heading)}
+.verb-chip-de{font-size:11px;line-height:1.3;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.verb-dots{display:flex;gap:4px;margin-top:4px}
+.verb-dots i{width:9px;height:9px;border:1.5px solid var(--line);border-radius:50%;background:var(--paper)}
+.verb-dots i.seen{background:color-mix(in srgb,var(--heading-accent) 38%,var(--paper));border-color:var(--heading-accent)}
+.verb-dots i.secure{background:var(--heading-accent);border-color:var(--heading-accent)}
+.verb-stage-more{margin:8px 0 0;font-size:12px;color:var(--ink-soft)}
+.verb-next{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;margin-top:12px;padding-top:12px;border-top:1.5px dashed color-mix(in srgb,var(--line) 35%,transparent)}
+.verb-next-label{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:var(--ink-soft)}
+.verb-next ul{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
+.verb-next li{padding:3px 9px;border:1.5px dashed color-mix(in srgb,var(--line) 45%,transparent);border-radius:999px;font:600 14px/1.3 var(--heading);color:var(--ink-soft)}
+.verb-start .verb-counts{margin:20px 0 12px;max-width:none}
+.verb-start .verb-counts button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:70px}
+.verb-start .verb-counts button:first-child{background:var(--orange);color:var(--on-orange,var(--ink))}
+.verb-start .verb-counts strong{font-size:1.1rem}
+.verb-start .verb-counts small{font-size:12px;font-weight:600;opacity:.8}
+.verb-start>.verb-hint{margin:0}
+@media(max-width:560px){.verb-hero{flex-direction:column;align-items:flex-start}.verb-hero-demo{transform:none;align-self:stretch;grid-template-columns:auto auto auto auto;grid-template-areas:'p i a f';justify-content:start}.verb-stats strong{font-size:22px}.verb-chips{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(prefers-reduced-motion:no-preference){.verb-start .verb-chip{animation:verb-chip-in .35s ease-out both}.verb-start .verb-chip:nth-child(2){animation-delay:.04s}.verb-start .verb-chip:nth-child(3){animation-delay:.08s}.verb-start .verb-chip:nth-child(4){animation-delay:.12s}.verb-start .verb-chip:nth-child(5){animation-delay:.16s}}
+@keyframes verb-chip-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
