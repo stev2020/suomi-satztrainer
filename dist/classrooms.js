@@ -1,4 +1,4 @@
-import {uiLocale} from './i18n.mjs?v=10';
+import {uiLocale} from './i18n.mjs?v=11';
 import {accountUser,accountRequest} from './auth.js?v=103';
 import {GRAMMAR_TOPICS,topicNotes} from './grammar-topics.mjs';
 
