@@ -72,15 +72,32 @@ try{
  assert.equal(await page.locator('#home-view .intro h1').evaluate(el=>getComputedStyle(el).transform),'none');
  await page.context().close();
 
- // Angemeldete bekommen kein Intro, auch nicht mit ?intro.
+ // Angemeldete: nur Logo und Satz des Tages (größer), dann wächst die Karte, der Satz wird normal groß,
+ // der Rest blendet ein; die Begrüßung steht zuerst auf Deutsch und dreht sich nach 2 s auf Finnisch.
  page=await newPage();
- await page.addInitScript(()=>localStorage.setItem('suomi-auth-session-v1',JSON.stringify({access_token:'a',refresh_token:'r',user:{id:'u'}})));
+ await page.addInitScript(()=>localStorage.setItem('suomi-auth-session-v1',JSON.stringify({access_token:'a',refresh_token:'r',user:{id:'u',user_metadata:{username:'testi'}}})));
  await page.goto(origin+'/?intro');
- assert.doesNotMatch(await classes(page),/intro-/);
+ await page.waitForFunction(()=>document.documentElement.classList.contains('intro-user')&&document.documentElement.classList.contains('intro-running'));
+ await page.waitForFunction(()=>document.getElementById('daily-sentence')?.classList.contains('intro-bare'),null,{timeout:8000});
+ await page.waitForTimeout(300);
+ assert.equal(await opacity(page,'header .brand'),1,'logo visible from the start');
+ assert.equal(await opacity(page,'header .header-nav'),0,'navigation hidden while the sentence stands alone');
+ assert.equal(await opacity(page,'#home-view .intro h1'),0,'greeting hidden while the sentence stands alone');
+ assert.equal(await opacity(page,'#home-view .today'),0);
+ assert.equal(await opacity(page,'#daily-sentence .daily-sentence-top'),0,'card chrome hidden at first');
+ const big=await page.locator('#daily-sentence .daily-words').evaluate(el=>new DOMMatrix(getComputedStyle(el).transform).a);
+ assert.ok(big>1.1,`sentence starts larger (scale ${big})`);
+ await page.waitForFunction(()=>!/intro-/.test(document.documentElement.className),null,{timeout:10000});
+ assert.equal(await page.locator('#daily-sentence .daily-words').evaluate(el=>getComputedStyle(el).transform),'none','sentence back to normal size');
+ assert.equal(await opacity(page,'#home-view .intro h1'),1);
+ assert.equal(await page.locator('.greeting').getAttribute('aria-pressed'),'true','greeting starts in German');
+ assert.equal(await page.locator('.greeting-hint, .daily-tip').count(),0,'no tap hints');
+ await page.waitForFunction(()=>document.querySelector('.greeting')?.getAttribute('aria-pressed')==='false',null,{timeout:4000});
+ assert.equal(await page.locator('.greeting-de').getAttribute('aria-hidden'),'true','greeting turned to Finnish');
  await page.context().close();
 
  assert.deepEqual(errors,[]);
- console.log('PASS: guest intro sequence, card reveal, skip on click, cleanup, no intro for automation or signed-in users.');
+ console.log('PASS: guest intro sequence, card reveal, skip on click, cleanup, no intro for automation, signed-in intro with daily sentence and greeting flip.');
 }finally{
  await browser?.close();server.kill();
 }

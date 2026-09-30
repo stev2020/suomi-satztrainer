@@ -1,6 +1,7 @@
 // Vanamo – lebendigere Startseite für angemeldete Nutzer.
 //
-// - Begrüßung auf Finnisch je nach Tageszeit (antippen zeigt die Übersetzung)
+// - Begrüßung je nach Tageszeit: steht zuerst auf Deutsch und dreht sich zwei Sekunden nachdem
+//   die Startseite fertig zu sehen ist auf Finnisch um (antippen dreht sie wieder zurück)
 // - „heute geübt“ als Ring zum Tagesziel, Wochenreihe Mo–So und Serie in Tagen
 // - „Satz des Tages“: ein Satz aus den eigenen Sätzen, Wörter antippen, Übersetzung aufdecken, anhören
 // - kleine Animationen (Hochzählen, Ring füllen); bei „reduzierter Bewegung“ entfallen sie
@@ -37,9 +38,34 @@ export function renderGreeting(h1,{account,name,date=new Date()}){
  h1.dataset.greeting=key;h1.classList.add('is-greeting');
  const tail=who?`<span translate="no">${esc(who)}</span>!`:'Mukava nähdä!';
  const tailDe=who?`<span translate="no">${esc(who)}</span>!`:'Schön, dich zu sehen!';
- h1.innerHTML=`<button type="button" class="greeting" aria-pressed="false" title="Übersetzung zeigen"><span class="greeting-face greeting-fi" lang="fi"><span class="intro-lead">${esc(g.fi)},</span><br><span class="intro-tail">${tail}</span></span><span class="greeting-face greeting-de" lang="de" aria-hidden="true"><span class="intro-lead">${esc(g.de)},</span><br><span class="intro-tail">${tailDe}</span></span></button><span class="greeting-hint">Tippe für die Übersetzung</span>`;
+ // Einmal umgedreht bleibt es Finnisch, auch wenn die Begrüßung neu aufgebaut wird (z. B. Name kommt später).
+ const german=h1.dataset.flipped!=='1';
+ h1.innerHTML=`<button type="button" class="greeting" aria-pressed="${german}" title="Übersetzung zeigen"><span class="greeting-face greeting-fi" lang="fi"${german?' aria-hidden="true"':''}><span class="intro-lead">${esc(g.fi)},</span><br><span class="intro-tail">${tail}</span></span><span class="greeting-face greeting-de" lang="de"${german?'':' aria-hidden="true"'}><span class="intro-lead">${esc(g.de)},</span><br><span class="intro-tail">${tailDe}</span></span></button>`;
  const button=h1.querySelector('.greeting');
- button.onclick=()=>{const on=button.getAttribute('aria-pressed')!=='true';button.setAttribute('aria-pressed',String(on));button.querySelector('.greeting-fi').setAttribute('aria-hidden',String(on));button.querySelector('.greeting-de').setAttribute('aria-hidden',String(!on));h1.classList.add('greeting-used');};
+ button.onclick=()=>{h1.dataset.flipped='1';showGerman(h1,button.getAttribute('aria-pressed')!=='true');};
+ if(german)flipWhenShown(h1,()=>{if(h1.dataset.flipped==='1')return;h1.dataset.flipped='1';showGerman(h1,false);});
+}
+function showGerman(h1,on){
+ const button=h1.querySelector('.greeting');if(!button)return;
+ button.setAttribute('aria-pressed',String(on));
+ button.querySelector('.greeting-fi').setAttribute('aria-hidden',String(on));
+ button.querySelector('.greeting-de').setAttribute('aria-hidden',String(!on));
+}
+
+// Wartet, bis die Startseite komplett zu sehen ist (Intro vorbei, Daten geladen, Startseite aktiv),
+// und dreht die Begrüßung dann nach zwei Sekunden auf Finnisch.
+export const GREETING_FLIP_MS=2000;
+function flipWhenShown(h1,flip){
+ if(h1._flipWait)return;
+ const html=document.documentElement,view=h1.closest('.app-view');
+ const shown=()=>!html.classList.contains('intro-pending')&&!html.classList.contains('intro-running')&&!view?.hidden&&!view?.classList.contains('is-loading')&&!document.hidden;
+ h1._flipWait=true;
+ const check=()=>{
+  if(h1.dataset.flipped==='1'){h1._flipWait=false;return;}
+  if(!shown()){setTimeout(check,120);return;}
+  setTimeout(()=>{h1._flipWait=false;if(shown())flip();else flipWhenShown(h1,flip);},GREETING_FLIP_MS);
+ };
+ check();
 }
 
 // ---------- Tagesziel, Woche, Serie ----------
@@ -167,7 +193,7 @@ export function createDailySentence(root,{sentences,learnedIds,fallbackLevel=()=
   const t=sentence.translations[0];
   return `<div class="daily-sentence-top"><h2 id="daily-sentence-title">Satz des Tages</h2><span class="daily-sentence-note">${own?'aus deinen Sätzen':'zum Kennenlernen'}</span><span class="daily-sentence-tools">${sentence.audios?.length?'<button type="button" class="daily-audio" aria-label="Anhören"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4 5 9H2v6h3l6 5V4Z"/><path d="M15 8a6 6 0 0 1 0 8M18 4a11 11 0 0 1 0 16"/></svg></button>':''}</span></div>
 <div class="guest-words gloss-on-tap daily-words" lang="fi">${words}<span class="daily-source">${sourceIcon(sentence)}</span></div>
-<div class="daily-sentence-bottom">${revealed?`<p class="daily-translation" lang="de">${esc(t.text)}${sourceIcon(t)}</p>`:'<p class="daily-tip">Tippe auf ein Wort für seine Bedeutung.</p><button type="button" class="daily-reveal">Übersetzung zeigen</button>'}</div>`;
+<div class="daily-sentence-bottom">${revealed?`<p class="daily-translation" lang="de">${esc(t.text)}${sourceIcon(t)}</p>`:'<button type="button" class="daily-reveal">Übersetzung zeigen</button>'}</div>`;
  }
  function paint(animate){
   root.innerHTML=markup();root.classList.toggle('is-entering',!!animate&&!reducedMotion());
