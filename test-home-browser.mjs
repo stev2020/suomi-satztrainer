@@ -41,7 +41,8 @@ try{
  assert.ok(await page.locator('#header-practice').isHidden(),'guests do not see the header practice button');
  await page.evaluate(()=>{document.body.dataset.account='authenticated';});
  assert.ok(await page.locator('#header-practice').isVisible(),'signed-in users see the header practice button');
- assert.equal(await page.locator('#header-practice').isDisabled(),true);
+ // Auch ohne Fälliges gibt es für Angemeldete ein paar neue Verbformen zum Wiederholen.
+ assert.equal(await page.locator('#header-practice').isDisabled(),false);
  await page.evaluate(()=>{document.body.dataset.account='guest';});
  assert.equal(await page.locator('#account-button').textContent(),'Anmelden / Registrieren');
  assert.ok(await page.locator('#storage-account-link').isVisible());

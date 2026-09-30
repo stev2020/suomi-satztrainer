@@ -614,3 +614,6 @@ html.intro-running,.intro-running body{overflow:hidden}
 .home-daily-stats span.bump{animation:today-pop .45s ease-out}
 @media(max-width:700px){.daily-sentence{padding:16px 0 18px}.today-ring{width:50px;height:50px}.today.is-account .today-ring>span{font-size:21px}.today.is-account{grid-template-columns:auto;justify-items:center;gap:6px}.today.is-account .today-label{text-align:center;font-size:11px;max-width:none}.today-week{gap:2px}.today-week li{width:17px;height:17px;font-size:8px}.today-streak{font-size:11px}}
 @media(prefers-reduced-motion:reduce){.today-flame,.today.goal-reached .today-ring,.home-daily.all-done .home-daily-done,.daily-sentence.is-entering .cycle-word,.daily-translation.is-new,.home-daily-stats span.bump{animation:none!important}.today-ring-fill,.greeting-face{transition:none}}
+/* „Wiederholen“ mit Verbformen (daily-mix.mjs) */
+.home-daily-stats span[hidden]{display:none}
+.verb-new-tag{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--mint);color:var(--ink);font-weight:800}

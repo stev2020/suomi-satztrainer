@@ -1,4 +1,4 @@
-import {tc} from './i18n.mjs?v=10';
+import {tc} from './i18n.mjs?v=11';
 import {canSearch,createSearch} from './wordsearch.mjs';
 import {mountSearch,searchInstructions} from './wordsearch-ui.mjs?v=64';
 import {createWordExercise,wordAnswerMatches,finnishSentenceMatches,sentenceWords} from './word-practice.mjs?v=61';
@@ -10,7 +10,8 @@ import {everydayPathState} from './learning-path.mjs';
 import {addPerformanceEvent,buildLearningInsights,mergePerformanceEvents,validatePerformanceEvents} from './learning-insights.mjs';
 import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './supabase-config.js';
 import {validateGames,mergeGames} from './games-progress.mjs';
-import {mountWordLookup,loadLexicon,lookupForSentence,splitSentence} from './word-lookup.mjs?v=2';
+import {mountWordLookup,loadLexicon,lookupForSentence,splitSentence,getLexicon} from './word-lookup.mjs?v=2';
+import {planVerbs,interleave,verbCard} from './daily-mix.mjs?v=1';
 import {createGuestCard,shortGloss,flipWordIndex} from './guest-card.mjs?v=11';
 import {renderGreeting,renderToday,createDailySentence,animateProgress,GOAL_CHOICES,DAILY_GOAL} from './home-extras.mjs?v=4';
 import {buildDifficultDeck} from './difficult-words.mjs?v=2';
@@ -109,8 +110,16 @@ function prepareAudio(url){
 // Audio comes from api.tatoeba.org; load it only while the practice view is open (privacy, data use).
 function preloadQueueAudio(){if($('practice-view')?.hidden)return;const urls=queue.slice(0,3).map(s=>s.audios?.[0]?.download_url).filter(Boolean);for(const url of new Set(urls))prepareAudio(url);}
 function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+// „Wiederholen“: fällige Sätze, dazu fällige und ein paar neue Verbformen (siehe daily-mix.mjs).
+const learnedSentenceIds=()=>new Set(Object.keys(memory.reviews||{}).map(k=>Number(k.split(':')[0])));
+function verbPlan(){
+ if(activityLocked('verbs'))return {due:[],fresh:[],dueTotal:0};
+ return planVerbs({verbs:VERBS,progress:memory.verbProgress,lexicon:getLexicon(),learnedIds:learnedSentenceIds(),sentencesDue:dueSentences([...data,...archived],memory.reviews,null).length});
+}
 function dailyPlan(){
- return reviewPlan([...data,...archived],memory.reviews,null,{translationOffset:reviewTranslationCount});
+ const sentences=reviewPlan([...data,...archived],memory.reviews,null,{translationOffset:reviewTranslationCount});
+ const verbs=verbPlan();
+ return interleave(sentences,[...verbs.due,...verbs.fresh].map(verbCard));
 }
 let reviewTranslationCount=0,guidedNew=false,pathSession=null;
 const pathState=()=>{const cards=[...data,...archived],available=new Set(cards.filter(s=>s.translations?.length).map(s=>s.id));return everydayPathState(cards,memory.reviews,level,new Set([...loadedSentenceIds].filter(id=>!available.has(id))));};
@@ -141,24 +150,32 @@ function renderLearningPath(){
  }).join('');
 }
 function dailyPlanStats(){
- return {dueCount:dueSentences([...data,...archived],memory.reviews,null).length,newCount:unseenSentences(data,memory.reviews,level).length};
+ const verbs=verbPlan(),dueCount=dueSentences([...data,...archived],memory.reviews,null).length;
+ return {dueCount,verbDue:verbs.dueTotal,verbNew:verbs.fresh.length,roundSize:Math.min(10,dueCount)+verbs.due.length+verbs.fresh.length,newCount:unseenSentences(data,memory.reviews,level).length};
+}
+function dailyNote(stats){
+ const due=stats.dueCount||stats.verbDue;
+ if(due&&stats.verbNew)return 'Fällige Wiederholungen – dazu ein paar neue Verbformen.';
+ if(due)return stats.verbDue?'Alles, was heute fällig ist – Sätze und Verbformen gemischt.':'Bekannte, fällige Sätze – abwechslungsreich üben, ohne neue Sätze.';
+ return stats.verbNew?'Heute ein paar neue Verbformen.':'Für heute ist alles wiederholt.';
 }
 // Bis die Sätze geladen sind, zeigt die Startseite nur leere Kästen statt Platzhaltertexten.
 function homeLoaded(){const home=$('home-view');home.classList.remove('is-loading');home.removeAttribute('aria-busy');}
 function renderDailyPlan(){
  const button=$('start-daily-session');if(!button)return;
- const stats=dailyPlanStats(),available=Math.min(10,stats.dueCount);
+ const stats=dailyPlanStats(),available=stats.roundSize,onlySentences=available===Math.min(10,stats.dueCount);
  if($('daily-due').textContent!==String(stats.dueCount)){$('daily-due').textContent=stats.dueCount;const chip=$('daily-due').parentElement;if(chip?.classList?.add){chip.classList.remove('bump');void chip.offsetWidth;chip.classList.add('bump');}}
- document.querySelector('.home-daily').classList.toggle('all-done',ready&&accountActive()&&!stats.dueCount&&!(dailySession?.active&&queue.length));
+ document.querySelector('.home-daily').classList.toggle('all-done',ready&&accountActive()&&!available&&!(dailySession?.active&&queue.length));
+ const verbChip=$('daily-verbs');if(verbChip){verbChip.textContent=stats.verbDue+stats.verbNew;if(verbChip.parentElement)verbChip.parentElement.hidden=!(stats.verbDue+stats.verbNew);}
  renderLearningPath();
- $('daily-plan-note').textContent=stats.dueCount?'Bekannte, fällige Sätze – abwechslungsreich üben, ohne neue Sätze.':'Für heute ist alles wiederholt.';
+ $('daily-plan-note').textContent=dailyNote(stats);
  button.disabled=!ready||(!available&&!(dailySession?.active&&queue.length));
  // Ohne Konto steht dort die Satzkarte; „Sätze wiederholen“ erscheint nur, wenn in dieser Sitzung etwas fällig ist.
  // Satzkarte und „Sätze wiederholen“ immer aus demselben Kontostand ableiten, damit nie beides falsch zusammen steht.
  const card=typeof guestCard==='undefined'?null:guestCard,guest=!accountActive()&&!!card?.available;
  if(card){$('guest-card').hidden=!guest;if(guest)card.start();else card.stop();}
  document.querySelector('.home-daily').hidden=guest&&!stats.dueCount&&!(dailySession?.active&&queue.length);
- button.textContent=dailySession?.active&&queue.length?'Wiederholung fortsetzen':available?`${available} ${available===1?'Satz':'Sätze'} wiederholen`:'Alles wiederholt';
+ button.textContent=dailySession?.active&&queue.length?'Wiederholung fortsetzen':!available?'Alles wiederholt':onlySentences?`${available} ${available===1?'Satz':'Sätze'} wiederholen`:`${available} ${available===1?'Aufgabe':'Aufgaben'} starten`;
  $('header-practice').disabled=button.disabled;
  const favs=ready?favoriteSentences().length:0;if($('home-favorites')){$('home-favorites').hidden=!favs;$('fav-home-count').textContent=favs;}
  syncHeaderPractice();
@@ -167,6 +184,7 @@ function renderDailyPlan(){
 function syncHeaderPractice(){const b=$('header-practice');if(b)b.hidden=!accountActive();}
 function applyDailyCard(){
  if(!dailySession?.active||!queue.length)return;
+ if(queue[0].dailyActivity==='verbs'&&!startDailyVerb(queue[0])){queue.shift();return applyDailyCard();}
  const card=queue[0];activity=card.dailyActivity;direction=card.dailyActivity==='translate'?'random':direction;difficulty=card.dailyDifficulty||'hard';mode='review';
 }
 // Favoriten aus allen Levels als Übersetzungsrunde (Knopf „Favoriten üben“ auf der Startseite).
@@ -179,13 +197,29 @@ function startFavorites(){
  queue=shuffle(pool).slice(0,10).map(s=>{const c=studyDirections();return {...s,practiceDirection:c[Math.floor(Math.random()*c.length)]};});
  initialCount=queue.length;completed=0;revealed=false;persist();showView('practice');render();
 }
+// Eine Verbform aus „Wiederholen“: eigene Mini-Runde mit genau dieser Aufgabe.
+function startDailyVerb(card){
+ if(verbSession?.dailyCard===card)return true;
+ const verb=VERBS.find(v=>v.id===card.dailyVerb.verbId);if(!verb)return false;
+ const {person,key}=card.dailyVerb;
+ if(!card.retry&&!saveVerbProgress(markAsked(memory.verbProgress,key)))return false;
+ verbSession={...createVerbSession(5),count:1,daily:true,dailyCard:card,current:{verb,person,key},history:[key]};
+ return true;
+}
+function nextDailyCard(){
+ const session=verbSession,card=queue.shift();completed++;
+ // Falsche Verbform kommt nach zwei anderen Aufgaben einmal wieder (wie „Nochmal“ bei Sätzen).
+ if(session&&!session.correct&&card&&!card.retry)queue.splice(Math.min(2,queue.length),0,{...card,retry:true});
+ verbSession=null;revealed=false;draft='';persist();render();
+ ($('reveal')||$('verb-input')||$('finish-daily-session'))?.focus({preventScroll:true});
+}
 function startDailySession(){
  if(!ready)return;
  if(dailySession?.active&&queue.length){applyDailyCard();showView('practice');render();return;}
  const plan=dailyPlan();if(!plan.length){renderDailyPlan();return;}
  guidedNew=false;
- dailySession={active:true,previous:{activity,direction,difficulty,mode},mix:{translate:plan.filter(x=>x.dailyActivity==='translate').length,listen:plan.filter(x=>x.dailyActivity==='listen').length,dictation:plan.filter(x=>x.dailyActivity==='dictation').length,suchsel:plan.filter(x=>x.dailyActivity==='suchsel').length}};
- queue=plan;initialCount=plan.length;completed=0;revealed=false;wordExercise=null;searchPuzzle=null;draft='';playedAudioCard=null;applyDailyCard();syncControls();showView('practice');render();
+ dailySession={active:true,previous:{activity,direction,difficulty,mode},mix:{total:plan.length,verbs:plan.filter(x=>x.dailyActivity==='verbs').length,verbsNew:plan.filter(x=>x.dailyVerb?.isNew).length,translate:plan.filter(x=>x.dailyActivity==='translate').length,listen:plan.filter(x=>x.dailyActivity==='listen').length,dictation:plan.filter(x=>x.dailyActivity==='dictation').length,suchsel:plan.filter(x=>x.dailyActivity==='suchsel').length}};
+ queue=plan;initialCount=plan.length;completed=0;revealed=false;wordExercise=null;searchPuzzle=null;draft='';playedAudioCard=null;verbSession=null;applyDailyCard();syncControls();showView('practice');render();
 }
 function finishDailySession(){
  if(!dailySession)return;
@@ -212,6 +246,10 @@ function renderStats(){
  $('practice-summary').textContent=`Level ${level} · ${ACTIVITY_LABELS[activity]}`;
  $('settings-level').textContent=`Level ${level}`;
  document.querySelectorAll('[data-mode]').forEach(b=>{b.classList.toggle('selected',b.dataset.mode===mode);b.setAttribute('aria-pressed',b.dataset.mode===mode);});
+ if(activity==='verbs'&&verbSession?.daily){
+  $('practice-summary').textContent='Wiederholen';$('session-title').textContent='Wiederholen · Sätze und Verbformen';
+  $('session-progress').textContent=`${completed} / ${completed+queue.length}`;$('progress-bar').style.width=`${completed/Math.max(1,completed+queue.length)*100}%`;return;
+ }
  if(activity==='verbs'){
   $('practice-summary').textContent='Verbformen · Präsens';
   $('session-title').textContent='Verbformen · Präsens';
@@ -592,6 +630,7 @@ function rollVerbPronoun(el,target){
  tick();
 }
 function renderVerbSession() {
+ if(verbSession?.daily&&!dailySession?.active)verbSession=null;
  stopAudio();renderStats();$('writing-history').hidden=true;$('actions').innerHTML='';$('keyboard-note').hidden=true;
  const card=$('card'),session=verbSession,summary=verbSummary(VERBS,memory.verbProgress);
  card.className='card verb-card';
@@ -607,11 +646,16 @@ function renderVerbSession() {
   $('verb-again').onclick=()=>{verbSession=null;mode='new';render();};return;
  }
  const {verb,person}=session.current;
- card.innerHTML=`<div class="card-top"><span class="card-label">Verbformen</span><span>${session.checked?session.answers.length:session.answers.length+1} von ${session.count}</span></div><p class="verb-hint">Welche Form? · Präsens</p><div class="verb-prompt"><h2 class="verb-question" lang="fi"><span class="verb-pronoun">${PRONOUNS[person]}</span><span class="verb-sep"> · </span><span class="verb-infinitive">${escape(verb.id)}</span> <span class="verb-meaning-inline" lang="de"><span class="verb-paren">(</span>${escape(verb.de)}<span class="verb-paren">)</span></span></h2></div><form id="verb-form" ${session.checked?'hidden':''}><label for="verb-input">Deine Verbform</label><input id="verb-input" lang="fi" maxlength="100" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" aria-describedby="verb-input-hint" placeholder="Deine Antwort …" ${session.checked?'readonly':''} value="${escape(session.draft)}"><p class="verb-hint" id="verb-input-hint">${person===2||person===5?`Schreibe „${PRONOUNS[person]}“ zusammen mit der Verbform. Das Pronomen ist hier erforderlich.`:`Nur die Verbform oder mit „${PRONOUNS[person]}“.`} Achte auf ä, ö und doppelte Buchstaben.</p>${session.checked?'':`<div class="letter-buttons"><button type="button" data-verb-letter="ä" aria-label="ä einfügen">ä</button><button type="button" data-verb-letter="ö" aria-label="ö einfügen">ö</button></div><button class="primary" type="submit">Lösung prüfen</button>`}</form>${session.checked?`<div class="verb-solution-card ${session.correct?'correct':'incorrect'}"><div class="verb-feedback ${session.correct?'verb-correct':'verb-wrong'}" role="status">${session.correct?'Richtig!':`Noch nicht richtig. Die Lösung ist <strong lang="fi">${person===2||person===5?PRONOUNS[person]+' ':''}${escape(verb.forms[person])}</strong>.`}</div><div class="verb-answer-summary"><span>Deine Verbform</span><strong lang="fi">${escape(session.draft)}</strong></div><table class="verb-forms"><caption>Alle sechs Formen von <span lang="fi">${escape(verb.id)}</span><span class="verb-forms-legend" aria-hidden="true"><span>Einzahl</span><span>Mehrzahl</span></span></caption><thead><tr><th scope="col">Personalpronomen</th><th scope="col">Präsens</th></tr></thead><tbody>${PRONOUNS.map((p,i)=>`<tr class="${i===person?'verb-target':''}"><th scope="row" lang="fi">${p}</th><td lang="fi">${verbFormMarkup(verb.forms[i],i)}</td></tr>`).join('')}</tbody></table></div>`:''}`;
+ card.innerHTML=`<div class="card-top"><span class="card-label">Verbformen${session.daily?(session.dailyCard.dailyVerb.isNew&&!session.dailyCard.retry?' · <span class="verb-new-tag">Neu</span>':' · Wiederholen'):''}</span>${session.daily?'':`<span>${session.checked?session.answers.length:session.answers.length+1} von ${session.count}</span>`}</div><p class="verb-hint">Welche Form? · Präsens</p><div class="verb-prompt"><h2 class="verb-question" lang="fi"><span class="verb-pronoun">${PRONOUNS[person]}</span><span class="verb-sep"> · </span><span class="verb-infinitive">${escape(verb.id)}</span> <span class="verb-meaning-inline" lang="de"><span class="verb-paren">(</span>${escape(verb.de)}<span class="verb-paren">)</span></span></h2></div><form id="verb-form" ${session.checked?'hidden':''}><label for="verb-input">Deine Verbform</label><input id="verb-input" lang="fi" maxlength="100" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" aria-describedby="verb-input-hint" placeholder="Deine Antwort …" ${session.checked?'readonly':''} value="${escape(session.draft)}"><p class="verb-hint" id="verb-input-hint">${person===2||person===5?`Schreibe „${PRONOUNS[person]}“ zusammen mit der Verbform. Das Pronomen ist hier erforderlich.`:`Nur die Verbform oder mit „${PRONOUNS[person]}“.`} Achte auf ä, ö und doppelte Buchstaben.</p>${session.checked?'':`<div class="letter-buttons"><button type="button" data-verb-letter="ä" aria-label="ä einfügen">ä</button><button type="button" data-verb-letter="ö" aria-label="ö einfügen">ö</button></div><button class="primary" type="submit">Lösung prüfen</button>`}</form>${session.checked?`<div class="verb-solution-card ${session.correct?'correct':'incorrect'}"><div class="verb-feedback ${session.correct?'verb-correct':'verb-wrong'}" role="status">${session.correct?'Richtig!':`Noch nicht richtig. Die Lösung ist <strong lang="fi">${person===2||person===5?PRONOUNS[person]+' ':''}${escape(verb.forms[person])}</strong>.`}</div><div class="verb-answer-summary"><span>Deine Verbform</span><strong lang="fi">${escape(session.draft)}</strong></div><table class="verb-forms"><caption>Alle sechs Formen von <span lang="fi">${escape(verb.id)}</span><span class="verb-forms-legend" aria-hidden="true"><span>Einzahl</span><span>Mehrzahl</span></span></caption><thead><tr><th scope="col">Personalpronomen</th><th scope="col">Präsens</th></tr></thead><tbody>${PRONOUNS.map((p,i)=>`<tr class="${i===person?'verb-target':''}"><th scope="row" lang="fi">${p}</th><td lang="fi">${verbFormMarkup(verb.forms[i],i)}</td></tr>`).join('')}</tbody></table></div>`:''}`;
  if(!session.checked&&session.rolledFor!==session.answers.length){session.rolledFor=session.answers.length;rollVerbPronoun(card.querySelector('.verb-pronoun'),PRONOUNS[person]);}
  const input=$('verb-input');input.oninput=()=>{if(!session.checked)session.draft=input.value;};
  $('verb-form').onsubmit=e=>{e.preventDefault();submitVerbAnswer();};
  card.querySelectorAll('[data-verb-letter]').forEach(b=>b.onclick=()=>{if(input.value.length>=100)return;input.setRangeText(b.dataset.verbLetter,input.selectionStart,input.selectionEnd,'end');session.draft=input.value;input.focus();});
+ if(session.daily){
+  $('actions').innerHTML=session.checked?'<button type="button" class="primary" id="verb-next">Weiter</button>':'';
+  if(session.checked)$('verb-next').onclick=()=>{if(session===verbSession&&session.checked)nextDailyCard();};
+  return;
+ }
  $('actions').innerHTML=`${session.checked?`<button type="button" class="primary" id="verb-next">${session.answers.length===session.count?'Auswertung':'Weiter'}</button>`:''}<button type="button" class="quiet" id="verb-abort">Runde beenden</button>`;
  if(session.checked)$('verb-next').onclick=()=>{if(session!==verbSession||!session.checked)return;if(session.answers.length>=session.count){session.current=null;render();focusVerbView($('verb-result-title'));}else nextVerbQuestion();};
  $('verb-abort').onclick=()=>{verbSession=null;render();};
@@ -717,16 +761,16 @@ function cycleGrades(s){
  $('actions').innerHTML='<div class="inline-grades cycle-grades"><button class="grade" id="grade-again" data-grade="again">Nochmal<span>Jetzt gleich wiederholen</span></button><button class="grade" data-grade="hard">Schwer<span>Morgen wiederholen</span></button><button class="grade easy" data-grade="easy">Leicht<span>In '+easyDays(s)+' Tagen wiederholen</span></button></div>';
  document.querySelectorAll('[data-grade]').forEach(b=>b.onclick=()=>cycleGo(()=>grade(b.dataset.grade),false));
 }
-function render(){applyDailyCard();if(activity==='verbs'){renderVerbSession();return;}if(activity==='endings'){renderEndingsSession();return;}if(activity==='dialogs'){renderDialogSession();return;}if(activity==='writing'){renderWritingSession();return;}$('writing-history').hidden=true;stopAudio();renderStats();preloadQueueAudio();const s=queue[0];$('actions').innerHTML='';$('keyboard-note').hidden=!s;$('keyboard-note').textContent=isTranslation()?'Nach dem Vergleich: 1 / 2 / 3 zum Bewerten':'Aufnahme beliebig oft anhören · Nach dem Aufdecken: 1 / 2 / 3 zum Bewerten';
+function render(){applyDailyCard();if(dailySession?.active&&!queue.length&&activity==='verbs')activity='translate';if(activity==='verbs'){renderVerbSession();return;}if(activity==='endings'){renderEndingsSession();return;}if(activity==='dialogs'){renderDialogSession();return;}if(activity==='writing'){renderWritingSession();return;}$('writing-history').hidden=true;stopAudio();renderStats();preloadQueueAudio();const s=queue[0];$('actions').innerHTML='';$('keyboard-note').hidden=!s;$('keyboard-note').textContent=isTranslation()?'Nach dem Vergleich: 1 / 2 / 3 zum Bewerten':'Aufnahme beliebig oft anhören · Nach dem Aufdecken: 1 / 2 / 3 zum Bewerten';
  if(!s&&guidedNew&&pathSession&&initialCount){
   const state=pathState(),topic=state.topics.find(t=>t.id===pathSession.topic.id);
   const title=state.complete?`Lernpfad für Level ${level} geschafft!`:topic.complete?`${topic.title} geschafft!`:'Etappe geschafft!';
   $('card').className='card empty';
-  $('card').innerHTML=`<span class="complete-mark">✓</span><h2>${escape(title)}</h2><p>${topic.seen} von ${topic.total} Sätzen in diesem Thema kennengelernt.</p><p>${state.lesson?`Als Nächstes: ${escape(state.topic.title)} · ${escape(state.lesson.title)}.`:'Du hast alle verfügbaren Themen dieses Levels kennengelernt.'}</p><p>Festige das Gelernte später mit „Sätze wiederholen“.</p>`;
+  $('card').innerHTML=`<span class="complete-mark">✓</span><h2>${escape(title)}</h2><p>${topic.seen} von ${topic.total} Sätzen in diesem Thema kennengelernt.</p><p>${state.lesson?`Als Nächstes: ${escape(state.topic.title)} · ${escape(state.lesson.title)}.`:'Du hast alle verfügbaren Themen dieses Levels kennengelernt.'}</p><p>Festige das Gelernte später mit „Wiederholen“.</p>`;
   const topicDialog=topic.complete&&level<=6;$('actions').innerHTML=`<div class="completion-actions"><button class="primary completion-home" id="completion-home">Zur Startseite</button>${topicDialog?'<button class="primary" id="topic-dialog">Dialog zum Thema lesen</button>':''}${state.lesson?.remaining.length?'<button class="primary" id="next-session">Weiter auf dem Lernpfad</button>':''}</div>`;if(topicDialog){const topicId=topic.id;$('topic-dialog').onclick=()=>openTopicDialog(level,topicId);}
   $('completion-home').onclick=()=>showView('home');if(state.lesson?.remaining.length)$('next-session').onclick=startNewSentences;return;
  }
- if(!s){$('card').className='card empty';if(dailySession?.active&&initialCount){const mix=dailySession.mix;$('card').innerHTML=`<span class="complete-mark">✓</span><h2>Heutige Runde geschafft.</h2><p>${completed} Aufgaben erledigt · ${mix.translate} Übersetzen · ${mix.listen} Hören · ${mix.dictation} Diktat${mix.suchsel?' · '+mix.suchsel+' Wortsel':''}</p><p>Nur fällige Sätze – ohne neue Inhalte.</p>`;$('actions').innerHTML='<button class="primary" id="finish-daily-session">Zur Startseite</button>';$('finish-daily-session').onclick=finishDailySession;}else if(initialCount){$('card').innerHTML='<span class="complete-mark">✓</span><h2>Gut gemacht.</h2><p>Deine Lerneinheit ist geschafft. Dein nächster Satz wartet schon.</p>';$('actions').innerHTML='<div class="completion-actions"><button class="primary completion-home" id="completion-home">Zur Startseite</button><button class="primary" id="next-session">Nächste Lerneinheit</button></div>';$('completion-home').onclick=()=>showView('home');$('next-session').onclick=guidedNew?startNewSentences:start;}else{let title='Alles für heute wiederholt.',text='Hier erscheinen die Sätze, sobald deine nächste Wiederholung fällig ist.';if(mode==='new'){title='In diesem Level ist alles entdeckt.';text='Wiederhole deine Sätze oder wechsle zum nächsten Level.';}if(mode==='favorites'){title='Deine Lieblingssätze warten hier.';text='Markiere einen Satz mit dem Stern auf der Lernkarte.';}if((audioOnly||!isTranslation())&&!base(mode!=='new').length){title='Hier gibt es noch keine Aufnahme.';text=isTranslation()?'Schalte „Nur mit Audio“ aus oder wähle ein anderes Level.':'Wähle ein anderes Level oder die Übungsart Übersetzen.';}if(activity==='grammar'){title=grammarAvailable?'Keine passenden Sätze in dieser Auswahl.':'Grammatikhilfen nicht verfügbar.';text=grammarAvailable?'Wähle ein anderes Grammatikthema oder Level. Falls aktiv, schalte „Nur mit Audio“ aus.':'Lade die Seite bei bestehender Verbindung neu.';}$('card').innerHTML=`<h2>${title}</h2><p>${text}</p>`;}return;}
+ if(!s){$('card').className='card empty';if(dailySession?.active&&initialCount){const mix=dailySession.mix;$('card').innerHTML=`<span class="complete-mark">✓</span><h2>Heutige Runde geschafft.</h2><p>${completed} Aufgaben erledigt · ${[[mix.translate,'Übersetzen'],[mix.listen,'Hören'],[mix.dictation,'Diktat'],[mix.suchsel,'Wortsel'],[mix.verbs,'Verbformen']].filter(([n])=>n).map(([n,l])=>n+' '+l).join(' · ')}</p><p>${!mix.verbsNew?'Nur fällige Wiederholungen – ohne neue Inhalte.':mix.verbsNew===mix.total?`${mix.verbsNew} neue ${mix.verbsNew===1?'Verbform':'Verbformen'} kennengelernt.`:`Fällige Wiederholungen – dazu ${mix.verbsNew} neue ${mix.verbsNew===1?'Verbform':'Verbformen'}.`}</p>`;$('actions').innerHTML='<button class="primary" id="finish-daily-session">Zur Startseite</button>';$('finish-daily-session').onclick=finishDailySession;}else if(initialCount){$('card').innerHTML='<span class="complete-mark">✓</span><h2>Gut gemacht.</h2><p>Deine Lerneinheit ist geschafft. Dein nächster Satz wartet schon.</p>';$('actions').innerHTML='<div class="completion-actions"><button class="primary completion-home" id="completion-home">Zur Startseite</button><button class="primary" id="next-session">Nächste Lerneinheit</button></div>';$('completion-home').onclick=()=>showView('home');$('next-session').onclick=guidedNew?startNewSentences:start;}else{let title='Alles für heute wiederholt.',text='Hier erscheinen die Sätze, sobald deine nächste Wiederholung fällig ist.';if(mode==='new'){title='In diesem Level ist alles entdeckt.';text='Wiederhole deine Sätze oder wechsle zum nächsten Level.';}if(mode==='favorites'){title='Deine Lieblingssätze warten hier.';text='Markiere einen Satz mit dem Stern auf der Lernkarte.';}if((audioOnly||!isTranslation())&&!base(mode!=='new').length){title='Hier gibt es noch keine Aufnahme.';text=isTranslation()?'Schalte „Nur mit Audio“ aus oder wähle ein anderes Level.':'Wähle ein anderes Level oder die Übungsart Übersetzen.';}if(activity==='grammar'){title=grammarAvailable?'Keine passenden Sätze in dieser Auswahl.':'Grammatikhilfen nicht verfügbar.';text=grammarAvailable?'Wähle ein anderes Grammatikthema oder Level. Falls aktiv, schalte „Nur mit Audio“ aus.':'Lade die Seite bei bestehender Verbindung neu.';}$('card').innerHTML=`<h2>${title}</h2><p>${text}</p>`;}return;}
  if(activity==='suchsel'){renderSearchCard(s);return;}
  if(inCycle(s)&&cycleStep!==1&&renderCycle(s))return;
  $('card').className=`card${revealed?' revealed':''}`;const saved=memory.favorites.includes(s.id),front=!isTranslation()?(revealed?s.text:''):cardDirection(s)==='fi-de'?s.text:s.translations[0].text;
