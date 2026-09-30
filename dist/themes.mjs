@@ -11,7 +11,7 @@ export const THEMES=[
  {id:'ruska',name:'Ruska',hint:'Herbstlaub',dark:false,color:'#b4532a'},
  {id:'tunturi',name:'Tunturi',hint:'Fjell',dark:false,color:'#589099'},
  {id:'kaamos',name:'Kaamos',hint:'Polarnacht',dark:true,color:'#1f2b4d'},
- {id:'revontulet',name:'Revontulet',hint:'Nordlicht',dark:true,color:'#a63efa'},
+ {id:'revontulet',name:'Revontulet',hint:'Nordlicht',dark:true,color:'#da8cb0'},
 ];
 export const STORAGE_KEY='vanamo-theme';
 const DEFAULT_LIGHT='vanamo',DEFAULT_DARK='kaamos';
