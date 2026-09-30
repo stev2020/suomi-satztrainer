@@ -7,11 +7,11 @@
 // - Fällige Verbformen kommen immer mit (höchstens VERB_DUE_LIMIT pro Runde).
 // - Damit auch ohne eigene Verbübung etwas nachkommt, gibt es pro Tag ein paar neue
 //   Verbformen (NEW_VERBS_PER_DAY) – aber nur, wenn nicht ohnehin viel fällig ist.
-// - Neue Formen stammen bevorzugt aus Sätzen, die man schon gelernt hat: erst die genaue
-//   Form aus dem Satz (z. B. „asun“ → minä · asua), dann andere Personen dieser Verben.
+// - Neue Formen kommen nur aus der freigeschalteten Stufe (die wichtigsten Verben zuerst);
+//   innerhalb der Stufe zuerst Formen, die genau so in schon gelernten Sätzen stehen.
 // - Neue Sätze kommen hier nie dazu; dafür ist der Lernpfad da.
 // Die Auswahl ist pro Tag stabil, damit Startseite und Runde dieselben Aufgaben zeigen.
-import {PRONOUNS,combinationKey} from './verb-practice.mjs';
+import {PRONOUNS,combinationKey,unlockedVerbCount} from './verb-practice.mjs';
 
 export const VERB_DUE_LIMIT=6;
 export const NEW_VERBS_PER_DAY=3;
@@ -58,28 +58,23 @@ export function verbsInSentences(verbs,lexicon,sentenceIds){
 export function newVerbCandidates(verbs,progress={},{lexicon=null,learnedIds=[],now=Date.now()}={}){
  const day=new Date(startOfDay(now)).toISOString().slice(0,10);
  const unseen=(verb,person)=>!progress[combinationKey(verb,person)]?.seen;
- const known=verbsInSentences(verbs,lexicon,learnedIds);
+ // Nur die freigeschaltete Stufe (die wichtigsten Verben zuerst, siehe verb-practice.mjs).
+ const stage=verbs.slice(0,unlockedVerbCount(verbs,progress));
+ const known=verbsInSentences(stage,lexicon,learnedIds);
  const order=list=>list.sort((a,b)=>hash(day+a.key)-hash(day+b.key));
  const item=(verb,person,tier)=>({verbId:verb.id,person,key:combinationKey(verb,person),tier});
- const exact=[],sameVerb=[],other=[];
- for(const verb of verbs){
-  const persons=known.get(verb.id);
-  if(persons){
-   for(const p of persons)if(unseen(verb,p))exact.push(item(verb,p,'sentence'));
-   const rest=PRONOUNS.map((_,p)=>p).filter(p=>!persons.has(p)&&unseen(verb,p));
-   if(rest.length)sameVerb.push(item(verb,rest[hash(day+verb.id)%rest.length],'verb'));
-  }
- }
- // Ohne Bezug zu eigenen Sätzen: die Liste ist nach Häufigkeit sortiert, also vorne anfangen.
- for(const verb of verbs){
-  if(known.has(verb.id))continue;
+ // Zuerst Formen, die genau so in den eigenen Sätzen stehen, dann die Stufe in Listenreihenfolge.
+ const exact=[],inOrder=[];
+ for(const verb of stage){
+  for(const p of known.get(verb.id)||[])if(unseen(verb,p))exact.push(item(verb,p,'sentence'));
   const open=PRONOUNS.map((_,p)=>p).filter(p=>unseen(verb,p));
-  if(open.length)other.push(item(verb,open[hash(day+verb.id)%open.length],'common'));
-  if(other.length>=NEW_VERBS_PER_DAY*2)break;
+  const start=hash(day+verb.id)%Math.max(1,open.length);
+  for(const p of [...open.slice(start),...open.slice(0,start)])inOrder.push(item(verb,p,known.has(verb.id)?'verb':'stage'));
  }
- // Höchstens eine neue Form pro Verb, damit es abwechslungsreich bleibt.
- const seenVerbs=new Set(),out=[];
- for(const c of [...order(exact),...order(sameVerb),...other]){if(seenVerbs.has(c.verbId))continue;seenVerbs.add(c.verbId);out.push(c);}
+ // Erst eine Form pro Verb (abwechslungsreich), dann auffüllen.
+ const candidates=[...order(exact),...inOrder],usedVerbs=new Set(),usedKeys=new Set(),out=[];
+ for(const c of candidates){if(usedVerbs.has(c.verbId)||usedKeys.has(c.key))continue;usedVerbs.add(c.verbId);usedKeys.add(c.key);out.push(c);}
+ for(const c of candidates){if(usedKeys.has(c.key))continue;usedKeys.add(c.key);out.push(c);}
  return out;
 }
 

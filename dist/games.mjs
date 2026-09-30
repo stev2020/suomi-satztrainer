@@ -1,4 +1,4 @@
-import './i18n.mjs?v=12';
+import './i18n.mjs?v=13';
 // Games-Bereich: Spielauswahl und Start von Mustikka Hyppy (Vokabel-Sprungspiel).
 // Das Spiel selbst liegt fertig gebaut unter games/hyppy/ (siehe scripts/update-hyppy.mjs)
 // und wird erst beim ersten Start geladen.
@@ -13,7 +13,8 @@ const GERMAN_PERSONS = ['ich', 'du', 'er/sie', 'wir', 'ihr', 'sie (Plural)'];
 /** Verbformen als Wortliste: „ich (wohnen)“ → asun; falsche Planken sind andere Formen desselben Verbs. */
 export function verbDeck(verbs = VERBS) {
   const entries = [];
-  verbs.forEach((v, index) => {
+  // Unpersönliche Wendungen (minun täytyy …) passen nicht auf eine Sprungplanke.
+  verbs.filter(v => !v.impersonal).forEach((v, index) => {
     const level = Math.min(5, 1 + Math.floor(index / 40));
     v.forms.forEach((form, person) => {
       entries.push({

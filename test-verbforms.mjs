@@ -1,10 +1,21 @@
 import assert from 'node:assert/strict';
 import {VERBS} from './dist/verbs-data.mjs';
-import {PRONOUNS,combinationKey,validateVerbProgress,mergeVerbProgress,markAsked,markAnswered,answerMatches,createVerbSession,chooseCombination,verbSummary} from './dist/verb-practice.mjs';
+import {PRONOUNS,combinationKey,validateVerbProgress,mergeVerbProgress,markAsked,markAnswered,answerMatches,createVerbSession,chooseCombination,verbSummary,unlockedVerbCount,STAGE_SIZE} from './dist/verb-practice.mjs';
 
-assert.equal(VERBS.length,200);
-assert.equal(new Set(VERBS.map(v=>v.id)).size,200);
-for(const v of VERBS) {
+assert.equal(VERBS.length,201);
+assert.equal(new Set(VERBS.map(v=>v.id)).size,201);
+// Lernreihenfolge: die 50 wichtigsten zuerst, olla vorne.
+assert.deepEqual(VERBS.slice(0,10).map(v=>v.id),['olla','tehdä','mennä','tulla','saada','voida','haluta','pitää','täytyä','tietää']);
+assert.equal(VERBS[49].id,'käydä');
+// täytyä: unpersönlich, Person im Genitiv, nur die ganze Wendung zählt.
+const taytya=VERBS.find(v=>v.id==='täytyä');
+assert.ok(taytya.impersonal);
+assert.deepEqual(taytya.forms,['minun täytyy','sinun täytyy','hänen täytyy','meidän täytyy','teidän täytyy','heidän täytyy']);
+assert.ok(answerMatches('  Minun  täytyy ',taytya,0));
+assert.ok(!answerMatches('täytyy',taytya,0));
+assert.ok(!answerMatches('minä täytyy',taytya,0));
+assert.ok(!answerMatches('sinun täytyy',taytya,0));
+for(const v of VERBS.filter(v=>!v.impersonal)) {
  assert.ok(v.de && /^[a-zäöå]+$/u.test(v.id));
  assert.equal(v.forms.length,6);
  for(const f of v.forms)assert.match(f,/^[a-zäöå]+$/u);
@@ -37,9 +48,9 @@ assert.ok(!answerMatches('tulet!',tulla,1));
 assert.ok(!answerMatches('',tulla,1));
 
 let progress={},clock=1000000;
-for(let round=0;round<120;round++){
+for(let round=0;round<121;round++){
  const session=createVerbSession(10);
- for(let i=0;i<10;i++){
+ for(let i=0;i<(round<120?10:6);i++){
   const item=chooseCombination(VERBS,progress,session,clock,()=>.37);
   assert.ok(!progress[item.key]?.seen,'Unseen combinations are covered before early successful repetitions');
   progress=markAsked(progress,item.key,clock++);
@@ -47,7 +58,7 @@ for(let round=0;round<120;round++){
   session.history.push(item.key);session.answers.push({correct:true});
  }
 }
-assert.equal(verbSummary(VERBS,progress,clock).seen,1200);
+assert.equal(verbSummary(VERBS,progress,clock).seen,1206);
 assert.equal(verbSummary(VERBS,progress,clock).due,0);
 assert.deepEqual(validateVerbProgress(JSON.parse(JSON.stringify(progress))),progress);
 assert.throws(()=>validateVerbProgress({'bad:8':{}}));
@@ -74,6 +85,19 @@ for(let round=0;round<40;round++){
 assert.ok(sawRetry);
 assert.ok(freshCount>=160,'At least four fresh combinations per ten-question round');
 assert.ok(verbSummary(VERBS,progress,clock).due>0);
+
+// Stufen: neue Formen nur aus den ersten fünf Verben, bis zwei Drittel davon gesehen sind.
+assert.equal(unlockedVerbCount(VERBS,{}),STAGE_SIZE);
+progress={};
+const firstStage=new Set(VERBS.slice(0,STAGE_SIZE).map(v=>v.id));
+for(let i=0;i<19;i++){const session=createVerbSession(5);const item=chooseCombination(VERBS,progress,session,clock,()=>(i*.37)%1);assert.ok(firstStage.has(item.verb.id),'new forms come from the first stage: '+item.key);progress=markAnswered(markAsked(progress,item.key,clock++),item.key,true,clock++);}
+assert.equal(unlockedVerbCount(VERBS,progress),STAGE_SIZE,'19 of 30 forms seen: still stage one');
+for(const v of VERBS.slice(0,STAGE_SIZE))for(let p=0;p<6;p++)progress=markAsked(progress,combinationKey(v,p),clock++);
+assert.equal(unlockedVerbCount(VERBS,progress),2*STAGE_SIZE,'next five verbs open');
+// Wer früher zufällig weiter hinten geübt hat, bekommt trotzdem zuerst die wichtigsten.
+const scattered=Object.fromEntries(VERBS.slice(150).flatMap(v=>PRONOUNS.map((_,p)=>[combinationKey(v,p),{seen:1,attempts:1,errors:0,streak:1,lastAskedAt:1,lastAnsweredAt:1,due:9e15,updatedAt:1}])));
+assert.equal(unlockedVerbCount(VERBS,scattered),STAGE_SIZE);
+assert.ok(firstStage.has(chooseCombination(VERBS,scattered,createVerbSession(5),clock,()=>.5).verb.id));
 
 // Difficult verbs transfer practice to other personal forms.
 let difficult=markAnswered(markAnswered({},'tulla:0',false,100), 'tulla:0',false,200);
@@ -104,4 +128,4 @@ const simultaneousWrong=markAnswered({},'tulla:1',false,700);
 assert.deepEqual(mergeVerbProgress(simultaneousRight,simultaneousWrong),mergeVerbProgress(simultaneousWrong,simultaneousRight));
 assert.equal(createVerbSession(5).count,5);
 assert.equal(createVerbSession(10).count,10);
-console.log('Verbforms: 200 paradigms, 1,200 combinations, answer checks, coverage, retries, difficult verbs and merges passed.');
+console.log('Verbforms: 201 paradigms in learning order (täytyä impersonal), 1,206 combinations, stages, answer checks, coverage, retries, difficult verbs and merges passed.');
