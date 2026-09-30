@@ -1,5 +1,11 @@
-// Vanamo – Intro auf der Startseite für Besucher ohne Konto.
+// Vanamo – Intro auf der Startseite.
 //
+// Angemeldete (Klasse `intro-user`, siehe runUserIntro unten): nur Logo und der finnische
+// „Satz des Tages“, etwas größer als normal; dann wächst die Karte um ihn herum auf, der Satz
+// schrumpft auf seine normale Größe und der Rest der Seite blendet ein. Die Begrüßung steht
+// zuerst auf Deutsch und dreht sich danach auf Finnisch (home-extras.mjs).
+//
+// Besucher ohne Konto:
 // Ablauf (nur beim ersten Aufruf pro Tab, nicht bei „Bewegung reduzieren“):
 //   1. „Ein bisschen Finnisch.“ erscheint groß in der Bildschirmmitte,
 //   2. kurz danach „Jeden Tag.“,
@@ -45,6 +51,7 @@ async function waitFor(check,timeout){
 
 export async function runGuestIntro(){
  if(!html.classList.contains('intro-pending'))return;
+ if(html.classList.contains('intro-user'))return runUserIntro();
  const h1=document.querySelector('#home-view .intro h1');
  const lead=h1?.querySelector('.intro-lead'),tail=h1?.querySelector('.intro-tail');
  if(!h1||!lead||!tail||typeof h1.animate!=='function'){html.classList.remove('intro-pending');return;}
@@ -114,6 +121,74 @@ export async function runGuestIntro(){
  rest.forEach((el,i)=>play(el,[{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'none'}],{duration:650,delay:120+i*90,easing:EASE_OUT,fill:'backwards'}));
  html.classList.remove('intro-pending');
  await sleep(120+rest.length*90+700);
+ finish();
+}
+
+// Restliche Seite gestaffelt einblenden (Reihenfolge = Lesereihenfolge).
+function revealRest(selector,play){
+ const rest=[...document.querySelectorAll(selector)].filter(el=>!el.hidden&&!el.classList.contains('intro-shown'));
+ rest.forEach((el,i)=>play(el,[{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'none'}],{duration:650,delay:120+i*90,easing:EASE_OUT,fill:'backwards'}));
+ html.classList.remove('intro-pending');
+ return sleep(120+rest.length*90+700);
+}
+
+const USER={
+ sentenceScale:1.3, // so viel größer steht der Satz am Anfang allein
+ cardWait:6000,     // Satz des Tages braucht Sätze und Wortanalyse – so lange höchstens warten
+ sentenceGap:700,   // Satz steht allein, dann wächst die Karte
+ shrinkMs:800
+};
+
+export async function runUserIntro(){
+ const card=document.getElementById('daily-sentence');
+ if(!card||typeof card.animate!=='function'){html.classList.remove('intro-pending','intro-user');return;}
+ html.classList.add('intro-running');
+ try{sessionStorage.setItem(SEEN,'1');}catch{}
+
+ const animations=[],controller=new AbortController();
+ let done=false,words=null;
+ const play=(el,frames,options)=>{const a=el.animate(frames,options);animations.push(a);return a;};
+ function finish(){
+  if(done)return;done=true;
+  controller.abort();
+  animations.forEach(a=>a.cancel());
+  if(words){words.style.transform='';words.style.transformOrigin='';}
+  card.classList.remove('intro-bare','intro-growing','intro-shown');
+  html.classList.remove('intro-pending','intro-running','intro-user');
+ }
+ for(const type of ['pointerdown','keydown','wheel','touchstart'])addEventListener(type,finish,{signal:controller.signal,passive:true});
+ setTimeout(finish,15000); // Sicherheitsnetz
+
+ await waitFor(()=>!html.classList.contains('i18n-pending'),3000);
+ try{await Promise.race([document.fonts?.ready,sleep(1500)]);}catch{}
+ const ready=()=>!card.hidden&&card.querySelector('.daily-words .guest-fi');
+ if(await waitFor(ready,USER.cardWait)&&!done){
+  scrollTo(0,0);
+  card.classList.remove('is-entering');
+  card.classList.add('intro-bare','intro-shown');
+  words=card.querySelector('.daily-words');
+  // Satz etwas größer, um die Mitte der tatsächlichen Wörter herum (nicht die ganze Kartenbreite),
+  // damit er auch auf dem Handy im Bild bleibt.
+  const box=words.getBoundingClientRect(),rects=[...words.querySelectorAll('.guest-fi')].map(el=>el.getBoundingClientRect());
+  const left=Math.min(...rects.map(r=>r.left)),right=Math.max(...rects.map(r=>r.right));
+  const top=Math.min(...rects.map(r=>r.top)),bottom=Math.max(...rects.map(r=>r.bottom));
+  const room=Math.min(left,innerWidth-right)*2+(right-left); // Platz, wenn der Satz um seine Mitte wächst
+  const scale=Math.max(1,Math.min(USER.sentenceScale,(room-32)/(right-left))); // mind. 16px Rand je Seite
+  words.style.transformOrigin=`${(left+right)/2-box.left}px ${(top+bottom)/2-box.top}px`;
+  const big=`scale(${scale})`;
+  words.style.transform=big;
+  const fades=[...words.querySelectorAll('.cycle-word')].map((word,i)=>play(word,[{opacity:0,transform:'translateY(14px)'},{opacity:1,transform:'none'}],{duration:700,delay:i*110,easing:EASE_OUT,fill:'both'}));
+  await Promise.all(fades.map(finished));if(done)return;
+  await hold(USER.sentenceGap);if(done)return;
+  card.classList.add('intro-growing');
+  card.classList.remove('intro-bare');
+  play(words,[{transform:big},{transform:'none'}],{duration:USER.shrinkMs,easing:EASE_MOVE,fill:'forwards'});
+  words.style.transform='';
+  play(card,[{transform:'scale(.97)'},{transform:'none'}],{duration:700,easing:EASE_OUT});
+  await hold(250);
+ }
+ if(done)return;
+ await revealRest('header .header-nav, #home-view .intro h1, #home-view .today, #home-view>:not(.intro), .page-tools, footer',play);
  finish();
 }
 

@@ -488,6 +488,14 @@ html.intro-running,.intro-running body{overflow:hidden}
 .guest-card.intro-growing{transition:border-color .6s ease,background-color .6s ease,box-shadow .7s ease}
 .guest-card.intro-growing :is(.guest-top,.guest-actions,.guest-gloss,.guest-translation,.sentence-source-icon){transition:opacity .6s ease .25s}
 .guest-card.intro-growing .guest-fi{transition:border-bottom-color .6s ease .2s}
+/* Intro für Angemeldete: nur Logo und der finnische Satz des Tages, etwas größer; dann wächst die Karte */
+.intro-user.intro-pending #home-view .intro h1{opacity:0}
+.daily-sentence.intro-bare{border-color:transparent;background:transparent;box-shadow:0 0 0 transparent}
+.daily-sentence.intro-bare :is(.daily-sentence-top,.daily-sentence-bottom,.daily-source,.guest-gloss){opacity:0}
+.daily-sentence.intro-bare .guest-fi{border-bottom-color:transparent}
+.daily-sentence.intro-growing{transition:border-color .6s ease,background-color .6s ease,box-shadow .7s ease}
+.daily-sentence.intro-growing :is(.daily-sentence-top,.daily-sentence-bottom,.daily-source){transition:opacity .6s ease .25s}
+.daily-sentence.intro-growing .guest-fi{transition:border-bottom-color .6s ease .2s}
 
 /* Satzkarte für Gäste: Zähler und Abschluss nach fünf Sätzen */
 .guest-count{margin-left:auto;font-size:12px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
@@ -539,8 +547,6 @@ html.intro-running,.intro-running body{overflow:hidden}
 .greeting .intro-lead{color:var(--ink)}
 .greeting .intro-tail{color:var(--heading-accent)}
 .greeting-fi .intro-lead{border-bottom:3px dotted color-mix(in srgb,var(--heading-accent) 45%,transparent)}
-.greeting-hint{display:block;margin-top:8px;font:600 12px/1.3 'DM Sans',sans-serif;letter-spacing:0;color:var(--ink-soft);transition:opacity .3s}
-.greeting-used .greeting-hint{opacity:0}
 .today.is-account{display:grid;grid-template-columns:auto auto;align-items:center;gap:8px 10px}
 .today-ring{position:relative;display:grid;place-items:center;width:58px;height:58px}
 .today-ring svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
@@ -591,8 +597,7 @@ html.intro-running,.intro-running body{overflow:hidden}
 .daily-sentence .cycle-word.show .guest-gloss,.daily-sentence .daily-words.all .guest-gloss{animation:daily-gloss .3s ease-out}
 @keyframes daily-gloss{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 .daily-sentence-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px 16px;flex-wrap:wrap;margin-top:12px}
-.daily-tip{margin:0;font-size:13px;color:var(--ink-soft)}
-.daily-reveal{min-height:40px;padding:8px 14px;border:2px solid var(--line);border-radius:10px;background:var(--lavender);box-shadow:2px 2px 0 var(--line);font-size:14px;font-weight:700;color:var(--ink)}
+.daily-reveal{margin-left:auto;min-height:40px;padding:8px 14px;border:2px solid var(--line);border-radius:10px;background:var(--lavender);box-shadow:2px 2px 0 var(--line);font-size:14px;font-weight:700;color:var(--ink)}
 .daily-translation{margin:0;font-size:18px;font-weight:600}
 .daily-translation.is-new{animation:daily-flip .45s ease-out}
 @keyframes daily-flip{from{opacity:0;transform:rotateX(80deg)}to{opacity:1;transform:none}}
