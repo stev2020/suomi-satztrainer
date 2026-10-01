@@ -103,7 +103,7 @@ header{flex-wrap:wrap}.report-error{align-self:center;margin:18px 0 0;padding:7p
 .home-session-actions button:disabled{opacity:1;color:var(--muted);cursor:not-allowed}
 .home-choose{display:block;min-height:44px;margin:16px auto 0;padding:8px;background:transparent;color:var(--purple);font-size:14px;font-weight:600;text-decoration:underline;text-underline-offset:4px}
 .home-new,.home-more{max-width:720px;margin:0 auto 24px}
-.home-new{padding:24px;border:2px solid var(--line);border-radius:20px;background:var(--paper);box-shadow:6px 6px 0 var(--mint)}
+.home-new{padding:24px;border:2px solid var(--line);border-radius:20px;background:var(--paper);box-shadow:6px 6px 0 var(--new-shadow)}
 .home-new h2{margin:0 0 10px;font-size:22px}.home-new p{line-height:1.5;margin:0 0 18px}
 .home-new button{min-height:48px;padding:12px 20px;background:var(--lavender);border:2px solid var(--line);border-radius:12px;font-weight:700}
 .path-heading{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap}
@@ -132,14 +132,19 @@ header{flex-wrap:wrap}.report-error{align-self:center;margin:18px 0 0;padding:7p
 .path-stop.upcoming .path-number{border-color:color-mix(in srgb,var(--line) 38%,transparent);color:var(--muted)}
 .path-stop h4{margin:2px 0 4px;font-size:15px;line-height:1.4}.home-new .path-stop p{font-size:12px;margin:0;color:var(--muted)}
 .home-new .path-explanation{font-size:13px;color:var(--muted);margin:0;line-height:1.6}
-.home-verbs{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 18px;max-width:720px;margin:0 auto 24px;padding:18px 22px;border:2px solid var(--line);border-radius:18px;background:var(--mint);box-shadow:5px 5px 0 var(--heading-accent)}
+.home-verbs{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 18px;max-width:720px;margin:0 auto 24px;padding:18px 22px;border:2px solid var(--line);border-radius:18px;background:var(--mint);box-shadow:5px 5px 0 var(--orange-shadow)}
 .home-verbs[hidden]{display:none}
 .home-verbs h2{margin:0;font:700 24px/1.2 var(--heading);color:var(--ink)}
 #home-verbs-note{margin:3px 0 0;font-size:13px;color:var(--ink-soft)}
 .quick-verb-review{min-height:48px;padding:10px 20px;border:2px solid var(--line);border-radius:12px;background:var(--lavender);color:var(--ink);font-size:16px;font-weight:700;box-shadow:3px 3px 0 var(--line);transition:transform .15s,box-shadow .15s}
 .quick-verb-review:hover{transform:translateY(-1px);box-shadow:4px 4px 0 var(--line)}
 /* Nordlicht: Verbformen-Box mit Flieder-Schatten */
-:root[data-theme=revontulet] .home-verbs{box-shadow:5px 5px 0 var(--orange-shadow)}
+/* Schatten: „Verbformen“ wie „Wiederholen“; in Vanamo und Ruska beide im dunklen Akzent */
+:root:is([data-theme=vanamo],:not([data-theme])) .home-verbs,:root[data-theme=ruska] .home-verbs{box-shadow:5px 5px 0 var(--heading-accent)}
+:root:is([data-theme=vanamo],:not([data-theme])) .home-daily,:root[data-theme=ruska] .home-daily{box-shadow:6px 6px 0 var(--heading-accent)}
+@media(max-width:700px){:root:is([data-theme=vanamo],:not([data-theme])) .home-daily,:root[data-theme=ruska] .home-daily{box-shadow:4px 4px 0 var(--heading-accent)}}
+/* „Neue Sätze lernen“: Schatten in der Farbe von „Weiterlernen“ (Heidelbeere eine Spur dunkler) */
+.home-new{--new-shadow:var(--lavender)}:root[data-theme=mustikka] .home-new{--new-shadow:color-mix(in srgb,var(--lavender) 90%,var(--ink))}
 /* „Verbformen üben“ in allen Designs in der Farbe von „Aufgaben starten“ */
 .home-view .quick-verb-review{background:var(--orange);color:var(--on-orange)}
 .home-view .quick-verb-review:not(:disabled):hover{background:var(--orange-hover)}
@@ -224,7 +229,7 @@ header .header-nav button:hover,header .header-nav button.selected{background:va
 .level.locked .level-number{border-style:dashed}
 /* Deaktiviert deckend statt durchsichtig, sonst scheint der Kreis der Tageskarte durch */
 .home-daily-action button:disabled{opacity:1;background:color-mix(in srgb,var(--orange) 50%,var(--lavender));color:color-mix(in srgb,var(--on-orange) 55%,var(--lavender));border-color:color-mix(in srgb,var(--line) 55%,var(--lavender));box-shadow:3px 3px 0 color-mix(in srgb,var(--line) 55%,var(--lavender))}
-@media(max-width:700px){.home-daily{grid-template-columns:minmax(0,1fr);gap:18px;margin-bottom:26px;padding:22px 20px;box-shadow:4px 4px 0 var(--orange-shadow)}.home-new{box-shadow:4px 4px 0 var(--mint)}.home-daily:after{right:-55px;top:-62px}.home-daily-copy>p{margin-top:48px}.home-daily-action{min-width:0}.home-daily-action>span{align-self:flex-start}.home-daily-action button{width:100%}}
+@media(max-width:700px){.home-daily{grid-template-columns:minmax(0,1fr);gap:18px;margin-bottom:26px;padding:22px 20px;box-shadow:4px 4px 0 var(--orange-shadow)}.home-new{box-shadow:4px 4px 0 var(--new-shadow)}.home-daily:after{right:-55px;top:-62px}.home-daily-copy>p{margin-top:48px}.home-daily-action{min-width:0}.home-daily-action>span{align-self:flex-start}.home-daily-action button{width:100%}}
 
 /* Keep answer rating controls close to the revealed solution. */
 .actions:empty{display:none}.card.revealed{min-height:0;padding-bottom:16px}.card.revealed .sentence{margin:20px 0 14px}.card.revealed .audio-row{margin-bottom:10px}.card.revealed .word-result{margin:16px 0 10px;padding:14px 18px}.card.revealed .word-result p{margin:8px 0}.card.revealed .translation{padding-top:14px;margin-top:6px}.card.revealed .translation p{margin:6px 0 8px}.inline-grades{width:100%;margin:14px 0 2px;padding:12px;border:2px solid var(--line);border-radius:13px;background:color-mix(in srgb,var(--paper) 80%,transparent)}.inline-grades .grade{min-height:54px}
