@@ -104,7 +104,8 @@ try{
  assert.equal(await page.locator('#home-review').textContent(),'3 Verbformen wiederholen');
  assert.equal(await page.locator('#continue-practice').textContent(),'Üben');
  const colors=await page.evaluate(()=>['.today','#home-review','.home-exercises .selected','#continue-practice'].map(selector=>getComputedStyle(document.querySelector(selector)).backgroundColor));
- assert.equal(colors[0],colors[1]);assert.equal(colors[0],colors[2]);assert.notEqual(colors[0],colors[3]);
+ assert.equal(colors[1],colors[2]);assert.notEqual(colors[1],colors[3]);
+ assert.equal(colors[0],await page.evaluate(()=>getComputedStyle(document.querySelector('.home-verbs')).backgroundColor),'„heute geübt“ hat die Farbe der Verbformen-Box');
  assert.equal(await page.locator('#home-view').getByText('3 Verbformen zur Wiederholung').count(),0);
  if(process.env.HOME_SCREENSHOTS)await page.screenshot({path:process.env.HOME_SCREENSHOTS+'/home-desktop.png',fullPage:true});
  for(const width of [390,320]){
