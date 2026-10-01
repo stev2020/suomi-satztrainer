@@ -1105,8 +1105,15 @@ function syncGuestHome(){if(typeof renderHomeExtras==='function')renderHomeExtra
 syncGuestHome();
 const sentencesRequest=fetch('sentences.json'),exclusionsRequest=loadQualityExclusions();
 let rawSentences=[],rawArchived=[];
-const grammarRequest=fetch('grammar.json').then(r=>r.ok?r.json():null).then(p=>{if(p){grammar=p.sentences||{};grammarAvailable=true;}}).catch(()=>{}).finally(()=>{grammarLoading=false;grammarLoaded();});
+// Die Grammatikhilfe wird erst nach den Sätzen geladen: Gleichzeitig geladen teilen
+// sich beide Dateien die Leitung, und auf langsamen Handys verzögert das den Start.
+// Gebraucht wird sie erst beim Aufdecken einer Karte (grammarLoaded zieht nach).
+let grammarRequest=null;
+const loadGrammar=()=>grammarRequest??=fetch('grammar.json').then(r=>r.ok?r.json():null).then(p=>{if(p){grammar=p.sentences||{};grammarAvailable=true;}}).catch(()=>{}).finally(()=>{grammarLoading=false;grammarLoaded();});
+setTimeout(loadGrammar,8000);
 try{const response=await sentencesRequest;if(!response.ok)throw new Error('load');const payload=await response.json();
+ // Gäste sehen zuerst die Satzkarte, die das Wörterbuch braucht: erst das laden, dann die Grammatik.
+ (accountActive()?Promise.resolve():loadLexicon().catch(()=>{})).finally(loadGrammar);
  // Mit gespeicherter Sperrliste gar nicht warten, sonst höchstens 1,5 s; Späteres wird nachgezogen.
  const exclusionsInTime=await Promise.race([exclusionsRequest.then(()=>true),new Promise(r=>setTimeout(()=>r(false),qualityCached?0:1500))]);
  rawSentences=payload.sentences;rawArchived=Array.isArray(payload.archived_sentences)?payload.archived_sentences:[];
