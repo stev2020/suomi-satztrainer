@@ -235,6 +235,12 @@ Jedes der sechs vorhandenen Levels hat einen eigenen Pfad mit 13 Themen in derse
 Prüfung: `node test-learning-path.mjs` sowie `node test-home-browser.mjs` (Playwright) für Levelwechsel, Fortsetzung, importierten Fortschritt und mobile Darstellung.
 
 
+## Schutz vor Melde-Missbrauch (1. Oktober 2026)
+
+- **Prüfer-Entscheidung gilt:** Hat ein Prüfer einen gemeldeten Satz oder eine Übersetzung behalten („Wiederherstellen“), landen neue Hinweise nur noch in der Prüfliste. Automatisch gesperrt wird dann nicht mehr; das kann nur noch ein Prüfer.
+- **Tagesgrenze:** Höchstens 20 automatische Sperren (drei unabhängige Konten) pro Tag für alle Inhalte zusammen. Danach landen Hinweise nur in der Prüfliste. Prüfer sind davon nicht betroffen.
+- **Prüfen:** `supabase/tests/report_abuse_guard.sql` (Migration `20261001210000_report_abuse_guard.sql`).
+
 ## Bot-Schutz bei der Registrierung (1. Oktober 2026)
 
 - **Cloudflare Turnstile:** Das Registrierungsformular zeigt das Turnstile-Häkchen. Das Skript wird erst beim Öffnen von „Registrieren“ geladen; jeder Versuch bekommt ein neues Token. Der öffentliche Site Key steht in `dist/supabase-config.js`.
