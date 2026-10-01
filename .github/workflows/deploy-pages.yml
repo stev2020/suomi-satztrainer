@@ -28,6 +28,7 @@ jobs:
       - name: Check translation word exercise
         run: |
           node --check dist/app.js
+          node scripts/check-csp.mjs
           node test-auth-sync.mjs
           node test-auth-refresh.mjs
           node test-games.mjs

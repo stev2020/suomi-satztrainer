@@ -1,4 +1,5 @@
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2';
+import {sweepOrphanedStreamFiles} from '../_shared/storage-sweep.ts';
 
 const cors={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'authorization, x-client-info, apikey, content-type'};
 const json=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status,headers:{...cors,'Content-Type':'application/json','Cache-Control':'no-store'}});
@@ -36,6 +37,8 @@ Deno.serve(async req=>{
   }
   const {error:deleteError}=await admin.auth.admin.deleteUser(user.id,false);
   if(deleteError){await cancel();return json({error:'Das Konto konnte nicht gelöscht werden. Bitte versuche es erneut.'},500);}
+  // Rooms deleted together with the account leave files of other members behind.
+  try{await sweepOrphanedStreamFiles(admin);}catch{}
   return json({deleted:true});
  }catch{return json({error:'Die Kontolöschung konnte nicht abgeschlossen werden.'},400);}
 });

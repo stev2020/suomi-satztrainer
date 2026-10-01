@@ -235,6 +235,18 @@ Jedes der sechs vorhandenen Levels hat einen eigenen Pfad mit 13 Themen in derse
 Prüfung: `node test-learning-path.mjs` sowie `node test-home-browser.mjs` (Playwright) für Levelwechsel, Fortsetzung, importierten Fortschritt und mobile Darstellung.
 
 
+## Sicherheits-Korrekturen (1. Oktober 2026)
+
+- **Anhänge und Speicher:** Ein Entwurfsanhang lässt sich nur verwerfen, wenn die Datei vorher aus dem Storage entfernt wurde (das macht die App). Dateien gelöschter Räume und Konten räumt die neue Edge Function `storage-sweep` auf; die App ruft sie nach dem Löschen eines Raums auf, `delete-account` nach der Kontolöschung. Grundlage ist `stream_orphan_objects()`, nur für `service_role`.
+- **Dateinamen:** Die Endung muss zum Dateityp passen, Pfad- und Steuerzeichen sind verboten. Beim Herunterladen setzt die App die Endung aus dem geprüften Dateityp.
+- **Lesegrenzen:** `room`, `list` und `stream_list` höchstens 120-mal pro Minute und Konto; Aufgabenpakete höchstens 40 KB.
+- **Lernstand:** höchstens 2 MB, nur für Konten mit Profil, höchstens 150 Schreibvorgänge in 10 Minuten (Trigger `learning_state_write_limit`).
+- **Wiederherstellung:** Nach dem Zurücksetzen werden alle bestehenden Sitzungen beendet (`revoke_user_sessions`). Fehlversuche zählen je Benutzername und Adresse (5 in 15 Minuten), dazu 50 pro Tag und Benutzername; Fremde können die Wiederherstellung so nicht mehr blockieren.
+- **Mehrere Tabs:** Token-Erneuerungen laufen über `navigator.locks` nacheinander; ein Tab übernimmt ein von einem anderen Tab erneuertes Token, statt das alte erneut zu senden. Abmelden in einem Tab lädt die anderen neu.
+- **Kontolöschung:** Die Auswahl zeigt die Namen der Lehrkräfte im Raum statt ihrer Login-Namen.
+- **Content-Security-Policy:** auf allen drei Seiten. Erlaubt sind nur eigene Dateien, Supabase und Tatoeba-Audio. `node scripts/check-csp.mjs` prüft, dass die Hashes der Inline-Skripte stimmen; wer ein Inline-Skript ändert, muss den Hash anpassen.
+- **Prüfen:** `supabase/tests/security_bundle.sql`, `node test-auth-refresh.mjs`, `node scripts/check-csp.mjs`.
+
 ## Performance-Korrekturen (1. Oktober 2026)
 
 - **Synchronisierung:** Antworten werden gesammelt und höchstens alle 15 s hochgeladen; beim Verlassen oder Verstecken des Tabs, beim Abmelden und mit „Jetzt synchronisieren“ sofort. Vor dem Hochladen liest die App nur noch `updated_at`. Den ganzen Lernstand lädt sie nur, wenn ein anderes Gerät inzwischen geschrieben hat oder die Seite neu geladen wurde. Ein Neuladen ohne neue Antworten lädt nichts hoch. Dafür merkt sich die App unter `suomi-cloud-stamp-v1` Konto, Zeitstempel und einen Fingerabdruck des zuletzt hochgeladenen Stands. Im Lasttest (100 Nutzer, voller Lernstand ≈ 450 KB) sank die Upload-Wartezeit (p95) von 1,75 s auf 0,24 s, und je Antwort werden statt ~450 KB nur noch rund 100 Byte heruntergeladen.

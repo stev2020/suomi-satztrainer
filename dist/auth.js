@@ -46,15 +46,25 @@ function loadSession(){try{const v=JSON.parse(localStorage.getItem(SESSION));if(
 // rate limits (429) and network failures keep the session and the local learning
 // state, so answers that are not synchronized yet are never thrown away.
 let refreshInFlight=null;
+const storedSession=()=>{try{const v=JSON.parse(localStorage.getItem(SESSION));return v?.access_token&&v?.refresh_token?v:null}catch{return null}};
 async function refreshSession(){
   if(!session?.refresh_token)return false;
   if(refreshInFlight)return refreshInFlight;
-  refreshInFlight=(async()=>{
-    const r=await api('/auth/v1/token?grant_type=refresh_token',{method:'POST',body:JSON.stringify({refresh_token:session.refresh_token})});
+  const used=session.refresh_token;
+  const run=async()=>{
+    // Several tabs share one session. If another tab already rotated the
+    // refresh token, take over its result: sending the used token again would
+    // be rejected and end the session in every tab.
+    const stored=storedSession();
+    if(stored&&stored.user?.id===session?.user?.id&&stored.refresh_token!==used){session=stored;return true}
+    const r=await api('/auth/v1/token?grant_type=refresh_token',{method:'POST',body:JSON.stringify({refresh_token:used})});
     if(r.status===400||r.status===401){localStorage.removeItem(STORE);saveSession(null);location.reload();return false}
     if(!r.ok){syncState('Server gerade nicht erreichbar. Dein Lernstand bleibt auf diesem Gerät gespeichert.',true);return false}
     saveSession(await r.json());return true;
-  })();
+  };
+  // Web Locks serialize refreshes across tabs (fallback: this tab only).
+  const locks=globalThis.navigator?.locks;
+  refreshInFlight=locks?.request?locks.request('suomi-auth-refresh',run):run();
   try{return await refreshInFlight}finally{refreshInFlight=null}
 }
 async function request(path,options={}){
@@ -268,6 +278,14 @@ $('account-progress').onclick=()=>{$('account-dialog').close();window.dispatchEv
   $('sync-now').onclick=async()=>{try{status('');await pullAndMerge()}catch(err){syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true);status(err.message,true)}};
   $('copy-recovery').onclick=async()=>{try{await navigator.clipboard.writeText($('recovery-code-result').textContent);status('Code kopiert.')}catch{status('Bitte kopiere den Code manuell.',true)}};
   window.addEventListener('suomi-learning-changed',scheduleSync);
+  // Keep tabs on the same session: adopt tokens another tab refreshed, and
+  // reload when another tab signed out or switched the account.
+  window.addEventListener('storage',e=>{
+    if(e.key!==SESSION)return;
+    const stored=storedSession();
+    if(stored&&session&&stored.user?.id===session.user?.id){session=stored;return}
+    if(stored||session)location.reload();
+  });
   // Hiding the tab (switching apps, closing) uploads pending answers right away;
   // anything that still does not arrive stays local and is merged next time.
   document.addEventListener('visibilitychange',syncChangedNow);
@@ -280,7 +298,7 @@ export const accountUser=()=>session?.user||null;
 export {request as accountRequest};
 window.suomiAccountUser=()=>session?.user||null;
 window.suomiAccountRequest=request;
-import('./classrooms.js?v=78').catch(()=>{});
+import('./classrooms.js?v=79').catch(()=>{});
 import('./quality-review.js?v=4').catch(()=>{});
 if(session?.user&&configured())refreshSession().then(async ok=>{if(!ok)return;try{await pullAndMerge();}catch(err){syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true);status(err.message,true);}}).catch(syncError).finally(()=>{syncReady=true;if(syncQueued)scheduleSync()});
 else syncReady=true;

@@ -9,13 +9,14 @@ const start=source.indexOf('let refreshInFlight=null;');
 const end=source.indexOf('\nasync function request(',start);
 assert(start>=0&&end>start,'refreshSession implementation found');
 
-async function run(status,{concurrent=1}={}){
+async function run(status,{concurrent=1,stored=null}={}){
   const storage=new Map([['suomi-learning-v1','{"reviews":{"1:fi-de":{}}}']]);
+  if(stored)storage.set('suomi-auth-session-v1',JSON.stringify(stored));
   const calls=[];let reloads=0,saved='unchanged',syncMessage='';
   const context={
-    STORE:'suomi-learning-v1',
-    session:{refresh_token:'r1',access_token:'a1'},
-    localStorage:{removeItem:key=>storage.delete(key)},
+    STORE:'suomi-learning-v1',SESSION:'suomi-auth-session-v1',
+    session:{refresh_token:'r1',access_token:'a1',user:{id:'u1'}},
+    localStorage:{getItem:key=>storage.get(key)??null,removeItem:key=>storage.delete(key)},
     location:{reload(){reloads++}},
     saveSession:v=>{saved=v},
     syncState:t=>{syncMessage=t},
@@ -24,7 +25,7 @@ async function run(status,{concurrent=1}={}){
   vm.createContext(context);
   vm.runInContext(`${source.slice(start,end)}\nthis.refreshSession=refreshSession;`,context);
   const results=await Promise.all(Array.from({length:concurrent},()=>context.refreshSession()));
-  return {results,storage,reloads,saved,syncMessage,calls:calls.length};
+  return {results,storage,reloads,saved,syncMessage,calls:calls.length,session:context.session};
 }
 
 for(const status of [500,503,429]){
@@ -43,4 +44,19 @@ for(const status of [400,401]){
 const ok=await run(200,{concurrent:3});
 assert.deepEqual(ok.results,[true,true,true]);
 assert.equal(ok.calls,1,'parallel 401 responses share one refresh (no rotated-token race)');
-console.log('PASS: token refresh keeps local progress on server errors, ends only rejected sessions, single-flight refresh.');
+// Another tab already rotated the token: adopt it instead of reusing the old one.
+const adopted=await run(400,{stored:{refresh_token:'r2',access_token:'a2',user:{id:'u1'}}});
+assert.deepEqual(adopted.results,[true]);
+assert.equal(adopted.calls,0,'no refresh request with the already used token');
+assert.equal(adopted.session.refresh_token,'r2');
+assert(adopted.storage.has('suomi-learning-v1'),'learning state stays');
+// A different account in storage is not adopted.
+const otherAccount=await run(200,{stored:{refresh_token:'x',access_token:'y',user:{id:'someone-else'}}});
+assert.equal(otherAccount.calls,1);
+// Same token in storage: normal refresh.
+const same=await run(200,{stored:{refresh_token:'r1',access_token:'a1',user:{id:'u1'}}});
+assert.equal(same.calls,1);
+const authSource=fs.readFileSync(new URL('./dist/auth.js',import.meta.url),'utf8');
+assert(authSource.includes("locks.request('suomi-auth-refresh'"),'refreshes are serialized across tabs');
+assert(authSource.includes("window.addEventListener('storage'"),'tabs follow session changes of other tabs');
+console.log('PASS: token refresh keeps local progress on server errors, ends only rejected sessions, single-flight refresh, adopts tokens rotated by other tabs.');
