@@ -5,6 +5,7 @@ Run python build_full_deck.py. Existing grammar annotations remain unchanged.
 import json,copy,collections,re
 from pathlib import Path
 from level_import import assign
+from slim_deck import write_outputs
 ROOT=Path(__file__).parent
 FIELDS=('id','text','lang','owner','license')
 def _tsv(name):
@@ -105,7 +106,7 @@ def main():
  assert all(s['translations'] and all(t['lang']=='deu' and t['text'].strip() for t in s['translations']) for s in cards)
  assert all(a['license'] for s in cards for a in s['audios'])
  assert all(sid in {s['id'] for s in cards+archived} for sid in known)
- (ROOT/'dist/sentences.json').write_text(json.dumps(out,ensure_ascii=False,separators=(',',':'))+'\n')
+ write_outputs(out)  # sources/sentences-full.json + slim dist/sentences.json
  print('active',len(cards),'archive',len(archived),'audio',sum(bool(s['audios']) for s in cards),'levels',collections.Counter(s['level'] for s in cards))
  print('names aligned',aligned)
  print('translation types',collections.Counter(s['translations'][0].get('origin','direct') for s in cards))

@@ -45,7 +45,7 @@ direction='random';start();const repeated=queue[0];revealed=true;grade('again');
 audioOnly=true;start();assert(queue.every(s=>s.audios.length));
 grammar={};start();assert.equal(queue.length,0);assert($('card').innerHTML.includes('Keine passenden'));
 grammar=fixtureGrammar;activity='translate';audioOnly=false;mode='new';start();assert(!$('direction-group').hidden);assert($('grammar-controls').hidden);
-assert(audioCache.size<=AUDIO_CACHE_LIMIT);const preparedURL=queue[0].audios[0].download_url;assert.strictEqual(prepareAudio(preparedURL),prepareAudio(preparedURL));
+assert(audioCache.size<=AUDIO_CACHE_LIMIT);const preparedURL=audioURL(queue[0].audios[0]);assert.strictEqual(preparedURL,'https://api.tatoeba.org/v1/audios/'+queue[0].audios[0].id+'/file');assert.strictEqual(prepareAudio(preparedURL),prepareAudio(preparedURL));
 activity='listen';start();assert(queue.every(s=>s.audios.length));assert($('direction-group').hidden);
 const audioCard=queue[0],audioHtml=audioMarkup(audioCard);assert(audioHtml.includes('id="play-audio"'));assert(!audioHtml.includes('replay-audio'));
 activity='dictation';start();assert(queue.every(s=>s.audios.length));assert(questionMarkup(queue[0],'').includes('Was hörst du'));
