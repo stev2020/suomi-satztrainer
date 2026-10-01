@@ -202,7 +202,7 @@ header .header-nav button:hover,header .header-nav button.selected{background:va
 
 /* Personalized daily round. */
 .home-daily{position:relative;isolation:isolate;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:28px;max-width:720px;margin:0 auto 30px;padding:25px 27px;border:2px solid var(--line);border-radius:20px;background:var(--lavender);box-shadow:6px 6px 0 var(--orange-shadow);overflow:hidden}
-.home-daily:after{content:'';position:absolute;z-index:-1;right:-34px;top:-42px;width:150px;height:150px;border:2px solid var(--line);border-radius:50%;background:var(--mint);opacity:.8}
+.home-daily:after{content:'';position:absolute;z-index:-1;right:-34px;top:-42px;width:150px;height:150px;border:2px solid color-mix(in srgb,var(--line) 80%,transparent);border-radius:50%;background:var(--mint)}
 .home-daily-copy{min-width:0}.home-daily h2.home-daily-title{font:800 22px/1.2 var(--heading);letter-spacing:.2px;margin:0 0 12px;color:var(--purple)}.home-daily-copy>p{max-width:510px;margin:24px 0 0;color:var(--ink-soft);font-size:15px;line-height:1.55}
 .home-daily-stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:17px}.home-daily-stats span{padding:6px 10px;border:1.5px solid var(--line);border-radius:999px;background:var(--paper);font-size:12px;white-space:nowrap}.home-daily-stats strong{color:var(--purple);font-size:15px}
 .home-daily-stats .fav-pill{display:inline-flex;align-items:center;gap:5px;min-height:0;padding:6px 12px;border:1.5px solid var(--line);border-radius:999px;background:var(--paper);box-shadow:1.5px 1.5px 0 var(--line);font-size:12px;font-weight:400;color:var(--ink);white-space:nowrap;cursor:pointer;transition:transform .15s,box-shadow .15s}
