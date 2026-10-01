@@ -143,6 +143,10 @@ header{flex-wrap:wrap}.report-error{align-self:center;margin:18px 0 0;padding:7p
 :root:is([data-theme=vanamo],:not([data-theme])) .home-verbs,:root[data-theme=ruska] .home-verbs{box-shadow:5px 5px 0 var(--heading-accent)}
 :root:is([data-theme=vanamo],:not([data-theme])) .home-daily,:root[data-theme=ruska] .home-daily{box-shadow:6px 6px 0 var(--heading-accent)}
 @media(max-width:700px){:root:is([data-theme=vanamo],:not([data-theme])) .home-daily,:root[data-theme=ruska] .home-daily{box-shadow:4px 4px 0 var(--heading-accent)}}
+/* Nordlicht: türkise Hauptknöpfe mit schwarzgrünem Rand und Schatten statt Taubenblau */
+:root[data-theme=revontulet] :is(.home-daily-action button,#home-view .quick-verb-review):not(:disabled){border-color:#002a24;box-shadow:3px 3px 0 #002a24}
+:root[data-theme=revontulet] :is(.home-daily-action button,#home-view .quick-verb-review):not(:disabled):hover{box-shadow:4px 4px 0 #002a24}
+:root[data-theme=revontulet] :is(.home-daily-action button,#home-view .quick-verb-review):not(:disabled):active{box-shadow:1px 1px 0 #002a24}
 /* „Neue Sätze lernen“: Schatten in der Farbe von „Weiterlernen“ (Heidelbeere eine Spur dunkler) */
 .home-new{--new-shadow:var(--lavender)}:root[data-theme=mustikka] .home-new{--new-shadow:color-mix(in srgb,var(--lavender) 90%,var(--ink))}
 /* „Verbformen üben“ in allen Designs in der Farbe von „Aufgaben starten“ */
