@@ -7,7 +7,8 @@
 // - kleine Animationen (Hochzählen, Ring füllen); bei „reduzierter Bewegung“ entfallen sie
 // Gäste sehen weiterhin die ursprüngliche Startseite mit Intro und Satzkarte.
 import {loadLexicon,lookupForSentence,splitSentence} from './word-lookup.mjs?v=2';
-import {shortGloss} from './guest-card.mjs?v=11';
+import {shortGloss} from './guest-card.mjs?v=12';
+const audioURL=a=>a?.download_url||(a?.id?`https://api.tatoeba.org/v1/audios/${encodeURIComponent(a.id)}/file`:'');
 
 export const DAILY_GOAL=20;
 const WEEKDAYS=[['Mo','Montag'],['Di','Dienstag'],['Mi','Mittwoch'],['Do','Donnerstag'],['Fr','Freitag'],['Sa','Samstag'],['So','Sonntag']];
@@ -203,7 +204,7 @@ export function createDailySentence(root,{sentences,learnedIds,fallbackLevel=()=
   root.querySelectorAll('.cycle-word').forEach(b=>b.onclick=e=>{if(e.target.closest('.sentence-source-icon'))return;b.classList.toggle('show');});
   root.querySelector('.daily-reveal')?.addEventListener('click',()=>{revealed=true;paint(false);root.querySelector('.daily-translation')?.classList.add('is-new');root.querySelector('.daily-words')?.classList.add('all');});
     const a=root.querySelector('.daily-audio');
-  if(a)a.onclick=()=>{if(audio){stopAudio();return;}const url=sentence?.audios?.[0]?.download_url;if(!url)return;audio=new Audio(url);a.classList.add('playing');audio.onended=stopAudio;audio.onerror=stopAudio;audio.play().catch(stopAudio);};
+  if(a)a.onclick=()=>{if(audio){stopAudio();return;}const url=audioURL(sentence?.audios?.[0]);if(!url)return;audio=new Audio(url);a.classList.add('playing');audio.onended=stopAudio;audio.onerror=stopAudio;audio.play().catch(stopAudio);};
  }
  return {
   // Zeigt die Karte nur für Angemeldete, sobald Sätze und Wortanalyse geladen sind.

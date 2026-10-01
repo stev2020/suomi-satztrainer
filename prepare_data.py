@@ -7,6 +7,7 @@ Only Finnish audio with an explicit Creative Commons license is embedded.
 import json
 import sys
 from pathlib import Path
+from slim_deck import write_outputs
 
 LEVELS = {
     1: [3215025,1614474,752738,3374632,409605,5642917,1966416,1970852,5002569,5084733,6829049,879595,354158,1969748,1971964,3569375,875108,879616,3756698,4955086],
@@ -79,7 +80,7 @@ def main():
     assert len(sentences) == 400
     assert len({s['text'] for s in sentences}) == 400
     output = {'source': 'https://api.tatoeba.org/v1/sentences', 'retrieved': '2026-09-10', 'level_method': 'Editorial estimate; Level 1–2 basic, Level 3–4 everyday Finnish. Not official CEFR.', 'sentences': sentences}
-    Path('dist/sentences.json').write_text(json.dumps(output, ensure_ascii=False, indent=2))
+    write_outputs(output)  # sources/sentences-full.json + slim dist/sentences.json
     Path('sources').mkdir(exist_ok=True)
     Path('sources/tatoeba-snapshot.json').write_text(json.dumps([records[s['id']] for s in sentences], ensure_ascii=False, indent=2))
     print(f'{len(sentences)} sentences; {sum(bool(s["audios"]) for s in sentences)} with licensed Finnish audio.')

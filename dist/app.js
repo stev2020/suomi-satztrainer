@@ -14,8 +14,8 @@ import {validateGames,mergeGames} from './games-progress.mjs';
 import {mountWordLookup,loadLexicon,lookupForSentence,splitSentence,getLexicon} from './word-lookup.mjs?v=2';
 import {planVerbs,planEndings,interleave,alternate,verbCard,endingCard} from './daily-mix.mjs?v=3';
 import {validateEndingsProgress,mergeEndingsProgress,markEndingAnswered,missedEndings} from './endings-progress.mjs?v=1';
-import {createGuestCard,shortGloss,flipWordIndex} from './guest-card.mjs?v=11';
-import {renderGreeting,renderToday,createDailySentence,animateProgress,GOAL_CHOICES,DAILY_GOAL} from './home-extras.mjs?v=5';
+import {createGuestCard,shortGloss,flipWordIndex} from './guest-card.mjs?v=12';
+import {renderGreeting,renderToday,createDailySentence,animateProgress,GOAL_CHOICES,DAILY_GOAL} from './home-extras.mjs?v=6';
 import {buildDifficultDeck} from './difficult-words.mjs?v=2';
 import {buildEndingItems,indexLexicon,renderEndings,hasEndingChoices} from './endings-practice.mjs?v=2';
 import {translationFeedbackMarkup} from './translation-feedback.mjs?v=1';
@@ -116,6 +116,8 @@ function setAudioButtonLabel(b,label){if(!b)return;b.querySelector('span').textC
 function bindSpeedOptions(){$('speed')?.querySelectorAll('button').forEach(b=>b.onclick=()=>{speed=Number(b.dataset.speed);if(player)player.playbackRate=speed;$('speed').querySelectorAll('button').forEach(o=>o.setAttribute('aria-pressed',String(o===b)));persist();});}
 function stopAudio(){if(player){player.pause();player=null;}const b=$('play-audio');if(b)setAudioButtonLabel(b,restingAudioLabel(b));}
 const AUDIO_CACHE_LIMIT=8,audioCache=new Map();
+// Aufnahme-Adresse aus der Tatoeba-ID (sentences.json enthält sie nicht mehr einzeln).
+const audioURL=a=>a?.download_url||(a?.id?`https://api.tatoeba.org/v1/audios/${encodeURIComponent(a.id)}/file`:'');
 function prepareAudio(url){
  if(typeof Audio==='undefined'||!url)return null;
  if(audioCache.has(url)){const cached=audioCache.get(url);audioCache.delete(url);audioCache.set(url,cached);return cached;}
@@ -124,7 +126,7 @@ function prepareAudio(url){
  return audio;
 }
 // Audio comes from api.tatoeba.org; load it only while the practice view is open (privacy, data use).
-function preloadQueueAudio(){if($('practice-view')?.hidden)return;const urls=queue.slice(0,3).map(s=>s.audios?.[0]?.download_url).filter(Boolean);for(const url of new Set(urls))prepareAudio(url);}
+function preloadQueueAudio(){if($('practice-view')?.hidden)return;const urls=queue.slice(0,3).map(s=>audioURL(s.audios?.[0])).filter(Boolean);for(const url of new Set(urls))prepareAudio(url);}
 function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 // „Wiederholen“: fällige Sätze, dazu fällige und ein paar neue Verbformen und Endungen (siehe daily-mix.mjs).
 const learnedSentenceIds=()=>new Set(Object.keys(memory.reviews||{}).map(k=>Number(k.split(':')[0])));
@@ -902,7 +904,7 @@ function render(){applyDailyCard();if(dailySession?.active&&!queue.length&&['ver
 function licenseURL(license){if(license==='CC0 1.0')return 'https://creativecommons.org/publicdomain/zero/1.0/';const m=license.match(/^CC (BY(?:-[A-Z]+)*) ([\d.]+)(?: (FR))?$/i);return m?`https://creativecommons.org/licenses/${m[1].toLowerCase()}/${m[2]}/${m[3]?'fr/':''}`:'https://tatoeba.org/en/terms_of_use';}
 function easyDays(s){return Math.min(180,Math.max(3,Math.round((Number(review(s)?.interval)||0)*2.5)));}
 function grade(g){if(activity==='writing')return;if(!revealed||!queue.length)return;if(inCycle(queue[0])&&!(cycleStep===2&&cycleFlipped))return;if(inCycle(queue[0])){cycleDone.add(queue[0].id);cycleStep=0;cycleFlipped=false;}const s=queue.shift(),interval=g==='again'?0:g==='hard'?1:easyDays(s),now=Date.now();memory.performanceEvents=addPerformanceEvent(memory.performanceEvents,{kind:'sentence',sentenceId:s.id,activity,direction:cardDirection(s),difficulty,grade:g,grammarTopic:activity==='grammar'?grammarTopic:'',at:now});memory.reviews[key(s)]={due:now+interval*86400000,interval,repetitions:(Number(review(s)?.repetitions)||0)+1,updatedAt:now};memory.daily[day()]=(Number(memory.daily[day()])||0)+1;if(dailySession?.active&&activity==='translate'&&!s.translationCounted){reviewTranslationCount++;s.translationCounted=true;}if(g==='again')queue.splice(Math.min(2,queue.length),0,s);completed++;wordExercise=null;searchPuzzle=null;revealed=false;playedAudioCard=null;draft='';persist();render();guestSaveHint();$('reveal')?.focus({preventScroll:true});}
-async function play(s){const a=s.audios[0],b=$('play-audio');if(player&&!player.paused){stopAudio();return;}stopAudio();const current=prepareAudio(a.download_url);if(!current)return;player=current;current.currentTime=0;current.playbackRate=speed;current.preservesPitch=true;setAudioButtonLabel(b,current.readyState>=3?'Startet …':'Lädt …');const reset=()=>{if(player===current&&$('play-audio')===b)setAudioButtonLabel(b,restingAudioLabel(b));};current.onended=reset;current.onerror=()=>{if(player!==current)return;audioCache.delete(a.download_url);reset();$('notice').textContent='Die Aufnahme ist gerade nicht erreichbar. Prüfe deine Internetverbindung.';};try{await current.play();if(player===current){playedAudioCard=s;b.dataset.played='true';setAudioButtonLabel(b,'Anhalten');}}catch{if(player!==current)return;audioCache.delete(a.download_url);reset();$('notice').textContent='Die Aufnahme konnte nicht abgespielt werden. Versuche es gleich noch einmal.';}}
+async function play(s){const a=s.audios[0],b=$('play-audio');if(player&&!player.paused){stopAudio();return;}stopAudio();const current=prepareAudio(audioURL(a));if(!current)return;player=current;current.currentTime=0;current.playbackRate=speed;current.preservesPitch=true;setAudioButtonLabel(b,current.readyState>=3?'Startet …':'Lädt …');const reset=()=>{if(player===current&&$('play-audio')===b)setAudioButtonLabel(b,restingAudioLabel(b));};current.onended=reset;current.onerror=()=>{if(player!==current)return;audioCache.delete(audioURL(a));reset();$('notice').textContent='Die Aufnahme ist gerade nicht erreichbar. Prüfe deine Internetverbindung.';};try{await current.play();if(player===current){playedAudioCard=s;b.dataset.played='true';setAudioButtonLabel(b,'Anhalten');}}catch{if(player!==current)return;audioCache.delete(audioURL(a));reset();$('notice').textContent='Die Aufnahme konnte nicht abgespielt werden. Versuche es gleich noch einmal.';}}
 // Portable backups accept only known, bounded fields. Imported text is always escaped.
 function objectRecord(value){if(!value||typeof value!=='object'||Array.isArray(value))throw new Error('Ungültige Datenstruktur.');return value;}
 function validInt(value,max=Number.MAX_SAFE_INTEGER){return Number.isSafeInteger(value)&&value>=0&&value<=max;}

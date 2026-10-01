@@ -7,6 +7,7 @@ Removed baseline cards remain available as archived review/favorite records.
 import json
 from pathlib import Path
 from collections import Counter
+from slim_deck import write_outputs
 
 TEXT_LICENSES = {'CC BY 2.0 FR', 'CC0 1.0'}
 AUDIO_LICENSES = {'CC BY 4.0', 'CC BY-NC 4.0', 'CC BY-SA 4.0', 'CC0 1.0'}
@@ -69,7 +70,7 @@ def main():
         'selection': 'Licensed Finnish audio first; direct German preferred; otherwise app-created German adaptation of direct English translation.',
         'sentences': active, 'archived_sentences': archived,
     }
-    Path('dist/sentences.json').write_text(json.dumps(metadata, ensure_ascii=False, indent=2))
+    write_outputs(metadata)  # sources/sentences-full.json + slim dist/sentences.json
     print('Active:', len(active), 'Audio:', sum(bool(s['audios']) for s in active),
           'English bridge:', sum(s['translations'][0].get('origin') == 'english_bridge' for s in active),
           'Archived:', len(archived))

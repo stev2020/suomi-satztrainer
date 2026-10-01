@@ -47,6 +47,7 @@ The current deck is rebuilt with `python build_audio_deck.py`. It reads the immu
 400-card baseline in `sources/baseline-deck.json`, the refreshed source records in
 `sources/audio-candidates.json`, and German adaptations in `sources/english-to-german.tsv`.
 `prepare_data.py` is the legacy baseline generator and should not overwrite the current deck.
+The complete deck with all provenance is written to `sources/sentences-full.json`; `dist/sentences.json` is its slim form (see `slim_deck.py`).
 The original, unmodified baseline records remain in `sources/tatoeba-snapshot.json`.
 The first import used `/v1/sentences`, with Finnish language, direct German
 translation, non-orphan and non-unapproved filters and `include=audios`.
@@ -259,6 +260,13 @@ Prüfung: `node test-learning-path.mjs` sowie `node test-home-browser.mjs` (Play
   | schwaches 3G (1,6 Mbit/s) | 8,6 s → 6,0 s | 10,7 s → 8,1 s |
 
 - **Service Worker:** Seitenaufrufe werden ohne Query-String und Anker gespeichert. So legt nicht mehr jede Variante (`?intro`, `?x=1` …) einen eigenen Eintrag an.
+
+## Schlanke Satzdaten (1. Oktober 2026)
+
+- **Zwei Dateien:** `sources/sentences-full.json` enthält den vollständigen Bestand mit allen Herkunftsangaben (Verknüpfungswege, Anpassungen, Korrekturen, Levelbegründungen, Audio-Zeitstempel). `dist/sentences.json` enthält nur, was die App liest.
+- **Erzeugung:** Alle Build-Skripte schreiben über `write_outputs()` aus `slim_deck.py` beide Dateien. `python3 slim_deck.py` erzeugt `dist/sentences.json` neu aus dem vollständigen Bestand. `npm test` prüft mit `--check`, dass beide zusammenpassen.
+- **Aufnahmen:** Die Download-Adresse steht nicht mehr in jedem Eintrag. Die App bildet sie aus der Tatoeba-ID (`audioURL()`). Das Skript bricht ab, falls eine Quelladresse nicht diesem Muster folgt.
+- **Gemessen:** 3,8 MB → 2,4 MB, gzip 418 KB → 333 KB (−20 %), Einlesen im Browser 90 ms → 58 ms (−36 %). Inhalt unverändert: dieselben Sätze, Übersetzungen, Level und Aufnahmen.
 
 ## Schutz vor Melde-Missbrauch (1. Oktober 2026)
 

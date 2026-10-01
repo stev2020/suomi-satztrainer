@@ -11,6 +11,7 @@
 // verweist auf den Lernpfad (onFinished / onPathRequest).
 import {loadLexicon,lookupForSentence,splitSentence} from './word-lookup.mjs?v=2';
 import {createWordExercise,wordAnswerMatches,sentenceWords} from './word-practice.mjs?v=61';
+const audioURL=a=>a?.download_url||(a?.id?`https://api.tatoeba.org/v1/audios/${encodeURIComponent(a.id)}/file`:'');
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const reducedMotion=()=>typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -190,7 +191,7 @@ ${list.length?`<ul class="guest-finale-list guest-l2" lang="fi" aria-label="Dein
  function stopAudio(){if(audio){audio.pause();audio=null;}audioButton.classList.remove('playing');}
  audioButton.onclick=()=>{
   if(audio){stopAudio();return;}
-  const url=sentence?.audios?.[0]?.download_url;if(!url)return;
+  const url=audioURL(sentence?.audios?.[0]);if(!url)return;
   audio=new Audio(url);audioButton.classList.add('playing');
   audio.onended=stopAudio;audio.onerror=stopAudio;audio.play().catch(stopAudio);
  };
