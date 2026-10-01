@@ -1,5 +1,5 @@
 import {uiLocale} from './i18n.mjs?v=14';
-import {accountUser,accountRequest} from './auth.js?v=105';
+import {accountUser,accountRequest} from './auth.js?v=106';
 import {GRAMMAR_TOPICS,topicNotes} from './grammar-topics.mjs';
 
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -296,7 +296,7 @@ $('classrooms-content').addEventListener('submit',e=>{
    if(action==='delete_room'&&data.get('confirm_name')!==room.name)throw new Error('Bitte den Raumnamen exakt eingeben.');
    if(room)payload.room_id=room.id;
    const value=await api(action,payload);dirty=false;
-   if(action==='delete_room'){streamDrafts.delete(room.id);for(const a of room.assignments)drafts.delete(a.id);await home();$('classrooms-content').insertAdjacentHTML('afterbegin','<p role="status">Klassenraum und zugehörige Inhalte wurden endgültig gelöscht.</p>');return;}
+   if(action==='delete_room'){accountRequest('/functions/v1/storage-sweep',{method:'POST',body:'{}'}).catch(()=>{});streamDrafts.delete(room.id);for(const a of room.assignments)drafts.delete(a.id);await home();$('classrooms-content').insertAdjacentHTML('afterbegin','<p role="status">Klassenraum und zugehörige Inhalte wurden endgültig gelöscht.</p>');return;}
    if(action==='rename'){await open(room.id);$('classrooms-content').insertAdjacentHTML('afterbegin','<p role="status">Dein Name wurde für diesen Klassenraum geändert.</p>');return;}
    if(action==='create'||action==='join')return open(value.id);
    if(action==='submit'){drafts.delete(selected);return refreshAssignment();}
@@ -315,6 +315,9 @@ window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.return
 let stream={posts:[],has_more:false},streamFilter='all';
 const streamDrafts=new Map(),attachmentURLs=new Set();
 const fileTypes={png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',webp:'image/webp',pdf:'application/pdf',txt:'text/plain',csv:'text/csv',zip:'application/zip',docx:'application/vnd.openxmlformats-officedocument.wordprocessingml.document',xlsx:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',pptx:'application/vnd.openxmlformats-officedocument.presentationml.presentation'};
+// The saved name always ends in the extension of the checked MIME type and
+// contains no path or control characters, whatever the uploader called it.
+const downloadName=file=>{const ext=Object.keys(fileTypes).find(k=>fileTypes[k]===file.mime)||'bin';const base=String(file.name||'').replace(/\.[^.]*$/,'').replace(/[\u0000-\u001f\u007f\/\\:*?"<>|]+/g,'_').trim().slice(0,150)||'Anhang';return base+'.'+ext;};
 const streamPosts=()=>Array.isArray(stream.posts)?stream.posts:[];
 const fileSize=n=>n<1048576?`${Math.ceil(n/1024)} KB`:`${(n/1048576).toFixed(1)} MB`;
 function richText(value){return String(value??'').split(/(https?:\/\/[^\s<>]+)/g).map(part=>/^https?:\/\//.test(part)?`<a href="${esc(part)}" target="_blank" rel="noopener noreferrer">${esc(part)}</a>`:esc(part)).join('');}
@@ -422,7 +425,7 @@ async function streamAction(action,el){
   if(!response.ok)throw new Error('Die Datei konnte nicht geladen werden. Bitte aktualisieren und erneut versuchen.');
   const raw=await response.blob(),blob=new Blob([raw],{type:action==='stream_preview'?file.mime:'application/octet-stream'}),url=URL.createObjectURL(blob);attachmentURLs.add(url);
   if(action==='stream_preview')showImagePreview(url);
-  else{const a=document.createElement('a');a.href=url;a.download=file.name;document.body.append(a);a.click();a.remove();}
+  else{const a=document.createElement('a');a.href=url;a.download=downloadName(file);document.body.append(a);a.click();a.remove();}
   return;
  }
  if(action==='stream_delete'&&!confirm('Beitrag entfernen? Antworten bleiben erhalten.'))return;
