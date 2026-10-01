@@ -138,13 +138,11 @@ header{flex-wrap:wrap}.report-error{align-self:center;margin:18px 0 0;padding:7p
 #home-verbs-note{margin:3px 0 0;font-size:13px;color:var(--ink-soft)}
 .quick-verb-review{min-height:48px;padding:10px 20px;border:2px solid var(--line);border-radius:12px;background:var(--lavender);color:var(--ink);font-size:16px;font-weight:700;box-shadow:3px 3px 0 var(--line);transition:transform .15s,box-shadow .15s}
 .quick-verb-review:hover{transform:translateY(-1px);box-shadow:4px 4px 0 var(--line)}
-/* Nordlicht: Verbformen-Box mit Flieder-Schatten, „Verbformen üben“ in Türkis wie „Aufgaben starten“ */
+/* Nordlicht: Verbformen-Box mit Flieder-Schatten */
 :root[data-theme=revontulet] .home-verbs{box-shadow:5px 5px 0 var(--orange-shadow)}
-:root[data-theme=revontulet] .quick-verb-review{background:var(--orange);color:var(--on-orange)}
-:root[data-theme=revontulet] .quick-verb-review:not(:disabled):hover{background:var(--orange-hover)}
-/* Polarnacht: „Verbformen üben“ als Hauptaktion in Gelb wie „Aufgaben starten“ */
-:root[data-theme=kaamos] .quick-verb-review{background:var(--orange);color:var(--on-orange)}
-:root[data-theme=kaamos] .quick-verb-review:hover{background:var(--orange-hover)}
+/* „Verbformen üben“ in allen Designs in der Farbe von „Aufgaben starten“ */
+.home-view .quick-verb-review{background:var(--orange);color:var(--on-orange)}
+.home-view .quick-verb-review:not(:disabled):hover{background:var(--orange-hover)}
 @media(max-width:480px){.home-verbs{padding:16px 18px}.quick-verb-review{flex:1 1 100%}}
 .home-more>summary{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 22px;border:2px solid var(--line);border-radius:18px;background:var(--paper);box-shadow:5px 5px 0 var(--line);cursor:pointer;list-style:none;transition:transform .15s,box-shadow .15s}
 .home-more>summary::-webkit-details-marker{display:none}
