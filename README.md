@@ -235,6 +235,19 @@ Jedes der sechs vorhandenen Levels hat einen eigenen Pfad mit 13 Themen in derse
 Prüfung: `node test-learning-path.mjs` sowie `node test-home-browser.mjs` (Playwright) für Levelwechsel, Fortsetzung, importierten Fortschritt und mobile Darstellung.
 
 
+## Eigene Domain und Sicherheits-Header (1. Oktober 2026)
+
+- **Adresse:** Die App läuft unter **https://vanamo.app** (GitHub Pages mit eigener Domain, DNS bei Cloudflare). `stev2020.github.io/suomi-satztrainer` leitet dorthin weiter.
+- **Cloudflare davor:** Der Proxy ist eingeschaltet, SSL/TLS steht auf „Full (strict)“. Rocket Loader, E-Mail-Verschleierung und automatisch eingefügte Analyse sind aus, weil sie Skripte ins HTML schreiben würden, die die CSP blockiert.
+- **Header** über eine Transform Rule („Modify Response Header“):
+  - `Strict-Transport-Security`
+  - `X-Frame-Options: DENY` und `Content-Security-Policy: frame-ancestors 'none'` gegen Clickjacking
+  - `X-Content-Type-Options: nosniff`
+  - `Referrer-Policy: strict-origin-when-cross-origin`
+  - `Permissions-Policy` (Kamera, Mikrofon, Standort und Zahlung aus)
+  - `Cross-Origin-Opener-Policy: same-origin`
+- Die Inhalts-CSP bleibt als `<meta>`-Tag in den Seiten; der Header ergänzt nur `frame-ancestors`, was per `<meta>` nicht geht.
+
 ## Schnellerer Start (1. Oktober 2026)
 
 - **Ladereihenfolge:** `grammar.json` wird erst geladen, nachdem `sentences.json` da ist. Für Gäste kommt davor noch `lexicon.json`, das die Satzkarte braucht. Vorher luden Sätze und Grammatik gleichzeitig und teilten sich die Leitung. Die Grammatikhilfe zeigt „wird geladen …“, bis sie da ist, und eine offene Karte wird nachgezogen. Spätestens nach 8 s wird sie in jedem Fall geladen.
