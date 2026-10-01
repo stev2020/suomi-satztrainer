@@ -14,7 +14,7 @@
 /* Tunturi – Fjell (hell): colorswall „northern lights north woodcut“ – Sand, Petrol, Holzbraun */
 :root[data-theme=tunturi]{color-scheme:light;--ink:#15303a;--ink-soft:#264f5e;--muted:#38484a;--bg:#f2f0e1;--paper:#faf8ee;--paper-2:#f6f4e6;--sunken:#e7e4c9;--line:#15303a;--scrim:#15303a80;--mint:#84c4c4;--lavender:#d3d09f;--lavender-tint:#e9e7cc;--orange:#e4a565;--orange-hover:#ebb983;--orange-shadow:#634432;--on-orange:#15303a;--purple:#264f5e;--purple-ink:#1b3a46;--on-accent:#fff;--heading-accent:#634432;--warm-soft:#f6e3c9;--warm-ink:#6b3f16;--good:#2a6438;--good-soft:#cfe5c9;--good-tint:#edf5e6;--bad:#a12e2e;--bad-soft:#f3cdc3;--bad-tint:#fbeee9}
 /* Kaamos – Polarnacht (dunkel) */
-:root[data-theme=kaamos]{color-scheme:dark;--ink:#e9efff;--ink-soft:#bbc3ef;--muted:#a8aabc;--bg:#121a2e;--paper:#1c2745;--paper-2:#202c4e;--sunken:#27345c;--line:#7d88b8;--scrim:#05080fb3;--mint:#1f3a66;--lavender:#2e3a66;--lavender-tint:#243056;--orange:#d2a517;--orange-hover:#e2bc3f;--on-orange:#121a2e;--purple:#8fb0ff;--purple-ink:#c9d6ff;--on-accent:#121a2e;--warm-soft:#1f3a66;--warm-ink:#f2cf6b;--good:#6fd6a5;--good-soft:#1f4a3b;--good-tint:#243056;--bad:#ff8f80;--bad-soft:#5a2b33;--bad-tint:#33202b}
+:root[data-theme=kaamos]{color-scheme:dark;--ink:#e9efff;--ink-soft:#bbc3ef;--muted:#a8aabc;--bg:#121a2e;--paper:#1c2745;--paper-2:#202c4e;--sunken:#27345c;--line:#7d88b8;--scrim:#05080fb3;--mint:#1f3a66;--lavender:#2e3a66;--lavender-tint:#243056;--orange:#d2a517;--orange-hover:#e2bc3f;--orange-shadow:#8fb0ff;--on-orange:#121a2e;--purple:#8fb0ff;--purple-ink:#c9d6ff;--on-accent:#121a2e;--warm-soft:#1f3a66;--warm-ink:#f2cf6b;--good:#6fd6a5;--good-soft:#1f4a3b;--good-tint:#243056;--bad:#ff8f80;--bad-soft:#5a2b33;--bad-tint:#33202b}
 /* Revontulet – Nordlicht (dunkel): colorswall „Aurora color landscape“ – Indigo, Violett, fast Schwarz */
 :root[data-theme=revontulet]{color-scheme:dark;--ink:#f1ecff;--ink-soft:#cfd8ea;--muted:#b3c0d8;--bg:#0c1418;--paper:#162338;--paper-2:#1a2842;--sunken:#1f2f4d;--line:#7d8fbf;--scrim:#020507b3;--mint:#23526a;--lavender:#3f2a52;--lavender-tint:#2e2238;--orange:#6cc3b6;--orange-hover:#80cfc3;--orange-shadow:#7d8fbf;--on-orange:#0c1418;--purple:#8cc6e5;--purple-ink:#cfe8f5;--on-accent:#0c1418;--heading-accent:#da8cb0;--warm-soft:#23526a;--warm-ink:#e8d5b5;--good:#6fe3b0;--good-soft:#0f4a3a;--good-tint:#1f3a55;--bad:#ff93a8;--bad-soft:#5a1840;--bad-tint:#2b0f33}
 /* Eingabefelder ohne eigene Farbe folgen der Palette (niedrige Spezifität, eigene Regeln gewinnen) */
@@ -138,6 +138,9 @@ header{flex-wrap:wrap}.report-error{align-self:center;margin:18px 0 0;padding:7p
 #home-verbs-note{margin:3px 0 0;font-size:13px;color:var(--ink-soft)}
 .quick-verb-review{min-height:48px;padding:10px 20px;border:2px solid var(--line);border-radius:12px;background:var(--lavender);color:var(--ink);font-size:16px;font-weight:700;box-shadow:3px 3px 0 var(--line);transition:transform .15s,box-shadow .15s}
 .quick-verb-review:hover{transform:translateY(-1px);box-shadow:4px 4px 0 var(--line)}
+/* Polarnacht: „Verbformen üben“ als Hauptaktion in Gelb wie „Aufgaben starten“ */
+:root[data-theme=kaamos] .quick-verb-review{background:var(--orange);color:var(--on-orange)}
+:root[data-theme=kaamos] .quick-verb-review:hover{background:var(--orange-hover)}
 @media(max-width:480px){.home-verbs{padding:16px 18px}.quick-verb-review{flex:1 1 100%}}
 .home-more>summary{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 22px;border:2px solid var(--line);border-radius:18px;background:var(--paper);box-shadow:5px 5px 0 var(--line);cursor:pointer;list-style:none;transition:transform .15s,box-shadow .15s}
 .home-more>summary::-webkit-details-marker{display:none}
