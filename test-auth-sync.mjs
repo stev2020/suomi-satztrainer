@@ -35,19 +35,20 @@ assert.equal(em.endingsProgress['6:0'].updatedAt,800,'newer endings answer from 
 assert.ok(em.endingsProgress['7:2'],'endings only known to the cloud survive');
 assert.ok(context.mergeLearning(local,{...cloud,endingsProgress:{'7:2':ending(10,1)}}).endingsProgress['7:2'],'older app versions without endings keep cloud progress');
 
-const mergeBeforeWrite=source.indexOf('const cloud=await cloudLearning()');
+const stampCheck=source.indexOf('await cloudUpdatedAt()');
+const mergeBeforeWrite=source.indexOf('await cloudLearning()',stampCheck);
 const cloudWrite=source.indexOf("request('/rest/v1/learning_state?on_conflict=user_id'",mergeBeforeWrite);
-assert(mergeBeforeWrite>=0&&cloudWrite>mergeBeforeWrite,'cloud state is read and merged before every write');
+assert(stampCheck>=0&&mergeBeforeWrite>stampCheck&&cloudWrite>mergeBeforeWrite,'cloud timestamp is checked and the cloud state merged before every write');
 assert(!source.includes('setInterval('),'no periodic synchronization checks');
 assert(source.includes("window.addEventListener('suomi-learning-changed',scheduleSync)"),'local persistence schedules synchronization');
 const appSource=fs.readFileSync(new URL('./dist/app.js',import.meta.url),'utf8');
 assert(appSource.includes('commitLearning(candidate,false)'),'applying cloud data does not emit a local edit');
 assert(source.includes("$('sync-now').onclick"),'manual synchronization remains available');
 
-function harness(){
-  let current=structuredClone({...base,reviews:{},verbProgress:{},performanceEvents:[]});
-  let remote=structuredClone(current),postGate=null,getGate=null,fail=false;
-  const calls=[],timers=new Map(),storage=new Map();let timerId=0;
+function harness({storage=new Map(),remote:initialRemote=null,remoteAt:initialAt=null,current:initialCurrent=null}={}){
+  let current=structuredClone(initialCurrent||{...base,reviews:{},verbProgress:{},performanceEvents:[]});
+  let remote=structuredClone(initialRemote||current),remoteAt=initialAt,postGate=null,getGate=null,fail=false;
+  const calls=[],timers=new Map(),delays=[];let timerId=0;
   const elements=new Map();
   const sandbox={uiLocale:'de-DE',mergeVerbProgress,mergePerformanceEvents,mergeGames,mergeEndingsProgress,console,URL,TextEncoder,
     SUPABASE_URL:'https://test.supabase.co',SUPABASE_PUBLISHABLE_KEY:'test-public-key',
@@ -61,21 +62,26 @@ function harness(){
       accepted.favorites=[...new Set([...current.favorites,...incoming.favorites])];
       current=accepted;storage.set('suomi-learning-v1',JSON.stringify(current));return true;
     }}},
-    setTimeout:fn=>{const id=++timerId;timers.set(id,fn);return id},clearTimeout:id=>timers.delete(id),
+    setTimeout:(fn,delay)=>{const id=++timerId;timers.set(id,fn);delays.push(delay);return id},clearTimeout:id=>timers.delete(id),
     fetch:async(url,options)=>{
-      const method=options.method||'GET';calls.push(method);
-      if(method==='GET'){if(getGate)await getGate;return {ok:true,status:200,json:async()=>[{state:structuredClone(remote)}]}}
-      const uploaded=JSON.parse(options.body).state;
+      const method=options.method||'GET';
+      // Supabase returns timestamps as +00:00, the app sends Z: compare as times.
+      const at=remoteAt&&remoteAt.replace('Z','+00:00');
+      if(method==='GET'&&url.includes('select=updated_at&')){calls.push('STAMP');return {ok:true,status:200,json:async()=>[{updated_at:at}]}}
+      calls.push(method);
+      if(method==='GET'){if(getGate)await getGate;return {ok:true,status:200,json:async()=>[{state:structuredClone(remote),updated_at:at}]}}
+      const body=JSON.parse(options.body);
       if(postGate)await postGate;
       if(fail)return {ok:false,status:500};
-      remote=uploaded;return {ok:true,status:204};
+      remote=body.state;remoteAt=body.updated_at;return {ok:true,status:204};
     }};
   vm.createContext(sandbox);
   const code=source.slice(0,source.indexOf('loadSession();bind();')).replace(/^import .*;\n/gm,'');
   vm.runInContext(code+"\nsession={user:{id:'test-user'},access_token:'test-token'};syncReady=true;this.sync={pullAndMerge,syncChangedNow,scheduleSync};",sandbox);
-  return {sandbox,calls,timers,storage,sync:sandbox.sync,
-    current:()=>current,remote:()=>remote,
-    cloud:value=>{remote=structuredClone(value)},edit:fn=>{fn(current);storage.set('suomi-learning-v1',JSON.stringify(current));sandbox.sync.scheduleSync()},
+  return {sandbox,calls,timers,delays,storage,sync:sandbox.sync,
+    current:()=>current,remote:()=>remote,remoteAt:()=>remoteAt,
+    // Another device writes: new content and a newer timestamp.
+    cloud:value=>{remote=structuredClone(value);remoteAt=new Date(Date.parse(remoteAt||'2026-09-01T00:00:00Z')+1000).toISOString()},edit:fn=>{fn(current);storage.set('suomi-learning-v1',JSON.stringify(current));sandbox.sync.scheduleSync()},
     gatePost:value=>{postGate=value},gateGet:value=>{getGate=value},fail:value=>{fail=value},
     flush:async()=>{for(const [id,fn] of [...timers]){timers.delete(id);fn()}await settle()},
   };
@@ -134,4 +140,37 @@ assert.equal(failed.calls.length,failureCalls);
 assert.equal(failed.current().daily['2026-09-19'],3);
 failed.fail(false);await failed.sync.pullAndMerge();
 assert.equal(failed.remote().daily['2026-09-19'],3,'manual retry preserves pending progress');
-console.log('PASS: event-driven sync, idle stability, coalescing, concurrent answers and failure recovery');
+// Steady answering: one timer that is not restarted, uploads after SYNC_DELAY.
+const steady=harness();await steady.sync.pullAndMerge();
+steady.edit(state=>{state.daily['2026-09-20']=1});const [firstTimer]=steady.timers.keys();
+steady.edit(state=>{state.daily['2026-09-20']=2});
+assert.deepEqual([...steady.timers.keys()],[firstTimer],'further answers keep the pending timer instead of postponing it');
+assert.equal(steady.delays.at(-1),15000,'answers are collected for 15 seconds');
+steady.calls.length=0;await steady.flush();
+assert.deepEqual(steady.calls,['STAMP','POST'],'own last write: only updated_at is read, not the whole state');
+assert.equal(steady.remote().daily['2026-09-20'],2);
+
+// Another device wrote in between: the full cloud state is read and merged.
+steady.cloud({...steady.remote(),daily:{...steady.remote().daily,'2026-09-21':7},legacyField:'newer app'});
+steady.edit(state=>{state.daily['2026-09-20']=3});steady.calls.length=0;await steady.flush();
+assert.deepEqual(steady.calls,['STAMP','GET','POST'],'a foreign write triggers a full read');
+assert.equal(steady.remote().daily['2026-09-21'],7,'answers from the other device are kept');
+assert.equal(steady.remote().daily['2026-09-20'],3,'answers from this device are kept');
+assert.equal(steady.current().legacyField,undefined,'the app drops fields it does not know');
+steady.edit(state=>{state.daily['2026-09-20']=4});steady.calls.length=0;await steady.flush();
+assert.deepEqual(steady.calls,['STAMP','POST']);
+assert.equal(steady.remote().legacyField,'newer app','fields of newer app versions survive the short path');
+
+// Reload without new answers: one read, no upload. Then the short path again.
+const reloaded=harness({storage:steady.storage,remote:steady.remote(),remoteAt:steady.remoteAt(),current:steady.current()});
+await reloaded.sync.pullAndMerge();
+assert.deepEqual(reloaded.calls,['GET'],'a page load without changes does not upload the learning state');
+reloaded.edit(state=>{state.daily['2026-09-22']=1});await reloaded.flush();
+assert.deepEqual(reloaded.calls,['GET','STAMP','POST']);
+assert.equal(reloaded.remote().legacyField,'newer app');
+
+// Stamp of another account is ignored.
+const other=harness({storage:new Map([['suomi-cloud-stamp-v1',JSON.stringify({user:'someone-else',at:steady.remoteAt(),hash:'x'})]])});
+await other.sync.pullAndMerge();
+assert.deepEqual(other.calls,['GET','POST']);
+console.log('PASS: event-driven sync, idle stability, coalescing, concurrent answers, failure recovery, timestamp short path, foreign writes and reloads');

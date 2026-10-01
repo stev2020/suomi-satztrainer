@@ -235,6 +235,13 @@ Jedes der sechs vorhandenen Levels hat einen eigenen Pfad mit 13 Themen in derse
 Prüfung: `node test-learning-path.mjs` sowie `node test-home-browser.mjs` (Playwright) für Levelwechsel, Fortsetzung, importierten Fortschritt und mobile Darstellung.
 
 
+## Performance-Korrekturen (1. Oktober 2026)
+
+- **Synchronisierung:** Antworten werden gesammelt und höchstens alle 15 s hochgeladen; beim Verlassen oder Verstecken des Tabs, beim Abmelden und mit „Jetzt synchronisieren“ sofort. Vor dem Hochladen liest die App nur noch `updated_at`. Den ganzen Lernstand lädt sie nur, wenn ein anderes Gerät inzwischen geschrieben hat oder die Seite neu geladen wurde. Ein Neuladen ohne neue Antworten lädt nichts hoch. Dafür merkt sich die App unter `suomi-cloud-stamp-v1` Konto, Zeitstempel und einen Fingerabdruck des zuletzt hochgeladenen Stands. Im Lasttest (100 Nutzer, voller Lernstand ≈ 450 KB) sank die Upload-Wartezeit (p95) von 1,75 s auf 0,24 s, und je Antwort werden statt ~450 KB nur noch rund 100 Byte heruntergeladen.
+- **Klassenräume:** `room` und `stream_list` lesen die Raumzeile ohne exklusive Sperre (`20261001153000_classroom_read_without_lock.sql`). Schreibaktionen sperren weiterhin, weil sie Grenzen wie „Raum voll“ prüfen. Mit 100 Personen in einem Raum, die alle gleichzeitig laden, verdoppelte sich der Durchsatz, und die Wartezeit (p95) sank von 1,5 s auf 0,3 s.
+- **Offline:** Der Service Worker speichert jetzt die aktuelle `style.css?v=171` vor (vorher eine veraltete Version).
+- **Prüfen:** `node test-auth-sync.mjs`; die Migration mit `supabase db push` anwenden.
+
 ## Audit-Korrekturen (25. September 2026)
 
 - **Lernpfad:** Gemeldete oder in Prüfung befindliche Sätze werden übersprungen und blockieren keine Etappe mehr. Fehlende Satzdaten ohne Meldung blockieren weiterhin (Schutz vor unvollständigem Laden).

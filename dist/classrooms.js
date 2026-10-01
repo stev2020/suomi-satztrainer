@@ -1,5 +1,5 @@
 import {uiLocale} from './i18n.mjs?v=14';
-import {accountUser,accountRequest} from './auth.js?v=104';
+import {accountUser,accountRequest} from './auth.js?v=105';
 import {GRAMMAR_TOPICS,topicNotes} from './grammar-topics.mjs';
 
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
