@@ -7,8 +7,14 @@ import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './supabase-config.js';
 
 const STORE='suomi-learning-v1';
 const SESSION='suomi-auth-session-v1';
+// Remembers when this device last wrote the cloud copy (and a fingerprint of
+// what it wrote). Then a sync only has to read the tiny updated_at field.
+const STAMP='suomi-cloud-stamp-v1';
+// Answers are collected and uploaded together at most every 15 seconds; hiding
+// the tab, going offline→online, logout and "Jetzt synchronisieren" upload at once.
+const SYNC_DELAY=15000;
 const $=id=>document.getElementById(id);
-let session=null,lastSnapshot='',timer=null,syncInFlight=null,syncQueued=false,syncReady=false,deletionManifest=null;
+let session=null,lastSnapshot='',lastUpload=null,timer=null,syncInFlight=null,syncQueued=false,syncReady=false,deletionManifest=null;
 
 const configured=()=>/^https:\/\/.+\.supabase\.co$/.test(SUPABASE_URL)&&SUPABASE_PUBLISHABLE_KEY.length>20;
 const normalizeUsername=v=>{
@@ -72,27 +78,60 @@ function mergeLearning(local,cloud){
 async function cloudLearning(){
   const r=await request('/rest/v1/learning_state?select=state,updated_at&limit=1');
   if(!r.ok)throw new Error('Der Online-Lernstand konnte nicht geladen werden.');
-  const rows=await r.json();return rows[0]?.state||null;
+  const rows=await r.json();return {state:rows[0]?.state||null,updatedAt:rows[0]?.updated_at??null};
 }
+async function cloudUpdatedAt(){
+  const r=await request('/rest/v1/learning_state?select=updated_at&limit=1');
+  if(!r.ok)throw new Error('Der Online-Lernstand konnte nicht geladen werden.');
+  const rows=await r.json();return rows[0]?.updated_at??null;
+}
+// Small non-cryptographic fingerprint (cyrb53) of the uploaded snapshot.
+function fingerprint(text){
+  let h1=0xdeadbeef^text.length,h2=0x41c6ce57^text.length;
+  for(let i=0;i<text.length;i++){const c=text.charCodeAt(i);h1=Math.imul(h1^c,2654435761);h2=Math.imul(h2^c,1597334677)}
+  h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);
+  h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);
+  return (4294967296*(2097151&h2)+(h1>>>0)).toString(36);
+}
+const sameTime=(a,b)=>a!=null&&b!=null&&Date.parse(a)===Date.parse(b);
+function readStamp(){
+  try{const v=JSON.parse(localStorage.getItem(STAMP));return v&&v.user===session?.user?.id&&v.at&&v.hash?v:null}catch{return null}
+}
+function writeStamp(at,snapshot){if(session?.user)localStorage.setItem(STAMP,JSON.stringify({user:session.user.id,at,hash:fingerprint(snapshot)}))}
 async function synchronizeLearning(state=currentLearning(),reloadIfChanged=true,silent=false){
   if(!session?.user||!state)return;
   if(syncInFlight)return syncInFlight;
-  clearTimeout(timer);syncQueued=false;
+  clearTimeout(timer);timer=null;syncQueued=false;
   let succeeded=false;
   syncInFlight=(async()=>{
     if(!silent)syncState('Synchronisierung läuft …');
     // Merge before writing so another device's newer answers are retained.
-    const cloud=await cloudLearning();
+    // If the cloud copy still carries the timestamp of this device's last
+    // upload, nobody else wrote since and it equals the copy kept in memory:
+    // then only updated_at is read instead of the whole learning state.
+    const known=readStamp();
+    let cloud,remoteAt=null;
+    if(known&&lastUpload?.user===session.user.id){remoteAt=await cloudUpdatedAt();if(sameTime(remoteAt,known.at))cloud=lastUpload.state;}
+    if(cloud===undefined)({state:cloud,updatedAt:remoteAt}=await cloudLearning());
+    const unchanged=!!known&&sameTime(remoteAt,known.at);
     const merged=mergeLearning(mergeLearning(currentLearning(),state),cloud);
     const changed=stableJSON(merged)!==stableJSON(currentLearning());
     // Apply before the upload: answers made while POST is pending must remain
     // in memory and local storage and be sent by the queued follow-up.
-    localStorage.setItem(STORE,JSON.stringify(merged));
+    const mergedText=JSON.stringify(merged);
+    localStorage.setItem(STORE,mergedText);
     let applied=false;
     if(changed&&reloadIfChanged)applied=!!window.suomiLearningState?.applyCloud?.(merged);
     const acceptedSnapshot=stableJSON(currentLearning());
-    const r=await request('/rest/v1/learning_state?on_conflict=user_id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({user_id:session.user.id,state:merged,updated_at:new Date().toISOString()})});
-    if(!r.ok)throw new Error('Der Lernstand konnte nicht synchronisiert werden.');
+    // Nothing new since this device's last upload (e.g. page reload): no write.
+    if(!(unchanged&&fingerprint(acceptedSnapshot)===known.hash)){
+      const updatedAt=new Date().toISOString();
+      const r=await request('/rest/v1/learning_state?on_conflict=user_id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({user_id:session.user.id,state:merged,updated_at:updatedAt})});
+      if(!r.ok)throw new Error('Der Lernstand konnte nicht synchronisiert werden.');
+      writeStamp(updatedAt,acceptedSnapshot);
+      // Private copy: the app may keep and change the applied objects.
+      lastUpload={user:session.user.id,state:JSON.parse(mergedText)};
+    }else lastUpload={user:session.user.id,state:JSON.parse(JSON.stringify(cloud))};
     // The app can normalize fields/order when applying cloud data. Compare
     // future edits with that accepted app snapshot, not the raw cloud object.
     lastSnapshot=acceptedSnapshot;succeeded=true;
@@ -109,7 +148,7 @@ async function uploadLearning(state=currentLearning()){return synchronizeLearnin
 async function pullAndMerge(){return synchronizeLearning(currentLearning(),true)}
 function syncError(){syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true)}
 function syncChangedNow(){
-  clearTimeout(timer);
+  clearTimeout(timer);timer=null;
   if(!session?.user||!syncReady||syncInFlight)return;
   syncQueued=false;
   const current=currentLearning(),snapshot=stableJSON(current);
@@ -118,8 +157,9 @@ function syncChangedNow(){
 function scheduleSync(){
   if(!session?.user)return;
   syncQueued=true;
-  clearTimeout(timer);
-  if(syncReady&&!syncInFlight)timer=setTimeout(syncChangedNow,500);
+  // A pending timer is kept (not restarted), so steady answering still
+  // uploads every SYNC_DELAY instead of waiting for a pause.
+  if(syncReady&&!syncInFlight&&!timer)timer=setTimeout(syncChangedNow,SYNC_DELAY);
 }
 function renderAccount(){
   const logged=!!session?.user;
@@ -179,13 +219,13 @@ async function deleteAccount(username,password,decisions){
   const r=await request('/functions/v1/delete-account',{method:'POST',body:JSON.stringify({username,password,decisions})});
   const result=await r.json().catch(()=>({}));
   if(!r.ok)throw new Error(result.error||'Das Konto konnte nicht gelöscht werden.');
-  clearTimeout(timer);syncQueued=false;syncReady=false;
-  localStorage.removeItem(STORE);localStorage.removeItem(SESSION);
+  clearTimeout(timer);timer=null;syncQueued=false;syncReady=false;
+  localStorage.removeItem(STORE);localStorage.removeItem(SESSION);localStorage.removeItem(STAMP);
   try{sessionStorage.removeItem('suomi-guest-exercise-accepted')}catch{}
   session=null;location.reload();
 }
 async function logout(){
-  clearTimeout(timer);
+  clearTimeout(timer);timer=null;
   // Send pending answers before the local copy is removed (at most 5 seconds).
   const current=currentLearning();
   if(session?.user&&current&&stableJSON(current)!==lastSnapshot){
@@ -193,7 +233,7 @@ async function logout(){
     await Promise.race([(syncInFlight||Promise.resolve()).then(()=>synchronizeLearning(currentLearning(),false,true)).catch(()=>{}),new Promise(r=>setTimeout(r,5000))]);
   }
   if(session?.access_token)await api('/auth/v1/logout',{method:'POST',headers:authHeaders()}).catch(()=>{});
-  localStorage.removeItem(STORE);
+  localStorage.removeItem(STORE);localStorage.removeItem(STAMP);
   saveSession(null);
   location.reload();
 }
@@ -228,7 +268,10 @@ $('account-progress').onclick=()=>{$('account-dialog').close();window.dispatchEv
   $('sync-now').onclick=async()=>{try{status('');await pullAndMerge()}catch(err){syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true);status(err.message,true)}};
   $('copy-recovery').onclick=async()=>{try{await navigator.clipboard.writeText($('recovery-code-result').textContent);status('Code kopiert.')}catch{status('Bitte kopiere den Code manuell.',true)}};
   window.addEventListener('suomi-learning-changed',scheduleSync);
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncChangedNow()});
+  // Hiding the tab (switching apps, closing) uploads pending answers right away;
+  // anything that still does not arrive stays local and is merged next time.
+  document.addEventListener('visibilitychange',syncChangedNow);
+  window.addEventListener('pagehide',syncChangedNow);
   window.addEventListener('focus',syncChangedNow);window.addEventListener('online',syncChangedNow);
   renderAccount();
 }
@@ -237,7 +280,7 @@ export const accountUser=()=>session?.user||null;
 export {request as accountRequest};
 window.suomiAccountUser=()=>session?.user||null;
 window.suomiAccountRequest=request;
-import('./classrooms.js?v=77').catch(()=>{});
+import('./classrooms.js?v=78').catch(()=>{});
 import('./quality-review.js?v=4').catch(()=>{});
 if(session?.user&&configured())refreshSession().then(async ok=>{if(!ok)return;try{await pullAndMerge();}catch(err){syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true);status(err.message,true);}}).catch(syncError).finally(()=>{syncReady=true;if(syncQueued)scheduleSync()});
 else syncReady=true;
