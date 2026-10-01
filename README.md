@@ -235,6 +235,18 @@ Jedes der sechs vorhandenen Levels hat einen eigenen Pfad mit 13 Themen in derse
 Prüfung: `node test-learning-path.mjs` sowie `node test-home-browser.mjs` (Playwright) für Levelwechsel, Fortsetzung, importierten Fortschritt und mobile Darstellung.
 
 
+## Schnellerer Start (1. Oktober 2026)
+
+- **Ladereihenfolge:** `grammar.json` wird erst geladen, nachdem `sentences.json` da ist. Für Gäste kommt davor noch `lexicon.json`, das die Satzkarte braucht. Vorher luden Sätze und Grammatik gleichzeitig und teilten sich die Leitung. Die Grammatikhilfe zeigt „wird geladen …“, bis sie da ist, und eine offene Karte wird nachgezogen. Spätestens nach 8 s wird sie in jedem Fall geladen.
+- **Gemessen** (Chromium, Handy-Ansicht, 4× langsamere CPU, Median aus 3 Läufen):
+
+  | Netz | App bereit vorher → nachher | Gäste-Satzkarte vorher → nachher |
+  |---|---|---|
+  | 4G (9 Mbit/s) | 3,8 s → 3,0 s | 4,4 s → 3,7 s |
+  | schwaches 3G (1,6 Mbit/s) | 8,6 s → 6,0 s | 10,7 s → 8,1 s |
+
+- **Service Worker:** Seitenaufrufe werden ohne Query-String und Anker gespeichert. So legt nicht mehr jede Variante (`?intro`, `?x=1` …) einen eigenen Eintrag an.
+
 ## Schutz vor Melde-Missbrauch (1. Oktober 2026)
 
 - **Prüfer-Entscheidung gilt:** Hat ein Prüfer einen gemeldeten Satz oder eine Übersetzung behalten („Wiederherstellen“), landen neue Hinweise nur noch in der Prüfliste. Automatisch gesperrt wird dann nicht mehr; das kann nur noch ein Prüfer.
