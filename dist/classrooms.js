@@ -9,7 +9,7 @@ let room=null,selected=null,deck=null,grammar=null,customItems=[],busy=false,dir
 let classroomHidden=new Map(),globalQuality={sentence_ids:[],translations:[]};
 const replyDrafts=new Map();
 const drafts=new Map(); // Memory only; never localStorage or service-worker data.
-const css=document.createElement('link');css.rel='stylesheet';css.href='./classrooms.css?v=70';document.head.append(css);
+const css=document.createElement('link');css.rel='stylesheet';css.href='./classrooms.css?v=71';document.head.append(css);
 const button=document.createElement('button');button.id='classrooms-button';button.type='button';button.dataset.view='classrooms';button.textContent='Klassenräume';
 const headerNav=document.querySelector('.header-nav');
 if(headerNav)headerNav.insertBefore(button,headerNav.querySelector('[data-view="progress"]'));else $('account-button').before(button);
