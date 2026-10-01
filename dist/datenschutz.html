@@ -11,7 +11,7 @@
 <h2>2. Das Wichtigste in Kürze</h2>
 <ul>
 <li>Die App funktioniert ohne Konto. Ohne Konto speichert sie nichts dauerhaft auf einem Server.</li>
-<li>Es gibt keine Werbung, keine Analyse- oder Tracking-Dienste und keine Cookies.</li>
+<li>Es gibt keine Werbung, keine Analyse- oder Tracking-Dienste, und die App setzt keine Cookies.</li>
 <li>Für ein Konto brauchst du nur einen Benutzernamen und ein Passwort, keine E-Mail-Adresse.</li>
 <li>Schriften werden von dieser Website selbst ausgeliefert, nicht von Google.</li>
 </ul>
@@ -42,8 +42,10 @@
 </ul>
 <p>Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Bereitstellung des von dir gewünschten Kontos und der Klassenräume) und für den Missbrauchsschutz Art. 6 Abs. 1 lit. f DSGVO. Die Daten werden gespeichert, bis du dein Konto löschst. Das geht jederzeit selbst unter <em>Konto → Konto löschen</em>; dabei werden Konto, Lernstand und deine Dateien entfernt.</p>
 
-<h2>6. Passwortprüfung</h2>
+<h2>6. Passwortprüfung und Schutz vor automatisierten Registrierungen</h2>
 <p>Bei Registrierung und Passwortänderung prüft der Server, ob dein Passwort in bekannten Datenlecks vorkommt (Dienst „Have I Been Pwned“, Troy Hunt, Australien). Dabei werden nur die ersten fünf Zeichen eines SHA-1-Hashwerts übertragen. Dein Passwort und deine IP-Adresse gelangen nicht zu diesem Dienst. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (Schutz deines Kontos).</p>
+
+<p>Damit nicht massenhaft automatisch Konten angelegt werden, nutzt das Registrierungsformular <strong>Cloudflare Turnstile</strong> (Cloudflare, Inc., 101 Townsend St., San Francisco, USA). Turnstile wird erst geladen, wenn du das Formular „Registrieren“ öffnest. Dabei verarbeitet Cloudflare deine IP-Adresse, deinen Browser-Typ (User-Agent) und technische Verbindungsmerkmale, um Menschen von Bots zu unterscheiden; Cloudflare kann dafür notwendige Daten in deinem Browser ablegen. Beim Absenden prüft unser Server das Ergebnis bei Cloudflare. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (Schutz des Dienstes vor Missbrauch). Cloudflare ist unter dem EU-US Data Privacy Framework zertifiziert. Weitere Informationen: <a href="https://www.cloudflare.com/turnstile-privacy-policy/" target="_blank" rel="noopener">Turnstile-Datenschutzhinweise</a>.</p>
 
 <h2>7. Audioaufnahmen (Tatoeba)</h2>
 <p>Die finnischen Aufnahmen werden direkt von Tatoeba (tatoeba.org, Frankreich) geladen, sobald du übst und eine Karte mit Aufnahme angezeigt oder als nächste vorbereitet wird. Dabei erhält Tatoeba deine IP-Adresse und technische Verbindungsdaten. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (Bereitstellung der Hörübungen). Weitere Informationen: <a href="https://tatoeba.org/de/terms_of_use" target="_blank" rel="noopener">Nutzungsbedingungen von Tatoeba</a>.</p>

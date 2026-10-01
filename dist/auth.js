@@ -3,7 +3,7 @@ import {mergeVerbProgress} from './verb-practice.mjs';
 import {mergeEndingsProgress} from './endings-progress.mjs?v=1';
 import {mergePerformanceEvents} from './learning-insights.mjs';
 import {mergeGames} from './games-progress.mjs';
-import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './supabase-config.js';
+import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,TURNSTILE_SITE_KEY} from './supabase-config.js?v=2';
 
 const STORE='suomi-learning-v1';
 const SESSION='suomi-auth-session-v1';
@@ -189,9 +189,36 @@ async function login(username,password,syncCloud=true,seedState=null){
   if(seedState)localStorage.setItem(STORE,JSON.stringify(seedState));
   if(syncCloud)await pullAndMerge();else await uploadLearning(seedState||localLearning());
 }
+// Cloudflare Turnstile protects the registration against bots. The script is
+// loaded only when the registration form is opened, not on every visit.
+const TURNSTILE_SCRIPT='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+let turnstileLoad=null,turnstileWidget=null,turnstileToken='';
+function loadTurnstile(){
+  if(!TURNSTILE_SITE_KEY)return Promise.resolve(null);
+  if(window.turnstile)return Promise.resolve(window.turnstile);
+  return turnstileLoad??=new Promise((resolve,reject)=>{
+    const script=document.createElement('script');script.src=TURNSTILE_SCRIPT;script.async=true;
+    script.onload=()=>resolve(window.turnstile);
+    script.onerror=()=>{turnstileLoad=null;script.remove();reject(new Error('Die Sicherheitsprüfung konnte nicht geladen werden. Bitte prüfe die Verbindung und versuche es erneut.'))};
+    document.head.append(script);
+  });
+}
+async function showTurnstile(){
+  const box=$('register-turnstile');if(!box||!TURNSTILE_SITE_KEY||turnstileWidget!==null)return;
+  try{
+    const turnstile=await loadTurnstile();if(!turnstile||turnstileWidget!==null)return;
+    turnstileWidget=turnstile.render(box,{sitekey:TURNSTILE_SITE_KEY,action:'register',
+      theme:document.documentElement.dataset.themeMode==='dark'?'dark':'light',language:document.documentElement.lang||'auto',
+      callback:token=>{turnstileToken=token},'expired-callback':()=>{turnstileToken=''},'error-callback':()=>{turnstileToken=''}});
+  }catch(err){status(err.message,true)}
+}
+// A token is valid for one check only, so every attempt gets a fresh one.
+function resetTurnstile(){turnstileToken='';if(turnstileWidget!==null)try{window.turnstile?.reset(turnstileWidget)}catch{}}
 async function register(username,password){
   username=normalizeUsername(username);checkPassword(password);
-  const r=await api('/functions/v1/register',{method:'POST',body:JSON.stringify({username,password})});
+  if(TURNSTILE_SITE_KEY&&!turnstileToken){showTurnstile();throw new Error('Bitte warte kurz, bis die Sicherheitsprüfung unter dem Formular abgeschlossen ist.');}
+  let r;
+  try{r=await api('/functions/v1/register',{method:'POST',body:JSON.stringify({username,password,turnstileToken})})}finally{resetTurnstile()}
   const result=await r.json().catch(()=>({}));
   if(!r.ok)throw new Error(result.error||'Registrierung fehlgeschlagen.');
   const guestState=currentLearning();await login(username,password,false,guestState);return result.recoveryCode;
@@ -248,7 +275,7 @@ async function logout(){
   location.reload();
 }
 function addDialog(){
-  document.body.insertAdjacentHTML('beforeend',`<dialog id="account-dialog" aria-labelledby="account-title"><div class="dialog-top"><h2 id="account-title">Dein Konto</h2><button id="close-account" class="quiet" aria-label="Schließen">✕</button></div><div id="account-unconfigured" hidden><p>Die Kontofunktion ist vorbereitet, aber die Serververbindung ist noch nicht aktiviert.</p></div><div id="account-logged-out"><div class="account-tabs"><button type="button" data-account-tab="login" class="selected">Anmelden</button><button type="button" data-account-tab="register">Registrieren</button><button type="button" data-account-tab="recover">Passwort vergessen</button></div><form id="login-form" class="account-form"><label>Benutzername<input id="login-name" autocomplete="username" required></label><label>Passwort<input id="login-password" type="password" autocomplete="current-password" required minlength="8"></label><button class="primary" type="submit">Anmelden</button></form><form id="register-form" class="account-form" hidden><label>Benutzername<input id="register-name" autocomplete="username" required></label><label>Passwort<input id="register-password" type="password" autocomplete="new-password" required minlength="8"></label><button class="primary" type="submit">Konto erstellen</button><p class="account-hint">Keine E-Mail nötig. Danach erhältst du einmalig einen Wiederherstellungscode.</p></form><form id="recover-form" class="account-form" hidden><label>Benutzername<input id="recover-name" autocomplete="username" required></label><label>Wiederherstellungscode<input id="recover-code" autocomplete="off" required></label><label>Neues Passwort<input id="recover-password" type="password" autocomplete="new-password" required minlength="8"></label><button class="primary" type="submit">Passwort neu setzen</button></form></div><div id="account-logged-in" hidden><p>Angemeldet als <strong id="account-name"></strong></p><p id="account-sync">Synchronisierung wird geprüft …</p><button id="account-progress" class="primary account-progress" type="button">Mein Fortschritt</button><button id="sync-now" class="quiet" type="button">Jetzt synchronisieren</button><button id="logout" class="quiet" type="button">Abmelden</button><button id="delete-account-open" class="quiet account-danger" type="button">Konto löschen</button><form id="delete-account-form" class="account-form account-delete-form" hidden><h3>Konto endgültig löschen</h3><p>Dein Konto, Lernstand, Beiträge, Abgaben, Meldungen und Mitgliedschaften werden unwiderruflich gelöscht. Eigene Klassenräume kannst du an eine dort aktive Lehrkraft übergeben; ohne Übergabe werden sie mitsamt allen Inhalten gelöscht.</p><div id="delete-account-rooms"></div><label>Benutzername zur Bestätigung<input id="delete-account-name" autocomplete="off" required></label><label>Aktuelles Passwort<input id="delete-account-password" type="password" autocomplete="current-password" required minlength="8"></label><div class="account-delete-actions"><button id="delete-account-confirm" class="account-danger" type="submit">Konto endgültig löschen</button><button id="delete-account-cancel" class="quiet" type="button">Abbrechen</button></div></form></div><div id="recovery-result" class="recovery-result" hidden><h3>Wiederherstellungscode</h3><p>Speichere diesen Code sicher. Er wird nicht noch einmal angezeigt.</p><code id="recovery-code-result"></code><button id="copy-recovery" class="quiet" type="button">Code kopieren</button></div><p id="account-status" role="status"></p></dialog>`);
+  document.body.insertAdjacentHTML('beforeend',`<dialog id="account-dialog" aria-labelledby="account-title"><div class="dialog-top"><h2 id="account-title">Dein Konto</h2><button id="close-account" class="quiet" aria-label="Schließen">✕</button></div><div id="account-unconfigured" hidden><p>Die Kontofunktion ist vorbereitet, aber die Serververbindung ist noch nicht aktiviert.</p></div><div id="account-logged-out"><div class="account-tabs"><button type="button" data-account-tab="login" class="selected">Anmelden</button><button type="button" data-account-tab="register">Registrieren</button><button type="button" data-account-tab="recover">Passwort vergessen</button></div><form id="login-form" class="account-form"><label>Benutzername<input id="login-name" autocomplete="username" required></label><label>Passwort<input id="login-password" type="password" autocomplete="current-password" required minlength="8"></label><button class="primary" type="submit">Anmelden</button></form><form id="register-form" class="account-form" hidden><label>Benutzername<input id="register-name" autocomplete="username" required></label><label>Passwort<input id="register-password" type="password" autocomplete="new-password" required minlength="8"></label><div id="register-turnstile" class="account-turnstile"></div><button class="primary" type="submit">Konto erstellen</button><p class="account-hint">Keine E-Mail nötig. Danach erhältst du einmalig einen Wiederherstellungscode.</p></form><form id="recover-form" class="account-form" hidden><label>Benutzername<input id="recover-name" autocomplete="username" required></label><label>Wiederherstellungscode<input id="recover-code" autocomplete="off" required></label><label>Neues Passwort<input id="recover-password" type="password" autocomplete="new-password" required minlength="8"></label><button class="primary" type="submit">Passwort neu setzen</button></form></div><div id="account-logged-in" hidden><p>Angemeldet als <strong id="account-name"></strong></p><p id="account-sync">Synchronisierung wird geprüft …</p><button id="account-progress" class="primary account-progress" type="button">Mein Fortschritt</button><button id="sync-now" class="quiet" type="button">Jetzt synchronisieren</button><button id="logout" class="quiet" type="button">Abmelden</button><button id="delete-account-open" class="quiet account-danger" type="button">Konto löschen</button><form id="delete-account-form" class="account-form account-delete-form" hidden><h3>Konto endgültig löschen</h3><p>Dein Konto, Lernstand, Beiträge, Abgaben, Meldungen und Mitgliedschaften werden unwiderruflich gelöscht. Eigene Klassenräume kannst du an eine dort aktive Lehrkraft übergeben; ohne Übergabe werden sie mitsamt allen Inhalten gelöscht.</p><div id="delete-account-rooms"></div><label>Benutzername zur Bestätigung<input id="delete-account-name" autocomplete="off" required></label><label>Aktuelles Passwort<input id="delete-account-password" type="password" autocomplete="current-password" required minlength="8"></label><div class="account-delete-actions"><button id="delete-account-confirm" class="account-danger" type="submit">Konto endgültig löschen</button><button id="delete-account-cancel" class="quiet" type="button">Abbrechen</button></div></form></div><div id="recovery-result" class="recovery-result" hidden><h3>Wiederherstellungscode</h3><p>Speichere diesen Code sicher. Er wird nicht noch einmal angezeigt.</p><code id="recovery-code-result"></code><button id="copy-recovery" class="quiet" type="button">Code kopieren</button></div><p id="account-status" role="status"></p></dialog>`);
 }
 function showRecovery(code){$('recovery-code-result').textContent=code;$('recovery-result').hidden=false}
 function selectAccountTab(tab='login'){
@@ -266,7 +293,7 @@ function bind(){
   $('account-button').onclick=()=>openAccount('login');
   if($('storage-account-link'))$('storage-account-link').onclick=()=>openAccount('login');
   $('close-account').onclick=()=>$('account-dialog').close();
-  document.querySelectorAll('[data-account-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-account-tab]').forEach(x=>x.classList.toggle('selected',x===b));for(const n of ['login','register','recover'])$(n+'-form').hidden=b.dataset.accountTab!==n;$('recovery-result').hidden=true;status('')});
+  document.querySelectorAll('[data-account-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-account-tab]').forEach(x=>x.classList.toggle('selected',x===b));for(const n of ['login','register','recover'])$(n+'-form').hidden=b.dataset.accountTab!==n;if(b.dataset.accountTab==='register')showTurnstile();$('recovery-result').hidden=true;status('')});
   $('login-form').onsubmit=async e=>{e.preventDefault();try{status('Anmeldung …');await login($('login-name').value,$('login-password').value);status('');$('login-password').value='';$('account-dialog').close();window.dispatchEvent(new CustomEvent('vanamo:view',{detail:'home'}));window.scrollTo?.(0,0)}catch(err){status(err.message,true)}};
   $('register-form').onsubmit=async e=>{e.preventDefault();try{status('Konto wird erstellt …');showRecovery(await register($('register-name').value,$('register-password').value));status('Konto erstellt und angemeldet.')}catch(err){status(err.message,true)}};
   $('recover-form').onsubmit=async e=>{e.preventDefault();try{status('Konto wird wiederhergestellt …');showRecovery(await recover($('recover-name').value,$('recover-code').value,$('recover-password').value));status('Passwort geändert. Der alte Wiederherstellungscode ist ungültig.')}catch(err){status(err.message,true)}};
@@ -298,7 +325,7 @@ export const accountUser=()=>session?.user||null;
 export {request as accountRequest};
 window.suomiAccountUser=()=>session?.user||null;
 window.suomiAccountRequest=request;
-import('./classrooms.js?v=79').catch(()=>{});
+import('./classrooms.js?v=80').catch(()=>{});
 import('./quality-review.js?v=4').catch(()=>{});
 if(session?.user&&configured())refreshSession().then(async ok=>{if(!ok)return;try{await pullAndMerge();}catch(err){syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true);status(err.message,true);}}).catch(syncError).finally(()=>{syncReady=true;if(syncQueued)scheduleSync()});
 else syncReady=true;
