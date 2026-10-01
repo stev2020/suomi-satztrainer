@@ -303,8 +303,8 @@ grant execute on function public.revoke_user_sessions(uuid) to service_role;
 -- S5: learning state at most 2 MB (a full state is ~0.5 MB today), only for
 -- accounts with a profile, and at most 150 writes per 10 minutes (the app
 -- writes at most every 15 s).
-alter table public.learning_state drop constraint if exists learning_state_state_check;
-alter table public.learning_state add constraint learning_state_state_check check (octet_length(state::text) <= 2000000);
+-- The old 5 MB check stays; this stricter one applies on top (no drop needed).
+alter table public.learning_state add constraint learning_state_state_max_2mb check (octet_length(state::text) <= 2000000);
 alter table public.learning_state add column if not exists write_window_start timestamptz not null default now();
 alter table public.learning_state add column if not exists write_count integer not null default 0;
 create or replace function account_private.learning_state_write_limit()
@@ -325,8 +325,7 @@ begin
  return new;
 end $$;
 revoke all on function account_private.learning_state_write_limit() from public, anon, authenticated;
-drop trigger if exists learning_state_write_limit on public.learning_state;
-create trigger learning_state_write_limit before insert or update on public.learning_state
+create or replace trigger learning_state_write_limit before insert or update on public.learning_state
  for each row execute function account_private.learning_state_write_limit();
 
 create or replace function account_private.has_profile()
@@ -335,11 +334,9 @@ returns boolean language sql stable security definer set search_path='' as $$
 $$;
 revoke all on function account_private.has_profile() from public, anon;
 grant execute on function account_private.has_profile() to authenticated;
-drop policy if exists "users insert own learning state" on public.learning_state;
-create policy "users insert own learning state" on public.learning_state for insert to authenticated
+alter policy "users insert own learning state" on public.learning_state
  with check ((select auth.uid())=user_id and (select account_private.has_profile()));
-drop policy if exists "users update own learning state" on public.learning_state;
-create policy "users update own learning state" on public.learning_state for update to authenticated
+alter policy "users update own learning state" on public.learning_state
  using ((select auth.uid())=user_id)
  with check ((select auth.uid())=user_id and (select account_private.has_profile()));
 
