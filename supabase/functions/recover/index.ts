@@ -6,7 +6,9 @@ const json=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status,
 const encoder=new TextEncoder();
 const hash=async(value:string)=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',encoder.encode(value)))).map(b=>b.toString(16).padStart(2,'0')).join('');
 const hmac=async(secret:string,value:string)=>{const key=await crypto.subtle.importKey('raw',encoder.encode(secret),{name:'HMAC',hash:'SHA-256'},false,['sign']);return Array.from(new Uint8Array(await crypto.subtle.sign('HMAC',key,encoder.encode(value)))).map(b=>b.toString(16).padStart(2,'0')).join('');};
-const clientAddress=(req:Request)=>String(req.headers.get('x-forwarded-for')||req.headers.get('cf-connecting-ip')||req.headers.get('x-real-ip')||'unknown').split(',')[0].trim().slice(0,200);
+// cf-connecting-ip is set by Cloudflare in front of Supabase and cannot be
+// chosen by the client; the first X-Forwarded-For entry can, so it is only a fallback.
+const clientAddress=(req:Request)=>String(req.headers.get('cf-connecting-ip')||req.headers.get('x-real-ip')||req.headers.get('x-forwarded-for')||'unknown').split(',')[0].trim().slice(0,200);
 const consume=async(admin:any,secret:string,action:string,subject:string,limit:number,windowSeconds:number)=>{const {data,error}=await admin.rpc('consume_abuse_limit',{p_action:action,p_subject_hash:await hmac(secret,subject),p_limit:limit,p_window_seconds:windowSeconds});if(error)throw error;return data===true;};
 const code=()=>Array.from(crypto.getRandomValues(new Uint8Array(20))).map(b=>(b%32).toString(32).toUpperCase()).join('').match(/.{1,5}/g)!.join('-');
 

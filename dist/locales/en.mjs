@@ -1155,4 +1155,6 @@ export default {
  "5 Aufgaben": "5 tasks",
  "10 Aufgaben": "10 tasks",
  "Nach jeder Antwort siehst du alle sechs Formen – bei den wichtigsten Verben mit Satzmustern. Schwierige Formen kommen mit Abstand wieder.": "After each answer you see all six forms – with sentence patterns for the most important verbs. Difficult forms come back after a while.",
+ "Die Sicherheitsprüfung konnte nicht geladen werden. Bitte prüfe die Verbindung und versuche es erneut.": "The security check could not be loaded. Please check your connection and try again.",
+ "Bitte warte kurz, bis die Sicherheitsprüfung unter dem Formular abgeschlossen ist.": "Please wait a moment until the security check below the form is complete.",
 }

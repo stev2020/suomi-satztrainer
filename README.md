@@ -235,6 +235,14 @@ Jedes der sechs vorhandenen Levels hat einen eigenen Pfad mit 13 Themen in derse
 Prüfung: `node test-learning-path.mjs` sowie `node test-home-browser.mjs` (Playwright) für Levelwechsel, Fortsetzung, importierten Fortschritt und mobile Darstellung.
 
 
+## Bot-Schutz bei der Registrierung (1. Oktober 2026)
+
+- **Cloudflare Turnstile:** Das Registrierungsformular zeigt das Turnstile-Häkchen. Das Skript wird erst beim Öffnen von „Registrieren“ geladen; jeder Versuch bekommt ein neues Token. Der öffentliche Site Key steht in `dist/supabase-config.js`.
+- **Server:** `register` prüft das Token bei Cloudflare (`siteverify`), sobald das Supabase-Secret `TURNSTILE_SECRET_KEY` gesetzt ist. Ohne Secret wird nicht geprüft, so lässt sich die Umstellung ohne Ausfall einspielen. Ist Cloudflare nicht erreichbar, lehnt der Server die Registrierung ab (503), statt sie ungeprüft durchzulassen.
+- **IP-Erkennung:** `register` und `recover` nehmen zuerst `cf-connecting-ip`, das der Client nicht selbst setzen kann; `X-Forwarded-For` dient nur noch als Rückfall.
+- **CSP:** `index.html` erlaubt `https://challenges.cloudflare.com` für Skript und Frame. Die Datenschutzerklärung nennt Turnstile.
+- **Prüfen:** `node test-turnstile-browser.mjs`.
+
 ## Sicherheits-Korrekturen (1. Oktober 2026)
 
 - **Anhänge und Speicher:** Ein Entwurfsanhang lässt sich nur verwerfen, wenn die Datei vorher aus dem Storage entfernt wurde (das macht die App). Dateien gelöschter Räume und Konten räumt die neue Edge Function `storage-sweep` auf; die App ruft sie nach dem Löschen eines Raums auf, `delete-account` nach der Kontolöschung. Grundlage ist `stream_orphan_objects()`, nur für `service_role`.
