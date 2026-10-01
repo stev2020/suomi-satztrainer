@@ -148,6 +148,9 @@ header{flex-wrap:wrap}.report-error{align-self:center;margin:18px 0 0;padding:7p
 :root:is([data-theme=revontulet],[data-theme=kaamos]) :is(.home-daily-action button,#home-view .quick-verb-review):not(:disabled){border-color:var(--button-edge);box-shadow:3px 3px 0 var(--button-edge)}
 :root:is([data-theme=revontulet],[data-theme=kaamos]) :is(.home-daily-action button,#home-view .quick-verb-review):not(:disabled):hover{box-shadow:4px 4px 0 var(--button-edge)}
 :root:is([data-theme=revontulet],[data-theme=kaamos]) :is(.home-daily-action button,#home-view .quick-verb-review):not(:disabled):active{box-shadow:1px 1px 0 var(--button-edge)}
+/* … und überall sonst, wo die Knopffarbe als Fläche auftaucht (Übungen, Konto, Verben, Klassenräume):
+   dort --line lokal umbiegen, damit Rand und Schatten in allen Zuständen mitziehen. */
+:root:is([data-theme=revontulet],[data-theme=kaamos]) :is(.primary,.favorite.saved,.search-grid button.preview,#grade-again,.insight-card button:not(:disabled),.guest-next,.guest-check,.verb-start .verb-counts button:first-child,#classrooms-view [data-cr=confirm_custom],.cr-assignment-meta .cr-assignment-status,.cr-assignment-number,.cr-assignment-section-title>span,.cr-feed-announcement .cr-feed-type){--line:var(--button-edge)}
 /* „Neue Sätze lernen“: Schatten in der Farbe von „Weiterlernen“ (Heidelbeere eine Spur dunkler) */
 .home-new{--new-shadow:var(--lavender)}:root[data-theme=mustikka] .home-new{--new-shadow:color-mix(in srgb,var(--lavender) 90%,var(--ink))}
 /* „Verbformen üben“ in allen Designs in der Farbe von „Aufgaben starten“ */
