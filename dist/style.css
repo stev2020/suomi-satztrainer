@@ -16,7 +16,7 @@
 /* Kaamos – Polarnacht (dunkel) */
 :root[data-theme=kaamos]{color-scheme:dark;--ink:#e9efff;--ink-soft:#bbc3ef;--muted:#a8aabc;--bg:#121a2e;--paper:#1c2745;--paper-2:#202c4e;--sunken:#27345c;--line:#7d88b8;--scrim:#05080fb3;--mint:#1f3a66;--lavender:#2e3a66;--lavender-tint:#243056;--orange:#d2a517;--orange-hover:#e2bc3f;--orange-shadow:#8fb0ff;--on-orange:#121a2e;--purple:#8fb0ff;--purple-ink:#c9d6ff;--on-accent:#121a2e;--warm-soft:#1f3a66;--warm-ink:#f2cf6b;--good:#6fd6a5;--good-soft:#1f4a3b;--good-tint:#243056;--bad:#ff8f80;--bad-soft:#5a2b33;--bad-tint:#33202b}
 /* Revontulet – Nordlicht (dunkel): colorswall „Aurora color landscape“ – Indigo, Violett, fast Schwarz */
-:root[data-theme=revontulet]{color-scheme:dark;--ink:#f1ecff;--ink-soft:#cfd8ea;--muted:#b3c0d8;--bg:#0c1418;--paper:#162338;--paper-2:#1a2842;--sunken:#1f2f4d;--line:#7d8fbf;--scrim:#020507b3;--mint:#23526a;--lavender:#3f2a52;--lavender-tint:#2e2238;--orange:#6cc3b6;--orange-hover:#80cfc3;--orange-shadow:#7d8fbf;--on-orange:#0c1418;--purple:#8cc6e5;--purple-ink:#cfe8f5;--on-accent:#0c1418;--heading-accent:#da8cb0;--warm-soft:#23526a;--warm-ink:#e8d5b5;--good:#6fe3b0;--good-soft:#0f4a3a;--good-tint:#1f3a55;--bad:#ff93a8;--bad-soft:#5a1840;--bad-tint:#2b0f33}
+:root[data-theme=revontulet]{color-scheme:dark;--ink:#f1ecff;--ink-soft:#cfd8ea;--muted:#b3c0d8;--bg:#0c1418;--paper:#162338;--paper-2:#1a2842;--sunken:#1f2f4d;--line:#7d8fbf;--scrim:#020507b3;--mint:#23526a;--lavender:#3f2a52;--lavender-tint:#2e2238;--orange:#00ac93;--orange-hover:#1cbca4;--orange-shadow:#bca1d1;--on-orange:#0c1418;--purple:#8cc6e5;--purple-ink:#cfe8f5;--on-accent:#0c1418;--heading-accent:#bca1d1;--warm-soft:#23526a;--warm-ink:#e8d5b5;--good:#6fe3b0;--good-soft:#0f4a3a;--good-tint:#1f3a55;--bad:#ff93a8;--bad-soft:#5a1840;--bad-tint:#2b0f33}
 /* Eingabefelder ohne eigene Farbe folgen der Palette (niedrige Spezifität, eigene Regeln gewinnen) */
 :where(input:not([type=checkbox],[type=radio],[type=range]),textarea,select){background-color:var(--paper);color:var(--ink)}
 ::placeholder{color:var(--muted);opacity:.85}
@@ -138,6 +138,10 @@ header{flex-wrap:wrap}.report-error{align-self:center;margin:18px 0 0;padding:7p
 #home-verbs-note{margin:3px 0 0;font-size:13px;color:var(--ink-soft)}
 .quick-verb-review{min-height:48px;padding:10px 20px;border:2px solid var(--line);border-radius:12px;background:var(--lavender);color:var(--ink);font-size:16px;font-weight:700;box-shadow:3px 3px 0 var(--line);transition:transform .15s,box-shadow .15s}
 .quick-verb-review:hover{transform:translateY(-1px);box-shadow:4px 4px 0 var(--line)}
+/* Nordlicht: Verbformen-Box mit Flieder-Schatten, „Verbformen üben“ in Türkis wie „Aufgaben starten“ */
+:root[data-theme=revontulet] .home-verbs{box-shadow:5px 5px 0 var(--orange-shadow)}
+:root[data-theme=revontulet] .quick-verb-review{background:var(--orange);color:var(--on-orange)}
+:root[data-theme=revontulet] .quick-verb-review:not(:disabled):hover{background:var(--orange-hover)}
 /* Polarnacht: „Verbformen üben“ als Hauptaktion in Gelb wie „Aufgaben starten“ */
 :root[data-theme=kaamos] .quick-verb-review{background:var(--orange);color:var(--on-orange)}
 :root[data-theme=kaamos] .quick-verb-review:hover{background:var(--orange-hover)}
