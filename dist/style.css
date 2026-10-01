@@ -209,7 +209,7 @@ header .header-nav button:hover,header .header-nav button.selected{background:va
 .home-daily-stats .fav-pill span{padding:0;border:0;background:none}
 .fav-star{color:#d19a00;font-size:14px;line-height:1}
 .fav-arrow{margin-left:2px;font-weight:700}
-.home-daily-action{position:relative;display:flex;flex-direction:column;align-items:stretch;gap:9px;min-width:210px}.home-daily-action>span{align-self:flex-end;padding:4px 8px;border:1px solid color-mix(in srgb,var(--line) 33%,transparent);border-radius:7px;background:var(--paper);font-size:12px;font-weight:700}.home-daily-action button{min-height:56px;padding:12px 17px;border:2px solid var(--line);border-radius:12px;background:var(--orange);font-weight:800;line-height:1.3;box-shadow:3px 3px 0 var(--line);color:var(--on-orange)}.home-daily-action button:not(:disabled):hover{background:var(--orange-hover);transform:translateY(-1px);box-shadow:4px 4px 0 var(--line)}.home-daily-action button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--line)}
+.home-daily-action{position:relative;display:flex;flex-direction:column;align-items:stretch;gap:9px;min-width:210px}.home-daily-action>span{align-self:flex-end;padding:4px 8px;border:1px solid color-mix(in srgb,var(--line) 33%,transparent);border-radius:7px;background:var(--paper);font-size:12px;font-weight:700}.home-daily-action button{min-height:56px;padding:12px 17px;border:2px solid var(--line);border-radius:12px;background:var(--orange);font-weight:800;line-height:1.3;box-shadow:3px 3px 0 var(--line);color:var(--on-orange)}.home-daily-action button:not(:disabled):hover{background:var(--orange-hover);transform:translateY(-1px);box-shadow:4px 4px 0 var(--line)}.home-daily-action button:not(:disabled):active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--line)}
 /* Startseite lädt: Texte der Karten ausblenden, Kästen und Buttons bleiben als ruhige Platzhalter stehen */
 .home-view.is-loading :is(#today-count,#daily-plan-note,.home-daily-stats,#start-daily-session,#path-tag,#path-level,#path-current-title,#path-goal,#new-sentences-note,#start-new-sentences,#path-progress-text){color:transparent!important}
 .home-view.is-loading :is(.home-daily-stats span,#daily-due){color:transparent!important;border-color:transparent}
@@ -629,3 +629,15 @@ html.intro-running,.intro-running body{overflow:hidden}
 .verb-example{font:700 18px/1.3 var(--heading);color:var(--ink)}
 .verb-example-de{font-size:14px;color:var(--ink-soft)}
 .verb-usage-note{margin:10px 0 0;font-size:11px;color:var(--ink-soft)}
+/* Startseite: alle Knöpfe mit demselben Verhalten wie „Aufgaben starten“ –
+   harter Schatten, beim Drüberfahren 1px anheben (Schatten 4px), beim Klicken eindrücken (Schatten 1px). */
+.home-daily-action button,.home-view :is(.quick-verb-review,.daily-reveal,.daily-sentence-tools button,.home-new button:not(.path-toggle),.home-exercises button,.home-session-actions button,#continue-practice),.home-daily-stats .fav-pill,.home-more>summary{transition:transform .15s ease,box-shadow .15s ease,background-color .15s ease}
+.home-view :is(.quick-verb-review,.daily-reveal,.daily-sentence-tools button,.home-new button:not(.path-toggle),.home-exercises button,.home-session-actions button,#continue-practice){box-shadow:3px 3px 0 var(--line)}
+.home-view :is(.quick-verb-review,.daily-reveal,.daily-sentence-tools button,.home-new button:not(.path-toggle),.home-exercises button,.home-session-actions button,#continue-practice):not(:disabled):hover{transform:translateY(-1px);box-shadow:4px 4px 0 var(--line)}
+.home-view :is(.quick-verb-review,.daily-reveal,.daily-sentence-tools button,.home-new button:not(.path-toggle),.home-exercises button,.home-session-actions button,#continue-practice):not(:disabled):active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--line)}
+.home-daily-stats .fav-pill:active{transform:translate(1.5px,1.5px);box-shadow:0 0 0 var(--line)}
+.home-more>summary:active{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--line)}
+/* „Weiterlernen“: Form und Gewicht wie der Hauptknopf, Farbe bleibt im Ton seiner Box */
+.home-new button:not(.path-toggle){min-height:52px;padding:12px 22px;border:2px solid var(--line);border-radius:12px;font-weight:800;color:var(--ink)}
+.home-new button:not(.path-toggle):not(:disabled):hover{background:color-mix(in srgb,var(--mint) 82%,var(--ink))}
+@media(prefers-reduced-motion:reduce){.home-view button,.home-more>summary{transition:none}}
