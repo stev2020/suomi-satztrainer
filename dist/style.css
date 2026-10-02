@@ -495,7 +495,7 @@ header .header-nav button:hover,header .header-nav button.selected{background:va
 [data-home-activity].is-locked:hover,[data-activity].is-locked:hover{transform:none}
 
 /* Intro für Gäste (guest-intro.mjs): Seite zuerst verborgen, Überschrift groß in der Mitte */
-.intro-pending :is(header .header-nav,footer,.page-tools,#home-view .today,#home-view>:not(.intro):not(.intro-shown)){opacity:0}
+.intro-pending :is(header .header-nav,footer,.page-tools,.today,#home-view>:not(.intro):not(.intro-shown)){opacity:0}
 .intro-pending:not(.intro-running) #home-view .intro h1{opacity:0}
 .intro-running #home-view .intro h1{opacity:1;position:relative;z-index:20;pointer-events:none}
 .intro-running #home-view .intro h1>span{opacity:0}
@@ -601,7 +601,7 @@ html.intro-running,.intro-running body{overflow:hidden}
 @keyframes today-pop{0%{transform:scale(1)}45%{transform:scale(1.15)}100%{transform:scale(1)}}
 /* Satz des Tages ohne Rahmen und Schatten: steht wie eine zweite Überschrift. Desktop auf der Textkante der Karten darunter, Handy bündig mit der Begrüßung. */
 .daily-sentence{position:relative;max-width:720px;margin:0 auto 26px;padding:18px 22px 20px;border:2px solid transparent;border-radius:18px;background:transparent}
-.daily-sentence-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-height:40px;margin-bottom:14px}
+.daily-sentence-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-height:40px;margin-bottom:28px}
 .daily-sentence h2{margin:0;font:800 20px/1.2 var(--heading);color:var(--heading-accent)}
 .daily-sentence-tools{display:flex;gap:8px;margin-left:2px}
 .daily-sentence-tools button{display:grid;place-items:center;width:40px;height:40px;min-height:0;padding:0;border:2px solid var(--line);border-radius:10px;background:var(--paper);box-shadow:2px 2px 0 var(--line);color:var(--ink)}
@@ -641,11 +641,21 @@ html.intro-running,.intro-running body{overflow:hidden}
 @keyframes daily-drop{0%{opacity:0;transform:translateY(-70px) scale(3.4);animation-timing-function:cubic-bezier(.6,0,.9,.5)}12%{opacity:1}45%{opacity:1;transform:none;animation-timing-function:ease-out}53%{transform:scale(1.1,.84);animation-timing-function:ease-out}68%{transform:translateY(-22px) scale(.97,1.04);animation-timing-function:ease-in}82%{transform:scale(1.05,.93);animation-timing-function:ease-out}91%{transform:translateY(-7px);animation-timing-function:ease-in}100%{opacity:1;transform:none}}
 main:has(.daily-sentence:is(.is-entering,.intro-drop)){overflow-x:clip}
 .daily-translate[aria-pressed="true"]{background:var(--lavender)}
-/* Angemeldet: Begrüßung als kleine gekippte Sprechblase, der Zähler leicht gegengekippt – der Satz des Tages ist die Hauptsache. */
-.home-view .intro h1.is-greeting{margin:0;padding:10px 16px 12px;border:2px solid var(--line);border-radius:16px 16px 16px 3px;background:var(--paper);box-shadow:4px 4px 0 var(--line);font-size:clamp(17px,2vw,21px);line-height:1.25;letter-spacing:-.3px;rotate:-3deg}
-.home-view .intro h1.is-greeting .greeting-fi .intro-lead{border-bottom-width:2px}
-.home-view .today.is-account{rotate:2deg}
-.home-view:has(h1.is-greeting) .intro{margin-bottom:10px}
+/* Angemeldet: die Begrüßung steht schlicht über dem Satz des Tages; „heute geübt“ sitzt als Pille im Header. */
+.home-view .intro h1.is-greeting{margin:0;font-size:clamp(22px,2.6vw,28px);line-height:1.2}
+.home-view:has(h1.is-greeting) .intro{margin-bottom:6px}
+header>.today.is-account{position:relative;display:flex;align-items:center;gap:8px;margin-left:auto;min-height:44px;padding:5px 14px 5px 12px;border-radius:999px;box-shadow:3px 3px 0 var(--line)}
+header>.today~.header-nav{margin-left:0}
+header>.today .today-ring{width:auto;height:auto;min-width:24px;min-height:32px}
+header>.today .today-ring svg{display:none}
+header>.today.is-account .today-ring>span{font-size:22px}
+header>.today.is-account .today-label{font-size:14px;max-width:none;text-align:left}
+header>.today.goal-reached .today-ring>span{color:var(--good)}
+header>.today>.today-details{position:absolute;top:calc(100% + 8px);right:0;z-index:20;width:max-content;padding:12px 14px;border:2px solid var(--line);border-radius:12px;background:var(--paper);box-shadow:3px 3px 0 var(--line);cursor:default}
+header>.today .today-week{gap:4px}
+header>.today .today-week li{width:22px;height:22px;font-size:10px}
+header>.today .today-streak{font-size:12px}
+@media(max-width:700px){header:has(>.today.is-account)>.brand{flex-basis:auto;margin-bottom:0}header>.today.is-account{min-height:40px;padding:3px 12px 3px 10px;box-shadow:2px 2px 0 var(--line)}header>.today.is-account .today-ring>span{font-size:19px}header>.today.is-account .today-label{font-size:12px}}
 .home-daily-done{display:none}
 .home-daily.all-done #start-daily-session{display:none}
 .home-daily.all-done .home-daily-done{display:flex;align-items:center;gap:12px;margin:0;padding:10px 16px 10px 10px;border:2px solid var(--line);border-radius:14px;background:var(--paper);box-shadow:3px 3px 0 var(--line);animation:today-pop .5s ease-out}

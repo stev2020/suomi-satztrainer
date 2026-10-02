@@ -15,7 +15,7 @@ import {mountWordLookup,loadLexicon,lookupForSentence,splitSentence,getLexicon} 
 import {planVerbs,planEndings,interleave,alternate,verbCard,endingCard} from './daily-mix.mjs?v=3';
 import {validateEndingsProgress,mergeEndingsProgress,markEndingAnswered,missedEndings} from './endings-progress.mjs?v=1';
 import {createGuestCard,shortGloss,flipWordIndex} from './guest-card.mjs?v=12';
-import {renderGreeting,renderToday,createDailySentence,animateProgress,GOAL_CHOICES,DAILY_GOAL} from './home-extras.mjs?v=8';
+import {renderGreeting,renderToday,createDailySentence,animateProgress,GOAL_CHOICES,DAILY_GOAL} from './home-extras.mjs?v=9';
 import {buildDifficultDeck} from './difficult-words.mjs?v=2';
 import {buildEndingItems,indexLexicon,renderEndings,hasEndingChoices} from './endings-practice.mjs?v=2';
 import {translationFeedbackMarkup} from './translation-feedback.mjs?v=1';
@@ -1095,7 +1095,7 @@ function renderHomeExtras(){
  if(typeof memory==='undefined'||!memory)return;
  const account=accountActive();
  renderGreeting(document.querySelector('#home-view .intro h1'),{account,name:accountName()});
- renderToday(document.querySelector('#home-view .today'),{count:memory.daily[day()]||0,daily:memory.daily,account,goal:dailyGoal,onGoalChange:n=>{dailyGoal=n;persist();renderHomeExtras();}});
+ renderToday(document.querySelector('.today'),{count:memory.daily[day()]||0,daily:memory.daily,account,goal:dailyGoal,onGoalChange:n=>{dailyGoal=n;persist();renderHomeExtras();}});
  if(!dailySentence&&$('daily-sentence'))dailySentence=createDailySentence($('daily-sentence'),{sentences:()=>data,learnedIds:()=>new Set(Object.keys(memory.reviews||{}).map(k=>Number(k.split(':')[0]))),fallbackLevel:()=>levels[0]||1,sourceIcon:s=>sourceIcon(s),userKey:accountId});
  dailySentence?.render({account,ready});
 }
