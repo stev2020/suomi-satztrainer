@@ -510,10 +510,8 @@ html.intro-running,.intro-running body{overflow:hidden}
 .intro-user.intro-pending #home-view .intro h1{opacity:0}
 .daily-sentence.intro-bare{border-color:transparent;background:transparent;box-shadow:0 0 0 transparent}
 .daily-sentence.intro-bare :is(.daily-sentence-top,.daily-sentence-bottom,.daily-source,.guest-gloss){opacity:0}
-.daily-sentence.intro-bare .guest-fi{border-bottom-color:transparent}
 .daily-sentence.intro-growing{transition:border-color .6s ease,background-color .6s ease,box-shadow .7s ease}
 .daily-sentence.intro-growing :is(.daily-sentence-top,.daily-sentence-bottom,.daily-source){transition:opacity .6s ease .25s}
-.daily-sentence.intro-growing .guest-fi{transition:border-bottom-color .6s ease .2s}
 
 /* Satzkarte für Gäste: Zähler und Abschluss nach fünf Sätzen */
 .guest-count{margin-left:auto;font-size:12px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
@@ -610,19 +608,44 @@ html.intro-running,.intro-running body{overflow:hidden}
 .daily-sentence-tools button{display:grid;place-items:center;width:40px;height:40px;min-height:0;padding:0;border:2px solid var(--line);border-radius:10px;background:var(--paper);box-shadow:2px 2px 0 var(--line);color:var(--ink)}
 .daily-sentence-tools button:hover,.daily-audio.playing{background:var(--lavender)}
 .daily-sentence .guest-words{gap:6px 18px;padding-top:4px}
-.daily-source{align-self:flex-start;padding-top:6px}
+.daily-source{align-self:flex-start;margin-top:-6px}
 .daily-sentence .guest-fi{font-size:clamp(24px,3.4vw,32px);letter-spacing:-.5px}
 @media(min-width:701px){.daily-sentence .guest-fi{font-size:clamp(28px,3.8vw,36px)}}
 .daily-sentence .guest-gloss{font-size:14px;min-height:1.3em}
-.daily-sentence .cycle-word.show .guest-gloss,.daily-sentence .daily-words.all .guest-gloss{animation:daily-gloss .3s ease-out}
-@keyframes daily-gloss{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 .daily-sentence-bottom{display:flex;align-items:center;justify-content:flex-start;gap:10px 16px;flex-wrap:wrap;min-height:40px;margin-top:12px}
 .daily-translation{margin:0;font-size:18px;font-weight:600;color:var(--ink-soft);visibility:hidden}
 .daily-translation.shown{visibility:visible}
 .daily-translation.is-new{animation:daily-flip .45s ease-out}
 @keyframes daily-flip{from{opacity:0;transform:rotateX(80deg)}to{opacity:1;transform:none}}
-.daily-sentence.is-entering .cycle-word{animation:daily-word .45s ease-out both;animation-delay:calc(var(--i)*70ms)}
-@keyframes daily-word{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+/* Wortkacheln: jedes Wort eine gekippte Kachel. Beim Start fallen sie von vorn oben herunter und hüpfen nach,
+   beim Überfahren wackeln sie, beim Antippen oder Übersetzen drehen sie sich um (hinten die Bedeutung). */
+.daily-sentence-top,.daily-sentence-bottom{justify-content:center}
+.daily-sentence .daily-words{justify-content:center;align-items:center;gap:18px 16px;padding:12px 0 8px}
+.daily-tile{--tile:var(--paper);--tile-ink:var(--ink);border-radius:14px;box-shadow:5px 5px 0 var(--line);rotate:var(--r,0deg);perspective:700px;transform-origin:50% 100%}
+.daily-tile[data-tone="0"]{--tile:var(--orange);--tile-ink:var(--on-orange)}
+.daily-tile[data-tone="2"]{--tile:var(--lavender)}
+.daily-tile[data-tone="3"]{--tile:var(--purple);--tile-ink:var(--on-accent)}
+.daily-tile[data-tone="4"]{--tile:var(--mint)}
+.daily-tile-inner{display:grid;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.3,1.3,.5,1)}
+.daily-words.staggered .daily-tile-inner{transition-delay:calc(var(--i)*70ms)}
+.daily-tile.show .daily-tile-inner{transform:rotateY(180deg)}
+.daily-tile :is(.guest-fi,.guest-gloss){grid-area:1/1;display:grid;place-items:center;padding:.2em .5em .28em;border:2px solid var(--line);border-radius:14px;white-space:nowrap;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.daily-tile .guest-fi{background:var(--tile);color:var(--tile-ink);font-size:clamp(24px,6.4vw,32px)}
+.daily-tile .guest-gloss{min-height:0;background:var(--ink);color:var(--bg);font:700 clamp(15px,3.6vw,19px)/1.2 var(--heading);transform:rotateY(180deg)}
+@media(min-width:701px){.daily-tile .guest-fi{font-size:clamp(30px,3.6vw,38px)}.daily-tile .guest-gloss{font-size:clamp(17px,2vw,21px)}}
+.daily-tail{display:flex;align-items:flex-start;gap:8px}
+.daily-tile:active{translate:2px 2px;box-shadow:3px 3px 0 var(--line)}
+@media(hover:hover){.daily-sentence:not(.is-entering,.intro-drop) .daily-tile:hover{animation:daily-wobble .7s ease-in-out}}
+@keyframes daily-wobble{0%,100%{transform:none}15%{transform:rotate(-7deg)}35%{transform:rotate(6deg)}55%{transform:rotate(-4deg)}75%{transform:rotate(2deg)}}
+.daily-sentence:is(.is-entering,.intro-drop) .daily-tile{animation:daily-drop .95s both;animation-delay:calc(var(--i)*120ms)}
+@keyframes daily-drop{0%{opacity:0;transform:translateY(-70px) scale(3.4);animation-timing-function:cubic-bezier(.6,0,.9,.5)}12%{opacity:1}45%{opacity:1;transform:none;animation-timing-function:ease-out}53%{transform:scale(1.1,.84);animation-timing-function:ease-out}68%{transform:translateY(-22px) scale(.97,1.04);animation-timing-function:ease-in}82%{transform:scale(1.05,.93);animation-timing-function:ease-out}91%{transform:translateY(-7px);animation-timing-function:ease-in}100%{opacity:1;transform:none}}
+html:has(.daily-sentence:is(.is-entering,.intro-drop)){overflow-x:clip}
+.daily-translate[aria-pressed="true"]{background:var(--lavender)}
+/* Angemeldet: Begrüßung als kleine gekippte Sprechblase, der Zähler leicht gegengekippt – der Satz des Tages ist die Hauptsache. */
+.home-view .intro h1.is-greeting{margin:0;padding:10px 16px 12px;border:2px solid var(--line);border-radius:16px 16px 16px 3px;background:var(--paper);box-shadow:4px 4px 0 var(--line);font-size:clamp(17px,2vw,21px);line-height:1.25;letter-spacing:-.3px;rotate:-3deg}
+.home-view .intro h1.is-greeting .greeting-fi .intro-lead{border-bottom-width:2px}
+.home-view .today.is-account{rotate:2deg}
+.home-view:has(h1.is-greeting) .intro{margin-bottom:10px}
 .home-daily-done{display:none}
 .home-daily.all-done #start-daily-session{display:none}
 .home-daily.all-done .home-daily-done{display:flex;align-items:center;gap:12px;margin:0;padding:10px 16px 10px 10px;border:2px solid var(--line);border-radius:14px;background:var(--paper);box-shadow:3px 3px 0 var(--line);animation:today-pop .5s ease-out}
@@ -632,7 +655,7 @@ html.intro-running,.intro-running body{overflow:hidden}
 .home-daily-done-text small{font-size:12px;color:var(--ink-soft)}
 .home-daily-stats span.bump{animation:today-pop .45s ease-out}
 @media(max-width:700px){.daily-sentence{padding:16px 0 18px}.today-ring{width:50px;height:50px}.today.is-account .today-ring>span{font-size:21px}.today.is-account{grid-template-columns:auto;justify-items:center;gap:6px}.today.is-account .today-label{text-align:center;font-size:11px;max-width:none}.today-week{gap:2px}.today-week li{width:17px;height:17px;font-size:8px}.today-streak{font-size:11px}}
-@media(prefers-reduced-motion:reduce){.today-flame,.today.goal-reached .today-ring,.home-daily.all-done .home-daily-done,.daily-sentence.is-entering .cycle-word,.daily-translation.is-new,.home-daily-stats span.bump{animation:none!important}.today-ring-fill,.greeting-face{transition:none}}
+@media(prefers-reduced-motion:reduce){.today-flame,.today.goal-reached .today-ring,.home-daily.all-done .home-daily-done,.daily-sentence:is(.is-entering,.intro-drop) .daily-tile,.daily-tile:hover,.daily-translation.is-new,.home-daily-stats span.bump{animation:none!important}.today-ring-fill,.greeting-face,.daily-tile-inner{transition:none}}
 /* „Wiederholen“ mit Verbformen (daily-mix.mjs) */
 .home-daily-stats span[hidden]{display:none}
 .verb-new-tag{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--mint);color:var(--ink);font-weight:800}

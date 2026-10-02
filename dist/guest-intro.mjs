@@ -153,7 +153,7 @@ export async function runUserIntro(){
   controller.abort();
   animations.forEach(a=>a.cancel());
   if(words){words.style.transform='';words.style.transformOrigin='';}
-  card.classList.remove('intro-bare','intro-growing','intro-shown');
+  card.classList.remove('intro-bare','intro-growing','intro-shown','intro-drop');
   html.classList.remove('intro-pending','intro-running','intro-user');
  }
  for(const type of ['pointerdown','keydown','wheel','touchstart'])addEventListener(type,finish,{signal:controller.signal,passive:true});
@@ -165,7 +165,7 @@ export async function runUserIntro(){
  if(await waitFor(ready,USER.cardWait)&&!done){
   scrollTo(0,0);
   card.classList.remove('is-entering');
-  card.classList.add('intro-bare','intro-shown');
+  card.classList.add('intro-bare','intro-shown','intro-drop');
   words=card.querySelector('.daily-words');
   // Satz etwas größer, um die Mitte der tatsächlichen Wörter herum (nicht die ganze Kartenbreite),
   // damit er auch auf dem Handy im Bild bleibt.
@@ -177,8 +177,8 @@ export async function runUserIntro(){
   words.style.transformOrigin=`${(left+right)/2-box.left}px ${(top+bottom)/2-box.top}px`;
   const big=`scale(${scale})`;
   words.style.transform=big;
-  const fades=[...words.querySelectorAll('.cycle-word')].map((word,i)=>play(word,[{opacity:0,transform:'translateY(14px)'},{opacity:1,transform:'none'}],{duration:700,delay:i*110,easing:EASE_OUT,fill:'both'}));
-  await Promise.all(fades.map(finished));if(done)return;
+  // Die Wortkacheln fallen herunter und hüpfen nach (CSS: daily-drop).
+  await hold(1000+words.querySelectorAll('.cycle-word').length*120);if(done)return;
   await hold(USER.sentenceGap);if(done)return;
   card.classList.add('intro-growing');
   card.classList.remove('intro-bare');

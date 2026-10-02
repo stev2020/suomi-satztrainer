@@ -39,6 +39,17 @@ try{
  assert.ok(!requested.includes('lexicon.json'),'die Wortanalyse wird dafür nicht geladen');
  await page.locator('#daily-sentence .cycle-word').first().click();
  assert.equal(await page.locator('#daily-sentence .cycle-word.show').count(),1,'Wörter lassen sich antippen');
+ // Übersetzen dreht alle Kacheln um und zeigt den Satz; der Knopf bleibt und schaltet wieder zurück.
+ const tiles=await page.locator('#daily-sentence .daily-tile').count(),translate=page.locator('#daily-sentence .daily-translate');
+ assert.equal(tiles,first.length,'jedes Wort ist eine Kachel');
+ assert.equal(await page.locator('#daily-sentence .daily-tail .sentence-source-icon').count(),1,'das Quellen-Symbol hängt am Satz');
+ await translate.click();
+ assert.equal(await page.locator('#daily-sentence .cycle-word.show').count(),tiles,'alle Kacheln umgedreht');
+ assert.equal(await translate.getAttribute('aria-pressed'),'true');
+ assert.ok(await page.locator('#daily-translation.shown').count(),'Übersetzung sichtbar');
+ await translate.click();
+ assert.equal(await page.locator('#daily-sentence .cycle-word.show').count(),0,'zurückgedreht');
+ assert.equal(await page.locator('#daily-translation.shown').count(),0,'Übersetzung wieder verdeckt');
 
  // Nächster Tag: die vorbereitete Karte steht sofort da; danach wird übermorgen vorbereitet.
  const tomorrowWords=saved.next.card.cols.map(c=>c.fi);
