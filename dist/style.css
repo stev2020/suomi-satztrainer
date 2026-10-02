@@ -603,7 +603,6 @@ html.intro-running,.intro-running body{overflow:hidden}
 .daily-sentence{position:relative;max-width:720px;margin:0 auto 26px;padding:18px 22px 20px;border:2px solid transparent;border-radius:18px;background:transparent}
 .daily-sentence-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-height:40px;margin-bottom:14px}
 .daily-sentence h2{margin:0;font:800 20px/1.2 var(--heading);color:var(--heading-accent)}
-.daily-sentence-note{font-size:12px;font-weight:700;color:var(--ink-soft)}
 .daily-sentence-tools{display:flex;gap:8px;margin-left:2px}
 .daily-sentence-tools button{display:grid;place-items:center;width:40px;height:40px;min-height:0;padding:0;border:2px solid var(--line);border-radius:10px;background:var(--paper);box-shadow:2px 2px 0 var(--line);color:var(--ink)}
 .daily-sentence-tools button:hover,.daily-audio.playing{background:var(--lavender)}

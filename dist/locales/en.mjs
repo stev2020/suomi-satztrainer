@@ -387,7 +387,6 @@ export default {
  "Tippe für die Übersetzung": "Tap for the translation",
  "Übersetzung zeigen": "Show translation",
  "Satz des Tages": "Sentence of the day",
- "aus deinen Sätzen": "from your sentences",
  "zum Kennenlernen": "to get to know",
  "Tippe auf ein Wort für seine Bedeutung.": "Tap a word to see its meaning.",
  "Ziel {0}": "Goal {0}",
