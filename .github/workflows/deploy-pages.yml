@@ -49,6 +49,7 @@ jobs:
           node test-games-browser.mjs
           node test-turnstile-browser.mjs
           node test-classrooms.mjs
+          node test-daily-sentence-browser.mjs
 
   # A fresh checkout: only files from the repository are published.
   deploy:
