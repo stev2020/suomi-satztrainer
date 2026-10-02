@@ -84,6 +84,12 @@ try{
   await page.locator('#cr-tab-custom [data-custom-field=de]').fill('Heute lernen wir zusammen.');
   await page.locator('#cr-tab-custom [data-custom-field=fi]').fill('Tänään opiskelemme yhdessä.');await check('aufgabe-eigener-satz');
   await page.locator('#cr-tab-custom [data-cr=confirm_custom]').click();
+  // Kein Knopf „Weiteren Satz eingeben“ mehr: nach dem Hinzufügen steht von selbst ein leeres Feld da – auch wenn man es entfernt
+  assert.equal(await page.locator('[data-cr=add_custom]').count(),0);
+  assert.equal(await page.locator('#cr-tab-custom [data-custom-field=de]').count(),1);
+  await page.locator('#cr-tab-custom .cr-custom-item:not(.cr-custom-added) [data-cr=remove_custom]').click();
+  assert.equal(await page.locator('#cr-tab-custom [data-custom-field=de]').count(),1,'ein leeres Feld bleibt stehen');
+  assert.equal(await page.locator('#cr-tab-custom .cr-custom-added').count(),1);
   await page.locator('[data-cr=tab_existing]').click();
   await page.locator('[data-sentence]').first().check();
   assert.equal(await page.locator('#cr-selection-count').textContent(),'2 Sätze ausgewählt');await check('aufgabe-vorhandene-saetze');

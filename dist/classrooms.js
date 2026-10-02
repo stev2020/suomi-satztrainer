@@ -1,5 +1,5 @@
 import {uiLocale} from './i18n.mjs?v=22';
-import {accountUser,accountRequest} from './auth.js?v=121';
+import {accountUser,accountRequest} from './auth.js?v=122';
 import {GRAMMAR_TOPICS,topicNotes} from './grammar-topics.mjs';
 import {translationFeedbackMarkup,compareTranslation} from './translation-feedback.mjs?v=1';
 import {loadLexicon} from './word-lookup.mjs?v=2';
@@ -255,7 +255,7 @@ async function composer(){
  const [quality,hidden]=await Promise.all([loadGlobalQuality(),qualityApi('classroom_list',{room_id:room.id})]);
  globalQuality=quality||{sentence_ids:[],translations:[]};classroomHidden=new Map((hidden||[]).map(item=>[Number(item.sentence_id),item]));
  selected=new Map();customItems=[{de:'',fi:'',added:false}];gaps=new Map();gapRows=[];verbChoice=new Set();personChoice=new Set([0,1,2,3,4,5]);
- const customSection=title=>`<section class="cr-assignment-source"><div class="cr-section-heading"><div><h4>${title}</h4><p class="cr-note">Diese Sätze gelten nur für diese Aufgabe und erscheinen später nicht als gespeicherte Auswahl.</p></div>${b('＋ Weiteren Satz eingeben','add_custom')}</div><div data-custom-host></div></section>`;
+ const customSection=title=>`<section class="cr-assignment-source"><div class="cr-section-heading"><div><h4>${title}</h4><p class="cr-note">Diese Sätze gelten nur für diese Aufgabe und erscheinen später nicht als gespeicherte Auswahl.</p></div></div><div data-custom-host></div></section>`;
  $('cr-composer').scrollIntoView?.({block:'start',behavior:'smooth'});
  $('cr-composer').innerHTML=`<form data-cr-form="assign" class="cr-card"><h3>Neue Aufgabe</h3><div class="cr-tabs cr-type-tabs" role="tablist" aria-label="Aufgabentyp"><button type="button" role="tab" aria-selected="true" data-cr="type" data-type="translate">Übersetzen</button><button type="button" role="tab" aria-selected="false" data-cr="type" data-type="cloze">Lückentext</button><button type="button" role="tab" aria-selected="false" data-cr="type" data-type="verbs">Verbformen</button></div><input type="hidden" name="direction" value="de-fi"><p class="cr-note" id="cr-type-hint">${TYPE_HINTS['de-fi']}</p><div id="cr-direction-switch" class="cr-switch" role="group" aria-label="Richtung"><button type="button" data-cr="direction" data-value="de-fi" aria-pressed="true">Deutsch → Finnisch</button><button type="button" data-cr="direction" data-value="fi-de" aria-pressed="false">Finnisch → Deutsch</button></div><label>Titel<input name="title" required minlength="3" maxlength="100" placeholder="Unsere erste Übersetzungsrunde"></label><label>Abgabetermin (optional)<input name="due" type="datetime-local"></label><div id="cr-source-switch" class="cr-switch" role="tablist" aria-label="Art der Sätze"><button type="button" role="tab" aria-selected="true" data-cr="tab_custom">Eigene Sätze</button><button type="button" role="tab" aria-selected="false" data-cr="tab_existing">Vorhandene Sätze</button></div><div id="cr-tab-custom" role="tabpanel">${customSection('Eigene Sätze erstellen')}</div><div id="cr-tab-existing" role="tabpanel" hidden><section class="cr-assignment-source"><h4>Vorhandene Sätze auswählen</h4><div class="cr-grid"><label>Level<select id="cr-level">${[1,2,3,4,5,6].map(n=>`<option>${n}</option>`).join('')}</select></label><label>Grammatikthema<select id="cr-topic"></select></label></div><p id="cr-topic-hint" class="cr-note"></p><div id="cr-sentence-picker"></div><details class="cr-hidden-sentences"><summary>Für diesen Klassenraum ausgeblendet · <span id="cr-hidden-count">0</span></summary><div id="cr-hidden-list"></div></details></section>${customSection('Eigene Sätze ergänzen')}</div><section id="cr-gap-panel" class="cr-assignment-source" hidden></section><section id="cr-verb-panel" class="cr-assignment-source" hidden></section><p id="cr-limit-note">Insgesamt sind 1–20 hinzugefügte oder ausgewählte Sätze möglich.</p><p id="cr-selection-count">0 Sätze ausgewählt</p><div class="cr-toolbar"><button class="primary">Aufgabe veröffentlichen</button>${b('Abbrechen','cancel_assignment')}</div></form>`;
  renderTopicOptions();picker();renderHiddenSentences();renderCustomItems();updateSelectionCount();
@@ -451,12 +451,6 @@ $('classrooms-content').addEventListener('click',e=>{
    }
    if(action==='tab_custom')return setComposerTab('custom');
    if(action==='tab_existing')return setComposerTab('existing');
-   if(action==='add_custom'){
-     if(selectionSize()>=20)throw new Error('Maximal 20 Sätze pro Aufgabe.');
-     if(customItems.length>=20)throw new Error('Bitte zuerst einen nicht benötigten Satz entfernen.');
-     customItems.push({de:'',fi:'',added:false});renderCustomItems();updateSelectionCount();
-     const panel=el.closest('[role=tabpanel]');panel?.querySelector('[data-custom-host]')?.lastElementChild?.querySelector('textarea')?.focus();return;
-   }
    if(action==='confirm_custom'){
      const index=Number(el.dataset.index),item=customItems[index];if(!item)throw new Error('Satz nicht gefunden.');
      if(item.added)return;
@@ -475,7 +469,10 @@ $('classrooms-content').addEventListener('click',e=>{
      panel?.querySelector('[data-custom-index="'+index+'"][data-custom-field="de"]')?.focus();return;
    }
    if(action==='remove_custom'){
-     customItems.splice(Number(el.dataset.index),1);renderCustomItems();updateSelectionCount();return;
+     customItems.splice(Number(el.dataset.index),1);
+     // Ein leeres Feld für den nächsten Satz bleibt immer stehen; einen eigenen Knopf dafür gibt es nicht mehr.
+     if(!customItems.some(item=>!item.added)&&selectionSize()<20&&customItems.length<20)customItems.push({de:'',fi:'',added:false});
+     renderCustomItems();updateSelectionCount();return;
    }
    if(action==='reply'){
      const a=room.assignments.find(x=>x.id===selected),m=a.messages.find(x=>x.id===el.dataset.id);
