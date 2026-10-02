@@ -201,13 +201,13 @@ try{
   // Zweiter Aufgabentyp: Finnisch → Deutsch
   await page.locator('[data-cr=new_assignment]').first().click();
   await page.locator('[data-cr-form=assign] input[name=title]').fill('Vom Finnischen ins Deutsche');
-  await page.locator('[data-cr-form=assign] [name=direction]').selectOption('fi-de');
+  await page.locator('[data-cr=direction][data-value=fi-de]').click();
   // Satzauswahl: der finnische Satz steht jetzt oben, der deutsche klein darunter; zurückgestellt ist es wieder umgekehrt
   await page.locator('[data-cr=tab_existing]').click();
   const firstPick=page.locator('#cr-sentence-picker .cr-pick>span').first();
   assert.equal(await firstPick.getAttribute('lang'),'fi');assert.equal(await firstPick.locator('small').getAttribute('lang'),'de');await check('auswahl-fi-de');
-  await page.locator('[data-cr-form=assign] [name=direction]').selectOption('de-fi');assert.equal(await firstPick.locator('small').getAttribute('lang'),'fi');
-  await page.locator('[data-cr-form=assign] [name=direction]').selectOption('fi-de');await page.locator('[data-cr=tab_custom]').click();
+  await page.locator('[data-cr=direction][data-value=de-fi]').click();assert.equal(await firstPick.locator('small').getAttribute('lang'),'fi');
+  await page.locator('[data-cr=direction][data-value=fi-de]').click();await page.locator('[data-cr=tab_custom]').click();
   assert.ok(await page.evaluate(()=>{const f=document.querySelector('#cr-tab-custom [data-custom-field=fi]').getBoundingClientRect(),d=document.querySelector('#cr-tab-custom [data-custom-field=de]').getBoundingClientRect();return f.top<d.top;}),'eigener Satz: finnisches Feld zuerst');
   await page.locator('#cr-tab-custom [data-custom-field=de]').fill('Ich habe eine Frage.');
   await page.locator('#cr-tab-custom [data-custom-field=fi]').fill('Minulla on kysymys.');await check('aufgabe-fi-de-erstellen');
@@ -232,7 +232,11 @@ try{
   const fresh=async()=>{await page.locator('[data-cr-form=update_assignment] [data-cr=assignment], [data-cr=assignment]').first().click();await page.locator('[data-cr=delete_assignment]').click();await page.getByText('Die Aufgabe wurde gelöscht.').waitFor();await page.locator('[data-cr=new_assignment]').first().click();await page.locator('[data-cr-form=assign]').waitFor();};
   await fresh();
   await page.locator('[data-cr-form=assign] input[name=title]').fill('Welches Wort fehlt?');
-  await page.locator('[data-cr-form=assign] [name=direction]').selectOption('cloze');
+  await page.locator('[data-cr=type][data-type=cloze]').click();
+  assert.equal(await page.locator('[data-cr=type][data-type=cloze]').getAttribute('aria-selected'),'true');assert.ok(await page.locator('#cr-direction-switch').isHidden()&&await page.locator('#cr-source-switch').isVisible());
+  // Zurück zu Übersetzen merkt sich die zuletzt gewählte Richtung
+  await page.locator('[data-cr=type][data-type=translate]').click();assert.equal(await page.locator('[data-cr-form=assign] [name=direction]').inputValue(),'de-fi');assert.ok(await page.locator('#cr-direction-switch').isVisible());
+  await page.locator('[data-cr=type][data-type=cloze]').click();
   await page.locator('#cr-tab-custom [data-custom-field=de]').fill('Ich habe eine Frage.');
   await page.locator('#cr-tab-custom [data-custom-field=fi]').fill('Minulla on kysymys.');
   await page.locator('#cr-tab-custom [data-cr=confirm_custom]').click();
@@ -251,8 +255,8 @@ try{
   await page.locator('#classrooms-button').click();teacher=true;
   await page.locator('[data-cr=open]').click();await page.locator('.cr-stream-layout').waitFor();await fresh();
   await page.locator('[data-cr-form=assign] input[name=title]').fill('Präsens üben');
-  await page.locator('[data-cr-form=assign] [name=direction]').selectOption('verbs');
-  assert.ok(await page.locator('#cr-tab-custom').isHidden()&&await page.locator('.cr-tabs').isHidden(),'bei Verbformen gibt es keine Satzauswahl');
+  await page.locator('[data-cr=type][data-type=verbs]').click();
+  assert.ok(await page.locator('#cr-tab-custom').isHidden()&&await page.locator('#cr-source-switch').isHidden()&&await page.locator('#cr-direction-switch').isHidden(),'bei Verbformen gibt es keine Satzauswahl und keine Richtung');
   await page.locator('#cr-verb-filter').fill('teh');assert.ok(await page.locator('[data-verb=olla]').isHidden());await page.locator('[data-verb=tehdä]').check();
   await page.locator('#cr-verb-filter').fill('');await page.locator('[data-verb=olla]').check();
   assert.equal(await page.locator('#cr-selection-count').textContent(),'12 Formen ausgewählt');

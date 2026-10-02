@@ -1,5 +1,5 @@
 import {uiLocale} from './i18n.mjs?v=22';
-import {accountUser,accountRequest} from './auth.js?v=120';
+import {accountUser,accountRequest} from './auth.js?v=121';
 import {GRAMMAR_TOPICS,topicNotes} from './grammar-topics.mjs';
 import {translationFeedbackMarkup,compareTranslation} from './translation-feedback.mjs?v=1';
 import {loadLexicon} from './word-lookup.mjs?v=2';
@@ -41,7 +41,6 @@ const directionOf=a=>DIRECTIONS[a.direction]?a.direction:'de-fi';
 // While an assignment is being put together: the sentence the class will see stands first.
 const composingFiDe=()=>document.querySelector('[data-cr-form=assign] [name=direction]')?.value==='fi-de';
 const directionSelect=value=>`<label>Richtung<select name="direction">${['de-fi','fi-de'].map(key=>`<option value="${key}"${key===value?' selected':''}>${DIRECTIONS[key]}</option>`).join('')}</select></label>`;
-const typeSelect=value=>`<label>Aufgabentyp<select name="direction">${Object.entries({'de-fi':'Übersetzen · Deutsch → Finnisch','fi-de':'Übersetzen · Finnisch → Deutsch',cloze:'Lückentext · fehlendes Wort ergänzen',verbs:'Verbformen · Präsens bilden'}).map(([key,label])=>`<option value="${key}"${key===value?' selected':''}>${label}</option>`).join('')}</select></label>`;
 const TYPE_HINTS={'de-fi':'Die Klasse sieht den deutschen Satz und übersetzt ihn ins Finnische.','fi-de':'Die Klasse sieht den finnischen Satz und übersetzt ihn ins Deutsche.',cloze:'Die Klasse sieht den finnischen Satz mit einer Lücke und ergänzt das fehlende Wort. Du wählst unten, welches Wort fehlt.',verbs:'Die Klasse bildet zu Verb und Person die Präsensform. Du wählst Verben und Personen.'};
 // Lückentext and Verbformen have exactly one right answer per entry, so they are checked.
 const isExact=a=>['cloze','verbs'].includes(directionOf(a));
@@ -160,7 +159,7 @@ const feedbackFor=(submission,i)=>(submission.feedback||[]).find(f=>f.item_index
 const teacherNote=(submission,i)=>{const f=feedbackFor(submission,i);return f?`<div class="cr-teacher-note"><strong>Rückmeldung von ${esc(f.author)}</strong><p>${esc(f.body)}</p></div>`:'';};
 const feedbackForm=(submission,i)=>{const f=feedbackFor(submission,i);return `<details class="cr-feedback-edit"${f?' open':''}><summary>${f?'Kommentar bearbeiten':'Kommentar schreiben'}</summary><form data-cr-form="feedback"><input type="hidden" name="submission_id" value="${esc(submission.id)}"><input type="hidden" name="item_index" value="${i}"><label>Kommentar zu Satz ${i+1}<textarea name="body" maxlength="1000" rows="2">${esc(f?.body||'')}</textarea></label><div class="cr-toolbar"><button class="primary">Kommentar speichern</button></div><p class="cr-note">Nur wer die Abgabe eingereicht hat, sieht diesen Kommentar. Leer speichern löscht ihn.</p></form></details>`;};
 const localInput=v=>{if(!v)return '';const d=new Date(v);d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16);};
-const css=document.createElement('link');css.rel='stylesheet';css.href='./classrooms.css?v=79';document.head.append(css);
+const css=document.createElement('link');css.rel='stylesheet';css.href='./classrooms.css?v=80';document.head.append(css);
 const button=document.createElement('button');button.id='classrooms-button';button.type='button';button.dataset.view='classrooms';button.textContent='Klassenräume';
 const headerNav=document.querySelector('.header-nav');
 if(headerNav)headerNav.insertBefore(button,headerNav.querySelector('[data-view="progress"]'));else $('account-button').before(button);
@@ -258,7 +257,7 @@ async function composer(){
  selected=new Map();customItems=[{de:'',fi:'',added:false}];gaps=new Map();gapRows=[];verbChoice=new Set();personChoice=new Set([0,1,2,3,4,5]);
  const customSection=title=>`<section class="cr-assignment-source"><div class="cr-section-heading"><div><h4>${title}</h4><p class="cr-note">Diese Sätze gelten nur für diese Aufgabe und erscheinen später nicht als gespeicherte Auswahl.</p></div>${b('＋ Weiteren Satz eingeben','add_custom')}</div><div data-custom-host></div></section>`;
  $('cr-composer').scrollIntoView?.({block:'start',behavior:'smooth'});
- $('cr-composer').innerHTML=`<form data-cr-form="assign" class="cr-card"><h3>Neue Aufgabe</h3><div class="cr-tabs" role="tablist" aria-label="Art der Sätze"><button type="button" role="tab" aria-selected="true" data-cr="tab_custom">Eigene Sätze</button><button type="button" role="tab" aria-selected="false" data-cr="tab_existing">Vorhandene Sätze</button></div><label>Titel<input name="title" required minlength="3" maxlength="100" placeholder="Unsere erste Übersetzungsrunde"></label><label>Abgabetermin (optional)<input name="due" type="datetime-local"></label>${typeSelect('de-fi')}<p class="cr-note" id="cr-type-hint">${TYPE_HINTS['de-fi']}</p><div id="cr-tab-custom" role="tabpanel">${customSection('Eigene Sätze erstellen')}</div><div id="cr-tab-existing" role="tabpanel" hidden><section class="cr-assignment-source"><h4>Vorhandene Sätze auswählen</h4><div class="cr-grid"><label>Level<select id="cr-level">${[1,2,3,4,5,6].map(n=>`<option>${n}</option>`).join('')}</select></label><label>Grammatikthema<select id="cr-topic"></select></label></div><p id="cr-topic-hint" class="cr-note"></p><div id="cr-sentence-picker"></div><details class="cr-hidden-sentences"><summary>Für diesen Klassenraum ausgeblendet · <span id="cr-hidden-count">0</span></summary><div id="cr-hidden-list"></div></details></section>${customSection('Eigene Sätze ergänzen')}</div><section id="cr-gap-panel" class="cr-assignment-source" hidden></section><section id="cr-verb-panel" class="cr-assignment-source" hidden></section><p id="cr-limit-note">Insgesamt sind 1–20 hinzugefügte oder ausgewählte Sätze möglich.</p><p id="cr-selection-count">0 Sätze ausgewählt</p><div class="cr-toolbar"><button class="primary">Aufgabe veröffentlichen</button>${b('Abbrechen','cancel_assignment')}</div></form>`;
+ $('cr-composer').innerHTML=`<form data-cr-form="assign" class="cr-card"><h3>Neue Aufgabe</h3><div class="cr-tabs cr-type-tabs" role="tablist" aria-label="Aufgabentyp"><button type="button" role="tab" aria-selected="true" data-cr="type" data-type="translate">Übersetzen</button><button type="button" role="tab" aria-selected="false" data-cr="type" data-type="cloze">Lückentext</button><button type="button" role="tab" aria-selected="false" data-cr="type" data-type="verbs">Verbformen</button></div><input type="hidden" name="direction" value="de-fi"><p class="cr-note" id="cr-type-hint">${TYPE_HINTS['de-fi']}</p><div id="cr-direction-switch" class="cr-switch" role="group" aria-label="Richtung"><button type="button" data-cr="direction" data-value="de-fi" aria-pressed="true">Deutsch → Finnisch</button><button type="button" data-cr="direction" data-value="fi-de" aria-pressed="false">Finnisch → Deutsch</button></div><label>Titel<input name="title" required minlength="3" maxlength="100" placeholder="Unsere erste Übersetzungsrunde"></label><label>Abgabetermin (optional)<input name="due" type="datetime-local"></label><div id="cr-source-switch" class="cr-switch" role="tablist" aria-label="Art der Sätze"><button type="button" role="tab" aria-selected="true" data-cr="tab_custom">Eigene Sätze</button><button type="button" role="tab" aria-selected="false" data-cr="tab_existing">Vorhandene Sätze</button></div><div id="cr-tab-custom" role="tabpanel">${customSection('Eigene Sätze erstellen')}</div><div id="cr-tab-existing" role="tabpanel" hidden><section class="cr-assignment-source"><h4>Vorhandene Sätze auswählen</h4><div class="cr-grid"><label>Level<select id="cr-level">${[1,2,3,4,5,6].map(n=>`<option>${n}</option>`).join('')}</select></label><label>Grammatikthema<select id="cr-topic"></select></label></div><p id="cr-topic-hint" class="cr-note"></p><div id="cr-sentence-picker"></div><details class="cr-hidden-sentences"><summary>Für diesen Klassenraum ausgeblendet · <span id="cr-hidden-count">0</span></summary><div id="cr-hidden-list"></div></details></section>${customSection('Eigene Sätze ergänzen')}</div><section id="cr-gap-panel" class="cr-assignment-source" hidden></section><section id="cr-verb-panel" class="cr-assignment-source" hidden></section><p id="cr-limit-note">Insgesamt sind 1–20 hinzugefügte oder ausgewählte Sätze möglich.</p><p id="cr-selection-count">0 Sätze ausgewählt</p><div class="cr-toolbar"><button class="primary">Aufgabe veröffentlichen</button>${b('Abbrechen','cancel_assignment')}</div></form>`;
  renderTopicOptions();picker();renderHiddenSentences();renderCustomItems();updateSelectionCount();
 }
 const addedCustomItems=()=>customItems.filter(item=>item.added);
@@ -295,7 +294,9 @@ function applyComposerType(){
  const form=document.querySelector('[data-cr-form=assign]');if(!form)return;
  const type=composerType(),verbs=type==='verbs',custom=form.querySelector('[data-cr=tab_custom]').getAttribute('aria-selected')==='true';
  $('cr-type-hint').textContent=TYPE_HINTS[type];
- form.querySelector('.cr-tabs').hidden=verbs;$('cr-tab-custom').hidden=verbs||!custom;$('cr-tab-existing').hidden=verbs||custom;
+ $('cr-source-switch').hidden=verbs;$('cr-direction-switch').hidden=!['de-fi','fi-de'].includes(type);
+ form.querySelectorAll('[data-cr=type]').forEach(tab=>tab.setAttribute('aria-selected',String(tab.dataset.type===(DIRECTIONS[type]&&!['de-fi','fi-de'].includes(type)?type:'translate'))));
+ form.querySelectorAll('[data-cr=direction]').forEach(option=>option.setAttribute('aria-pressed',String(option.dataset.value===type)));$('cr-tab-custom').hidden=verbs||!custom;$('cr-tab-existing').hidden=verbs||custom;
  $('cr-verb-panel').hidden=!verbs;$('cr-limit-note').hidden=verbs;
  if(verbs&&!$('cr-verb-list'))renderVerbPanel();
  form.classList.toggle('cr-fi-first',type==='fi-de');
@@ -304,7 +305,7 @@ function applyComposerType(){
 function setComposerTab(name){
  renderCustomItems();
  const custom=name==='custom';$('cr-tab-custom').hidden=!custom;$('cr-tab-existing').hidden=custom;
- document.querySelectorAll('.cr-tabs [role=tab]').forEach(tab=>tab.setAttribute('aria-selected',String(tab.dataset.cr===(custom?'tab_custom':'tab_existing'))));
+ document.querySelectorAll('#cr-source-switch [role=tab]').forEach(tab=>tab.setAttribute('aria-selected',String(tab.dataset.cr===(custom?'tab_custom':'tab_existing'))));
 }
 function renderTopicOptions(){
  const select=$('cr-topic'),level=Number($('cr-level').value),current=select.value,usable=availableDeck();
@@ -415,6 +416,12 @@ $('classrooms-content').addEventListener('click',e=>{
    if(action==='refresh_assignment')return refreshAssignment();
    if(action==='new_assignment')return composer();
    if(action==='edit_assignment')return editAssignment(selected);
+   if(action==='type'||action==='direction'){
+     const form=el.closest('form'),field=form.querySelector('[name=direction]');
+     // Übersetzen keeps the direction chosen last.
+     field.value=action==='direction'?el.dataset.value:el.dataset.type==='translate'?(form.querySelector('[data-cr=direction][aria-pressed=true]')?.dataset.value||'de-fi'):el.dataset.type;
+     picker();renderHiddenSentences();applyComposerType();return;
+   }
    if(action==='pick_gap'){const row=gapRows[Number(el.dataset.row)];if(row){gaps.set(row.ref,Number(el.dataset.index));dirty=true;renderGapPanel();}return;}
    if(action==='add_reviews'){
      const a=room.assignments.find(x=>x.id===selected),out=$('cr-review-result');

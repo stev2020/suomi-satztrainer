@@ -211,7 +211,7 @@ Gesehen-Stand im Konto: Migration `supabase/migrations/20261002210000_classroom_
 
 ## Aufgabentypen Lückentext und Verbformen
 
-Das Feld **Aufgabentyp** beim Erstellen bietet neben den beiden Übersetzungsrichtungen:
+Oben im Formular „Neue Aufgabe“ stehen drei Reiter: **Übersetzen**, **Lückentext**, **Verbformen**. Bei „Übersetzen“ wählt ein kleiner Umschalter darunter die Richtung; über den Sätzen wählt ein zweiter Umschalter zwischen eigenen und vorhandenen Sätzen (bei Verbformen entfällt er). Die beiden neuen Typen:
 
 - **Lückentext:** Sätze wählen oder eingeben wie sonst; unter „Lücken wählen“ tippt die Lehrkraft in jedem finnischen Satz das Wort an, das fehlen soll (Vorschlag: das längste Wort). Die Klasse sieht den Satz mit Lücke und den deutschen Satz als Hilfe und schreibt das fehlende Wort.
 - **Verbformen:** Die Lehrkraft wählt Verben (aus `verbs-data.mjs`, ohne unpersönliche) und Personen; jedes Verb ergibt eine Aufgabe je Person, zusammen höchstens 20. Die Klasse sieht Verb, Bedeutung und Person und schreibt die Präsensform.
