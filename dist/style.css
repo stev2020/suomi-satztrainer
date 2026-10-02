@@ -617,7 +617,7 @@ html.intro-running,.intro-running body{overflow:hidden}
 .daily-sentence .cycle-word.show .guest-gloss,.daily-sentence .daily-words.all .guest-gloss{animation:daily-gloss .3s ease-out}
 @keyframes daily-gloss{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 .daily-sentence-bottom{display:flex;align-items:center;justify-content:flex-start;gap:10px 16px;flex-wrap:wrap;min-height:40px;margin-top:12px}
-.daily-translation{margin:0;font-size:18px;font-weight:600;visibility:hidden}
+.daily-translation{margin:0;font-size:18px;font-weight:600;color:var(--ink-soft);visibility:hidden}
 .daily-translation.shown{visibility:visible}
 .daily-translation.is-new{animation:daily-flip .45s ease-out}
 @keyframes daily-flip{from{opacity:0;transform:rotateX(80deg)}to{opacity:1;transform:none}}
