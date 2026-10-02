@@ -194,3 +194,9 @@ Die Richtung lässt sich wie die Sätze nur ändern, solange es keine Abgaben un
 API: `assign` und `update_assignment` nehmen `direction` (`de-fi` oder `fi-de`) an, `room` liefert sie je Aufgabe. Spalte `classroom_private.assignments.direction`.
 
 Rollout: zuerst `supabase/migrations/20261002190000_classroom_direction.sql` anwenden, danach das Frontend veröffentlichen. Tests: `supabase/tests/classroom_direction.sql`, `test-classroom-assignment-ui.mjs`, `test-classrooms.mjs`.
+
+## Sätze ins eigene Wiederholen übernehmen
+
+Nach der Abgabe steht unter den Sätzen **Sätze ins Wiederholen übernehmen**. Der Knopf legt die vorhandenen Sätze der Aufgabe (aus dem Vanamo-Bestand) in der Richtung der Aufgabe in den persönlichen Wiederholplan, fällig ab sofort. Sätze, die dort schon fällig sind, bleiben unverändert. Eigene Sätze der Lehrkraft gehören nicht zum Bestand und bleiben im Klassenraum; die Oberfläche sagt das dazu.
+
+Technik: `window.suomiLearningState.addReviews([{id,direction}])` in `app.js` schreibt in den privaten Lernstand (`reviews`), der wie gewohnt synchronisiert wird. Der Klassenraum-Server erfährt davon nichts. Keine Migration.

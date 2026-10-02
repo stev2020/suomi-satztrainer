@@ -6,7 +6,7 @@ const assignment=source.slice(source.indexOf('function assignment('),source.inde
 const render=source.slice(source.indexOf('function renderCustomItems('),source.indexOf('function assignment('));
 const check=new Function('teacher','creator','submitted','closed','manage','direction',`
  const room={teacher,archived:false,member_count:1,members:[],assignments:[{id:'a',own_assignment:creator,title:'Test',can_manage:manage,direction,submissions:submitted?[{own:true,answers:['MY ANSWER'],reactions:{},feedback:[{item_index:0,body:'x',author:'T'}]}]:[],released:closed,items:[{text:'SECRET SOLUTION',translations:[{text:'Hallo'}]}],submitted_count:0}]};
- let selected,dirty;const drafts=new Map(),target={},dropDraft=()=>{},lexiconReady=true,DIRECTIONS={'de-fi':'Deutsch → Finnisch','fi-de':'Finnisch → Deutsch'},directionOf=a=>DIRECTIONS[a.direction]?a.direction:'de-fi',loadLexicon=async()=>{},autoFeedback=()=>'AUTO',teacherNote=(s,i)=>(s.feedback||[]).some(f=>f.item_index===i)?'NOTE':'',feedbackForm=()=>'FORM';const $=()=>target;
+ let selected,dirty;const drafts=new Map(),target={},dropDraft=()=>{},lexiconReady=true,reviewOffer=()=>'OFFER',DIRECTIONS={'de-fi':'Deutsch → Finnisch','fi-de':'Finnisch → Deutsch'},directionOf=a=>DIRECTIONS[a.direction]?a.direction:'de-fi',loadLexicon=async()=>{},autoFeedback=()=>'AUTO',teacherNote=(s,i)=>(s.feedback||[]).some(f=>f.item_index===i)?'NOTE':'',feedbackForm=()=>'FORM';const $=()=>target;
  const b=(text)=>text,esc=String,date=()=>'',sources=()=>'',discussion=()=>'',sentenceSourceIcon=()=>'';${assignment}
  assignment('a');return target.innerHTML;
 `);
@@ -23,6 +23,7 @@ assert(check(true,true,false,false,true).includes('Aufgabe bearbeiten')&&check(t
 assert(!check(false,false,false,false,false).includes('Aufgabe bearbeiten'));
 assert(check(false,false,true,false,false).includes('AUTO')&&check(false,false,true,false,false).includes('NOTE'),'own submission shows comparison and comment');
 assert(!check(false,false,false,false,false).includes('AUTO'));
+assert(check(false,false,true,false,false).includes('OFFER')&&!check(false,false,false,false,false).includes('OFFER')&&!check(true,true,false,false,true).includes('OFFER'),'review offer only after the own submission');
 assert(check(true,true,true,false,true).includes('FORM')&&!check(true,false,true,true,false).includes('FORM'),'comment form only for whoever manages the assignment');
 const html=new Function(`const customItems=[{added:true,de:'<b>Hallo</b>',fi:'Hei'},{added:false,de:'',fi:''}];const host={};const document={querySelectorAll:()=>[host]};const b=(text)=>text;const esc=v=>String(v).replaceAll('<','&lt;').replaceAll('>','&gt;');${render};renderCustomItems();return host.innerHTML;`)();
 assert(!html.split('</fieldset>')[0].includes('<textarea'));

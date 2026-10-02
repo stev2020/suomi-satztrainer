@@ -1,4 +1,4 @@
-import {tc} from './i18n.mjs?v=19';
+import {tc} from './i18n.mjs?v=20';
 import {canSearch,createSearch} from './wordsearch.mjs';
 import {mountSearch,searchInstructions} from './wordsearch-ui.mjs?v=64';
 import {createWordExercise,wordAnswerMatches,finnishSentenceMatches,sentenceWords} from './word-practice.mjs?v=61';
@@ -940,6 +940,21 @@ window.suomiLearningState={snapshot:learningSnapshot,
  // Spiele (games.mjs): Lernstand je Spiel und Wortliste lesen/speichern
  gameProgress:(game,deck)=>JSON.parse(JSON.stringify(memory.games?.[game]?.[deck]||{})),
  saveGameProgress:(game,deck,map)=>{const games=validateGames({...memory.games,[game]:{...(memory.games?.[game]||{}),[deck]:map}});commitLearning({...memory,games});},
+ // Klassenräume: vorhandene Sätze einer Aufgabe ins Wiederholen legen, fällig ab sofort.
+ // Sätze, die schon fällig sind, bleiben unverändert; unbekannte Sätze werden nur gezählt.
+ addReviews:items=>{
+  if(!ready||!accountActive())return null;
+  const known=new Set([...data,...archived].map(s=>s.id)),reviews={...memory.reviews},now=Date.now();
+  let added=0,already=0,missing=0;
+  for(const {id,direction:dir} of Array.isArray(items)?items:[]){
+   if(!['fi-de','de-fi'].includes(dir)||!known.has(id)){missing++;continue;}
+   const k=`${id}:${dir}`,old=reviews[k];
+   if(old&&Number.isFinite(old.due)&&old.due<=now){already++;continue;}
+   reviews[k]=old?{...old,due:now,updatedAt:now}:{due:now,interval:0,repetitions:1,updatedAt:now};added++;
+  }
+  if(added){commitLearning({...memory,reviews});renderStats();}
+  return {added,already,missing};
+ },
  applyCloud:incoming=>{
  let endingsProgress={};try{endingsProgress=validateEndingsProgress(incoming.endingsProgress||{});}catch{}
  const candidate=mergeLearning(memory,{...incoming,prefs:learningSnapshot().prefs,verbProgress:validateVerbProgress(incoming.verbProgress||{}),endingsProgress});
