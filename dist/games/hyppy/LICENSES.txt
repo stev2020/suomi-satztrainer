@@ -1,5 +1,11 @@
 Mustikka Hyppy – eingebettet in Vanamo
 
+Spielcode und Grafiken: © Vanamo, alle Rechte vorbehalten.
+Nicht unter der AGPL und nicht unter einer Creative-Commons-Lizenz.
+Das Spiel darf als Teil von Vanamo unverändert gespielt werden; Kopieren, Verändern,
+Übernehmen in andere Projekte und Weitergabe getrennt von Vanamo sind nicht gestattet.
+
+Fremde Bestandteile mit eigener Lizenz:
 Phaser (https://phaser.io) – MIT License:
 The MIT License (MIT)
 

@@ -1,6 +1,6 @@
 # Quellen und Lizenzen
 
-Der Code von Vanamo steht unter der AGPL-3.0-or-later (siehe `LICENSE`). Eigene Lerninhalte – Grammatikhilfen, Dialoge, Wortanalysen, KI-gestützte eigene Übersetzungen und Wortlisten – stehen unter CC BY-NC-SA 4.0 (https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de), sofern unten nichts anderes angegeben ist. Die folgenden fremden Inhalte behalten ihre eigenen Lizenzen.
+Der Code von Vanamo steht unter der AGPL-3.0-or-later (siehe `LICENSE`); ausgenommen ist das Spiel Mustikka Hyppy (siehe unten). Eigene Lerninhalte – Grammatikhilfen, Dialoge, Wortanalysen, KI-gestützte eigene Übersetzungen und Wortlisten – stehen unter CC BY-NC-SA 4.0 (https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de), sofern unten nichts anderes angegeben ist. Die folgenden fremden Inhalte behalten ihre eigenen Lizenzen.
 
 ## Satztexte
 
@@ -36,12 +36,16 @@ Die Schriften werden lokal aus `dist/fonts/` ausgeliefert (keine Verbindung zu G
 
 ## Spiel Mustikka Hyppy (Bereich „Spiele“)
 
-`dist/games/hyppy/` enthält den Einbettungs-Build des eigenen Spiels Mustikka Hyppy (github.com/stev2020/mustikka-hyppy).
+`dist/games/hyppy/` enthält den Einbettungs-Build des eigenen Spiels Mustikka Hyppy; `dist/games/previews/` enthält Vorschaubild und -video.
+
+**Spielcode und Grafiken von Mustikka Hyppy stehen nicht unter der AGPL und nicht unter CC BY-NC-SA.** © Vanamo, alle Rechte vorbehalten. Das Spiel darf als Teil von Vanamo unverändert gespielt werden; Kopieren, Verändern, Übernehmen in andere Projekte und die Weitergabe getrennt von Vanamo sind nicht gestattet. Der Quellcode des Spiels ist nicht öffentlich. Wer Vanamo unter der AGPL weiterverwendet, muss diese beiden Ordner entfernen.
+
+Davon ausgenommen sind folgende Bestandteile mit eigener Lizenz:
 
 - Phaser (https://phaser.io), MIT License – Lizenztext in `dist/games/hyppy/LICENSES.txt`
 - Schrift Patrick Hand – Copyright 2010–2012 Patrick Wagesreiter, SIL Open Font License 1.1, `dist/games/hyppy/fonts/OFL-Patrick-Hand.txt`
 - Wortliste `words-de-fi.json` – eigener Grundwortschatz, CC0 1.0
-- Grafiken – eigene, per Skript gezeichnete Kritzel-Grafiken
+- Grafiken – eigene, per Skript gezeichnete Kritzel-Grafiken: alle Rechte vorbehalten (wie der Spielcode)
 
 ## Dienste
 

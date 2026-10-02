@@ -25,6 +25,12 @@ const phaserLicense = path.join(game, 'node_modules', 'phaser', 'LICENSE.md');
 const licenses = [
   'Mustikka Hyppy – eingebettet in Vanamo',
   '',
+  'Spielcode und Grafiken: © Vanamo, alle Rechte vorbehalten.',
+  'Nicht unter der AGPL und nicht unter einer Creative-Commons-Lizenz.',
+  'Das Spiel darf als Teil von Vanamo unverändert gespielt werden; Kopieren, Verändern,',
+  'Übernehmen in andere Projekte und Weitergabe getrennt von Vanamo sind nicht gestattet.',
+  '',
+  'Fremde Bestandteile mit eigener Lizenz:',
   'Phaser (https://phaser.io) – MIT License:',
   fs.existsSync(phaserLicense) ? fs.readFileSync(phaserLicense, 'utf8') : 'Copyright (c) 2013-2025 Phaser Studio Inc.',
   '',
