@@ -57,7 +57,7 @@ enthalten. Das ist kein manipulationssicheres Prüfungssystem.
   30 Schreib-/Beitrittsaktionen pro Minute und Konto.
 - Kein allgemeiner Chat, keine Live-Sitzung und keine Benachrichtigungen
   in dieser ersten Version. Änderungen mit **Aktualisieren** laden.
-- Antwortentwürfe nur im Arbeitsspeicher, verbindliche Abgaben in Supabase.
+- Antwortentwürfe liegen auf dem Gerät (`localStorage`, Schlüssel `vanamo-classroom-drafts:<Konto-ID>`), verbindliche Abgaben in Supabase. Entwürfe verschwinden beim Abgeben, nach 60 Tagen und beim Abmelden.
   Gastnutzer können nichts im Klassenraum speichern.
 
 ## Architektur
@@ -153,3 +153,15 @@ Beim Erstellen und Beitreten ist `display_name` Pflicht (1–80 Zeichen, äußer
 Die private Tabelle `display_names` speichert Namen getrennt von `profiles.username`. Bestehende Namen werden bei der Migration übernommen. Stream, Antworten, Aufgabenfragen und benannte Abgaben verwenden den aktuellen Raumnamen. Namen bleiben nach dem Verlassen für alte Beiträge erhalten und werden beim Löschen des Raums mit entfernt. Abgaben werden über Benutzer-IDs statt über möglicherweise identische Namen zugeordnet; anonymisierte Vergleiche bleiben anonymisiert.
 
 Rollout: Migration `classroom_display_names` vor dem Frontend aktivieren. Tests: `test-classroom-db.mjs` (mit PGlite) und `test-classrooms-dom.mjs` (mit Happy DOM).
+
+## Aufgaben bearbeiten und löschen
+
+In der Aufgabenansicht stehen **Aufgabe bearbeiten** und **Aufgabe löschen**. Beides dürfen die Lehrkraft, die die Aufgabe erstellt hat, und der Ersteller des Raums; in archivierten Räumen geht beides nicht.
+
+- Titel und Abgabetermin lassen sich immer ändern.
+- Die Sätze lassen sich nur ändern, solange es keine Abgaben und keine Fragen gibt und der Vergleich nicht freigegeben ist, weil Antworten und Fragen sich über die Position auf einen Satz beziehen. Eigene Sätze kann man korrigieren, vorhandene Sätze nur entfernen; neue Sätze kommen über eine neue Aufgabe dazu.
+- Löschen entfernt die Aufgabe mit allen Abgaben, Fragen und Reaktionen unwiderruflich.
+
+API: `update_assignment` (`assignment_id`, `title`, `due_at`, optional `items`) und `delete_assignment` (`assignment_id`). `room` liefert je Aufgabe `can_manage`, `items_locked` und `created_at`. Ohne die Migration fehlen diese Felder, dann zeigt die Oberfläche die beiden Knöpfe nicht.
+
+Rollout: zuerst `supabase/migrations/20261002130000_classroom_assignment_edit.sql` anwenden, danach das Frontend veröffentlichen. Tests: `supabase/tests/classroom_assignment_edit.sql` (läuft in `test-classroom-db.mjs` mit), `test-classroom-assignment-ui.mjs` und `test-classrooms.mjs`.
