@@ -612,12 +612,13 @@ html.intro-running,.intro-running body{overflow:hidden}
 .daily-sentence .guest-words{gap:6px 18px;padding-top:4px}
 .daily-source{align-self:flex-start;padding-top:6px}
 .daily-sentence .guest-fi{font-size:clamp(24px,3.4vw,32px);letter-spacing:-.5px}
+@media(min-width:701px){.daily-sentence .guest-fi{font-size:clamp(28px,3.8vw,36px)}}
 .daily-sentence .guest-gloss{font-size:14px;min-height:1.3em}
 .daily-sentence .cycle-word.show .guest-gloss,.daily-sentence .daily-words.all .guest-gloss{animation:daily-gloss .3s ease-out}
 @keyframes daily-gloss{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
-.daily-sentence-bottom{display:flex;align-items:center;justify-content:flex-start;gap:10px 16px;flex-wrap:wrap;margin-top:12px}
-.daily-reveal{min-height:40px;padding:8px 14px;border:2px solid var(--line);border-radius:10px;background:var(--lavender);box-shadow:2px 2px 0 var(--line);font-size:14px;font-weight:700;color:var(--ink)}
-.daily-translation{margin:0;font-size:18px;font-weight:600}
+.daily-sentence-bottom{display:flex;align-items:center;justify-content:flex-start;gap:10px 16px;flex-wrap:wrap;min-height:40px;margin-top:12px}
+.daily-translation{margin:0;font-size:18px;font-weight:600;visibility:hidden}
+.daily-translation.shown{visibility:visible}
 .daily-translation.is-new{animation:daily-flip .45s ease-out}
 @keyframes daily-flip{from{opacity:0;transform:rotateX(80deg)}to{opacity:1;transform:none}}
 .daily-sentence.is-entering .cycle-word{animation:daily-word .45s ease-out both;animation-delay:calc(var(--i)*70ms)}
@@ -646,10 +647,10 @@ html.intro-running,.intro-running body{overflow:hidden}
 .verb-usage-note{margin:10px 0 0;font-size:11px;color:var(--ink-soft)}
 /* Startseite: alle Knöpfe mit demselben Verhalten wie „Aufgaben starten“ –
    harter Schatten, beim Drüberfahren 1px anheben (Schatten 4px), beim Klicken eindrücken (Schatten 1px). */
-.home-daily-action button,.home-view :is(.quick-verb-review,.daily-reveal,.daily-sentence-tools button,.home-new button:not(.path-toggle),.home-exercises button,.home-session-actions button,#continue-practice),.home-daily-stats .fav-pill,.home-more>summary{transition:transform .15s ease,box-shadow .15s ease,background-color .15s ease}
-.home-view :is(.quick-verb-review,.daily-reveal,.daily-sentence-tools button,.home-new button:not(.path-toggle),.home-exercises button,.home-session-actions button,#continue-practice){box-shadow:3px 3px 0 var(--line)}
-.home-view :is(.quick-verb-review,.daily-reveal,.daily-sentence-tools button,.home-new button:not(.path-toggle),.home-exercises button,.home-session-actions button,#continue-practice):not(:disabled):hover{transform:translateY(-1px);box-shadow:4px 4px 0 var(--line)}
-.home-view :is(.quick-verb-review,.daily-reveal,.daily-sentence-tools button,.home-new button:not(.path-toggle),.home-exercises button,.home-session-actions button,#continue-practice):not(:disabled):active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--line)}
+.home-daily-action button,.home-view :is(.quick-verb-review,.daily-sentence-tools button,.home-new button:not(.path-toggle),.home-exercises button,.home-session-actions button,#continue-practice),.home-daily-stats .fav-pill,.home-more>summary{transition:transform .15s ease,box-shadow .15s ease,background-color .15s ease}
+.home-view :is(.quick-verb-review,.daily-sentence-tools button,.home-new button:not(.path-toggle),.home-exercises button,.home-session-actions button,#continue-practice){box-shadow:3px 3px 0 var(--line)}
+.home-view :is(.quick-verb-review,.daily-sentence-tools button,.home-new button:not(.path-toggle),.home-exercises button,.home-session-actions button,#continue-practice):not(:disabled):hover{transform:translateY(-1px);box-shadow:4px 4px 0 var(--line)}
+.home-view :is(.quick-verb-review,.daily-sentence-tools button,.home-new button:not(.path-toggle),.home-exercises button,.home-session-actions button,#continue-practice):not(:disabled):active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--line)}
 .home-daily-stats .fav-pill:active{transform:translate(1.5px,1.5px);box-shadow:0 0 0 var(--line)}
 .home-more>summary:active{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--line)}
 /* „Weiterlernen“: Form und Gewicht wie der Hauptknopf, Farbe wie „Übersetzung zeigen“ */

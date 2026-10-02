@@ -194,15 +194,17 @@ export function createDailySentence(root,{sentences,learnedIds,fallbackLevel=()=
   }
   const words=cols.map((c,i)=>`<button type="button" class="guest-word cycle-word" style="--i:${i}" aria-label="${c.fi.replace(/<[^>]*>/g,'')}: Bedeutung zeigen"><span class="guest-fi">${c.fi}</span><span class="guest-gloss" lang="de">${esc(c.gloss)}</span></button>`).join('');
   const t=sentence.translations[0];
-  return `<div class="daily-sentence-top"><h2 id="daily-sentence-title">Satz des Tages</h2><span class="daily-sentence-note">${own?'aus deinen Sätzen':'zum Kennenlernen'}</span><span class="daily-sentence-tools">${sentence.audios?.length?'<button type="button" class="daily-audio" aria-label="Anhören"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4 5 9H2v6h3l6 5V4Z"/><path d="M15 8a6 6 0 0 1 0 8M18 4a11 11 0 0 1 0 16"/></svg></button>':''}</span></div>
+  return `<div class="daily-sentence-top"><h2 id="daily-sentence-title">Satz des Tages</h2>${own?'<span class="daily-sentence-note">aus deinen Sätzen</span>':''}<span class="daily-sentence-tools">${sentence.audios?.length?'<button type="button" class="daily-audio" aria-label="Anhören"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4 5 9H2v6h3l6 5V4Z"/><path d="M15 8a6 6 0 0 1 0 8M18 4a11 11 0 0 1 0 16"/></svg></button>':''}${revealed?'':'<button type="button" class="daily-translate" aria-controls="daily-translation" aria-label="Übersetzung zeigen" title="Übersetzung zeigen"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h10M8 3v3M11 6c-1 4-4 7-8 9M5.5 9.5c1.2 2.2 3 4 5.5 5.5"/><path d="m13 21 4.5-11L22 21M14.6 17.5h5.8"/></svg></button>'}</span></div>
 <div class="guest-words gloss-on-tap daily-words" lang="fi">${words}<span class="daily-source">${sourceIcon(sentence)}</span></div>
-<div class="daily-sentence-bottom">${revealed?`<p class="daily-translation" lang="de">${esc(t.text)}${sourceIcon(t)}</p>`:'<button type="button" class="daily-reveal">Übersetzung zeigen</button>'}</div>`;
+<div class="daily-sentence-bottom"><p id="daily-translation" class="daily-translation${revealed?' shown':''}" lang="de">${esc(t.text)}${sourceIcon(t)}</p></div>`;
  }
  function paint(animate){
   root.innerHTML=markup();root.classList.toggle('is-entering',!!animate&&!reducedMotion());
   if(animate)setTimeout(()=>root.classList.remove('is-entering'),900);
   root.querySelectorAll('.cycle-word').forEach(b=>b.onclick=e=>{if(e.target.closest('.sentence-source-icon'))return;b.classList.toggle('show');});
-  root.querySelector('.daily-reveal')?.addEventListener('click',()=>{revealed=true;paint(false);root.querySelector('.daily-translation')?.classList.add('is-new');root.querySelector('.daily-words')?.classList.add('all');});
+  // Die Übersetzung steht immer schon unsichtbar an ihrem Platz – beim Auf- und Zudecken verschiebt sich nichts.
+  const tr=root.querySelector('.daily-translate');
+  if(tr)tr.onclick=()=>{revealed=true;tr.remove();const p=root.querySelector('.daily-translation');p?.classList.add('shown','is-new');root.querySelector('.daily-words')?.classList.add('all');};
     const a=root.querySelector('.daily-audio');
   if(a)a.onclick=()=>{if(audio){stopAudio();return;}const url=audioURL(sentence?.audios?.[0]);if(!url)return;audio=new Audio(url);a.classList.add('playing');audio.onended=stopAudio;audio.onerror=stopAudio;audio.play().catch(stopAudio);};
  }
