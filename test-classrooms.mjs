@@ -155,10 +155,11 @@ try{
   assert.equal(await page.locator('.cr-feed-card .cr-new').count(),1);assert.ok((await page.locator('.cr-feed-card:has(.cr-new)').textContent()).includes('Neues von Anna'));
   assert.equal(await page.locator('#classrooms-button').getAttribute('data-news'),null,'gesehen: der Hinweis am Knopf ist weg');await check('neues-im-raum');
   await page.locator('#classrooms-refresh').click();await page.waitForFunction(()=>!document.querySelector('.cr-new'));
-  // Neue Antwort unter einem alten Beitrag: Antworten klappen auf, nur die neue Antwort trägt „Neu“
+  // Neue Antwort unter einem alten Beitrag: „Neu“ an der Zeile „n Antworten“, nach dem Aufklappen nur an der neuen Antwort
   activity='2026-10-03T10:30:00Z';posts.find(p=>p.id==='post-1').replies.push({id:'reply-new',reply_to_id:null,body:'Danke, verstanden!',author:'Mika',own:false,teacher:false,created_at:activity});
-  await page.locator('#classrooms-refresh').click();await page.locator('#cr-stream-message-reply-new .cr-new').waitFor();
-  assert.ok(await page.locator('#cr-post-post-1 .cr-feed-replies').evaluate(e=>e.open),'Antworten mit Neuem sind aufgeklappt');
+  await page.locator('#classrooms-refresh').click();await page.locator('#cr-post-post-1 .cr-feed-replies summary .cr-new').waitFor();
+  assert.ok(!await page.locator('#cr-post-post-1 .cr-feed-replies').evaluate(e=>e.open),'Antworten bleiben zugeklappt, damit die Seite kurz bleibt');
+  await page.locator('#cr-post-post-1 .cr-feed-replies summary').click();await page.locator('#cr-stream-message-reply-new .cr-new').waitFor();
   assert.equal(await page.locator('#cr-post-post-1 .cr-feed-replies summary .cr-new').count(),1);
   assert.equal(await page.locator('#cr-stream-message-reply-1 .cr-new').count(),0,'alte Antworten bleiben unmarkiert');
   assert.equal(await page.locator('#cr-post-post-1 .cr-feed-meta .cr-new').count(),0,'der alte Beitrag selbst ist nicht neu');await check('neue-antwort');
