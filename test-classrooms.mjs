@@ -32,11 +32,11 @@ try{
    if(action==='list')result=[{id:room.id,name:room.name,archived:room.archived,teacher,owner:teacher,activity,open_tasks:teacher?0:room.assignments.filter(a=>!a.released&&!a.submissions.length).length}];
    if(action==='create'||action==='join')result={id};
    if(action==='room')result={...room,teacher,owner:teacher,members,code:teacher?room.code:null,assignments:room.assignments.map(a=>({...a,submissions:a.submissions.map(x=>({...x,own:!teacher})),own_assignment:teacher,can_manage:teacher,items_locked:a.released||a.submissions.length>0||a.messages.length>0}))};
-   if(action==='assign')room.assignments.push({id:'22222222-2222-4222-a222-222222222222',title:payload.title,items:payload.items,due_at:payload.due_at,created_at:'2026-10-02T08:00:00Z',released:false,submissions:[],messages:[],submitted_count:0});
+   if(action==='assign')room.assignments.push({id:'22222222-2222-4222-a222-222222222222',title:payload.title,items:payload.items,due_at:payload.due_at,direction:payload.direction,created_at:'2026-10-02T08:00:00Z',released:false,submissions:[],messages:[],submitted_count:0});
    if(action==='submit'){room.assignments[0].submissions.push({id:'submission',answers:payload.answers,author_id:'s1',author:'Anna Müller',reactions:{},feedback:[]});room.assignments[0].submitted_count=1;}
    if(action==='release')room.assignments[0].released=true;
    if(action==='feedback'){assert.ok(teacher);const sub=room.assignments[0].submissions.find(x=>x.id===payload.submission_id);sub.feedback=(sub.feedback||[]).filter(f=>f.item_index!==payload.item_index);if(payload.body.trim())sub.feedback.push({item_index:payload.item_index,body:payload.body.trim(),author:'Frau Virtanen'});}
-   if(action==='update_assignment'){const a=room.assignments[0];a.title=payload.title;a.due_at=payload.due_at||null;if(payload.items){assert.ok(!a.submissions.length&&!a.messages.length);a.items=payload.items;}}
+   if(action==='update_assignment'){const a=room.assignments[0];a.title=payload.title;a.due_at=payload.due_at||null;if(payload.direction)a.direction=payload.direction;if(payload.items){assert.ok(!a.submissions.length&&!a.messages.length);a.items=payload.items;}}
    if(action==='delete_assignment'){assert.equal(payload.assignment_id,room.assignments[0].id);room.assignments=[];}
    if(action==='message')room.assignments[0].messages.push({id:'message-'+(room.assignments[0].messages.length+1),author:teacher?'Frau Virtanen':'Anna Müller',teacher,own:true,body:payload.body,item_index:Number(payload.item_index),parent_id:payload.parent_id||null,deleted:false});
    if(action==='stream_list')result={posts,has_more:false,open_questions:posts.filter(p=>p.kind==='question'&&!p.resolved).length,assignment_dates:Object.fromEntries(room.assignments.map(a=>[a.id,a.created_at]))};
@@ -172,8 +172,31 @@ try{
   // Aufgabe löschen
   await page.locator('[data-cr=assignment]').first().click();await page.locator('[data-cr=delete_assignment]').click();
   await page.getByText('Die Aufgabe wurde gelöscht.').waitFor();assert.equal(await page.locator('[data-cr=assignment]').count(),0);assert.equal(room.assignments.length,0);await check('aufgabe-geloescht');
+  // Zweiter Aufgabentyp: Finnisch → Deutsch
+  await page.locator('[data-cr=new_assignment]').first().click();
+  await page.locator('[data-cr-form=assign] input[name=title]').fill('Vom Finnischen ins Deutsche');
+  await page.locator('[data-cr-form=assign] [name=direction]').selectOption('fi-de');
+  await page.locator('#cr-tab-custom [data-custom-field=de]').fill('Ich habe eine Frage.');
+  await page.locator('#cr-tab-custom [data-custom-field=fi]').fill('Minulla on kysymys.');await check('aufgabe-fi-de-erstellen');
+  await page.locator('#cr-tab-custom [data-cr=confirm_custom]').click();
+  await page.locator('[data-cr-form=assign] button.primary').click();
+  await page.locator('.cr-feed-assignment').first().waitFor();assert.equal(room.assignments[0].direction,'fi-de');
+  assert.ok((await page.locator('.cr-feed-assignment').first().textContent()).includes('Finnisch → Deutsch'));
+  await page.locator('#classrooms-button').click();teacher=false;
+  await page.locator('[data-cr=open]').click();await page.locator('[data-cr=assignment]').first().click();
+  assert.equal((await page.locator('.cr-assignment-item h3').first().textContent()).trim(),'Minulla on kysymys.');
+  assert.ok(!(await page.locator('.cr-assignment-item').first().textContent()).includes('Ich habe eine Frage.'),'die deutsche Lösung ist vor der Abgabe nicht zu sehen');
+  assert.equal(await page.locator('[data-answer]').getAttribute('lang'),'de');
+  await page.locator('[data-answer]').fill('Ich habe ein Frage.');await check('aufgabe-fi-de-beantworten');
+  await page.locator('[data-cr-form=submit] button.primary').click();await page.getByText('Deine Antworten sind gespeichert.').waitFor();
+  assert.ok((await page.locator('.cr-assignment-item').first().textContent()).includes('Richtige Lösung: Ich habe eine Frage.'));
+  assert.ok(await page.locator('.cr-assignment-item .translation-diffs').count(),'Vergleich mit der deutschen Vorlage');await check('aufgabe-fi-de-abgegeben');
+  await page.locator('#classrooms-button').click();teacher=true;
+  await page.locator('[data-cr=open]').click();await page.locator('[data-cr=assignment]').first().click();
+  await page.locator('[data-cr=edit_assignment]').click();await page.locator('.cr-edit-locked').waitFor();
+  assert.ok((await page.locator('[data-cr-form=update_assignment]').textContent()).includes('Richtung: Finnisch → Deutsch'));assert.equal(await page.locator('[data-cr-form=update_assignment] [name=direction]').count(),0);
   assert.deepEqual(errors,[],`${tag}: Fehler in der Konsole`);
   await context.close();
  }
- console.log('PASS: Klassenräume auf Handy und Desktop – Gast, Raum, Stream, Mitglieder, Aufgabe, Bearbeiten, Entwurf, Abgabe, Vergleich, Kommentar, Frage, Freigabe, Neues, Löschen, keine Überbreite, keine Konsolenfehler');
+ console.log('PASS: Klassenräume auf Handy und Desktop – Gast, Raum, Stream, Mitglieder, Aufgabe, Bearbeiten, Entwurf, Abgabe, Vergleich, Kommentar, Frage, Freigabe, Neues, Löschen, Finnisch → Deutsch, keine Überbreite, keine Konsolenfehler');
 }finally{await browser?.close();server.kill();}

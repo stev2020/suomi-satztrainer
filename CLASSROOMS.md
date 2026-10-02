@@ -184,3 +184,13 @@ Rollout: zuerst `supabase/migrations/20261002150000_classroom_feedback.sql` anwe
 API: `list` liefert je Raum `open_tasks` und `activity`. Ohne die Migration fehlen beide Felder, dann gibt es keine Hinweise.
 
 Rollout: zuerst `supabase/migrations/20261002170000_classroom_activity.sql` anwenden, danach das Frontend veröffentlichen. Tests: `supabase/tests/classroom_activity.sql`, `test-classrooms.mjs`.
+
+## Übersetzungsrichtung
+
+Beim Erstellen wählt die Lehrkraft die Richtung: **Deutsch → Finnisch** (wie bisher) oder **Finnisch → Deutsch**. Bei „Finnisch → Deutsch“ sieht die Klasse den finnischen Satz und antwortet auf Deutsch; nach der Abgabe erscheint die deutsche Vorlage, und der Vergleich läuft gegen die deutschen Übersetzungen des Satzes. Eigene Sätze gibt die Lehrkraft in beiden Fällen als Paar aus deutschem und finnischem Satz ein.
+
+Die Richtung lässt sich wie die Sätze nur ändern, solange es keine Abgaben und keine Fragen gibt. Aufgaben von vor dieser Auswahl sind „Deutsch → Finnisch“.
+
+API: `assign` und `update_assignment` nehmen `direction` (`de-fi` oder `fi-de`) an, `room` liefert sie je Aufgabe. Spalte `classroom_private.assignments.direction`.
+
+Rollout: zuerst `supabase/migrations/20261002190000_classroom_direction.sql` anwenden, danach das Frontend veröffentlichen. Tests: `supabase/tests/classroom_direction.sql`, `test-classroom-assignment-ui.mjs`, `test-classrooms.mjs`.
