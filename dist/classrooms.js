@@ -1,5 +1,5 @@
 import {uiLocale} from './i18n.mjs?v=18';
-import {accountUser,accountRequest} from './auth.js?v=112';
+import {accountUser,accountRequest} from './auth.js?v=113';
 import {GRAMMAR_TOPICS,topicNotes} from './grammar-topics.mjs';
 import {translationFeedbackMarkup} from './translation-feedback.mjs?v=1';
 import {loadLexicon} from './word-lookup.mjs?v=2';
@@ -75,6 +75,7 @@ const isNew=v=>newSince!==null&&stampOf(v)>stampOf(newSince);
 const postNews=p=>(!p.own&&isNew(p.created_at))||(p.replies||[]).some(reply=>!reply.own&&isNew(reply.created_at));
 const assignmentNews=a=>(!a.own_assignment&&isNew(a.created_at||stream.assignment_dates?.[a.id]))||(a.messages||[]).some(m=>!m.own&&isNew(m.created_at))||(a.submissions||[]).some(x=>x.own?(x.feedback||[]).some(f=>isNew(f.updated_at)):Boolean(a.can_manage)&&isNew(x.created_at));
 const newPill=on=>on?'<span class="cr-new">Neu</span>':'';
+const replyNews=p=>(p.replies||[]).some(reply=>!reply.own&&isNew(reply.created_at));
 // Automatic comparison with the template (never a grade) and the teacher's comment per sentence.
 const autoFeedback=(answer,s)=>translationFeedbackMarkup({answer,templates:[s.text],language:'fi',sentenceText:s.text,compact:true})||'<p class="cr-note cr-auto-different">Anders formuliert als die Vorlage – das kann trotzdem richtig sein.</p>';
 const feedbackFor=(submission,i)=>(submission.feedback||[]).find(f=>f.item_index===i);
@@ -238,7 +239,7 @@ function discussion(a){
    return (children.get(parent)||[]).map(m=>{
      if(seen.has(m.id))return '';seen.add(m.id);
      const parentMessage=messages.find(x=>x.id===m.parent_id);
-     return `<li class="cr-thread-node"><article class="cr-message" id="cr-message-${m.id}" data-message-id="${m.id}"><div class="cr-message-meta"><strong>${esc(m.author)}</strong>${m.teacher?' · Lehrkraft':''} · Satz ${m.item_index+1}${m.created_at?` · <time datetime="${esc(m.created_at)}">${esc(date(m.created_at))}</time>`:''}</div>${parentMessage?`<small class="cr-note">Antwort an ${esc(parentMessage.author)}</small>`:''}<p>${esc(m.body)}</p><div class="cr-toolbar">${!room.archived?b('Antworten','reply',`data-id="${m.id}"`):''}${(room.teacher||m.own)&&!room.archived?b('Beitrag entfernen','delete_message',`data-id="${m.id}"`):''}</div><div id="cr-reply-${m.id}"></div></article>${children.has(m.id)?`<ul class="cr-replies ${depth>=3?'cr-replies-deep':''}" aria-label="Antworten auf den Beitrag von ${esc(m.author)}">${render(m.id,depth+1)}</ul>`:''}</li>`;
+     return `<li class="cr-thread-node"><article class="cr-message" id="cr-message-${m.id}" data-message-id="${m.id}"><div class="cr-message-meta"><strong>${esc(m.author)}</strong>${m.teacher?' · Lehrkraft':''}${newPill(!m.own&&isNew(m.created_at))} · Satz ${m.item_index+1}${m.created_at?` · <time datetime="${esc(m.created_at)}">${esc(date(m.created_at))}</time>`:''}</div>${parentMessage?`<small class="cr-note">Antwort an ${esc(parentMessage.author)}</small>`:''}<p>${esc(m.body)}</p><div class="cr-toolbar">${!room.archived?b('Antworten','reply',`data-id="${m.id}"`):''}${(room.teacher||m.own)&&!room.archived?b('Beitrag entfernen','delete_message',`data-id="${m.id}"`):''}</div><div id="cr-reply-${m.id}"></div></article>${children.has(m.id)?`<ul class="cr-replies ${depth>=3?'cr-replies-deep':''}" aria-label="Antworten auf den Beitrag von ${esc(m.author)}">${render(m.id,depth+1)}</ul>`:''}</li>`;
    }).join('');
  }
  return `<ul class="cr-discussions" aria-label="Diskussionen">${render(null)}</ul>`;
@@ -471,10 +472,10 @@ function renderFeed(){
  $('cr-stream-feed').innerHTML=entries.map(p=>{
   if(p.kind==='assignment')return `<article class="cr-card cr-feed-card cr-feed-assignment"><span class="cr-feed-type">NEUE AUFGABE</span>${newPill(assignmentNews(p))}${p.created_at?`<time>${esc(date(p.created_at))}</time>`:''}<h3>${esc(p.title)}</h3><p>${p.items.length} Sätze · ${esc(date(p.due_at))}</p><div class="cr-toolbar">${b('Aufgabe öffnen →','assignment',`data-id="${p.id}"`)}<span class="cr-state">${p.released?'Vergleich freigegeben':p.submissions.some(s=>s.own)?'Abgegeben':p.due_at&&new Date(p.due_at)<new Date()?'Frist abgelaufen':'Offen'}</span></div></article>`;
   const writable=!room.archived&&!p.deleted;
-  return `<article class="cr-card cr-feed-card cr-feed-${p.kind}" id="cr-post-${p.id}"><div class="cr-feed-meta"><span class="cr-feed-type">${p.pinned?'ANGEHEFTET · ':''}${{question:'FRAGE',post:'BEITRAG',announcement:'ANKÜNDIGUNG'}[p.kind]||'BEITRAG'}</span>${newPill(postNews(p))}${p.kind==='question'&&!p.deleted?`<span class="cr-state ${p.resolved?'cr-resolved':''}">${p.resolved?'✓ Beantwortet':'Offen'}</span>`:''}</div><div class="cr-author"><strong>${esc(p.author)}</strong>${p.teacher?' · Lehrkraft':''} <time datetime="${esc(p.created_at)}">${esc(date(p.created_at))}</time></div><p class="cr-post-body">${richText(p.body)}</p>
+  return `<article class="cr-card cr-feed-card cr-feed-${p.kind}" id="cr-post-${p.id}"><div class="cr-feed-meta"><span class="cr-feed-type">${p.pinned?'ANGEHEFTET · ':''}${{question:'FRAGE',post:'BEITRAG',announcement:'ANKÜNDIGUNG'}[p.kind]||'BEITRAG'}</span>${newPill(!p.own&&isNew(p.created_at))}${p.kind==='question'&&!p.deleted?`<span class="cr-state ${p.resolved?'cr-resolved':''}">${p.resolved?'✓ Beantwortet':'Offen'}</span>`:''}</div><div class="cr-author"><strong>${esc(p.author)}</strong>${p.teacher?' · Lehrkraft':''} <time datetime="${esc(p.created_at)}">${esc(date(p.created_at))}</time></div><p class="cr-post-body">${richText(p.body)}</p>
  ${!p.deleted?(p.files||[]).map(f=>f.mime.startsWith('image/')?`<div class="cr-attachment cr-image-attachment" data-attachment="${f.id}"><button type="button" class="cr-image-thumb" data-cr="stream_preview" data-id="${f.id}" aria-label="Bild vergrößern"><span>Vorschau wird geladen …</span></button>${b('Herunterladen','stream_download',`data-id="${f.id}"`)}</div>`:`<div class="cr-attachment" data-attachment="${f.id}"><div><strong>${esc(f.name)}</strong><small>${fileSize(f.size)}</small></div>${b('Herunterladen','stream_download',`data-id="${f.id}"`)}</div>`).join(''):''}
  <div class="cr-toolbar">${writable?b('Antworten','stream_reply',`data-id="${p.id}"`):''}${writable&&p.kind==='question'&&(room.teacher||p.own)?b(p.resolved?'Wieder öffnen':'Als beantwortet markieren','stream_resolve',`data-id="${p.id}" data-value="${!p.resolved}"`):''}${writable&&room.teacher?b(p.pinned?'Lösen':'Anpinnen','stream_pin',`data-id="${p.id}" data-value="${!p.pinned}"`):''}${writable&&(room.teacher||p.own)?b('Entfernen','stream_delete',`data-id="${p.id}"`):''}</div>
- ${(p.replies||[]).length?`<details class="cr-feed-replies"><summary>${p.replies.length} ${p.replies.length===1?'Antwort':'Antworten'}</summary>${renderStreamReplies(p)}</details>`:''}<div id="cr-stream-reply-${p.id}"></div></article>`;
+ ${(p.replies||[]).length?`<details class="cr-feed-replies"${replyNews(p)?' open':''}><summary>${p.replies.length} ${p.replies.length===1?'Antwort':'Antworten'}${newPill(replyNews(p))}</summary>${renderStreamReplies(p)}</details>`:''}<div id="cr-stream-reply-${p.id}"></div></article>`;
  }).join('')||'<div class="cr-card"><h3>Hier beginnt euer Austausch.</h3><p>Noch keine Beiträge in dieser Ansicht. Stellt eine Frage oder teilt etwas mit der Klasse.</p></div>';
  loadImageThumbs();
 }
@@ -503,7 +504,7 @@ function renderStreamReplies(post){
  function render(target,depth=0){return (children.get(target)||[]).map(m=>{
   if(seen.has(m.id))return '';seen.add(m.id);
   const parent=byId.get(m.reply_to_id);
-  return `<div class="cr-stream-thread"><article class="cr-message" id="cr-stream-message-${m.id}"><div class="cr-author"><strong>${esc(m.author)}</strong>${m.teacher?' · Lehrkraft':''}<time>${esc(date(m.created_at))}</time></div>${parent?`<small class="cr-note">Antwort an ${esc(parent.author)}</small>`:''}<p>${richText(m.body)}</p><div class="cr-toolbar">${!room.archived?b('Antworten','stream_reply',`data-id="${m.id}"`):''}${!room.archived&&(room.teacher||m.own)?b('Entfernen','stream_delete',`data-id="${m.id}"`):''}</div><div id="cr-stream-reply-${m.id}"></div></article>${children.has(m.id)?`<div class="cr-stream-children ${depth>=2?'cr-stream-children-flat':''}">${render(m.id,depth+1)}</div>`:''}</div>`;
+  return `<div class="cr-stream-thread"><article class="cr-message" id="cr-stream-message-${m.id}"><div class="cr-author"><strong>${esc(m.author)}</strong>${m.teacher?' · Lehrkraft':''}${newPill(!m.own&&isNew(m.created_at))}<time>${esc(date(m.created_at))}</time></div>${parent?`<small class="cr-note">Antwort an ${esc(parent.author)}</small>`:''}<p>${richText(m.body)}</p><div class="cr-toolbar">${!room.archived?b('Antworten','stream_reply',`data-id="${m.id}"`):''}${!room.archived&&(room.teacher||m.own)?b('Entfernen','stream_delete',`data-id="${m.id}"`):''}</div><div id="cr-stream-reply-${m.id}"></div></article>${children.has(m.id)?`<div class="cr-stream-children ${depth>=2?'cr-stream-children-flat':''}">${render(m.id,depth+1)}</div>`:''}</div>`;
  }).join('');}
  return render(null);
 }

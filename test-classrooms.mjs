@@ -155,6 +155,14 @@ try{
   assert.equal(await page.locator('.cr-feed-card .cr-new').count(),1);assert.ok((await page.locator('.cr-feed-card:has(.cr-new)').textContent()).includes('Neues von Anna'));
   assert.equal(await page.locator('#classrooms-button').getAttribute('data-news'),null,'gesehen: der Hinweis am Knopf ist weg');await check('neues-im-raum');
   await page.locator('#classrooms-refresh').click();await page.waitForFunction(()=>!document.querySelector('.cr-new'));
+  // Neue Antwort unter einem alten Beitrag: Antworten klappen auf, nur die neue Antwort trägt „Neu“
+  activity='2026-10-03T10:30:00Z';posts.find(p=>p.id==='post-1').replies.push({id:'reply-new',reply_to_id:null,body:'Danke, verstanden!',author:'Mika',own:false,teacher:false,created_at:activity});
+  await page.locator('#classrooms-refresh').click();await page.locator('#cr-stream-message-reply-new .cr-new').waitFor();
+  assert.ok(await page.locator('#cr-post-post-1 .cr-feed-replies').evaluate(e=>e.open),'Antworten mit Neuem sind aufgeklappt');
+  assert.equal(await page.locator('#cr-post-post-1 .cr-feed-replies summary .cr-new').count(),1);
+  assert.equal(await page.locator('#cr-stream-message-reply-1 .cr-new').count(),0,'alte Antworten bleiben unmarkiert');
+  assert.equal(await page.locator('#cr-post-post-1 .cr-feed-meta .cr-new').count(),0,'der alte Beitrag selbst ist nicht neu');await check('neue-antwort');
+  await page.locator('#classrooms-refresh').click();await page.waitForFunction(()=>!document.querySelector('.cr-new'));
   // Zurück im Tab nach einer Weile: der Raum lädt von selbst neu
   activity='2026-10-03T11:00:00Z';posts.unshift(newer('Noch etwas Neues'));
   await page.evaluate(()=>{const real=Date.now;Date.now=()=>real()+180000;document.dispatchEvent(new Event('visibilitychange'));});
