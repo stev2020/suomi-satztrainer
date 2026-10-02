@@ -177,7 +177,7 @@ Rollout: zuerst `supabase/migrations/20261002150000_classroom_feedback.sql` anwe
 
 ## Hinweis auf Neues
 
-- Am Knopf **Klassenräume** steht die Zahl der Räume, in denen es etwas Neues gibt. In der Raumliste tragen diese Räume „Neu“, dazu steht bei Teilnehmern die Zahl der offenen Aufgaben. Im Raum tragen neue Beiträge und Aufgaben mit Neuem (neue Aufgabe, Frage, Abgabe für die Lehrkraft, Kommentar zur eigenen Abgabe) „Neu“, bis man den Raum das nächste Mal lädt.
+- Am Knopf **Klassenräume** steht die Zahl der Räume, in denen es etwas Neues gibt. In der Raumliste tragen diese Räume „Neu“, dazu steht bei Teilnehmern die Zahl der offenen Aufgaben. Neue Antworten unter einem Beitrag zeigt „Neu“ an der Zeile „n Antworten“ an; die Antworten bleiben zugeklappt, nach dem Aufklappen trägt jede neue Antwort „Neu“. Im Raum tragen neue Beiträge und Aufgaben mit Neuem (neue Aufgabe, Frage, Abgabe für die Lehrkraft, Kommentar zur eigenen Abgabe) „Neu“, bis man den Raum das nächste Mal lädt.
 - Neu ist, was jemand anderes getan hat; eigene Beiträge zählen nicht. Was ein Gerät schon gezeigt hat, merkt es sich je Konto in `localStorage` (`vanamo-classroom-seen:<Konto-ID>`). Der Stand gilt also pro Gerät; ein Raum, den ein Gerät zum ersten Mal sieht, gilt als gesehen.
 - Die App fragt beim Start, bei der Rückkehr in den Tab (höchstens einmal pro Minute) und alle fünf Minuten nach. Bei der Rückkehr in den Tab lädt ein geöffneter Raum von selbst neu, wenn der letzte Stand älter als eine Minute ist und gerade nichts geschrieben wird.
 
