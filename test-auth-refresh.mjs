@@ -10,13 +10,14 @@ const end=source.indexOf('\nasync function request(',start);
 assert(start>=0&&end>start,'refreshSession implementation found');
 
 async function run(status,{concurrent=1,stored=null}={}){
-  const storage=new Map([['suomi-learning-v1','{"reviews":{"1:fi-de":{}}}']]);
+  const storage=new Map([['suomi-learning-v1','{"reviews":{"1:fi-de":{}}}'],['suomi-cloud-stamp-v1','{}'],['vanamo-daily-sentence:u1','{}'],['vanamo-daily-sentence:u2','{}'],['suomi-hyppy.progress.grund','{}'],['suomi-hyppy.highscore','12'],['vanamo-theme','ruska']]);
   if(stored)storage.set('suomi-auth-session-v1',JSON.stringify(stored));
   const calls=[];let reloads=0,saved='unchanged',syncMessage='';
   const context={
-    STORE:'suomi-learning-v1',SESSION:'suomi-auth-session-v1',
+    STORE:'suomi-learning-v1',SESSION:'suomi-auth-session-v1',STAMP:'suomi-cloud-stamp-v1',
     session:{refresh_token:'r1',access_token:'a1',user:{id:'u1'}},
-    localStorage:{getItem:key=>storage.get(key)??null,removeItem:key=>storage.delete(key)},
+    localStorage:{getItem:key=>storage.get(key)??null,removeItem:key=>storage.delete(key),get length(){return storage.size},key:i=>[...storage.keys()][i]??null},
+    sessionStorage:{removeItem(){}},
     location:{reload(){reloads++}},
     saveSession:v=>{saved=v},
     syncState:t=>{syncMessage=t},
@@ -40,6 +41,8 @@ for(const status of [400,401]){
   const r=await run(status);
   assert(!r.storage.has('suomi-learning-v1'),`HTTP ${status} (invalid refresh token) clears the account copy`);
   assert.equal(r.saved,null);assert.equal(r.reloads,1);
+  for(const key of ['suomi-cloud-stamp-v1','vanamo-daily-sentence:u1','suomi-hyppy.progress.grund'])assert(!r.storage.has(key),`${key} of the account is removed`);
+  for(const key of ['vanamo-daily-sentence:u2','suomi-hyppy.highscore','vanamo-theme'])assert(r.storage.has(key),`${key} (other account / device setting) stays`);
 }
 const ok=await run(200,{concurrent:3});
 assert.deepEqual(ok.results,[true,true,true]);

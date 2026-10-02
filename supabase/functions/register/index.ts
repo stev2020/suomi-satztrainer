@@ -10,6 +10,8 @@ const hmac=async(secret:string,value:string)=>{const key=await crypto.subtle.imp
 // chosen by the client; the first X-Forwarded-For entry can, so it is only a fallback.
 const clientAddress=(req:Request)=>String(req.headers.get('cf-connecting-ip')||req.headers.get('x-real-ip')||req.headers.get('x-forwarded-for')||'unknown').split(',')[0].trim().slice(0,200);
 const consume=async(admin:any,secret:string,action:string,subject:string,limit:number,windowSeconds:number)=>{const {data,error}=await admin.rpc('consume_abuse_limit',{p_action:action,p_subject_hash:await hmac(secret,subject),p_limit:limit,p_window_seconds:windowSeconds});if(error)throw error;return data===true;};
+// bcrypt only uses the first 72 bytes of a password; longer ones would be cut off silently.
+const passwordBytes=(value:string)=>encoder.encode(value).length;
 const code=()=>Array.from(crypto.getRandomValues(new Uint8Array(20))).map(b=>(b%32).toString(32).toUpperCase()).join('').match(/.{1,5}/g)!.join('-');
 // Cloudflare Turnstile: required as soon as the secret TURNSTILE_SECRET_KEY is set.
 const verifyTurnstile=async(secret:string,token:string,ip:string)=>{
@@ -28,7 +30,7 @@ Deno.serve(async req=>{
   try{
     const body=await req.json(),username=String(body.username||'').trim().toLowerCase(),password=String(body.password||'');
     if(!/^[a-z0-9][a-z0-9._-]{2,31}$/.test(username))return json({error:'Ungültiger Benutzername.'},400);
-    if(password.length<8||password.length>200)return json({error:'Das Passwort muss 8–200 Zeichen lang sein.'},400);
+    if(password.length<8||passwordBytes(password)>72)return json({error:'Das Passwort muss 8–72 Zeichen lang sein (Umlaute und Sonderzeichen zählen mehrfach).'},400);
     const turnstileSecret=Deno.env.get('TURNSTILE_SECRET_KEY');
     if(turnstileSecret){
       const token=String(body.turnstileToken||'');
@@ -44,7 +46,7 @@ Deno.serve(async req=>{
     if(!await consume(admin,serviceKey,'register-user',username,3,3600))return json({error:'Zu viele Registrierungsversuche für diesen Benutzernamen. Bitte versuche es später erneut.'},429);
     const existing=await admin.from('profiles').select('user_id').eq('username',username).maybeSingle();
     if(existing.data)return json({error:'Dieser Benutzername ist bereits vergeben.'},409);
-    try{if(await isPwnedPassword(password))return json({error:'Dieses Passwort ist aus bekannten Datenlecks bekannt. Bitte verwende ein anderes Passwort.'},400);}catch{}
+    try{if(await isPwnedPassword(password))return json({error:'Dieses Passwort ist aus bekannten Datenlecks bekannt. Bitte verwende ein anderes Passwort.'},400);}catch(error){console.error('register: leaked-password check unavailable, password accepted unchecked:',error instanceof Error?error.message:String(error));}
     const created=await admin.auth.admin.createUser({email:`u${hex(username)}@users.suomi.invalid`,password,email_confirm:true,user_metadata:{username}});
     if(created.error||!created.data.user)return json({error:'Konto konnte nicht erstellt werden.'},400);
     const recoveryCode=code();
