@@ -208,3 +208,18 @@ Ab zwei Abgaben zeigt die Abgabenübersicht oben den Kasten **Wo die Klasse abwe
 Die Auswertung läuft im Browser aus den Abgaben, die die Lehrkraft ohnehin sieht (`compareTranslation` aus `translation-feedback.mjs`); gespeichert wird nichts, eine Migration gibt es nicht. Es ist keine Benotung.
 
 Gesehen-Stand im Konto: Migration `supabase/migrations/20261002210000_classroom_seen.sql`, Test `supabase/tests/classroom_seen.sql`. Ohne Migration bleibt es beim Stand pro Gerät.
+
+## Aufgabentypen Lückentext und Verbformen
+
+Das Feld **Aufgabentyp** beim Erstellen bietet neben den beiden Übersetzungsrichtungen:
+
+- **Lückentext:** Sätze wählen oder eingeben wie sonst; unter „Lücken wählen“ tippt die Lehrkraft in jedem finnischen Satz das Wort an, das fehlen soll (Vorschlag: das längste Wort). Die Klasse sieht den Satz mit Lücke und den deutschen Satz als Hilfe und schreibt das fehlende Wort.
+- **Verbformen:** Die Lehrkraft wählt Verben (aus `verbs-data.mjs`, ohne unpersönliche) und Personen; jedes Verb ergibt eine Aufgabe je Person, zusammen höchstens 20. Die Klasse sieht Verb, Bedeutung und Person und schreibt die Präsensform.
+
+Beide Typen haben genau eine richtige Antwort und werden ausgewertet: Nach der Abgabe steht bei jedem Eintrag „Richtig“ oder die richtige Lösung, dazu „n von m richtig“. Groß-/Kleinschreibung und Satzzeichen am Rand zählen nicht; bei Verbformen gilt auch die Form mit Pronomen („hän on“). Die Lehrkraft sieht je Abgabe das Ergebnis, im Überblick je Eintrag „n von m richtig“ und die häufigsten falschen Antworten. Kommentare der Lehrkraft gehen wie sonst.
+
+Einträge dieser Typen lassen sich nach dem Veröffentlichen nicht einzeln ändern (Titel und Termin schon). Aus einem Lückentext lassen sich vorhandene Sätze ins Wiederholen übernehmen, aus Verbformen nicht.
+
+Daten: `assignments.direction` ist `cloze` oder `verbs`. Bei `cloze` trägt jeder Satz `gap` (Position des Worts im finnischen Satz, nach Leerzeichen gezählt); bei `verbs` steht die Form in `text`, dazu `lemma`, `person` (0–5) und `origin: "verb"`. Die Auswertung geschieht in der App (`isRight`), der Server speichert nur die Antworten. Es bleibt eine Übung, kein manipulationssicherer Test.
+
+Rollout: zuerst `supabase/migrations/20261002230000_classroom_exercise_types.sql` anwenden, danach das Frontend veröffentlichen.
