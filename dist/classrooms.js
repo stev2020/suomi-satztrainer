@@ -1,5 +1,5 @@
-import {uiLocale} from './i18n.mjs?v=17';
-import {accountUser,accountRequest} from './auth.js?v=111';
+import {uiLocale} from './i18n.mjs?v=18';
+import {accountUser,accountRequest} from './auth.js?v=112';
 import {GRAMMAR_TOPICS,topicNotes} from './grammar-topics.mjs';
 import {translationFeedbackMarkup} from './translation-feedback.mjs?v=1';
 import {loadLexicon} from './word-lookup.mjs?v=2';
@@ -34,13 +34,54 @@ function storeDrafts(){
 }
 function dropDraft(id){if(drafts.delete(id)){draftTimes.delete(id);storeDrafts();}}
 let editItems=[],lexiconReady=false;
+// What is new: `list` reports the newest thing somebody else did in each room. This
+// device remembers per account what it has already shown (localStorage) and marks
+// the rest – a number on the header button, "Neu" on rooms, posts and tasks.
+const SEEN_KEY='vanamo-classroom-seen:';
+let newSince=null,roomList=null,lastNewsCheck=0,lastRefresh=0;
+const stampOf=v=>Date.parse(v)||0;
+function seenMap(){try{const v=JSON.parse(localStorage.getItem(SEEN_KEY+accountUser()?.id)||'{}');return v&&typeof v==='object'&&!Array.isArray(v)?v:{};}catch{return {};}}
+function storeSeen(map){const id=accountUser()?.id;if(!id)return;try{localStorage.setItem(SEEN_KEY+id,JSON.stringify(map));}catch{}}
+function showNews(count){
+ if(count>0){button.dataset.news=String(count);button.title=count===1?'Neues in 1 Klassenraum':`Neues in ${count} Klassenräumen`;}
+ else{delete button.dataset.news;button.removeAttribute('title');}
+}
+// Rooms this device meets for the first time count as seen, so nobody starts with a pile of hints.
+function applyNews(rooms){
+ roomList=rooms;
+ const seen=seenMap(),next={};let count=0;
+ for(const r of rooms){
+  next[r.id]=r.id in seen?seen[r.id]:(r.activity||'');
+  r.news=Boolean(r.activity)&&stampOf(r.activity)>stampOf(next[r.id]);
+  if(r.news)count++;
+ }
+ storeSeen(next);showNews(count);
+}
+async function checkNews(force=false){
+ if(!accountUser()){roomList=null;showNews(0);return;}
+ if(!force&&Date.now()-lastNewsCheck<60000)return;
+ lastNewsCheck=Date.now();
+ try{applyNews(await api('list'));}catch{}
+}
+function markRoomSeen(){
+ const stamps=[newSince,roomList?.find(r=>r.id===room.id)?.activity];
+ for(const a of room.assignments){stamps.push(a.created_at,stream.assignment_dates?.[a.id]);for(const m of a.messages||[])stamps.push(m.created_at);for(const x of a.submissions||[]){stamps.push(x.created_at);for(const f of x.feedback||[])stamps.push(f.updated_at);}}
+ for(const post of stream.posts||[]){stamps.push(post.created_at);for(const reply of post.replies||[])stamps.push(reply.created_at);}
+ const latest=stamps.filter(Boolean).sort((x,y)=>stampOf(y)-stampOf(x))[0]||'';
+ const seen=seenMap();seen[room.id]=latest;storeSeen(seen);
+ if(roomList)applyNews(roomList);
+}
+const isNew=v=>newSince!==null&&stampOf(v)>stampOf(newSince);
+const postNews=p=>(!p.own&&isNew(p.created_at))||(p.replies||[]).some(reply=>!reply.own&&isNew(reply.created_at));
+const assignmentNews=a=>(!a.own_assignment&&isNew(a.created_at||stream.assignment_dates?.[a.id]))||(a.messages||[]).some(m=>!m.own&&isNew(m.created_at))||(a.submissions||[]).some(x=>x.own?(x.feedback||[]).some(f=>isNew(f.updated_at)):Boolean(a.can_manage)&&isNew(x.created_at));
+const newPill=on=>on?'<span class="cr-new">Neu</span>':'';
 // Automatic comparison with the template (never a grade) and the teacher's comment per sentence.
 const autoFeedback=(answer,s)=>translationFeedbackMarkup({answer,templates:[s.text],language:'fi',sentenceText:s.text,compact:true})||'<p class="cr-note cr-auto-different">Anders formuliert als die Vorlage – das kann trotzdem richtig sein.</p>';
 const feedbackFor=(submission,i)=>(submission.feedback||[]).find(f=>f.item_index===i);
 const teacherNote=(submission,i)=>{const f=feedbackFor(submission,i);return f?`<div class="cr-teacher-note"><strong>Rückmeldung von ${esc(f.author)}</strong><p>${esc(f.body)}</p></div>`:'';};
 const feedbackForm=(submission,i)=>{const f=feedbackFor(submission,i);return `<details class="cr-feedback-edit"${f?' open':''}><summary>${f?'Kommentar bearbeiten':'Kommentar schreiben'}</summary><form data-cr-form="feedback"><input type="hidden" name="submission_id" value="${esc(submission.id)}"><input type="hidden" name="item_index" value="${i}"><label>Kommentar zu Satz ${i+1}<textarea name="body" maxlength="1000" rows="2">${esc(f?.body||'')}</textarea></label><div class="cr-toolbar"><button class="primary">Kommentar speichern</button></div><p class="cr-note">Nur wer die Abgabe eingereicht hat, sieht diesen Kommentar. Leer speichern löscht ihn.</p></form></details>`;};
 const localInput=v=>{if(!v)return '';const d=new Date(v);d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16);};
-const css=document.createElement('link');css.rel='stylesheet';css.href='./classrooms.css?v=74';document.head.append(css);
+const css=document.createElement('link');css.rel='stylesheet';css.href='./classrooms.css?v=75';document.head.append(css);
 const button=document.createElement('button');button.id='classrooms-button';button.type='button';button.dataset.view='classrooms';button.textContent='Klassenräume';
 const headerNav=document.querySelector('.header-nav');
 if(headerNav)headerNav.insertBefore(button,headerNav.querySelector('[data-view="progress"]'));else $('account-button').before(button);
@@ -99,13 +140,15 @@ async function home(){
  loadDrafts();
  room=null;selected=null;dirty=false;streamFilter='all';updateHeading();
  if(!accountUser()){$('classrooms-content').innerHTML=`<p>Gemeinsam Finnisch lernen: Erstelle einen Raum oder tritt deiner Klasse per Code bei.</p><p>Zum Beitreten und Speichern brauchst du ein Konto.</p>${b('Anmelden / Registrieren','login')}`;return;}
- const rooms=await api('list');
- $('classrooms-content').innerHTML=`<p>Ein Raum für eure Sätze, Fragen und gemeinsamen Fortschritte.</p><h3>Meine Klassenräume</h3><div class="cr-grid">${rooms.length?rooms.map(r=>`<article class="cr-card cr-room-card"><span class="cr-badge">${r.teacher?'Lehrkraft':'Teilnehmer'}${r.archived?' · Archiv':''}</span><h3>${esc(r.name)}</h3>${b('Raum öffnen','open',`data-id="${r.id}"`)}</article>`).join(''):'<p>Noch keine Klassenräume. Erstelle einen Raum oder gib einen Einladungscode ein.</p>'}</div><div class="cr-grid cr-room-actions"><details class="cr-card cr-room-action"><summary><span><strong>Klassenraum erstellen</strong><small class="cr-room-action-closed">Zum Öffnen anklicken</small><small class="cr-room-action-open">Einklappen</small></span></summary><form data-cr-form="create"><label>Raumname<input name="name" required minlength="3" maxlength="80" placeholder="Finnisch am Mittwoch"></label><label>Dein Name in diesem Klassenraum<input name="display_name" required maxlength="80" autocomplete="name" placeholder="Zum Beispiel Anna Müller"></label><p class="cr-note">So sieht dich diese Klasse. Dein Benutzername für den Login bleibt unverändert.</p><p class="cr-note">Du übernimmst die Lehrkraft-Rolle und verwaltest Aufgaben und Mitglieder.</p><button class="primary">Raum erstellen</button></form></details><details class="cr-card cr-room-action"><summary><span><strong>Mit Code beitreten</strong><small class="cr-room-action-closed">Zum Öffnen anklicken</small><small class="cr-room-action-open">Einklappen</small></span></summary><form data-cr-form="join"><label>Einladungscode<input name="code" required maxlength="40" autocomplete="off" placeholder="Code der Lehrkraft"></label><label>Dein Name in diesem Klassenraum<input name="display_name" required maxlength="80" autocomplete="name" placeholder="Zum Beispiel Anna Müller"></label><p class="cr-note">So sieht dich diese Klasse. Dein Benutzername für den Login bleibt unverändert.</p><p class="cr-note">Im Raum sind dein Klassenraumname und deine Beiträge sichtbar. Die Lehrkräfte sehen deine Abgaben. Dein privater Lernstand bleibt privat.</p><button class="primary">Klasse beitreten</button></form></details></div>`;
+ const rooms=await api('list');applyNews(rooms);lastNewsCheck=Date.now();
+ $('classrooms-content').innerHTML=`<p>Ein Raum für eure Sätze, Fragen und gemeinsamen Fortschritte.</p><h3>Meine Klassenräume</h3><div class="cr-grid">${rooms.length?rooms.map(r=>`<article class="cr-card cr-room-card"><span class="cr-badge">${r.teacher?'Lehrkraft':'Teilnehmer'}${r.archived?' · Archiv':''}</span>${newPill(r.news)}<h3>${esc(r.name)}</h3>${r.open_tasks?`<p class="cr-note cr-open-tasks">${r.open_tasks===1?'1 offene Aufgabe':`${r.open_tasks} offene Aufgaben`}</p>`:''}${b('Raum öffnen','open',`data-id="${r.id}"`)}</article>`).join(''):'<p>Noch keine Klassenräume. Erstelle einen Raum oder gib einen Einladungscode ein.</p>'}</div><div class="cr-grid cr-room-actions"><details class="cr-card cr-room-action"><summary><span><strong>Klassenraum erstellen</strong><small class="cr-room-action-closed">Zum Öffnen anklicken</small><small class="cr-room-action-open">Einklappen</small></span></summary><form data-cr-form="create"><label>Raumname<input name="name" required minlength="3" maxlength="80" placeholder="Finnisch am Mittwoch"></label><label>Dein Name in diesem Klassenraum<input name="display_name" required maxlength="80" autocomplete="name" placeholder="Zum Beispiel Anna Müller"></label><p class="cr-note">So sieht dich diese Klasse. Dein Benutzername für den Login bleibt unverändert.</p><p class="cr-note">Du übernimmst die Lehrkraft-Rolle und verwaltest Aufgaben und Mitglieder.</p><button class="primary">Raum erstellen</button></form></details><details class="cr-card cr-room-action"><summary><span><strong>Mit Code beitreten</strong><small class="cr-room-action-closed">Zum Öffnen anklicken</small><small class="cr-room-action-open">Einklappen</small></span></summary><form data-cr-form="join"><label>Einladungscode<input name="code" required maxlength="40" autocomplete="off" placeholder="Code der Lehrkraft"></label><label>Dein Name in diesem Klassenraum<input name="display_name" required maxlength="80" autocomplete="name" placeholder="Zum Beispiel Anna Müller"></label><p class="cr-note">So sieht dich diese Klasse. Dein Benutzername für den Login bleibt unverändert.</p><p class="cr-note">Im Raum sind dein Klassenraumname und deine Beiträge sichtbar. Die Lehrkräfte sehen deine Abgaben. Dein privater Lernstand bleibt privat.</p><button class="primary">Klasse beitreten</button></form></details></div>`;
 }
 async function open(id){
  const next=await api('room',{room_id:id});
  const feed=await api('stream_list',{room_id:id});
- room=next;stream=feed;selected=null;updateHeading();renderRoom();
+ room=next;stream=feed;selected=null;lastRefresh=Date.now();
+ const seen=seenMap();newSince=room.id in seen?seen[room.id]:null;markRoomSeen();
+ updateHeading();renderRoom();
 }
 function memberRow(m){
  const label=`${esc(m.name)} · ${m.owner?'Lehrkraft · Ersteller':m.role==='teacher'?'Lehrkraft':'Teilnehmer'}${m.blocked?' · entfernt':''}`;
@@ -212,7 +255,7 @@ function editAssignment(id){
  $('classrooms-content').innerHTML=`<div class="cr-toolbar cr-assignment-nav">${b('← Zurück zur Aufgabe','assignment',`data-id="${id}"`)}</div><form data-cr-form="update_assignment" class="cr-card"><h3>Aufgabe bearbeiten</h3><label>Titel<input name="title" required minlength="3" maxlength="100" value="${esc(a.title)}"></label><label>Abgabetermin (optional)<input name="due" type="datetime-local" value="${esc(localInput(a.due_at))}"></label><section class="cr-assignment-source"><h4>Sätze</h4>${a.items_locked?`<p class="cr-note">Die Sätze lassen sich nicht mehr ändern, weil es schon Abgaben oder Fragen gibt oder der Vergleich freigegeben ist.</p><ol class="cr-edit-locked">${a.items.map(s=>`<li lang="de">${esc(s.translations[0].text)}</li>`).join('')}</ol>`:'<p class="cr-note">Eigene Sätze kannst du korrigieren, vorhandene Sätze nur entfernen. Das geht, solange es keine Abgaben und keine Fragen gibt.</p><div id="cr-edit-items"></div>'}</section><div class="cr-toolbar"><button class="primary">Änderungen speichern</button>${b('Abbrechen','assignment',`data-id="${id}"`)}</div></form>`;
  renderEditItems();
 }
-async function refreshAssignment(){const id=selected;room=await api('room',{room_id:room.id});assignment(id);}
+async function refreshAssignment(){const id=selected;room=await api('room',{room_id:room.id});lastRefresh=Date.now();assignment(id);}
 function canNavigate(){return !dirty||confirm('Ungespeicherte Eingaben verlassen? Antwortentwürfe bleiben auf diesem Gerät gespeichert.');}
 function openClassrooms(){
  document.querySelectorAll('.app-view').forEach(view=>{view.hidden=true;});
@@ -418,7 +461,7 @@ function restoreStreamDraft(){
 }
 function upcomingAssignments(){
  const items=room.assignments.filter(a=>!a.released&&(!a.due_at||new Date(a.due_at)>=new Date())).sort((a,b)=>(a.due_at||'9999').localeCompare(b.due_at||'9999')).slice(0,4);
- return items.map(a=>`<div class="cr-upcoming"><strong>${esc(a.title)}</strong><p class="cr-note">${esc(date(a.due_at))}</p>${b('Zur Aufgabe →','assignment',`data-id="${a.id}"`)}</div>`).join('')||'<p>Im Moment steht keine Aufgabe an.</p>';
+ return items.map(a=>`<div class="cr-upcoming"><strong>${esc(a.title)}</strong>${newPill(assignmentNews(a))}<p class="cr-note">${esc(date(a.due_at))}</p>${b('Zur Aufgabe →','assignment',`data-id="${a.id}"`)}</div>`).join('')||'<p>Im Moment steht keine Aufgabe an.</p>';
 }
 function renderFeed(){
  const preview=$('cr-image-dialog');if(preview?.open)preview.close();
@@ -426,9 +469,9 @@ function renderFeed(){
  const entries=[...streamPosts(),...room.assignments.map(a=>({...a,kind:'assignment',created_at:stream.assignment_dates?.[a.id]}))]
  .filter(p=>(p.kind==='assignment'||!p.deleted)&&(streamFilter==='all'||p.kind===streamFilter)).sort((a,b)=>Number(!!b.pinned)-Number(!!a.pinned)||(Date.parse(b.created_at)||0)-(Date.parse(a.created_at)||0)||String(b.id).localeCompare(String(a.id)));
  $('cr-stream-feed').innerHTML=entries.map(p=>{
-  if(p.kind==='assignment')return `<article class="cr-card cr-feed-card cr-feed-assignment"><span class="cr-feed-type">NEUE AUFGABE</span>${p.created_at?`<time>${esc(date(p.created_at))}</time>`:''}<h3>${esc(p.title)}</h3><p>${p.items.length} Sätze · ${esc(date(p.due_at))}</p><div class="cr-toolbar">${b('Aufgabe öffnen →','assignment',`data-id="${p.id}"`)}<span class="cr-state">${p.released?'Vergleich freigegeben':p.submissions.some(s=>s.own)?'Abgegeben':p.due_at&&new Date(p.due_at)<new Date()?'Frist abgelaufen':'Offen'}</span></div></article>`;
+  if(p.kind==='assignment')return `<article class="cr-card cr-feed-card cr-feed-assignment"><span class="cr-feed-type">NEUE AUFGABE</span>${newPill(assignmentNews(p))}${p.created_at?`<time>${esc(date(p.created_at))}</time>`:''}<h3>${esc(p.title)}</h3><p>${p.items.length} Sätze · ${esc(date(p.due_at))}</p><div class="cr-toolbar">${b('Aufgabe öffnen →','assignment',`data-id="${p.id}"`)}<span class="cr-state">${p.released?'Vergleich freigegeben':p.submissions.some(s=>s.own)?'Abgegeben':p.due_at&&new Date(p.due_at)<new Date()?'Frist abgelaufen':'Offen'}</span></div></article>`;
   const writable=!room.archived&&!p.deleted;
-  return `<article class="cr-card cr-feed-card cr-feed-${p.kind}" id="cr-post-${p.id}"><div class="cr-feed-meta"><span class="cr-feed-type">${p.pinned?'ANGEHEFTET · ':''}${{question:'FRAGE',post:'BEITRAG',announcement:'ANKÜNDIGUNG'}[p.kind]||'BEITRAG'}</span>${p.kind==='question'&&!p.deleted?`<span class="cr-state ${p.resolved?'cr-resolved':''}">${p.resolved?'✓ Beantwortet':'Offen'}</span>`:''}</div><div class="cr-author"><strong>${esc(p.author)}</strong>${p.teacher?' · Lehrkraft':''} <time datetime="${esc(p.created_at)}">${esc(date(p.created_at))}</time></div><p class="cr-post-body">${richText(p.body)}</p>
+  return `<article class="cr-card cr-feed-card cr-feed-${p.kind}" id="cr-post-${p.id}"><div class="cr-feed-meta"><span class="cr-feed-type">${p.pinned?'ANGEHEFTET · ':''}${{question:'FRAGE',post:'BEITRAG',announcement:'ANKÜNDIGUNG'}[p.kind]||'BEITRAG'}</span>${newPill(postNews(p))}${p.kind==='question'&&!p.deleted?`<span class="cr-state ${p.resolved?'cr-resolved':''}">${p.resolved?'✓ Beantwortet':'Offen'}</span>`:''}</div><div class="cr-author"><strong>${esc(p.author)}</strong>${p.teacher?' · Lehrkraft':''} <time datetime="${esc(p.created_at)}">${esc(date(p.created_at))}</time></div><p class="cr-post-body">${richText(p.body)}</p>
  ${!p.deleted?(p.files||[]).map(f=>f.mime.startsWith('image/')?`<div class="cr-attachment cr-image-attachment" data-attachment="${f.id}"><button type="button" class="cr-image-thumb" data-cr="stream_preview" data-id="${f.id}" aria-label="Bild vergrößern"><span>Vorschau wird geladen …</span></button>${b('Herunterladen','stream_download',`data-id="${f.id}"`)}</div>`:`<div class="cr-attachment" data-attachment="${f.id}"><div><strong>${esc(f.name)}</strong><small>${fileSize(f.size)}</small></div>${b('Herunterladen','stream_download',`data-id="${f.id}"`)}</div>`).join(''):''}
  <div class="cr-toolbar">${writable?b('Antworten','stream_reply',`data-id="${p.id}"`):''}${writable&&p.kind==='question'&&(room.teacher||p.own)?b(p.resolved?'Wieder öffnen':'Als beantwortet markieren','stream_resolve',`data-id="${p.id}" data-value="${!p.resolved}"`):''}${writable&&room.teacher?b(p.pinned?'Lösen':'Anpinnen','stream_pin',`data-id="${p.id}" data-value="${!p.pinned}"`):''}${writable&&(room.teacher||p.own)?b('Entfernen','stream_delete',`data-id="${p.id}"`):''}</div>
  ${(p.replies||[]).length?`<details class="cr-feed-replies"><summary>${p.replies.length} ${p.replies.length===1?'Antwort':'Antworten'}</summary>${renderStreamReplies(p)}</details>`:''}<div id="cr-stream-reply-${p.id}"></div></article>`;
@@ -531,3 +574,15 @@ async function sendStream(form,data,action){
  const value=await api('stream_post',{room_id:room.id,request_id:draft.id,kind:draft.kind,body:draft.body.trim(),file_ids:draft.files.map(f=>f.id)});
  streamDrafts.delete(room.id);dirty=false;streamFilter='all';await reloadStream();$('cr-post-'+value.id)?.scrollIntoView?.({block:'nearest'});
 }
+// Coming back to the tab: look for news and reload the open room, unless something is being written.
+function autoRefresh(){
+ if($('classrooms-view').hidden||!room||busy||dirty||Date.now()-lastRefresh<60000)return;
+ const content=$('classrooms-content'),active=document.activeElement;
+ if(content.querySelector('[data-cr-form=assign],[data-cr-form=update_assignment],[data-cr-form=stream_reply],.cr-reply-form'))return;
+ if(active&&content.contains(active)&&active.matches('textarea,input,select'))return;
+ run(()=>typeof selected==='string'?refreshAssignment():open(room.id));
+}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState!=='visible')return;checkNews();autoRefresh();});
+window.addEventListener('vanamo:session',()=>checkNews(true));
+setInterval(()=>{if(document.visibilityState==='visible')checkNews();},5*60*1000);
+setTimeout(()=>checkNews(true),2500);
