@@ -31,6 +31,13 @@ try{
  assert.equal(saved.day,today);assert.equal(saved.card.sentence.id,saved.id);assert.deepEqual(saved.card.cols.map(c=>c.fi),first);
  assert.ok(saved.next&&saved.next.day>today&&saved.next.card.cols.length>0,'die Karte von morgen ist vorbereitet');
  assert.ok(requested.includes('lexicon.json'));
+ // „heute geübt“ sitzt für Angemeldete als Pille im Header; Woche und Serie klappen darunter auf und wieder zu.
+ assert.equal(await page.locator('header>.today.is-account').count(),1,'Zähler im Header');
+ assert.equal(await page.locator('#home-view .today').count(),0);
+ await page.locator('.today-toggle').click();
+ assert.ok(await page.locator('#today-details').isVisible(),'Wochenübersicht aufgeklappt');
+ await page.locator('#daily-sentence h2').click();
+ assert.ok(await page.locator('#today-details').isHidden(),'Klick daneben klappt sie zu');
 
  // Zweiter Besuch: Karte ist da, bevor Sätze und Wortanalyse geladen sind.
  hold=true;requested.length=0;
@@ -69,6 +76,7 @@ try{
  // Abgemeldet: keine Karte.
  await page.evaluate(()=>localStorage.removeItem('suomi-auth-session-v1'));
  await page.reload();await page.waitForFunction(()=>document.querySelector('#daily-sentence')?.hidden);
+ assert.equal(await page.locator('#home-view .intro>.today:not(.is-account)').count(),1,'Gäste: Zähler neben der Überschrift');
  assert.deepEqual(errors,[]);
  console.log('PASS: Satz des Tages – sofort aus dem Gerätespeicher, Karte von morgen vorbereitet, veralteter Satz ersetzt, Gäste ohne Karte');
 }finally{await browser?.close();server.kill();}

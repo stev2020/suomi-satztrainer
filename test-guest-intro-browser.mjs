@@ -83,7 +83,7 @@ try{
  assert.equal(await opacity(page,'header .brand'),1,'logo visible from the start');
  assert.equal(await opacity(page,'header .header-nav'),0,'navigation hidden while the sentence stands alone');
  assert.equal(await opacity(page,'#home-view .intro h1'),0,'greeting hidden while the sentence stands alone');
- assert.equal(await opacity(page,'#home-view .today'),0);
+ assert.equal(await opacity(page,'header>.today'),0,'counter pill hidden while the sentence stands alone');
  assert.equal(await opacity(page,'#daily-sentence .daily-sentence-top'),0,'card chrome hidden at first');
  const big=await page.locator('#daily-sentence .daily-words').evaluate(el=>new DOMMatrix(getComputedStyle(el).transform).a);
  assert.ok(big>1.1,`sentence starts larger (scale ${big})`);

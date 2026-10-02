@@ -117,7 +117,7 @@ export async function runGuestIntro(){
  if(done)return;
 
  // Restliche Seite gestaffelt einblenden (Reihenfolge = Lesereihenfolge).
- const rest=[...document.querySelectorAll('header .header-nav, #home-view .today, #home-view>:not(.intro), .page-tools, footer')].filter(el=>!el.hidden&&!el.classList.contains('intro-shown'));
+ const rest=[...document.querySelectorAll('header .header-nav, .today, #home-view>:not(.intro), .page-tools, footer')].filter(el=>!el.hidden&&!el.classList.contains('intro-shown'));
  rest.forEach((el,i)=>play(el,[{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'none'}],{duration:650,delay:120+i*90,easing:EASE_OUT,fill:'backwards'}));
  html.classList.remove('intro-pending');
  await sleep(120+rest.length*90+700);
@@ -188,7 +188,7 @@ export async function runUserIntro(){
   await hold(250);
  }
  if(done)return;
- await revealRest('header .header-nav, #home-view .intro h1, #home-view .today, #home-view>:not(.intro), .page-tools, footer',play);
+ await revealRest('header .header-nav, #home-view .intro h1, .today, #home-view>:not(.intro), .page-tools, footer',play);
  finish();
 }
 

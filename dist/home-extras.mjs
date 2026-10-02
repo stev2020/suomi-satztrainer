@@ -85,17 +85,17 @@ export function practiceStreak(daily={},date=new Date()){
 
 const RING_C=2*Math.PI*19;
 export const GOAL_CHOICES=[5,10,20,30,50];
-const DETAILS_KEY='vanamo-today-open';
 const CHEVRON='<svg class="today-chevron" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 let shownCount=null;
-function readOpen(){try{return localStorage.getItem(DETAILS_KEY)==='1';}catch{return false;}}
-function saveOpen(on){try{localStorage.setItem(DETAILS_KEY,on?'1':'0');}catch{}}
-// Angemeldete: Ring + „heute geübt“; ein Klick auf die Box klappt Woche und Serie auf,
-// ein Klick auf die Zahl im Ring öffnet die Auswahl fürs Tagesziel.
+// Angemeldete: „heute geübt“ sitzt als kleine Pille im Header (auf allen Seiten sichtbar). Ein Klick klappt
+// darunter Woche und Serie auf, ein Klick auf die Zahl öffnet die Auswahl fürs Tagesziel. Gäste: Kasten neben der Überschrift.
 export function renderToday(box,{count,daily,account,date=new Date(),goal=DAILY_GOAL,onGoalChange}){
  if(!box)return;
  const counter=box.querySelector('#today-count');
  box.classList.toggle('is-account',account);
+ const header=document.querySelector('header'),intro=document.querySelector('#home-view .intro');
+ if(account&&header&&box.parentElement!==header)header.insertBefore(box,header.querySelector('.header-nav'));
+ else if(!account&&intro&&box.parentElement!==intro)intro.append(box);
  if(!account){if(counter)counter.textContent=count;shownCount=null;return;}
  box._onGoalChange=onGoalChange;
  if(!box.querySelector('.today-ring')){
@@ -107,16 +107,17 @@ export function renderToday(box,{count,daily,account,date=new Date(),goal=DAILY_
   const ring=box.querySelector('.today-ring'),picker=box.querySelector('.today-goal-picker'),toggle=box.querySelector('.today-toggle'),details=box.querySelector('.today-details');
   const setOpen=on=>{details.hidden=!on;toggle?.setAttribute('aria-expanded',String(on));box.classList.toggle('details-open',on);};
   const setPicker=on=>{picker.hidden=!on;ring.setAttribute('aria-expanded',String(on));if(on)picker.querySelector('[aria-pressed="true"]')?.focus();};
-  setOpen(readOpen());
+  setOpen(false);
   box.addEventListener('click',e=>{
    const choice=e.target.closest('[data-goal]');
    if(choice){const n=Number(choice.dataset.goal);setPicker(false);ring.focus();box._onGoalChange?.(n);return;}
    if(e.target.closest('.today-goal-picker'))return;
-   if(e.target.closest('.today-ring')){setPicker(picker.hidden);return;}
-   const on=details.hidden;setOpen(on);saveOpen(on);
+   if(e.target.closest('.today-ring')){setOpen(false);setPicker(picker.hidden);return;}
+   if(e.target.closest('.today-details'))return;
+   setPicker(false);setOpen(details.hidden);
   });
-  box.addEventListener('keydown',e=>{if(e.key==='Escape'&&!picker.hidden){setPicker(false);ring.focus();}});
-  document.addEventListener('click',e=>{if(!picker.hidden&&!box.contains(e.target))setPicker(false);});
+  box.addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(!picker.hidden){setPicker(false);ring.focus();}else if(!details.hidden){setOpen(false);toggle?.focus();}});
+  document.addEventListener('click',e=>{if(box.contains(e.target))return;if(!picker.hidden)setPicker(false);if(!details.hidden)setOpen(false);});
  }
  const reached=count>=goal,fill=box.querySelector('.today-ring-fill');
  box.classList.toggle('goal-reached',reached);
