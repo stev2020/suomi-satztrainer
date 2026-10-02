@@ -608,7 +608,8 @@ html.intro-running,.intro-running body{overflow:hidden}
 .daily-sentence-tools button{display:grid;place-items:center;width:40px;height:40px;min-height:0;padding:0;border:2px solid var(--line);border-radius:10px;background:var(--paper);box-shadow:2px 2px 0 var(--line);color:var(--ink)}
 .daily-sentence-tools button:hover,.daily-audio.playing{background:var(--lavender)}
 .daily-sentence .guest-words{gap:6px 18px;padding-top:4px}
-.daily-source{align-self:flex-start;margin-top:-6px}
+.daily-source{align-self:flex-start;margin-top:-6px;transition:opacity .3s ease}
+.daily-sentence.is-entering .daily-source{opacity:0}
 .daily-sentence .guest-fi{font-size:clamp(24px,3.4vw,32px);letter-spacing:-.5px}
 @media(min-width:701px){.daily-sentence .guest-fi{font-size:clamp(28px,3.8vw,36px)}}
 .daily-sentence .guest-gloss{font-size:14px;min-height:1.3em}
@@ -639,7 +640,7 @@ html.intro-running,.intro-running body{overflow:hidden}
 @keyframes daily-wobble{0%,100%{transform:none}15%{transform:rotate(-7deg)}35%{transform:rotate(6deg)}55%{transform:rotate(-4deg)}75%{transform:rotate(2deg)}}
 .daily-sentence:is(.is-entering,.intro-drop) .daily-tile{animation:daily-drop .95s both;animation-delay:calc(var(--i)*120ms)}
 @keyframes daily-drop{0%{opacity:0;transform:translateY(-70px) scale(3.4);animation-timing-function:cubic-bezier(.6,0,.9,.5)}12%{opacity:1}45%{opacity:1;transform:none;animation-timing-function:ease-out}53%{transform:scale(1.1,.84);animation-timing-function:ease-out}68%{transform:translateY(-22px) scale(.97,1.04);animation-timing-function:ease-in}82%{transform:scale(1.05,.93);animation-timing-function:ease-out}91%{transform:translateY(-7px);animation-timing-function:ease-in}100%{opacity:1;transform:none}}
-html:has(.daily-sentence:is(.is-entering,.intro-drop)){overflow-x:clip}
+main:has(.daily-sentence:is(.is-entering,.intro-drop)){overflow-x:clip}
 .daily-translate[aria-pressed="true"]{background:var(--lavender)}
 /* Angemeldet: Begrüßung als kleine gekippte Sprechblase, der Zähler leicht gegengekippt – der Satz des Tages ist die Hauptsache. */
 .home-view .intro h1.is-greeting{margin:0;padding:10px 16px 12px;border:2px solid var(--line);border-radius:16px 16px 16px 3px;background:var(--paper);box-shadow:4px 4px 0 var(--line);font-size:clamp(17px,2vw,21px);line-height:1.25;letter-spacing:-.3px;rotate:-3deg}
