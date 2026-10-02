@@ -55,8 +55,8 @@ enthalten. Das ist kein manipulationssicheres Prüfungssystem.
 - Limits: 10 eigene Räume, 30 Mitgliedschaften, 100 Teilnehmer pro Raum,
   100 Aufgabenpakete pro Raum, 300 Diskussionsbeiträge pro Aufgabe,
   30 Schreib-/Beitrittsaktionen pro Minute und Konto.
-- Kein allgemeiner Chat, keine Live-Sitzung und keine Benachrichtigungen
-  in dieser ersten Version. Änderungen mit **Aktualisieren** laden.
+- Kein allgemeiner Chat, keine Live-Sitzung und keine Push-Benachrichtigungen.
+  Neues zeigt die App selbst an (siehe „Hinweis auf Neues“); **Aktualisieren** lädt sofort.
 - Antwortentwürfe liegen auf dem Gerät (`localStorage`, Schlüssel `vanamo-classroom-drafts:<Konto-ID>`), verbindliche Abgaben in Supabase. Entwürfe verschwinden beim Abgeben, nach 60 Tagen und beim Abmelden.
   Gastnutzer können nichts im Klassenraum speichern.
 
@@ -174,3 +174,13 @@ Rollout: zuerst `supabase/migrations/20261002130000_classroom_assignment_edit.sq
 API: `feedback` (`assignment_id`, `submission_id`, `item_index`, `body`). `room` liefert je Abgabe `feedback` als Liste aus `item_index`, `body`, `author`, `updated_at`. Tabelle `classroom_private.feedback`, ohne direkten Browserzugriff; Kommentare werden mit der Abgabe, der Aufgabe, dem Raum und dem Konto der Lehrkraft gelöscht.
 
 Rollout: zuerst `supabase/migrations/20261002150000_classroom_feedback.sql` anwenden, danach das Frontend veröffentlichen. Tests: `supabase/tests/classroom_feedback.sql`, `test-classroom-assignment-ui.mjs`, `test-classrooms.mjs`.
+
+## Hinweis auf Neues
+
+- Am Knopf **Klassenräume** steht die Zahl der Räume, in denen es etwas Neues gibt. In der Raumliste tragen diese Räume „Neu“, dazu steht bei Teilnehmern die Zahl der offenen Aufgaben. Im Raum tragen neue Beiträge und Aufgaben mit Neuem (neue Aufgabe, Frage, Abgabe für die Lehrkraft, Kommentar zur eigenen Abgabe) „Neu“, bis man den Raum das nächste Mal lädt.
+- Neu ist, was jemand anderes getan hat; eigene Beiträge zählen nicht. Was ein Gerät schon gezeigt hat, merkt es sich je Konto in `localStorage` (`vanamo-classroom-seen:<Konto-ID>`). Der Stand gilt also pro Gerät; ein Raum, den ein Gerät zum ersten Mal sieht, gilt als gesehen.
+- Die App fragt beim Start, bei der Rückkehr in den Tab (höchstens einmal pro Minute) und alle fünf Minuten nach. Bei der Rückkehr in den Tab lädt ein geöffneter Raum von selbst neu, wenn der letzte Stand älter als eine Minute ist und gerade nichts geschrieben wird.
+
+API: `list` liefert je Raum `open_tasks` und `activity`. Ohne die Migration fehlen beide Felder, dann gibt es keine Hinweise.
+
+Rollout: zuerst `supabase/migrations/20261002170000_classroom_activity.sql` anwenden, danach das Frontend veröffentlichen. Tests: `supabase/tests/classroom_activity.sql`, `test-classrooms.mjs`.

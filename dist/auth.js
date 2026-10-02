@@ -1,4 +1,4 @@
-import {uiLocale} from './i18n.mjs?v=17';
+import {uiLocale} from './i18n.mjs?v=18';
 import {mergeVerbProgress} from './verb-practice.mjs';
 import {mergeEndingsProgress} from './endings-progress.mjs?v=1';
 import {mergePerformanceEvents} from './learning-insights.mjs';
@@ -45,7 +45,7 @@ const syncState=(t,error=false)=>{
 const stableJSON=value=>JSON.stringify(value,(_,item)=>item&&typeof item==='object'&&!Array.isArray(item)?Object.keys(item).sort().reduce((out,key)=>(out[key]=item[key],out),{}):item);
 const localLearning=()=>{try{return JSON.parse(localStorage.getItem(STORE))||null}catch{return null}};
 const currentLearning=()=>window.suomiLearningState?.snapshot?.()||localLearning();
-function saveSession(v){session=v;if(v)localStorage.setItem(SESSION,JSON.stringify(v));else localStorage.removeItem(SESSION);renderAccount();}
+function saveSession(v){session=v;if(v)localStorage.setItem(SESSION,JSON.stringify(v));else localStorage.removeItem(SESSION);renderAccount();try{window.dispatchEvent(new CustomEvent('vanamo:session'));}catch{}}
 function loadSession(){try{const v=JSON.parse(localStorage.getItem(SESSION));if(v?.access_token&&v?.refresh_token)session=v}catch{}}
 
 // Only an explicitly rejected refresh token ends the session. Server errors (5xx),
@@ -60,7 +60,7 @@ function clearAccountStorage(userId){
     const doomed=[];
     for(let i=0;i<localStorage.length;i++){
       const key=localStorage.key(i)||'';
-      if(key.startsWith('suomi-hyppy.progress.')||(userId&&(key==='vanamo-daily-sentence:'+userId||key==='vanamo-classroom-drafts:'+userId)))doomed.push(key);
+      if(key.startsWith('suomi-hyppy.progress.')||(userId&&(key==='vanamo-daily-sentence:'+userId||key==='vanamo-classroom-drafts:'+userId||key==='vanamo-classroom-seen:'+userId)))doomed.push(key);
     }
     for(const key of [STORE,STAMP,...doomed])localStorage.removeItem(key);
   }catch{}
@@ -344,7 +344,7 @@ export const accountUser=()=>session?.user||null;
 export {request as accountRequest};
 window.suomiAccountUser=()=>session?.user||null;
 window.suomiAccountRequest=request;
-import('./classrooms.js?v=84').catch(()=>{});
+import('./classrooms.js?v=85').catch(()=>{});
 import('./quality-review.js?v=4').catch(()=>{});
 if(session?.user&&configured())refreshSession().then(async ok=>{if(!ok)return;try{await pullAndMerge();}catch(err){syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true);status(err.message,true);}}).catch(syncError).finally(()=>{syncReady=true;if(syncQueued)scheduleSync()});
 else syncReady=true;

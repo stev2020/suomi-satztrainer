@@ -15,7 +15,7 @@ try{
  browser=await chromium.launch({headless:true,...(process.env.PW_CHROMIUM?{executablePath:process.env.PW_CHROMIUM}:{})});
  for(const viewport of [{width:390,height:844},{width:1280,height:800}]){
   const tag=viewport.width<600?'handy':'desktop';
-  let teacher=true,step=0;
+  let teacher=true,step=0,activity=null;
   const room={id,name:'Finnisch am Mittwoch',teacher:true,owner:true,teacher_count:1,archived:false,code:'ABCD1234ABCD1234',member_count:3,assignments:[],
    members:[{id:'owner',name:'Frau Virtanen',role:'teacher',owner:true,own:true,blocked:false},{id:'s1',name:'Anna Müller',role:'student',owner:false,blocked:false},{id:'s2',name:'Mika',role:'student',owner:false,blocked:false}]};
   const posts=[{id:'post-1',kind:'question',body:'Wann benutzt man den Partitiv? Siehe https://example.org/partitiv',author:'Anna Müller',own:false,teacher:false,resolved:false,created_at:'2026-10-01T09:00:00Z',files:[],
@@ -29,7 +29,7 @@ try{
   await context.route('**/rest/v1/rpc/classroom_api',async route=>{
    const {action,payload}=route.request().postDataJSON();let result={};
    const members=room.members.map(m=>({...m,own:teacher?m.id==='owner':m.id==='s1'}));
-   if(action==='list')result=[{...room,teacher,owner:teacher}];
+   if(action==='list')result=[{id:room.id,name:room.name,archived:room.archived,teacher,owner:teacher,activity,open_tasks:teacher?0:room.assignments.filter(a=>!a.released&&!a.submissions.length).length}];
    if(action==='create'||action==='join')result={id};
    if(action==='room')result={...room,teacher,owner:teacher,members,code:teacher?room.code:null,assignments:room.assignments.map(a=>({...a,submissions:a.submissions.map(x=>({...x,own:!teacher})),own_assignment:teacher,can_manage:teacher,items_locked:a.released||a.submissions.length>0||a.messages.length>0}))};
    if(action==='assign')room.assignments.push({id:'22222222-2222-4222-a222-222222222222',title:payload.title,items:payload.items,due_at:payload.due_at,created_at:'2026-10-02T08:00:00Z',released:false,submissions:[],messages:[],submitted_count:0});
@@ -145,11 +145,26 @@ try{
   await page.locator('[data-cr-form=update_assignment] [data-cr=assignment]').click();await page.locator('[data-cr=release]').waitFor();
   await page.locator('[data-cr=release]').click();await page.locator('[data-cr=react]').first().waitFor();await check('vergleich-freigegeben');
   await page.locator('[data-cr=back]').click();await page.locator('.cr-stream-layout').waitFor();await check('zurueck-im-raum');
+  // Hinweis auf Neues: Zahl am Knopf, „Neu“ am Raum und am Beitrag, verschwindet nach dem Ansehen
+  assert.equal(await page.locator('#classrooms-button').getAttribute('data-news'),null);
+  const newer=body=>({id:'post-'+body.length,kind:'post',body,author:'Anna Müller',own:false,teacher:false,resolved:false,created_at:activity,files:[],replies:[]});
+  activity='2026-10-03T10:00:00Z';posts.unshift(newer('Neues von Anna'));
+  await page.locator('#classrooms-button').click();await page.locator('.cr-room-card .cr-new').waitFor();
+  assert.equal(await page.locator('#classrooms-button').getAttribute('data-news'),'1');await check('neues-in-raumliste');
+  await page.locator('[data-cr=open]').click();await page.locator('.cr-stream-layout').waitFor();
+  assert.equal(await page.locator('.cr-feed-card .cr-new').count(),1);assert.ok((await page.locator('.cr-feed-card:has(.cr-new)').textContent()).includes('Neues von Anna'));
+  assert.equal(await page.locator('#classrooms-button').getAttribute('data-news'),null,'gesehen: der Hinweis am Knopf ist weg');await check('neues-im-raum');
+  await page.locator('#classrooms-refresh').click();await page.waitForFunction(()=>!document.querySelector('.cr-new'));
+  // Zurück im Tab nach einer Weile: der Raum lädt von selbst neu
+  activity='2026-10-03T11:00:00Z';posts.unshift(newer('Noch etwas Neues'));
+  await page.evaluate(()=>{const real=Date.now;Date.now=()=>real()+180000;document.dispatchEvent(new Event('visibilitychange'));});
+  await page.getByText('Noch etwas Neues').waitFor();assert.equal(await page.locator('.cr-feed-card .cr-new').count(),1);
+  await page.evaluate(()=>{document.dispatchEvent(new Event('visibilitychange'));});
   // Aufgabe löschen
   await page.locator('[data-cr=assignment]').first().click();await page.locator('[data-cr=delete_assignment]').click();
   await page.getByText('Die Aufgabe wurde gelöscht.').waitFor();assert.equal(await page.locator('[data-cr=assignment]').count(),0);assert.equal(room.assignments.length,0);await check('aufgabe-geloescht');
   assert.deepEqual(errors,[],`${tag}: Fehler in der Konsole`);
   await context.close();
  }
- console.log('PASS: Klassenräume auf Handy und Desktop – Gast, Raum, Stream, Mitglieder, Aufgabe, Bearbeiten, Entwurf, Abgabe, Vergleich, Kommentar, Frage, Freigabe, Löschen, keine Überbreite, keine Konsolenfehler');
+ console.log('PASS: Klassenräume auf Handy und Desktop – Gast, Raum, Stream, Mitglieder, Aufgabe, Bearbeiten, Entwurf, Abgabe, Vergleich, Kommentar, Frage, Freigabe, Neues, Löschen, keine Überbreite, keine Konsolenfehler');
 }finally{await browser?.close();server.kill();}
