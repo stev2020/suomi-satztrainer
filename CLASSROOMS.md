@@ -79,6 +79,8 @@ Zeitstempel; vor einem späteren CLI-Push diese historische Zuordnung beachten.
 
 ## Tests
 
+Stand Oktober 2026: `npm run test:classrooms` führt die vier Klassenraum-Tests ohne Browser aus (Aufgaben-Matrix, Oberfläche, Stream, Datenbank). Dafür einmalig `npm install --no-save --package-lock=false happy-dom@20.8.4 @electric-sql/pglite@0.5.8`. `node test-classrooms.mjs` klickt die Klassenräume mit Playwright auf Handy- und Desktopbreite durch und startet den lokalen Server selbst; `CLASSROOM_SCREENSHOTS=<Ordner>` speichert von jedem Schritt ein Bild. Alle fünf Tests laufen auch vor jeder Veröffentlichung in GitHub Actions.
+
 - `npm test`: bestehende Grammatik-/Lernfunktionen.
 - `supabase/tests/classrooms.sql`: echte Rollen-, Workflow- und Zugriffstests
   innerhalb einer Transaktion mit vollständigem ROLLBACK. Keine dauerhaften

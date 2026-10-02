@@ -947,6 +947,7 @@ export default {
  "{0} Aufgaben erledigt · {1} Übersetzen · {2} Hören · {3} Diktat{4}": "{0} tasks done · {1} Translate · {2} Listening · {3} Dictation{4}",
  "{0} Bis zu 10 Sätze pro Runde, auch bereits gelernte. Bewertungen zählen zur gewählten Lernrichtung.": "{0} Up to 10 sentences per round, including ones you've already learned. Ratings count toward the selected direction.",
  "{0} Dein Lernstand bleibt erhalten.": "{0} Your progress is kept.",
+ "1 Frage wartet auf eine Antwort.": "1 question is waiting for an answer.",
  "{0} Fragen warten auf eine Antwort.": "{0} questions are waiting for an answer.",
  "{0} Lücken in Level {1}": "{0} gaps in level {1}",
  "{0} Lücken in Level {1} · {2}": "{0} gaps in Level {1} · {2}",

@@ -10,9 +10,11 @@ const calls=[];
 room.members.unshift({id:'owner',name:'teacher',role:'teacher',owner:true,own:true,blocked:false});room.members[1].role='student';
 let messageNumber=0;
 window.accountUser=()=>logged?{id:'test-user',user_metadata:{username:teacher?'teacher':'learner'}}:null;
-window.GRAMMAR_TOPICS=GRAMMAR_TOPICS;window.topicNotes=topicNotes;
+window.uiLocale=()=>'de';window.GRAMMAR_TOPICS=GRAMMAR_TOPICS;window.topicNotes=topicNotes;
 window.confirm=()=>true;
-window.accountRequest=async(url,opts)=>{
+window.accountRequest=async(path,opts)=>{
+ if(path.includes('sentence_quality_exclusions'))return {ok:true,json:async()=>({sentence_ids:[],translations:[]})};
+ if(path.includes('sentence_quality_api'))return {ok:true,json:async()=>[]};
  const {action,payload}=JSON.parse(opts.body);calls.push(action);let result={};
  if(action==='list')result=deleted?[]:[{...room,teacher}];
  if(action==='create'||action==='join'){assert(payload.display_name);result={id:room.id};}
