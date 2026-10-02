@@ -233,7 +233,7 @@ try{
  await focused.locator('.path-details > summary').click();
  assert.equal(await focused.locator('.path-stop').count(),14);
  assert.equal(await focused.locator('.path-stop[aria-current="step"]').count(),1);
- for(const width of [390,320]){await focused.setViewportSize({width,height:844});assert.ok(await focused.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
+ for(const width of [800,390,320]){await focused.setViewportSize({width,height:844});assert.ok(await focused.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`kein seitliches Scrollen bei ${width}px`);}
  // Imported progress advances the same path without a new persistence schema.
  const finished=await focused.evaluate(()=>window.suomiLearningState.snapshot());
  const levelOneIds=[...new Set([...sentencePayload.sentences,...sentencePayload.archived_sentences].filter(s=>s.level===1&&s.translations?.length).map(s=>s.id))];
