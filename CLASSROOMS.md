@@ -178,7 +178,7 @@ Rollout: zuerst `supabase/migrations/20261002150000_classroom_feedback.sql` anwe
 ## Hinweis auf Neues
 
 - Am Knopf **Klassenräume** steht die Zahl der Räume, in denen es etwas Neues gibt. In der Raumliste tragen diese Räume „Neu“, dazu steht bei Teilnehmern die Zahl der offenen Aufgaben. Neue Antworten unter einem Beitrag zeigt „Neu“ an der Zeile „n Antworten“ an; die Antworten bleiben zugeklappt, nach dem Aufklappen trägt jede neue Antwort „Neu“. Im Raum tragen neue Beiträge und Aufgaben mit Neuem (neue Aufgabe, Frage, Abgabe für die Lehrkraft, Kommentar zur eigenen Abgabe) „Neu“, bis man den Raum das nächste Mal lädt.
-- Neu ist, was jemand anderes getan hat; eigene Beiträge zählen nicht. Was ein Gerät schon gezeigt hat, merkt es sich je Konto in `localStorage` (`vanamo-classroom-seen:<Konto-ID>`). Der Stand gilt also pro Gerät; ein Raum, den ein Gerät zum ersten Mal sieht, gilt als gesehen.
+- Neu ist, was jemand anderes getan hat; eigene Beiträge zählen nicht. Bis wohin ein Konto das Neue angesehen hat, steht je Raum im Konto (`classroom_private.seen`, Aktion `seen`, Feld `seen` in `list`) und gilt damit auf allen Geräten. Jedes Gerät hält eine Kopie in `localStorage` (`vanamo-classroom-seen:<Konto-ID>`); es gilt der spätere der beiden Stände. Ein Raum ohne jeden Stand gilt als gesehen.
 - Die App fragt beim Start, bei der Rückkehr in den Tab (höchstens einmal pro Minute) und alle fünf Minuten nach. Bei der Rückkehr in den Tab lädt ein geöffneter Raum von selbst neu, wenn der letzte Stand älter als eine Minute ist und gerade nichts geschrieben wird.
 
 API: `list` liefert je Raum `open_tasks` und `activity`. Ohne die Migration fehlen beide Felder, dann gibt es keine Hinweise.
@@ -206,3 +206,5 @@ Technik: `window.suomiLearningState.addReviews([{id,direction}])` in `app.js` sc
 Ab zwei Abgaben zeigt die Abgabenübersicht oben den Kasten **Wo die Klasse abweicht** – für die Lehrkraft, die die Aufgabe erstellt hat, und den Ersteller des Raums. Je Satz steht dort, wie viele Antworten wie die Vorlage, fast wie die Vorlage oder anders formuliert sind, und bei welchen Wörtern die Klasse am häufigsten abweicht (bis zu drei Stellen, mit den häufigsten Varianten und „fehlt“). Abweichungen werden nur aus Antworten gezählt, die der Vorlage nahe sind; frei umformulierte Antworten zählen als „anders formuliert“.
 
 Die Auswertung läuft im Browser aus den Abgaben, die die Lehrkraft ohnehin sieht (`compareTranslation` aus `translation-feedback.mjs`); gespeichert wird nichts, eine Migration gibt es nicht. Es ist keine Benotung.
+
+Gesehen-Stand im Konto: Migration `supabase/migrations/20261002210000_classroom_seen.sql`, Test `supabase/tests/classroom_seen.sql`. Ohne Migration bleibt es beim Stand pro Gerät.
