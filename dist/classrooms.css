@@ -298,3 +298,15 @@ header{flex-wrap:wrap}
 .cr-edit-removed .cr-custom-text{text-decoration:line-through}
 .cr-edit-locked{margin:8px 0 0;padding-left:22px}
 .cr-edit-locked li{margin:6px 0}
+/* Rückmeldung: Vergleich mit der Vorlage und Kommentar der Lehrkraft */
+.cr-submission-answer{padding:10px 0;border-top:1px solid color-mix(in srgb,var(--line) 14%,transparent)}
+.cr-submission-answer:first-of-type{border-top:0}
+.cr-submission-answer>p{margin:0 0 6px}
+#classrooms-view .writing-feedback{margin:8px 0;font-size:14px}
+.cr-auto-different{margin:6px 0}
+.cr-teacher-note{margin:10px 0;padding:10px 12px;border-left:4px solid var(--purple);border-radius:6px;background:var(--lavender);color:var(--ink)}
+.cr-teacher-note strong{display:block;font-size:13px}
+.cr-teacher-note p{margin:4px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.cr-feedback-edit{margin:8px 0 2px}
+.cr-feedback-edit>summary{cursor:pointer;font-size:14px;font-weight:700;min-height:32px}
+.cr-feedback-edit form{margin-top:8px}

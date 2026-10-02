@@ -31,10 +31,11 @@ try{
    const members=room.members.map(m=>({...m,own:teacher?m.id==='owner':m.id==='s1'}));
    if(action==='list')result=[{...room,teacher,owner:teacher}];
    if(action==='create'||action==='join')result={id};
-   if(action==='room')result={...room,teacher,owner:teacher,members,code:teacher?room.code:null,assignments:room.assignments.map(a=>({...a,own_assignment:teacher,can_manage:teacher,items_locked:a.released||a.submissions.length>0||a.messages.length>0}))};
+   if(action==='room')result={...room,teacher,owner:teacher,members,code:teacher?room.code:null,assignments:room.assignments.map(a=>({...a,submissions:a.submissions.map(x=>({...x,own:!teacher})),own_assignment:teacher,can_manage:teacher,items_locked:a.released||a.submissions.length>0||a.messages.length>0}))};
    if(action==='assign')room.assignments.push({id:'22222222-2222-4222-a222-222222222222',title:payload.title,items:payload.items,due_at:payload.due_at,created_at:'2026-10-02T08:00:00Z',released:false,submissions:[],messages:[],submitted_count:0});
-   if(action==='submit'){room.assignments[0].submissions.push({id:'submission',own:!teacher,answers:payload.answers,author_id:'s1',author:'Anna Müller',reactions:{}});room.assignments[0].submitted_count=1;}
+   if(action==='submit'){room.assignments[0].submissions.push({id:'submission',answers:payload.answers,author_id:'s1',author:'Anna Müller',reactions:{},feedback:[]});room.assignments[0].submitted_count=1;}
    if(action==='release')room.assignments[0].released=true;
+   if(action==='feedback'){assert.ok(teacher);const sub=room.assignments[0].submissions.find(x=>x.id===payload.submission_id);sub.feedback=(sub.feedback||[]).filter(f=>f.item_index!==payload.item_index);if(payload.body.trim())sub.feedback.push({item_index:payload.item_index,body:payload.body.trim(),author:'Frau Virtanen'});}
    if(action==='update_assignment'){const a=room.assignments[0];a.title=payload.title;a.due_at=payload.due_at||null;if(payload.items){assert.ok(!a.submissions.length&&!a.messages.length);a.items=payload.items;}}
    if(action==='delete_assignment'){assert.equal(payload.assignment_id,room.assignments[0].id);room.assignments=[];}
    if(action==='message')room.assignments[0].messages.push({id:'message-'+(room.assignments[0].messages.length+1),author:teacher?'Frau Virtanen':'Anna Müller',teacher,own:true,body:payload.body,item_index:Number(payload.item_index),parent_id:payload.parent_id||null,deleted:false});
@@ -117,12 +118,28 @@ try{
   await page.getByText('Deine Antworten sind gespeichert.').waitFor();
   assert.equal(await page.evaluate(id=>localStorage.getItem('vanamo-classroom-drafts:'+id),id),null,'nach der Abgabe ist der Entwurf entfernt');
   assert.equal(await page.locator('#classrooms-content img').count(),0,'answers are shown as text');
+  assert.ok(await page.locator('.cr-assignment-item .translation-diffs').count(),'Vergleich mit der Vorlage nach der Abgabe');
   await page.locator('[data-cr-form=message] textarea').first().fill('Warum steht hier diese Form?');
   await page.locator('[data-cr-form=message] button').first().click();await page.locator('.cr-message').waitFor();await check('abgegeben-mit-frage');
   // Lehrkraft: Abgaben ansehen und Vergleich freigeben
   await page.locator('#classrooms-button').click();teacher=true;
   await page.locator('[data-cr=open]').click();await page.locator('[data-cr=assignment]').first().click();
-  await page.locator('[data-cr=release]').waitFor();await check('abgaben-lehrkraft');
+  await page.locator('[data-cr=release]').waitFor();
+  // Lehrkraft: Vergleich je Antwort sehen und einen Kommentar schreiben, ändern, löschen
+  assert.ok(await page.locator('.cr-submission-card .translation-diffs').count(),'Lehrkraft sieht den Vergleich mit der Vorlage');
+  const note=page.locator('.cr-submission-card .cr-feedback-edit').nth(1);
+  await note.locator('summary').click();await note.locator('textarea').fill('Das „me“ kannst du weglassen. <b>Gut!</b>');await check('kommentar-schreiben');
+  await note.locator('button.primary').click();
+  await page.locator('.cr-feedback-edit[open] textarea').waitFor();
+  assert.equal(room.assignments[0].submissions[0].feedback[0].item_index,1);assert.equal(await page.locator('.cr-feedback-edit[open]').count(),1);await check('abgaben-lehrkraft');
+  // Teilnehmerin liest den Kommentar bei ihrem Satz
+  await page.locator('#classrooms-button').click();teacher=false;
+  await page.locator('[data-cr=open]').click();await page.locator('[data-cr=assignment]').first().click();
+  await page.locator('.cr-teacher-note').waitFor();
+  assert.ok((await page.locator('.cr-assignment-item').nth(1).locator('.cr-teacher-note').textContent()).includes('Das „me“ kannst du weglassen. <b>Gut!</b>'));
+  assert.equal(await page.locator('.cr-teacher-note b').count(),0,'Kommentar wird als Text gezeigt');assert.equal(await page.locator('.cr-feedback-edit').count(),0);await check('kommentar-lesen');
+  await page.locator('#classrooms-button').click();teacher=true;
+  await page.locator('[data-cr=open]').click();await page.locator('[data-cr=assignment]').first().click();await page.locator('[data-cr=release]').waitFor();
   await page.locator('[data-cr=edit_assignment]').click();await page.locator('.cr-edit-locked').waitFor();
   assert.equal(await page.locator('#cr-edit-items').count(),0,'nach einer Abgabe sind die Sätze fest');await check('bearbeiten-saetze-fest');
   await page.locator('[data-cr-form=update_assignment] [data-cr=assignment]').click();await page.locator('[data-cr=release]').waitFor();
@@ -134,5 +151,5 @@ try{
   assert.deepEqual(errors,[],`${tag}: Fehler in der Konsole`);
   await context.close();
  }
- console.log('PASS: Klassenräume auf Handy und Desktop – Gast, Raum, Stream, Mitglieder, Aufgabe, Bearbeiten, Entwurf, Abgabe, Frage, Freigabe, Löschen, keine Überbreite, keine Konsolenfehler');
+ console.log('PASS: Klassenräume auf Handy und Desktop – Gast, Raum, Stream, Mitglieder, Aufgabe, Bearbeiten, Entwurf, Abgabe, Vergleich, Kommentar, Frage, Freigabe, Löschen, keine Überbreite, keine Konsolenfehler');
 }finally{await browser?.close();server.kill();}

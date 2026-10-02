@@ -5,8 +5,8 @@ new Function(source.replace(/^import .*$/gm,''));
 const assignment=source.slice(source.indexOf('function assignment('),source.indexOf('function discussion('));
 const render=source.slice(source.indexOf('function renderCustomItems('),source.indexOf('function assignment('));
 const check=new Function('teacher','creator','submitted','closed','manage',`
- const room={teacher,archived:false,member_count:1,members:[],assignments:[{id:'a',own_assignment:creator,title:'Test',can_manage:manage,submissions:submitted?[{own:true,answers:['MY ANSWER'],reactions:{}}]:[],released:closed,items:[{text:'SECRET SOLUTION',translations:[{text:'Hallo'}]}],submitted_count:0}]};
- let selected,dirty;const drafts=new Map(),target={},dropDraft=()=>{};const $=()=>target;
+ const room={teacher,archived:false,member_count:1,members:[],assignments:[{id:'a',own_assignment:creator,title:'Test',can_manage:manage,submissions:submitted?[{own:true,answers:['MY ANSWER'],reactions:{},feedback:[{item_index:0,body:'x',author:'T'}]}]:[],released:closed,items:[{text:'SECRET SOLUTION',translations:[{text:'Hallo'}]}],submitted_count:0}]};
+ let selected,dirty;const drafts=new Map(),target={},dropDraft=()=>{},lexiconReady=true,loadLexicon=async()=>{},autoFeedback=()=>'AUTO',teacherNote=(s,i)=>(s.feedback||[]).some(f=>f.item_index===i)?'NOTE':'',feedbackForm=()=>'FORM';const $=()=>target;
  const b=(text)=>text,esc=String,date=()=>'',sources=()=>'',discussion=()=>'',sentenceSourceIcon=()=>'';${assignment}
  assignment('a');return target.innerHTML;
 `);
@@ -21,6 +21,9 @@ assert(check(false,undefined,false,false).includes('data-cr-form="submit"'));
 assert(!check(true,true,false,false).includes('Aufgabe löschen'),'no manage buttons until the migration reports can_manage');
 assert(check(true,true,false,false,true).includes('Aufgabe bearbeiten')&&check(true,true,true,true,true).includes('Aufgabe löschen'));
 assert(!check(false,false,false,false,false).includes('Aufgabe bearbeiten'));
+assert(check(false,false,true,false,false).includes('AUTO')&&check(false,false,true,false,false).includes('NOTE'),'own submission shows comparison and comment');
+assert(!check(false,false,false,false,false).includes('AUTO'));
+assert(check(true,true,true,false,true).includes('FORM')&&!check(true,false,true,true,false).includes('FORM'),'comment form only for whoever manages the assignment');
 const html=new Function(`const customItems=[{added:true,de:'<b>Hallo</b>',fi:'Hei'},{added:false,de:'',fi:''}];const host={};const document={querySelectorAll:()=>[host]};const b=(text)=>text;const esc=v=>String(v).replaceAll('<','&lt;').replaceAll('>','&gt;');${render};renderCustomItems();return host.innerHTML;`)();
 assert(!html.split('</fieldset>')[0].includes('<textarea'));
 assert(html.includes('&lt;b&gt;'));

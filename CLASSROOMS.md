@@ -165,3 +165,12 @@ In der Aufgabenansicht stehen **Aufgabe bearbeiten** und **Aufgabe löschen**. B
 API: `update_assignment` (`assignment_id`, `title`, `due_at`, optional `items`) und `delete_assignment` (`assignment_id`). `room` liefert je Aufgabe `can_manage`, `items_locked` und `created_at`. Ohne die Migration fehlen diese Felder, dann zeigt die Oberfläche die beiden Knöpfe nicht.
 
 Rollout: zuerst `supabase/migrations/20261002130000_classroom_assignment_edit.sql` anwenden, danach das Frontend veröffentlichen. Tests: `supabase/tests/classroom_assignment_edit.sql` (läuft in `test-classroom-db.mjs` mit), `test-classroom-assignment-ui.mjs` und `test-classrooms.mjs`.
+
+## Rückmeldung zu Abgaben
+
+- **Vergleich mit der Vorlage:** Nach der Abgabe sieht man unter jedem Satz, wo die eigene Antwort von der Vorlage abweicht (dieselbe Auswertung wie beim Üben, `translation-feedback.mjs`). Das ist keine Benotung; andere Formulierungen können richtig sein. Die Auswertung läuft im Browser, gespeichert wird nichts.
+- **Kommentar der Lehrkraft:** In der Abgabenübersicht kann die Lehrkraft, die die Aufgabe erstellt hat, oder der Ersteller des Raums zu jedem Satz einer Abgabe einen Kommentar schreiben (höchstens 1000 Zeichen, einer je Satz; leer speichern löscht ihn). Den Kommentar sieht nur, wer die Abgabe eingereicht hat – im freigegebenen Vergleich erscheint er nicht. In archivierten Räumen bleiben Kommentare lesbar, aber nicht änderbar.
+
+API: `feedback` (`assignment_id`, `submission_id`, `item_index`, `body`). `room` liefert je Abgabe `feedback` als Liste aus `item_index`, `body`, `author`, `updated_at`. Tabelle `classroom_private.feedback`, ohne direkten Browserzugriff; Kommentare werden mit der Abgabe, der Aufgabe, dem Raum und dem Konto der Lehrkraft gelöscht.
+
+Rollout: zuerst `supabase/migrations/20261002150000_classroom_feedback.sql` anwenden, danach das Frontend veröffentlichen. Tests: `supabase/tests/classroom_feedback.sql`, `test-classroom-assignment-ui.mjs`, `test-classrooms.mjs`.
