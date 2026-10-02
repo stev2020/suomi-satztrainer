@@ -200,3 +200,9 @@ Rollout: zuerst `supabase/migrations/20261002190000_classroom_direction.sql` anw
 Nach der Abgabe steht unter den Sätzen **Sätze ins Wiederholen übernehmen**. Der Knopf legt die vorhandenen Sätze der Aufgabe (aus dem Vanamo-Bestand) in der Richtung der Aufgabe in den persönlichen Wiederholplan, fällig ab sofort. Sätze, die dort schon fällig sind, bleiben unverändert. Eigene Sätze der Lehrkraft gehören nicht zum Bestand und bleiben im Klassenraum; die Oberfläche sagt das dazu.
 
 Technik: `window.suomiLearningState.addReviews([{id,direction}])` in `app.js` schreibt in den privaten Lernstand (`reviews`), der wie gewohnt synchronisiert wird. Der Klassenraum-Server erfährt davon nichts. Keine Migration.
+
+## Überblick für die Lehrkraft
+
+Ab zwei Abgaben zeigt die Abgabenübersicht oben den Kasten **Wo die Klasse abweicht** – für die Lehrkraft, die die Aufgabe erstellt hat, und den Ersteller des Raums. Je Satz steht dort, wie viele Antworten wie die Vorlage, fast wie die Vorlage oder anders formuliert sind, und bei welchen Wörtern die Klasse am häufigsten abweicht (bis zu drei Stellen, mit den häufigsten Varianten und „fehlt“). Abweichungen werden nur aus Antworten gezählt, die der Vorlage nahe sind; frei umformulierte Antworten zählen als „anders formuliert“.
+
+Die Auswertung läuft im Browser aus den Abgaben, die die Lehrkraft ohnehin sieht (`compareTranslation` aus `translation-feedback.mjs`); gespeichert wird nichts, eine Migration gibt es nicht. Es ist keine Benotung.

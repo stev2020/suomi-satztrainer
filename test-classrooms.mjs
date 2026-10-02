@@ -132,6 +132,13 @@ try{
   // Lehrkraft: Abgaben ansehen und Vergleich freigeben
   await page.locator('#classrooms-button').click();teacher=true;
   await page.locator('[data-cr=open]').click();await page.locator('[data-cr=assignment]').first().click();
+  // Zweite Abgabe, damit es einen Überblick gibt: beide haben „me“ zusätzlich, eine Antwort zu Satz 1 stimmt
+  room.assignments[0].submissions.push({id:'submission-2',answers:['Sinä olet ihminen.','Tänään me opiskelemme yhdessä!'],author_id:'s2',author:'Mika',reactions:{},feedback:[]});room.assignments[0].submitted_count=2;
+  await page.locator('#classrooms-refresh').click();await page.locator('.cr-stream-layout').waitFor();await page.locator('[data-cr=assignment]').first().click();await page.locator('.cr-overview').waitFor();
+  const rows=page.locator('.cr-overview-row');assert.equal(await rows.count(),2);
+  assert.match((await rows.nth(0).locator('.cr-overview-tally').textContent()).replace(/\s+/g,' '),/1 wie die Vorlage.*1 anders formuliert/);
+  assert.match((await rows.nth(1).locator('.cr-overview-tally').textContent()).replace(/\s+/g,' '),/2 fast wie die Vorlage/);
+  assert.match((await rows.nth(1).locator('.cr-overview-spots li').first().textContent()).replace(/\s+/g,' '),/me.*bei 2 zusätzlich/);await check('ueberblick-lehrkraft');
   await page.locator('[data-cr=release]').waitFor();
   // Lehrkraft: Vergleich je Antwort sehen und einen Kommentar schreiben, ändern, löschen
   assert.ok(await page.locator('.cr-submission-card .translation-diffs').count(),'Lehrkraft sieht den Vergleich mit der Vorlage');
@@ -213,5 +220,5 @@ try{
   assert.deepEqual(errors,[],`${tag}: Fehler in der Konsole`);
   await context.close();
  }
- console.log('PASS: Klassenräume auf Handy und Desktop – Gast, Raum, Stream, Mitglieder, Aufgabe, Bearbeiten, Entwurf, Abgabe, Vergleich, Wiederholen, Kommentar, Frage, Freigabe, Neues, Löschen, Finnisch → Deutsch, keine Überbreite, keine Konsolenfehler');
+ console.log('PASS: Klassenräume auf Handy und Desktop – Gast, Raum, Stream, Mitglieder, Aufgabe, Bearbeiten, Entwurf, Abgabe, Vergleich, Wiederholen, Überblick, Kommentar, Frage, Freigabe, Neues, Löschen, Finnisch → Deutsch, keine Überbreite, keine Konsolenfehler');
 }finally{await browser?.close();server.kill();}

@@ -9,7 +9,7 @@ const id='11111111-1111-4111-a111-111111111111';
 const room={id,name:'Finnisch am Mittwoch',teacher:false,owner:false,teacher_count:1,archived:false,member_count:2,members:[{name:'lehrkraft',role:'teacher',owner:true},{name:'anna',role:'student'},{name:'mika',role:'student'}],assignments:[{id:'task',title:'Unsere erste Aufgabe',items:[{text:'Hei',translations:[{text:'Hallo'}]}],due_at:null,released:false,submissions:[],submitted_count:0,messages:[]}]};
 let posts=[],counter=0,files=new Map();
 window.accountUser=()=>({id:'user',user_metadata:{username:'anna'}});
-window.confirm=()=>true;window.uiLocale=()=>'de';window.translationFeedbackMarkup=()=>'';window.loadLexicon=async()=>{};
+window.confirm=()=>true;window.uiLocale=()=>'de';window.translationFeedbackMarkup=()=>'';window.compareTranslation=()=>({kind:'different'});window.loadLexicon=async()=>{};
 window.accountRequest=async(path,options={})=>{
  if(path.startsWith('/storage/')){
   const fileId=path.split('/').at(-1);
