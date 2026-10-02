@@ -15,7 +15,7 @@ try{
  browser=await chromium.launch({headless:true,...(process.env.PW_CHROMIUM?{executablePath:process.env.PW_CHROMIUM}:{})});
  for(const viewport of [{width:390,height:844},{width:1280,height:800}]){
   const tag=viewport.width<600?'handy':'desktop';
-  let teacher=true,step=0,activity=null;
+  let teacher=true,step=0,activity=null,seenAt=null;
   const room={id,name:'Finnisch am Mittwoch',teacher:true,owner:true,teacher_count:1,archived:false,code:'ABCD1234ABCD1234',member_count:3,assignments:[],
    members:[{id:'owner',name:'Frau Virtanen',role:'teacher',owner:true,own:true,blocked:false},{id:'s1',name:'Anna Müller',role:'student',owner:false,blocked:false},{id:'s2',name:'Mika',role:'student',owner:false,blocked:false}]};
   const posts=[{id:'post-1',kind:'question',body:'Wann benutzt man den Partitiv? Siehe https://example.org/partitiv',author:'Anna Müller',own:false,teacher:false,resolved:false,created_at:'2026-10-01T09:00:00Z',files:[],
@@ -29,12 +29,13 @@ try{
   await context.route('**/rest/v1/rpc/classroom_api',async route=>{
    const {action,payload}=route.request().postDataJSON();let result={};
    const members=room.members.map(m=>({...m,own:teacher?m.id==='owner':m.id==='s1'}));
-   if(action==='list')result=[{id:room.id,name:room.name,archived:room.archived,teacher,owner:teacher,activity,open_tasks:teacher?0:room.assignments.filter(a=>!a.released&&!a.submissions.length).length}];
+   if(action==='list')result=[{id:room.id,name:room.name,archived:room.archived,teacher,owner:teacher,activity,seen:seenAt,open_tasks:teacher?0:room.assignments.filter(a=>!a.released&&!a.submissions.length).length}];
    if(action==='create'||action==='join')result={id};
    if(action==='room')result={...room,teacher,owner:teacher,members,code:teacher?room.code:null,assignments:room.assignments.map(a=>({...a,submissions:a.submissions.map(x=>({...x,own:!teacher})),own_assignment:teacher,can_manage:teacher,items_locked:a.released||a.submissions.length>0||a.messages.length>0}))};
    if(action==='assign')room.assignments.push({id:'22222222-2222-4222-a222-222222222222',title:payload.title,items:payload.items,due_at:payload.due_at,direction:payload.direction,created_at:'2026-10-02T08:00:00Z',released:false,submissions:[],messages:[],submitted_count:0});
    if(action==='submit'){room.assignments[0].submissions.push({id:'submission',answers:payload.answers,author_id:'s1',author:'Anna Müller',reactions:{},feedback:[]});room.assignments[0].submitted_count=1;}
    if(action==='release')room.assignments[0].released=true;
+   if(action==='seen'&&(!seenAt||Date.parse(payload.at)>Date.parse(seenAt)))seenAt=payload.at;
    if(action==='feedback'){assert.ok(teacher);const sub=room.assignments[0].submissions.find(x=>x.id===payload.submission_id);sub.feedback=(sub.feedback||[]).filter(f=>f.item_index!==payload.item_index);if(payload.body.trim())sub.feedback.push({item_index:payload.item_index,body:payload.body.trim(),author:'Frau Virtanen'});}
    if(action==='update_assignment'){const a=room.assignments[0];a.title=payload.title;a.due_at=payload.due_at||null;if(payload.direction)a.direction=payload.direction;if(payload.items){assert.ok(!a.submissions.length&&!a.messages.length);a.items=payload.items;}}
    if(action==='delete_assignment'){assert.equal(payload.assignment_id,room.assignments[0].id);room.assignments=[];}
@@ -168,7 +169,8 @@ try{
   assert.equal(await page.locator('#classrooms-button').getAttribute('data-news'),'1');await check('neues-in-raumliste');
   await page.locator('[data-cr=open]').click();await page.locator('.cr-stream-layout').waitFor();
   assert.equal(await page.locator('.cr-feed-card .cr-new').count(),1);assert.ok((await page.locator('.cr-feed-card:has(.cr-new)').textContent()).includes('Neues von Anna'));
-  assert.equal(await page.locator('#classrooms-button').getAttribute('data-news'),null,'gesehen: der Hinweis am Knopf ist weg');await check('neues-im-raum');
+  assert.equal(await page.locator('#classrooms-button').getAttribute('data-news'),null,'gesehen: der Hinweis am Knopf ist weg');
+  await page.waitForFunction(()=>true);assert.equal(seenAt,'2026-10-03T10:00:00Z','der Stand ist im Konto angekommen');await check('neues-im-raum');
   await page.locator('#classrooms-refresh').click();await page.waitForFunction(()=>!document.querySelector('.cr-new'));
   // Neue Antwort unter einem alten Beitrag: „Neu“ an der Zeile „n Antworten“, nach dem Aufklappen nur an der neuen Antwort
   activity='2026-10-03T10:30:00Z';posts.find(p=>p.id==='post-1').replies.push({id:'reply-new',reply_to_id:null,body:'Danke, verstanden!',author:'Mika',own:false,teacher:false,created_at:activity});
@@ -178,6 +180,15 @@ try{
   assert.equal(await page.locator('#cr-post-post-1 .cr-feed-replies summary .cr-new').count(),1);
   assert.equal(await page.locator('#cr-stream-message-reply-1 .cr-new').count(),0,'alte Antworten bleiben unmarkiert');
   assert.equal(await page.locator('#cr-post-post-1 .cr-feed-meta .cr-new').count(),0,'der alte Beitrag selbst ist nicht neu');await check('neue-antwort');
+  await page.locator('#classrooms-refresh').click();await page.waitForFunction(()=>!document.querySelector('.cr-new'));
+  // Anderes Gerät: ohne Kopie auf dem Gerät gilt der Stand aus dem Konto, also nichts Neues
+  await page.evaluate(id=>localStorage.removeItem('vanamo-classroom-seen:'+id),id);
+  await page.locator('#classrooms-button').click();await page.locator('.cr-room-card').waitFor();
+  assert.equal(await page.locator('.cr-room-card .cr-new').count(),0);assert.equal(await page.locator('#classrooms-button').getAttribute('data-news'),null);
+  // … und was ein anderes Gerät noch nicht ins Konto gemeldet hat, ist hier neu
+  seenAt='2026-10-03T09:00:00Z';await page.evaluate(id=>localStorage.removeItem('vanamo-classroom-seen:'+id),id);
+  await page.locator('#classrooms-button').click();await page.locator('.cr-room-card .cr-new').waitFor();
+  await page.locator('[data-cr=open]').click();await page.locator('.cr-stream-layout').waitFor();
   await page.locator('#classrooms-refresh').click();await page.waitForFunction(()=>!document.querySelector('.cr-new'));
   // Zurück im Tab nach einer Weile: der Raum lädt von selbst neu
   activity='2026-10-03T11:00:00Z';posts.unshift(newer('Noch etwas Neues'));

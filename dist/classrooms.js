@@ -1,5 +1,5 @@
 import {uiLocale} from './i18n.mjs?v=21';
-import {accountUser,accountRequest} from './auth.js?v=118';
+import {accountUser,accountRequest} from './auth.js?v=119';
 import {GRAMMAR_TOPICS,topicNotes} from './grammar-topics.mjs';
 import {translationFeedbackMarkup,compareTranslation} from './translation-feedback.mjs?v=1';
 import {loadLexicon} from './word-lookup.mjs?v=2';
@@ -40,8 +40,9 @@ const directionOf=a=>DIRECTIONS[a.direction]?a.direction:'de-fi';
 // While an assignment is being put together: the sentence the class will see stands first.
 const composingFiDe=()=>document.querySelector('[data-cr-form=assign] [name=direction]')?.value==='fi-de';
 const directionSelect=value=>`<label>Richtung<select name="direction">${Object.entries(DIRECTIONS).map(([key,label])=>`<option value="${key}"${key===value?' selected':''}>${label}</option>`).join('')}</select></label>`;
-// What is new: `list` reports the newest thing somebody else did in each room. This
-// device remembers per account what it has already shown (localStorage) and marks
+// What is new: `list` reports the newest thing somebody else did in each room and
+// how far this account has already looked (`seen`, shared by all its devices). The
+// device keeps a copy (localStorage) for offline use and older servers, and marks
 // the rest – a number on the header button, "Neu" on rooms, posts and tasks.
 const SEEN_KEY='vanamo-classroom-seen:';
 let newSince=null,roomList=null,lastNewsCheck=0,lastRefresh=0;
@@ -57,7 +58,8 @@ function applyNews(rooms){
  roomList=rooms;
  const seen=seenMap(),next={};let count=0;
  for(const r of rooms){
-  next[r.id]=r.id in seen?seen[r.id]:(r.activity||'');
+  const local=r.id in seen?seen[r.id]:null,known=r.seen&&stampOf(r.seen)>stampOf(local)?r.seen:local;
+  next[r.id]=known===null?(r.activity||''):known;
   r.news=Boolean(r.activity)&&stampOf(r.activity)>stampOf(next[r.id]);
   if(r.news)count++;
  }
@@ -75,6 +77,9 @@ function markRoomSeen(){
  for(const post of stream.posts||[]){stamps.push(post.created_at);for(const reply of post.replies||[])stamps.push(reply.created_at);}
  const latest=stamps.filter(Boolean).sort((x,y)=>stampOf(y)-stampOf(x))[0]||'';
  const seen=seenMap();seen[room.id]=latest;storeSeen(seen);
+ // Tell the account, so the other devices do not show the same things as new again.
+ const entry=roomList?.find(r=>r.id===room.id);
+ if(latest&&stampOf(latest)>stampOf(entry?.seen)){api('seen',{room_id:room.id,at:latest}).catch(()=>{});if(entry)entry.seen=latest;}
  if(roomList)applyNews(roomList);
 }
 const isNew=v=>newSince!==null&&stampOf(v)>stampOf(newSince);

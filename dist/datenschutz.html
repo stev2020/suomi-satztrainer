@@ -29,7 +29,7 @@
 <li><code>suomi-hyppy…</code>: Einstellungen (gewählte Wortliste, Design, Tempo, Neigungssteuerung), Rekord und – ohne Konto – der Lernstand des Spiels Mustikka Hyppy (Bereich „Spiele“).</li>
 <li><code>vanamo-daily-sentence</code>: der heutige „Satz des Tages“, bei angemeldetem Konto zusammen mit der Konto-ID, damit er sich im Laufe des Tages nicht ändert.</li>
 <li><code>vanamo-classroom-drafts</code>: deine noch nicht abgegebenen Antworten auf Klassenaufgaben, zusammen mit der Konto-ID, damit ein Entwurf beim Neuladen nicht verloren geht. Er wird beim Abgeben, nach 60 Tagen und beim Abmelden entfernt und nicht an den Server übertragen.</li>
-<li><code>vanamo-classroom-seen</code>: je Klassenraum der Zeitpunkt des Neuesten, das dir dieses Gerät schon gezeigt hat, zusammen mit der Konto-ID – daraus entsteht der Hinweis „Neu“. Wird beim Abmelden entfernt.</li>
+<li><code>vanamo-classroom-seen</code>: je Klassenraum der Zeitpunkt des Neuesten, das dir dieses Gerät schon gezeigt hat, zusammen mit der Konto-ID – daraus entsteht der Hinweis „Neu“. Der Stand wird auch im Konto gespeichert, damit deine Geräte dasselbe als neu anzeigen; die Kopie auf dem Gerät wird beim Abmelden entfernt.</li>
 <li><code>suomi-dialogs-read</code>: welche Dialoge du schon gelesen hast.</li>
 <li><code>vanamo-quality-exclusions</code>: die zuletzt geladene Liste der Sätze, die gerade geprüft werden (enthält nichts über dich).</li>
 <li><code>vanamo-theme</code>, <code>vanamo-ui-lang</code>: gewähltes Farbdesign und Sprache der Oberfläche.</li>
@@ -47,7 +47,7 @@
 <li><strong>Konto:</strong> Benutzername, Passwort (nur als Hash), Hash deines Wiederherstellungscodes, Zeitpunkt der Erstellung und letzten Anmeldung. Intern verwendet Supabase eine technische Adresse, die aus dem Benutzernamen gebildet wird; eine echte E-Mail-Adresse wird nicht erhoben.</li>
 <li><strong>Lernstand:</strong> Bewertungen, Favoriten, Einstellungen, Übungsstatistik, der Lernstand der Spiele und deine Hinweise zu Sätzen, damit du auf mehreren Geräten weiterlernen kannst.</li>
 <li><strong>Hinweise zu Sätzen:</strong> Wenn du angemeldet einen Satz meldest, werden Satz, Kategorie, dein Hinweistext und dein Konto gespeichert, damit Prüfer ihn bearbeiten können.</li>
-<li><strong>Klassenräume:</strong> Mitgliedschaften, Anzeigenamen im Raum, Aufgaben, Abgaben, Kommentare der Lehrkraft zu Abgaben, Beiträge, Reaktionen und hochgeladene Dateien. Innerhalb eines Raums sind diese Inhalte für die Mitglieder so sichtbar, wie es in der App beschrieben ist.</li>
+<li><strong>Klassenräume:</strong> Mitgliedschaften, Anzeigenamen im Raum, Aufgaben, Abgaben, Kommentare der Lehrkraft zu Abgaben, Beiträge, Reaktionen, hochgeladene Dateien und je Raum der Zeitpunkt, bis zu dem du das Neue schon angesehen hast. Innerhalb eines Raums sind diese Inhalte für die Mitglieder so sichtbar, wie es in der App beschrieben ist.</li>
 <li><strong>Missbrauchsschutz:</strong> Bei Registrierung und Wiederherstellung wird ein verschlüsselter Prüfwert (HMAC) deiner IP-Adresse und des Benutzernamens gezählt, um Massenanmeldungen zu begrenzen. Die Zähler werden nach zwei Tagen gelöscht.</li>
 </ul>
 <p>Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Bereitstellung des von dir gewünschten Kontos und der Klassenräume) und für den Missbrauchsschutz Art. 6 Abs. 1 lit. f DSGVO. Die Daten werden gespeichert, bis du dein Konto löschst. Das geht jederzeit selbst unter <em>Konto → Konto löschen</em>; dabei werden Konto, Lernstand und deine Dateien entfernt.</p>
