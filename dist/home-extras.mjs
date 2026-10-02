@@ -160,7 +160,8 @@ function fits(s){
 
 // userKey: Konto-ID – jedes Konto bekommt seinen eigenen Satz, auf allen Geräten derselbe.
 export function createDailySentence(root,{sentences,learnedIds,fallbackLevel=()=>1,sourceIcon=()=>'',userKey=()=>''}){
- let lexicon=null,sentence=null,audio=null,revealed=false,poolKey='',pool=[],own=false;
+ let lexicon=null,sentence=null,cols=[],audio=null,revealed=false,poolKey='',pool=[],own=false;
+ const storeKey=()=>{const user=String(userKey()||'');return user?`${DAILY_KEY}:${user}`:DAILY_KEY;};
  if(!root)return {render(){}};
  const stopAudio=()=>{if(audio){audio.pause();audio=null;}root.querySelector('.daily-audio')?.classList.remove('playing');};
  function buildPool(){
@@ -174,25 +175,62 @@ export function createDailySentence(root,{sentences,learnedIds,fallbackLevel=()=
  // wenn im Laufe des Tages neue Sätze dazukommen. Am nächsten Tag wird neu gewählt.
  function pick(){
   const today=dayKey(new Date());
-  const user=String(userKey()||''),storeKey=user?`${DAILY_KEY}:${user}`:DAILY_KEY;
-  let saved=null;try{saved=JSON.parse(localStorage.getItem(storeKey)||'null');}catch{}
+  const user=String(userKey()||'');
+  let saved=null;try{saved=JSON.parse(localStorage.getItem(storeKey())||'null');}catch{}
   if(saved?.day===today){
    const kept=(sentences()||[]).find(s=>s.id===saved.id);
    if(kept&&fits(kept)){own=!!saved.own;return kept;}
   }
   if(!pool.length)return null;
   const chosen=pool[hash(user+'|'+today+(own?'m':'f'))%pool.length];
-  try{localStorage.setItem(storeKey,JSON.stringify({day:today,id:chosen.id,own}));}catch{}
+  try{localStorage.setItem(storeKey(),JSON.stringify({day:today,id:chosen.id,own}));}catch{}
   return chosen;
  }
- function markup(){
-  const infos=lookupForSentence(sentence.text)||[],cols=[];
-  for(const p of splitSentence(sentence.text)){
-   if(p.index!==undefined)cols.push({fi:esc(p.text),gloss:shortGloss(infos[p.index])});
-   else if(p.text.trim()&&cols.length)cols[cols.length-1].fi+=esc(p.text);
-   else if(p.text.trim())cols.push({fi:esc(p.text),gloss:''});
+ // Wörter und ihre Kurzbedeutungen; braucht die Wortanalyse.
+ function columns(of=sentence){
+  const infos=lookupForSentence(of.text)||[],list=[];
+  for(const p of splitSentence(of.text)){
+   if(p.index!==undefined)list.push({fi:p.text,gloss:shortGloss(infos[p.index])||''});
+   else if(p.text.trim()&&list.length)list[list.length-1].fi+=p.text;
+   else if(p.text.trim())list.push({fi:p.text,gloss:''});
   }
-  const words=cols.map((c,i)=>`<button type="button" class="guest-word cycle-word" style="--i:${i}" aria-label="${c.fi.replace(/<[^>]*>/g,'')}: Bedeutung zeigen"><span class="guest-fi">${c.fi}</span><span class="guest-gloss" lang="de">${esc(c.gloss)}</span></button>`).join('');
+  return list;
+ }
+ // Die fertige Karte des Tages bleibt auf dem Gerät: Beim nächsten Öffnen steht sie sofort da,
+ // ohne auf Sätze und Wortanalyse (zusammen mehrere hundert KB) zu warten.
+ const validCard=entry=>{
+  const card=entry?.card;
+  return Boolean(card)&&card.sentence?.id===entry.id&&typeof card.sentence.text==='string'&&typeof card.sentence.translations?.[0]?.text==='string'
+   &&Array.isArray(card.cols)&&card.cols.length>0&&card.cols.every(c=>typeof c?.fi==='string'&&typeof c?.gloss==='string');
+ };
+ const readStore=()=>{try{return JSON.parse(localStorage.getItem(storeKey())||'null');}catch{return null;}};
+ // Mit der Karte von heute wird die von morgen gleich mit vorbereitet (gleiche Auswahlregel),
+ // damit auch der erste Besuch des nächsten Tages nicht warten muss.
+ function keepCard(){
+  const today=dayKey(new Date()),tomorrow=dayKey(new Date(Date.now()+864e5)),user=String(userKey()||'');
+  let next=null;
+  if(pool.length){const s=pool[hash(user+'|'+tomorrow+(own?'m':'f'))%pool.length];next={day:tomorrow,id:s.id,own,card:{sentence:s,cols:columns(s)}};}
+  try{localStorage.setItem(storeKey(),JSON.stringify({day:today,id:sentence.id,own,card:{sentence,cols},next}));}catch{}
+ }
+ function keptCard(){
+  const saved=readStore(),today=dayKey(new Date());
+  if(saved?.day===today&&validCard(saved))return saved;
+  if(saved?.next?.day===today&&validCard(saved.next))return saved.next;
+  return null;
+ }
+ // Wurde die Karte aus dem Vorrat gezeigt, fehlt die für morgen noch: in Ruhe nachholen.
+ let preparing=false;
+ function prepareTomorrow(){
+  const saved=readStore(),tomorrow=dayKey(new Date(Date.now()+864e5));
+  if(preparing||(saved?.day===dayKey(new Date())&&saved.next?.day===tomorrow))return;
+  preparing=true;
+  setTimeout(async()=>{
+   try{await (lexicon||(lexicon=loadLexicon()));buildPool();if(sentence)keepCard();}catch{lexicon=null;}
+   preparing=false;
+  },3000);
+ }
+ function markup(){
+  const words=cols.map((c,i)=>`<button type="button" class="guest-word cycle-word" style="--i:${i}" aria-label="${esc(c.fi)}: Bedeutung zeigen"><span class="guest-fi">${esc(c.fi)}</span><span class="guest-gloss" lang="de">${esc(c.gloss)}</span></button>`).join('');
   const t=sentence.translations[0];
   return `<div class="daily-sentence-top"><h2 id="daily-sentence-title">Satz des Tages</h2>${own?'<span class="daily-sentence-note">aus deinen Sätzen</span>':''}<span class="daily-sentence-tools">${sentence.audios?.length?'<button type="button" class="daily-audio" aria-label="Anhören"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4 5 9H2v6h3l6 5V4Z"/><path d="M15 8a6 6 0 0 1 0 8M18 4a11 11 0 0 1 0 16"/></svg></button>':''}${revealed?'':'<button type="button" class="daily-translate" aria-controls="daily-translation" aria-label="Übersetzung zeigen" title="Übersetzung zeigen"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h10M8 3v3M11 6c-1 4-4 7-8 9M5.5 9.5c1.2 2.2 3 4 5.5 5.5"/><path d="m13 21 4.5-11L22 21M14.6 17.5h5.8"/></svg></button>'}</span></div>
 <div class="guest-words gloss-on-tap daily-words" lang="fi">${words}<span class="daily-source">${sourceIcon(sentence)}</span></div>
@@ -211,13 +249,22 @@ export function createDailySentence(root,{sentences,learnedIds,fallbackLevel=()=
  return {
   // Zeigt die Karte nur für Angemeldete, sobald Sätze und Wortanalyse geladen sind.
   async render({account,ready}){
-   if(!account||!ready){root.hidden=true;stopAudio();return;}
-   if(!lexicon){try{lexicon=loadLexicon();await lexicon;}catch{lexicon=null;root.hidden=true;return;}}
-   await lexicon;
+   if(!account){root.hidden=true;stopAudio();return;}
+   // Karte von heute schon auf dem Gerät: sofort zeigen. Sind die Sätze geladen, muss es den Satz noch geben.
+   const kept=keptCard();
+   if(kept&&(!ready||(sentences()||[]).some(s=>s.id===kept.id))){
+    if(sentence?.id!==kept.id||root.hidden||!root.firstChild){sentence=kept.card.sentence;cols=kept.card.cols;own=!!kept.own;revealed=false;root.hidden=false;paint(true);}
+    if(ready)prepareTomorrow();
+    return;
+   }
+   // Erster Besuch des Tages: die Wortanalyse schon holen, während die Sätze noch laden.
+   if(!lexicon){lexicon=loadLexicon();lexicon.catch(()=>{});}
+   if(!ready){root.hidden=true;stopAudio();return;}
+   try{await lexicon;}catch{lexicon=null;root.hidden=true;return;}
    buildPool();
    const next=pick();
    if(!next){root.hidden=true;return;}
-   if(sentence?.id!==next.id||root.hidden||!root.firstChild){sentence=next;revealed=false;root.hidden=false;paint(true);}
+   if(sentence?.id!==next.id||root.hidden||!root.firstChild){sentence=next;cols=columns();revealed=false;root.hidden=false;paint(true);keepCard();}
   },
   stop:stopAudio
  };
