@@ -9,7 +9,7 @@ const id='11111111-1111-4111-a111-111111111111';
 const room={id,name:'Finnisch am Mittwoch',teacher:false,owner:false,teacher_count:1,archived:false,member_count:2,members:[{name:'lehrkraft',role:'teacher',owner:true},{name:'anna',role:'student'},{name:'mika',role:'student'}],assignments:[{id:'task',title:'Unsere erste Aufgabe',items:[{text:'Hei',translations:[{text:'Hallo'}]}],due_at:null,released:false,submissions:[],submitted_count:0,messages:[]}]};
 let posts=[],counter=0,files=new Map();
 window.accountUser=()=>({id:'user',user_metadata:{username:'anna'}});
-window.confirm=()=>true;
+window.confirm=()=>true;window.uiLocale=()=>'de';
 window.accountRequest=async(path,options={})=>{
  if(path.startsWith('/storage/')){
   const fileId=path.split('/').at(-1);
@@ -17,6 +17,8 @@ window.accountRequest=async(path,options={})=>{
   if(options.method==='DELETE'){for(const f of JSON.parse(options.body).prefixes)files.delete(f);return {ok:true};}
   return {ok:files.has(fileId),blob:async()=>files.get(fileId)};
  }
+ if(path.includes('sentence_quality_exclusions'))return {ok:true,json:async()=>({sentence_ids:[],translations:[]})};
+ if(path.includes('sentence_quality_api'))return {ok:true,json:async()=>[]};
  const {action,payload}=JSON.parse(options.body);let result={};
  if(action==='list')result=[{...room,teacher}];
  if(action==='room')result={...room,teacher,owner:teacher};
@@ -44,6 +46,7 @@ try{
  assert($('#cr-stream-compose summary').textContent.includes('Aufklappen'));
  await click('#cr-stream-compose summary');assert($('#cr-stream-compose').open);
  assert(!$('option[value=announcement]'));assert(!$('[data-cr=new_assignment]'));
+ assert.equal($('[data-cr-form=stream_post] [name=kind]').value,'post');$('[data-cr-form=stream_post] [name=kind]').value='question';
  input('[data-cr-form=stream_post] textarea','Wie sagt man <img src=x onerror=alert(1)>? https://example.org/test');
  await submit('[data-cr-form=stream_post]');assert.equal(posts.length,1);assert.equal($('.cr-post-body img'),null);assert($('.cr-post-body a').rel.includes('noopener'));
  await click('[data-cr=stream_reply]');input('[data-cr-form=stream_reply] textarea','Hei!');await submit('[data-cr-form=stream_reply]');assert($('.cr-feed-replies').open);assert($('.cr-feed-replies').textContent.includes('Hei!'));
@@ -55,18 +58,18 @@ try{
  await click('[data-cr=stream_filter][data-filter=all]');
  input('[data-cr-form=stream_post] textarea','Entwurf bleibt erhalten');
  $('#cr-stream-compose').open=true;await click('#cr-stream-compose summary');assert(!$('#cr-stream-compose').open);assert.equal($('[data-cr-form=stream_post] textarea').value,'Entwurf bleibt erhalten');
- await click('[data-cr=refresh]');assert.equal($('[data-cr-form=stream_post] textarea').value,'Entwurf bleibt erhalten');
+ await click('#classrooms-refresh');assert.equal($('[data-cr-form=stream_post] textarea').value,'Entwurf bleibt erhalten');
  const upload=$('[name=files]');Object.defineProperty(upload,'files',{configurable:true,value:[new window.File(['Hallo'],'Hallo.txt',{type:'text/plain'})]});upload.dispatchEvent(new window.Event('change',{bubbles:true}));Object.defineProperty(upload,'files',{configurable:true,value:[]});
  assert($('#cr-draft-files').textContent.includes('Hallo.txt'));
  failUpload=true;await submit('[data-cr-form=stream_post]',true);assert($('#classrooms-status').classList.contains('error'));assert.equal(posts.length,1);assert.equal($('[data-cr-form=stream_post] textarea').value,'Entwurf bleibt erhalten');
  failUpload=false;await submit('[data-cr-form=stream_post]');assert.equal(posts.length,2);assert.equal(posts[0].files.length,1);assert.equal(files.size,1);assert.equal($('[data-cr-form=stream_post] textarea').value,'');
  files.set('image-file',new window.File(['image'],'Foto.png',{type:'image/png'}));posts.unshift({id:'image-post',kind:'post',body:'Ein Bild',author:'anna',own:true,teacher:false,resolved:false,created_at:'2026-09-13T12:02:00Z',files:[{id:'image-file',name:'Foto.png',mime:'image/png',size:5}],replies:[]});
- await click('[data-cr=refresh]');assert($('.cr-image-thumb img'));assert(!$('.cr-image-attachment').textContent.includes('Foto.png'));assert(!$('.cr-image-attachment').textContent.includes('Bild ansehen'));
+ await click('#classrooms-refresh');assert($('.cr-image-thumb img'));assert(!$('.cr-image-attachment').textContent.includes('Foto.png'));assert(!$('.cr-image-attachment').textContent.includes('Bild ansehen'));
  await click('.cr-image-thumb');assert($('#cr-image-dialog').open);assert($('#cr-image-dialog img').src.startsWith('blob:test-'));$('#cr-image-dialog button').click();
- const question=posts.find(p=>p.kind==='question');question.own=false;await click('[data-cr=refresh]');assert(!$('#cr-post-'+question.id+' [data-cr=stream_resolve]'));
- teacher=true;await click('[data-cr=refresh]');assert($('option[value=announcement]'));assert($('#cr-post-'+question.id+' [data-cr=stream_resolve]'));assert($('[data-cr=stream_pin]'));
+ const question=posts.find(p=>p.kind==='question');question.own=false;await click('#classrooms-refresh');assert(!$('#cr-post-'+question.id+' [data-cr=stream_resolve]'));
+ teacher=true;await click('#classrooms-refresh');assert($('option[value=announcement]'));assert($('#cr-post-'+question.id+' [data-cr=stream_resolve]'));assert($('[data-cr=stream_pin]'));
  await click('[data-cr=stream_pin]');assert($('.cr-feed-type').textContent.includes('ANGEHEFTET'));
  const deletedQuestionId=question.id;await click(`#cr-post-${deletedQuestionId} [data-cr=stream_delete]`);assert(!$('#cr-post-'+deletedQuestionId));assert(!$('#cr-stream-feed').textContent.includes('Beitrag entfernt'));
- room.archived=true;await click('[data-cr=refresh]');assert(!$('[data-cr-form=stream_post]'));assert(!$('[data-cr=stream_reply]'));assert(!$('[data-cr=stream_resolve]'));assert($('.cr-feed-card'));
+ room.archived=true;await click('#classrooms-refresh');assert(!$('[data-cr-form=stream_post]'));assert(!$('[data-cr=stream_reply]'));assert(!$('[data-cr=stream_resolve]'));assert($('.cr-feed-card'));
  console.log('PASS stream: layout, task events, questions, links/XSS, replies, resolution rights, filters, drafts, failed upload retry, attachments, teacher pinning and archive');
 }finally{await window.happyDOM.close();}

@@ -278,3 +278,17 @@ header{flex-wrap:wrap}
  .cr-feed-card .cr-feed-meta{padding-right:24px}
  .cr-feed-card .cr-author time{width:100%;margin-left:0}
 }
+
+/* Feinschliff Oktober 2026 */
+/* Aufklapp-Pfeile stehen in der Karte statt auf ihrem Rand. */
+.cr-stream-compose>summary,.cr-sidebar-disclosure>summary{list-style-position:inside}
+/* Datum eines Beitrags liegt nicht mehr auf dem Zierkreis. */
+.cr-feed-card>.cr-author{padding-right:84px}
+@media(max-width:540px){.cr-feed-card>.cr-author{padding-right:0}}
+/* Satzauswahl nutzt die Bildschirmhöhe. */
+#cr-sentence-picker{max-height:min(60vh,520px)}
+/* Solange eine Aufgabe erstellt wird, steht das Formular allein. */
+.cr-stream-main:has(#cr-composer>form)>:not(#cr-composer){display:none}
+@media(max-width:850px){.cr-stream-layout:has(#cr-composer>form) .cr-stream-sidebar{display:none}}
+/* Knöpfe brechen am Handy als Ganzes um, nicht ihr Text. */
+@media(max-width:640px){#classrooms-view .cr-toolbar button{flex:1 1 auto;white-space:nowrap}}

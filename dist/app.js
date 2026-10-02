@@ -1,4 +1,4 @@
-import {tc} from './i18n.mjs?v=14';
+import {tc} from './i18n.mjs?v=15';
 import {canSearch,createSearch} from './wordsearch.mjs';
 import {mountSearch,searchInstructions} from './wordsearch-ui.mjs?v=64';
 import {createWordExercise,wordAnswerMatches,finnishSentenceMatches,sentenceWords} from './word-practice.mjs?v=61';

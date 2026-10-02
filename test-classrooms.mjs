@@ -1,65 +1,113 @@
-// Browser UI regression test. API responses are mocked; live SQL authorization
-// is tested separately by supabase/tests/classrooms.sql inside ROLLBACK.
+// Klassenräume im Browser (Handy und Desktop): Gast-Hinweis, Raum anlegen, Aufgabe
+// erstellen, abgeben, Frage stellen, Vergleich freigeben, Stream, Mitglieder.
+// Die API-Antworten sind simuliert; die echten Rechte prüft test-classroom-db.mjs.
+// CLASSROOM_SCREENSHOTS=<Ordner> speichert von jedem Schritt ein Bild.
 import assert from 'node:assert/strict';
-import {createRequire} from 'node:module';
-const require=createRequire(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES+'/playwright/package.json');
-const {chromium}=require('playwright');
-const browser=await chromium.launch({headless:true,executablePath:process.env.PLAYWRIGHT_EXECUTABLE_PATH||undefined,args:['--no-sandbox','--disable-dev-shm-usage','--no-zygote','--single-process']});
-const page=await browser.newPage({viewport:{width:1280,height:900},locale:'de-DE'});
-const errors=[];page.on('pageerror',e=>errors.push(e.message));
-page.on('dialog',d=>d.accept());
-const base=process.env.TEST_BASE_URL||'http://localhost:4173';
-const id='11111111-1111-4111-a111-111111111111';
-let teacher=true;
-const room={id,name:'Finnisch am Mittwoch',teacher:true,owner:true,teacher_count:1,archived:false,code:'ABCD1234ABCD1234',member_count:1,members:[{id:'student',name:'learner',role:'student',owner:false,blocked:false}],assignments:[]};
-await page.route('**/auth/v1/**',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({access_token:'test',refresh_token:'test',user:{id,user_metadata:{username:'teacher'}}})}));
-await page.route('**/rest/v1/learning_state**',route=>route.fulfill({status:200,contentType:'application/json',body:'[]'}));
-await page.route('**/rest/v1/rpc/sentence_quality_exclusions',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({sentence_ids:[],translations:[]})}));
-await page.route('**/rest/v1/rpc/sentence_quality_api',route=>route.fulfill({status:200,contentType:'application/json',body:'[]'}));
-await page.route('**/rest/v1/rpc/classroom_api',async route=>{
- const {action,payload}=route.request().postDataJSON();let result={};
- if(action==='list')result=[{...room,teacher}];
- if(action==='create'||action==='join')result={id};
- if(action==='room')result={...room,teacher,members:teacher?room.members:[],code:teacher?room.code:null};
- if(action==='assign')room.assignments.push({id:'22222222-2222-4222-a222-222222222222',title:payload.title,items:payload.items,due_at:payload.due_at,released:false,submissions:[],messages:[],submitted_count:0});
- if(action==='submit'){room.assignments[0].submissions.push({id:'submission',own:true,answers:payload.answers,author:teacher?'learner':null,reactions:{}});room.assignments[0].submitted_count=1;}
- if(action==='release')room.assignments[0].released=true;
- if(action==='message')room.assignments[0].messages.push({id:'message',author:'learner',own:true,body:payload.body,item_index:Number(payload.item_index)});
- if(action==='delete_message')room.assignments[0].messages=[];
- await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(result)});
-});
+import {spawn} from 'node:child_process';
+import {chromium} from 'playwright';
+const server=spawn(process.execPath,['server.mjs'],{stdio:['ignore','pipe','inherit']});
+await new Promise(resolve=>server.stdout.once('data',resolve));
+const origin='http://localhost:4173',id='11111111-1111-4111-a111-111111111111';
+const shots=process.env.CLASSROOM_SCREENSHOTS;
+const json=body=>({status:200,contentType:'application/json',body:JSON.stringify(body)});
+let browser;
 try{
- await page.goto(base);await page.locator('#classrooms-button').click();
- await page.getByText('Zum Beitreten und Speichern brauchst du ein Konto.').waitFor();
- assert.equal(await page.locator('#classrooms-close').count(),0);
- await page.evaluate(id=>localStorage.setItem('suomi-auth-session-v1',JSON.stringify({access_token:'test',refresh_token:'test',user:{id,user_metadata:{username:'teacher'}}})),id);
- await page.reload();await page.locator('#classrooms-button').click();
- await page.locator('[data-cr-form=create] input').fill('Finnisch am Mittwoch');
- await page.locator('[data-cr-form=create] button').click();
- await page.locator('[data-cr=new_assignment]').click();
- await page.locator('[data-cr-form=assign] input[name=title]').fill('Unsere erste Runde');
- await page.locator('[data-sentence]').first().check();
- await page.locator('[data-cr-form=assign] button.primary').click();
- await page.locator('[data-cr=assignment]').click();
- await page.getByRole('heading',{name:'Unsere erste Runde'}).waitFor();
- assert(await page.locator('[data-cr=release]').isVisible());
- await page.locator('#classrooms-button').click();teacher=false;
- await page.locator('[data-cr=open]').click();
- assert.equal(await page.locator('[data-cr=new_assignment]').count(),0);
- await page.locator('[data-cr=assignment]').click();
- await page.locator('[data-answer]').fill('<img src=x onerror=alert(1)> Hei!');
- await page.locator('[data-cr-form=submit] button.primary').click();
- await page.getByText('Deine Antworten sind gespeichert.').waitFor();
- assert.equal(await page.locator('#classrooms-content img').count(),0);
- await page.locator('[data-cr-form=message] textarea').fill('Warum steht hier diese Form?');
- await page.locator('[data-cr-form=message] button').click();await page.locator('.cr-message').waitFor();
- await page.locator('#classrooms-button').click();teacher=true;
- await page.locator('[data-cr=open]').click();await page.locator('[data-cr=assignment]').click();
- await page.locator('[data-cr=release]').click();await page.locator('[data-cr=react]').first().waitFor();
- if(process.env.CLASSROOM_SCREENSHOTS)await page.screenshot({path:process.env.CLASSROOM_SCREENSHOTS+'/classroom-desktop.png',fullPage:true});
- await page.setViewportSize({width:390,height:844});
- await page.locator('[data-cr=back]').click();
- assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'no mobile horizontal overflow');
- if(process.env.CLASSROOM_SCREENSHOTS)await page.screenshot({path:process.env.CLASSROOM_SCREENSHOTS+'/classroom-mobile.png',fullPage:true});
- assert.deepEqual(errors,[]);console.log('PASS: guest gate, create, assignment picker, submit, XSS escaping, questions, release, teacher/student UI, mobile layout');
-}finally{await browser.close();}
+ browser=await chromium.launch({headless:true,...(process.env.PW_CHROMIUM?{executablePath:process.env.PW_CHROMIUM}:{})});
+ for(const viewport of [{width:390,height:844},{width:1280,height:800}]){
+  const tag=viewport.width<600?'handy':'desktop';
+  let teacher=true,step=0;
+  const room={id,name:'Finnisch am Mittwoch',teacher:true,owner:true,teacher_count:1,archived:false,code:'ABCD1234ABCD1234',member_count:3,assignments:[],
+   members:[{id:'owner',name:'Frau Virtanen',role:'teacher',owner:true,own:true,blocked:false},{id:'s1',name:'Anna Müller',role:'student',owner:false,blocked:false},{id:'s2',name:'Mika',role:'student',owner:false,blocked:false}]};
+  const posts=[{id:'post-1',kind:'question',body:'Wann benutzt man den Partitiv? Siehe https://example.org/partitiv',author:'Anna Müller',own:false,teacher:false,resolved:false,created_at:'2026-10-01T09:00:00Z',files:[],
+   replies:[{id:'reply-1',reply_to_id:null,body:'Zum Beispiel nach Zahlen: kaksi kahvia.',author:'Frau Virtanen',own:true,teacher:true,created_at:'2026-10-01T09:05:00Z'}]}];
+  const context=await browser.newContext({viewport,serviceWorkers:'block',locale:'de-DE'});
+  await context.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());
+  await context.route('**/auth/v1/**',route=>route.fulfill(json({access_token:'test',refresh_token:'test',user:{id,user_metadata:{username:'teacher'}}})));
+  await context.route('**/rest/v1/learning_state**',route=>route.fulfill(json([])));
+  await context.route('**/rest/v1/rpc/sentence_quality_exclusions',route=>route.fulfill(json({sentence_ids:[],translations:[]})));
+  await context.route('**/rest/v1/rpc/sentence_quality_api',route=>route.fulfill(json([])));
+  await context.route('**/rest/v1/rpc/classroom_api',async route=>{
+   const {action,payload}=route.request().postDataJSON();let result={};
+   const members=room.members.map(m=>({...m,own:teacher?m.id==='owner':m.id==='s1'}));
+   if(action==='list')result=[{...room,teacher,owner:teacher}];
+   if(action==='create'||action==='join')result={id};
+   if(action==='room')result={...room,teacher,owner:teacher,members,code:teacher?room.code:null,assignments:room.assignments.map(a=>({...a,own_assignment:teacher}))};
+   if(action==='assign')room.assignments.push({id:'22222222-2222-4222-a222-222222222222',title:payload.title,items:payload.items,due_at:payload.due_at,created_at:'2026-10-02T08:00:00Z',released:false,submissions:[],messages:[],submitted_count:0});
+   if(action==='submit'){room.assignments[0].submissions.push({id:'submission',own:!teacher,answers:payload.answers,author_id:'s1',author:'Anna Müller',reactions:{}});room.assignments[0].submitted_count=1;}
+   if(action==='release')room.assignments[0].released=true;
+   if(action==='message')room.assignments[0].messages.push({id:'message-'+(room.assignments[0].messages.length+1),author:teacher?'Frau Virtanen':'Anna Müller',teacher,own:true,body:payload.body,item_index:Number(payload.item_index),parent_id:payload.parent_id||null,deleted:false});
+   if(action==='stream_list')result={posts,has_more:false,open_questions:posts.filter(p=>p.kind==='question'&&!p.resolved).length,assignment_dates:Object.fromEntries(room.assignments.map(a=>[a.id,a.created_at]))};
+   if(action==='stream_post'){posts.unshift({id:payload.request_id,kind:payload.kind,body:payload.body,author:teacher?'Frau Virtanen':'Anna Müller',own:true,teacher,resolved:false,created_at:'2026-10-02T09:00:00Z',files:[],replies:[]});result={id:payload.request_id};}
+   await route.fulfill(json(result));
+  });
+  const page=await context.newPage(),errors=[];
+  page.on('pageerror',e=>errors.push(e.message));
+  page.on('console',m=>{if(m.type()==='error'&&!/net::ERR_FAILED|Failed to load resource/.test(m.text()))errors.push(m.text());});
+  page.on('dialog',d=>d.accept());
+  const check=async name=>{
+   await page.waitForFunction(()=>!document.querySelector('[aria-busy]'));
+   const wide=await page.evaluate(()=>[...document.querySelectorAll('#classrooms-view *')].filter(e=>e.getBoundingClientRect().right>innerWidth+1&&getComputedStyle(e).position!=='fixed'&&!e.closest('[hidden]')).slice(0,3).map(e=>e.tagName+'.'+e.className));
+   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${tag} ${name}: Seite ist breiter als der Bildschirm (${wide})`);
+   assert.ok(!await page.locator('#classrooms-status.error').count(),`${tag} ${name}: ${await page.locator('#classrooms-status').textContent()}`);
+   if(shots)await page.screenshot({path:`${shots}/${tag}-${String(++step).padStart(2,'0')}-${name}.png`,fullPage:true});
+  };
+  // Gast
+  await page.goto(origin);await page.locator('#classrooms-button').click();
+  await page.getByText('Zum Beitreten und Speichern brauchst du ein Konto.').waitFor();await check('gast');
+  // Lehrkraft: Raum anlegen
+  await page.evaluate(id=>localStorage.setItem('suomi-auth-session-v1',JSON.stringify({access_token:'test',refresh_token:'test',user:{id,user_metadata:{username:'teacher'}}})),id);
+  await page.reload();await page.locator('#classrooms-button').click();
+  await page.locator('.cr-room-action summary').first().waitFor();await check('raumliste');
+  await page.locator('.cr-room-action:has([data-cr-form=create]) summary').click();
+  await page.locator('[data-cr-form=create] [name=name]').fill('Finnisch am Mittwoch');
+  await page.locator('[data-cr-form=create] [name=display_name]').fill('Frau Virtanen');
+  await page.locator('[data-cr-form=create] button').click();
+  await page.locator('.cr-stream-layout').waitFor();
+  assert.equal(await page.locator('#classrooms-title').textContent(),'Finnisch am Mittwoch');
+  assert.ok(await page.locator('.cr-post-body a[rel~=noopener]').count(),'links in posts are safe links');await check('raum-lehrkraft');
+  // Stream: Beitrag schreiben
+  await page.locator('#cr-stream-compose summary').click();
+  await page.locator('[data-cr-form=stream_post] textarea').fill('Morgen bitte das Buch mitbringen.');await check('beitrag-schreiben');
+  await page.locator('[data-cr-form=stream_post] button[type=submit], [data-cr-form=stream_post] button.primary').first().click();
+  await page.getByText('Morgen bitte das Buch mitbringen.').first().waitFor();
+  // Mitglieder
+  for(const details of await page.locator('.cr-sidebar-disclosure').all())await details.locator('summary').first().click();
+  assert.ok((await page.locator('.cr-roster').textContent()).includes('Anna Müller'));
+  assert.ok((await page.locator('.cr-today').textContent()).includes('1 Frage wartet auf eine Antwort.'));await check('mitglieder');
+  // Aufgabe erstellen: eigener Satz und vorhandener Satz
+  await page.locator('[data-cr=new_assignment]').first().click();
+  await page.locator('[data-cr-form=assign] input[name=title]').fill('Unsere erste Runde');
+  await page.locator('#cr-tab-custom [data-custom-field=de]').fill('Heute lernen wir zusammen.');
+  await page.locator('#cr-tab-custom [data-custom-field=fi]').fill('Tänään opiskelemme yhdessä.');await check('aufgabe-eigener-satz');
+  await page.locator('#cr-tab-custom [data-cr=confirm_custom]').click();
+  await page.locator('[data-cr=tab_existing]').click();
+  await page.locator('[data-sentence]').first().check();
+  assert.equal(await page.locator('#cr-selection-count').textContent(),'2 Sätze ausgewählt');await check('aufgabe-vorhandene-saetze');
+  await page.locator('[data-cr-form=assign] button.primary').click();
+  await page.locator('.cr-feed-assignment').first().waitFor();await check('raum-mit-aufgabe');
+  await page.locator('[data-cr=assignment]').first().click();
+  await page.getByRole('heading',{name:'Unsere erste Runde'}).waitFor();
+  assert.ok(await page.locator('[data-cr=release]').isVisible());await check('aufgabe-lehrkraft');
+  // Teilnehmerin: beantworten, abgeben, Frage stellen
+  await page.locator('#classrooms-button').click();teacher=false;
+  await page.locator('[data-cr=open]').click();await page.locator('.cr-stream-layout').waitFor();
+  assert.equal(await page.locator('[data-cr=new_assignment]').count(),0);await check('raum-teilnehmerin');
+  await page.locator('[data-cr=assignment]').first().click();
+  const answers=page.locator('[data-answer]');assert.equal(await answers.count(),2);
+  await answers.nth(0).fill('<img src=x onerror=alert(1)> Hei!');await answers.nth(1).fill('Tänään me opiskelemme yhdessä.');await check('aufgabe-beantworten');
+  await page.locator('[data-cr-form=submit] button.primary').click();
+  await page.getByText('Deine Antworten sind gespeichert.').waitFor();
+  assert.equal(await page.locator('#classrooms-content img').count(),0,'answers are shown as text');
+  await page.locator('[data-cr-form=message] textarea').first().fill('Warum steht hier diese Form?');
+  await page.locator('[data-cr-form=message] button').first().click();await page.locator('.cr-message').waitFor();await check('abgegeben-mit-frage');
+  // Lehrkraft: Abgaben ansehen und Vergleich freigeben
+  await page.locator('#classrooms-button').click();teacher=true;
+  await page.locator('[data-cr=open]').click();await page.locator('[data-cr=assignment]').first().click();
+  await page.locator('[data-cr=release]').waitFor();await check('abgaben-lehrkraft');
+  await page.locator('[data-cr=release]').click();await page.locator('[data-cr=react]').first().waitFor();await check('vergleich-freigegeben');
+  await page.locator('[data-cr=back]').click();await page.locator('.cr-stream-layout').waitFor();await check('zurueck-im-raum');
+  assert.deepEqual(errors,[],`${tag}: Fehler in der Konsole`);
+  await context.close();
+ }
+ console.log('PASS: Klassenräume auf Handy und Desktop – Gast, Raum, Stream, Mitglieder, Aufgabe, Abgabe, Frage, Freigabe, keine Überbreite, keine Konsolenfehler');
+}finally{await browser?.close();server.kill();}
