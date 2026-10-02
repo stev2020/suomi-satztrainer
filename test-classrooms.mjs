@@ -227,9 +227,53 @@ try{
   await page.locator('#classrooms-button').click();teacher=true;
   await page.locator('[data-cr=open]').click();await page.locator('[data-cr=assignment]').first().click();
   await page.locator('[data-cr=edit_assignment]').click();await page.locator('.cr-edit-locked').waitFor();
-  assert.ok((await page.locator('[data-cr-form=update_assignment]').textContent()).includes('Richtung: Finnisch → Deutsch'));assert.equal(await page.locator('[data-cr-form=update_assignment] [name=direction]').count(),0);
+  assert.ok((await page.locator('[data-cr-form=update_assignment]').textContent()).includes('Aufgabentyp: Finnisch → Deutsch'));assert.equal(await page.locator('[data-cr-form=update_assignment] [name=direction]').count(),0);
+  // Dritter Aufgabentyp: Lückentext mit gewählter Lücke
+  const fresh=async()=>{await page.locator('[data-cr-form=update_assignment] [data-cr=assignment], [data-cr=assignment]').first().click();await page.locator('[data-cr=delete_assignment]').click();await page.getByText('Die Aufgabe wurde gelöscht.').waitFor();await page.locator('[data-cr=new_assignment]').first().click();await page.locator('[data-cr-form=assign]').waitFor();};
+  await fresh();
+  await page.locator('[data-cr-form=assign] input[name=title]').fill('Welches Wort fehlt?');
+  await page.locator('[data-cr-form=assign] [name=direction]').selectOption('cloze');
+  await page.locator('#cr-tab-custom [data-custom-field=de]').fill('Ich habe eine Frage.');
+  await page.locator('#cr-tab-custom [data-custom-field=fi]').fill('Minulla on kysymys.');
+  await page.locator('#cr-tab-custom [data-cr=confirm_custom]').click();
+  assert.equal(await page.locator('.cr-gap-word').count(),3);assert.equal((await page.locator('.cr-gap-word[aria-pressed=true]').textContent()).trim(),'Minulla','Vorschlag: das längste Wort');
+  await page.locator('.cr-gap-word').nth(2).click();assert.equal((await page.locator('.cr-gap-word[aria-pressed=true]').textContent()).trim(),'kysymys.');await check('lueckentext-erstellen');
+  await page.locator('[data-cr-form=assign] button.primary').click();await page.locator('.cr-feed-assignment').first().waitFor();
+  assert.equal(room.assignments[0].direction,'cloze');assert.equal(room.assignments[0].items[0].gap,2);
+  await page.locator('#classrooms-button').click();teacher=false;
+  await page.locator('[data-cr=open]').click();await page.locator('[data-cr=assignment]').first().click();
+  const gapText=await page.locator('.cr-assignment-item h3').first().textContent();
+  assert.ok(gapText.includes('Minulla on')&&gapText.includes('_____')&&!gapText.includes('kysymys'),'das Lückenwort ist vor der Abgabe nicht zu sehen');
+  await page.locator('input[data-answer]').fill(' Kysymys ');await check('lueckentext-beantworten');
+  await page.locator('[data-cr-form=submit] button.primary').click();await page.getByText('1 von 1 richtig.').waitFor();
+  assert.ok(await page.locator('.cr-verdict-right').count());await check('lueckentext-abgegeben');
+  // Vierter Aufgabentyp: Verbformen
+  await page.locator('#classrooms-button').click();teacher=true;
+  await page.locator('[data-cr=open]').click();await page.locator('.cr-stream-layout').waitFor();await fresh();
+  await page.locator('[data-cr-form=assign] input[name=title]').fill('Präsens üben');
+  await page.locator('[data-cr-form=assign] [name=direction]').selectOption('verbs');
+  assert.ok(await page.locator('#cr-tab-custom').isHidden()&&await page.locator('.cr-tabs').isHidden(),'bei Verbformen gibt es keine Satzauswahl');
+  await page.locator('#cr-verb-filter').fill('teh');assert.ok(await page.locator('[data-verb=olla]').isHidden());await page.locator('[data-verb=tehdä]').check();
+  await page.locator('#cr-verb-filter').fill('');await page.locator('[data-verb=olla]').check();
+  assert.equal(await page.locator('#cr-selection-count').textContent(),'12 Formen ausgewählt');
+  for(const person of [1,3,4,5])await page.locator(`[data-person="${person}"]`).uncheck();
+  assert.equal(await page.locator('#cr-selection-count').textContent(),'4 Formen ausgewählt');await check('verbformen-erstellen');
+  await page.locator('[data-cr-form=assign] button.primary').click();await page.locator('.cr-feed-assignment').first().waitFor();
+  assert.deepEqual(room.assignments[0].items.map(item=>item.text),['olen','on','teen','tekee']);assert.equal(room.assignments[0].direction,'verbs');
+  assert.ok((await page.locator('.cr-feed-assignment').first().textContent()).includes('4 Formen · Verbformen'));
+  await page.locator('#classrooms-button').click();teacher=false;
+  await page.locator('[data-cr=open]').click();await page.locator('[data-cr=assignment]').first().click();
+  assert.equal((await page.locator('.cr-assignment-item h3').first().textContent()).replace(/\s+/g,' ').trim(),'olla · minä');
+  const forms=page.locator('input[data-answer]');assert.equal(await forms.count(),4);
+  for(const [n,value] of ['olen','hän on','teen','tekevät'].entries())await forms.nth(n).fill(value);await check('verbformen-beantworten');
+  await page.locator('[data-cr-form=submit] button.primary').click();await page.getByText('3 von 4 richtig.').waitFor();
+  assert.equal(await page.locator('.cr-verdict-right').count(),3);assert.ok((await page.locator('.cr-verdict-wrong').textContent()).includes('tekee'));
+  assert.equal(await page.locator('.cr-review-offer').count(),0);await check('verbformen-abgegeben');
+  await page.locator('#classrooms-button').click();teacher=true;
+  await page.locator('[data-cr=open]').click();await page.locator('[data-cr=assignment]').first().click();
+  assert.ok((await page.locator('.cr-submission-card .cr-score').textContent()).includes('3 von 4 richtig'));await check('verbformen-lehrkraft');
   assert.deepEqual(errors,[],`${tag}: Fehler in der Konsole`);
   await context.close();
  }
- console.log('PASS: Klassenräume auf Handy und Desktop – Gast, Raum, Stream, Mitglieder, Aufgabe, Bearbeiten, Entwurf, Abgabe, Vergleich, Wiederholen, Überblick, Kommentar, Frage, Freigabe, Neues, Löschen, Finnisch → Deutsch, keine Überbreite, keine Konsolenfehler');
+ console.log('PASS: Klassenräume auf Handy und Desktop – Gast, Raum, Stream, Mitglieder, Aufgabe, Bearbeiten, Entwurf, Abgabe, Vergleich, Wiederholen, Überblick, Kommentar, Frage, Freigabe, Neues, Löschen, Finnisch → Deutsch, Lückentext, Verbformen, keine Überbreite, keine Konsolenfehler');
 }finally{await browser?.close();server.kill();}

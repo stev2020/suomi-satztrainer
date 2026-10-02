@@ -10,7 +10,7 @@ const calls=[];
 room.members.unshift({id:'owner',name:'teacher',role:'teacher',owner:true,own:true,blocked:false});room.members[1].role='student';
 let messageNumber=0;
 window.accountUser=()=>logged?{id:'test-user',user_metadata:{username:teacher?'teacher':'learner'}}:null;
-window.uiLocale=()=>'de';window.translationFeedbackMarkup=()=>'';window.compareTranslation=()=>({kind:'different'});window.loadLexicon=async()=>{};window.GRAMMAR_TOPICS=GRAMMAR_TOPICS;window.topicNotes=topicNotes;
+window.uiLocale=()=>'de';window.translationFeedbackMarkup=()=>'';window.compareTranslation=()=>({kind:'different'});window.VERBS=[{id:'olla',de:'sein',forms:['olen','olet','on','olemme','olette','ovat']}];window.loadLexicon=async()=>{};window.GRAMMAR_TOPICS=GRAMMAR_TOPICS;window.topicNotes=topicNotes;
 window.confirm=()=>true;
 window.accountRequest=async(path,opts)=>{
  if(path.includes('sentence_quality_exclusions'))return {ok:true,json:async()=>({sentence_ids:[],translations:[]})};

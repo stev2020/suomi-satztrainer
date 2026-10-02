@@ -27,22 +27,28 @@ begin
  select (x->>'id')::uuid into bid from jsonb_array_elements(v->'assignments') x where x->>'title'='Neu' and x->>'direction'='fi-de';
  assert aid is not null and bid is not null,'default and chosen direction are returned';
  begin perform public.classroom_api('assign',jsonb_build_object('room_id',rid,'title','Falsch','items',one,'direction','sv-de'));raise exception 'FAIL unknown direction';
- exception when raise_exception then if sqlerrm<>'Unbekannte Übersetzungsrichtung.' then raise;end if;end;
+ exception when raise_exception then if sqlerrm<>'Unbekannter Aufgabentyp.' then raise;end if;end;
  -- The direction changes while nobody answered; the title alone keeps it.
  perform public.classroom_api('update_assignment',jsonb_build_object('room_id',rid,'assignment_id',aid,'title','Alt','direction','fi-de'));
  perform public.classroom_api('update_assignment',jsonb_build_object('room_id',rid,'assignment_id',aid,'title','Alt, neu benannt'));
  v:=public.classroom_api('room',jsonb_build_object('room_id',rid));
  assert (select x->>'direction' from jsonb_array_elements(v->'assignments') x where x->>'id'=aid::text)='fi-de','direction changed and kept';
  begin perform public.classroom_api('update_assignment',jsonb_build_object('room_id',rid,'assignment_id',aid,'title','Alt','direction','xx'));raise exception 'FAIL unknown direction on update';
- exception when raise_exception then if sqlerrm<>'Unbekannte Übersetzungsrichtung.' then raise;end if;end;
+ exception when raise_exception then if sqlerrm<>'Unbekannter Aufgabentyp.' then raise;end if;end;
  -- After a submission the direction is fixed.
  perform set_config('request.jwt.claim.sub',s::text,true);
  perform public.classroom_api('submit',jsonb_build_object('room_id',rid,'assignment_id',bid,'answers','["Hallo"]'::jsonb));
  perform set_config('request.jwt.claim.sub',o::text,true);
  begin perform public.classroom_api('update_assignment',jsonb_build_object('room_id',rid,'assignment_id',bid,'title','Neu','direction','de-fi'));raise exception 'FAIL direction after submission';
- exception when raise_exception then if sqlerrm<>'Die Richtung lässt sich nur ändern, solange es keine Abgaben und keine Fragen gibt.' then raise;end if;end;
+ exception when raise_exception then if sqlerrm<>'Der Aufgabentyp lässt sich nur ändern, solange es keine Abgaben und keine Fragen gibt.' then raise;end if;end;
  perform public.classroom_api('update_assignment',jsonb_build_object('room_id',rid,'assignment_id',bid,'title','Neu, umbenannt','direction','fi-de'));
+ -- Lückentext und Verbformen sind weitere Typen; ihre Zusatzfelder bleiben erhalten.
+ perform public.classroom_api('assign',jsonb_build_object('room_id',rid,'title','Lücken','direction','cloze','items','[{"text":"Minulla on kysymys.","gap":2,"translations":[{"text":"Ich habe eine Frage."}]}]'::jsonb));
+ perform public.classroom_api('assign',jsonb_build_object('room_id',rid,'title','Verben','direction','verbs','items','[{"text":"olen","lemma":"olla","person":0,"origin":"verb","translations":[{"text":"sein"}]}]'::jsonb));
+ v:=public.classroom_api('room',jsonb_build_object('room_id',rid));
+ assert (select (x->'items'->0->>'gap')::int from jsonb_array_elements(v->'assignments') x where x->>'direction'='cloze')=2,'gap is kept';
+ assert (select x->'items'->0->>'lemma' from jsonb_array_elements(v->'assignments') x where x->>'direction'='verbs')='olla','verb fields are kept';
 end $test$;
 reset role;
-select 'PASS: default direction, chosen direction, validation, change before answers, fixed after a submission' as result;
+select 'PASS: default direction, chosen direction, cloze and verbs, validation, change before answers, fixed after a submission' as result;
 rollback;

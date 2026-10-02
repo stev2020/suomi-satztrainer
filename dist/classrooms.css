@@ -337,3 +337,25 @@ header{flex-wrap:wrap}
 .cr-overview-spots{margin:6px 0 0;padding:0;list-style:none;display:grid;gap:6px}
 .cr-overview-spots li{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;padding:8px 10px;border:1.5px solid var(--line);border-radius:10px;background:var(--paper);font-size:14px}
 .cr-overview-variants{flex-basis:100%;color:var(--muted);font-size:13px}
+/* Lückentext und Verbformen */
+.cr-gap{display:inline-block;padding:0 4px;border-bottom:2px solid var(--purple);color:var(--purple);font-weight:700;letter-spacing:.04em}
+.cr-gap-filled{padding:0 3px;border-radius:4px;background:var(--mint);color:var(--ink)}
+.cr-prompt-help{margin:4px 0 10px;color:var(--muted)}
+#classrooms-view .cr-assignment-item input[data-answer]{width:100%;max-width:340px}
+.cr-verdict{margin:8px 0;font-weight:700}
+.cr-verdict-right{color:var(--good)}
+.cr-verdict-wrong{color:var(--bad)}
+.cr-verdict-wrong strong{color:var(--ink)}
+.cr-score,.cr-score-own{margin:4px 0 10px}
+.cr-gap-row{padding:12px 0;border-top:1px solid color-mix(in srgb,var(--line) 14%,transparent)}
+.cr-gap-row p{margin:0 0 8px}
+.cr-gap-words{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+#classrooms-view .cr-gap-word{min-height:38px;margin:0;padding:6px 10px;border:1.5px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);font:inherit;box-shadow:none;cursor:pointer}
+#classrooms-view .cr-gap-word[aria-pressed=true]{background:var(--purple);border-color:var(--purple);color:#fff;font-weight:700}
+.cr-verb-persons{display:flex;flex-wrap:wrap;gap:6px 16px;margin:8px 0 12px;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px}
+#classrooms-view .cr-verb-persons label,#classrooms-view .cr-verb{display:flex;align-items:center;gap:8px;margin:0;font-weight:400}
+#classrooms-view .cr-verb-persons input,#classrooms-view .cr-verb input{width:auto;margin:0}
+#cr-verb-list{max-height:min(50vh,360px);overflow:auto;margin:10px 0;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}
+#classrooms-view .cr-verb{padding:8px 6px;border-bottom:1px solid color-mix(in srgb,var(--line) 12%,transparent)}
+.cr-verb small{display:block;color:var(--muted);font-size:12px}
+.cr-verb[hidden]{display:none!important}
