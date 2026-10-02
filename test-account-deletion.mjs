@@ -10,6 +10,8 @@ for(const expected of ['delete-account-form','Benutzername zur Bestätigung','Ak
 assert(config.includes('[functions.delete-account]')&&config.includes('verify_jwt = true'));
 for(const expected of ['account_private.deletion_transfers','auth.uid()','m.role=\'teacher\'','before delete on auth.users','update classroom_private.rooms set owner_id=transfer.new_owner_id','security invoker'])assert(migration.includes(expected),expected);
 for(const expected of ['auth.getUser()','signInWithPassword','account_prepare_deletion',"storage.from('classroom-stream').remove",'admin.auth.admin.deleteUser','account_cancel_deletion'])assert(edge.includes(expected),expected);
-assert(edge.indexOf("storage.from('classroom-stream').remove")<edge.indexOf('admin.auth.admin.deleteUser'),'Storage bytes are removed before the cascading Auth deletion');
+assert(edge.indexOf('admin.auth.admin.deleteUser')<edge.indexOf("storage.from('classroom-stream').remove"),'The account is deleted first, so a failure never leaves an account without its files');
+assert(edge.indexOf("storage.from('classroom-stream').remove")<edge.indexOf('sweepOrphanedStreamFiles(admin)'),'Leftover files are collected by the storage sweep');
+assert(!edge.includes('planError?.message||'),'Database error texts are not passed to the client unfiltered');
 
-console.log('PASS: account deletion reauthenticates, transfers classrooms and removes Storage before Auth data.');
+console.log('PASS: account deletion reauthenticates, transfers classrooms and deletes the account before its files, with the storage sweep as safety net.');

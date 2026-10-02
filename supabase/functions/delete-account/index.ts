@@ -27,18 +27,26 @@ Deno.serve(async req=>{
   if(passwordError||verified.user?.id!==user.id)return json({error:'Das Passwort ist falsch.'},403);
 
   const {data:plan,error:planError}=await userClient.rpc('account_prepare_deletion',{decisions});
-  if(planError||!plan)return json({error:planError?.message||'Die Klassenraum-Auswahl ist ungültig.'},400);
+  // Only messages raised on purpose by the database function (P0001) are meant
+  // for the user; anything else stays in the log.
+  if(planError||!plan){
+   if(planError&&planError.code!=='P0001')console.error('delete-account: prepare failed:',planError.code,planError.message);
+   return json({error:planError?.code==='P0001'&&planError.message?planError.message:'Die Klassenraum-Auswahl ist ungültig.'},400);
+  }
   const cancel=async()=>{try{await userClient.rpc('account_cancel_deletion');}catch{}};
   const admin=createClient(url,serviceKey,{auth:{autoRefreshToken:false,persistSession:false}});
   const objects=Array.isArray(plan.storage_objects)?plan.storage_objects.filter((item:unknown)=>typeof item==='string'):[];
+  // The account goes first: if that fails, nothing has been removed yet. Files
+  // that cannot be removed afterwards have lost their database row and are
+  // collected by the storage sweep (below, and again whenever a room or account is deleted).
+  const {error:deleteError}=await admin.auth.admin.deleteUser(user.id,false);
+  if(deleteError){console.error('delete-account: deleteUser failed:',deleteError.message);await cancel();return json({error:'Das Konto konnte nicht gelöscht werden. Bitte versuche es erneut.'},500);}
   for(let offset=0;offset<objects.length;offset+=100){
    const {error}=await admin.storage.from('classroom-stream').remove(objects.slice(offset,offset+100));
-   if(error){await cancel();return json({error:'Die hochgeladenen Dateien konnten nicht vollständig gelöscht werden. Das Konto wurde noch nicht gelöscht.'},500);}
+   if(error)console.error('delete-account: file removal left to the storage sweep:',error.message);
   }
-  const {error:deleteError}=await admin.auth.admin.deleteUser(user.id,false);
-  if(deleteError){await cancel();return json({error:'Das Konto konnte nicht gelöscht werden. Bitte versuche es erneut.'},500);}
   // Rooms deleted together with the account leave files of other members behind.
-  try{await sweepOrphanedStreamFiles(admin);}catch{}
+  try{await sweepOrphanedStreamFiles(admin);}catch(error){console.error('delete-account: storage sweep failed:',error instanceof Error?error.message:String(error));}
   return json({deleted:true});
  }catch{return json({error:'Die Kontolöschung konnte nicht abgeschlossen werden.'},400);}
 });

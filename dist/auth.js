@@ -26,6 +26,12 @@ const checkPassword=v=>{
   const s=String(v||'');
   if(s.length<8||s.length>200) throw new Error('Das Passwort muss 8–200 Zeichen lang sein.');
 };
+// New passwords: the server's hash (bcrypt) only uses the first 72 bytes, so
+// anything longer would be cut off silently. Existing longer passwords still log in.
+const checkNewPassword=v=>{
+  const s=String(v||'');
+  if(s.length<8||new TextEncoder().encode(s).length>72) throw new Error('Das Passwort muss 8–72 Zeichen lang sein (Umlaute und Sonderzeichen zählen mehrfach).');
+};
 const escapeHTML=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const hex=s=>Array.from(new TextEncoder().encode(s)).map(b=>b.toString(16).padStart(2,'0')).join('');
 const technicalEmail=u=>`u${hex(u)}@users.suomi.invalid`;
@@ -46,6 +52,20 @@ function loadSession(){try{const v=JSON.parse(localStorage.getItem(SESSION));if(
 // rate limits (429) and network failures keep the session and the local learning
 // state, so answers that are not synchronized yet are never thrown away.
 let refreshInFlight=null;
+// Leaving an account also removes what this browser kept for that account:
+// its "Satz des Tages" and leftover game progress. Device settings (design,
+// language, game speed, record) stay.
+function clearAccountStorage(userId){
+  try{
+    const doomed=[];
+    for(let i=0;i<localStorage.length;i++){
+      const key=localStorage.key(i)||'';
+      if(key.startsWith('suomi-hyppy.progress.')||(userId&&key==='vanamo-daily-sentence:'+userId))doomed.push(key);
+    }
+    for(const key of [STORE,STAMP,...doomed])localStorage.removeItem(key);
+  }catch{}
+  try{sessionStorage.removeItem('suomi-guest-exercise-accepted')}catch{}
+}
 const storedSession=()=>{try{const v=JSON.parse(localStorage.getItem(SESSION));return v?.access_token&&v?.refresh_token?v:null}catch{return null}};
 async function refreshSession(){
   if(!session?.refresh_token)return false;
@@ -58,7 +78,7 @@ async function refreshSession(){
     const stored=storedSession();
     if(stored&&stored.user?.id===session?.user?.id&&stored.refresh_token!==used){session=stored;return true}
     const r=await api('/auth/v1/token?grant_type=refresh_token',{method:'POST',body:JSON.stringify({refresh_token:used})});
-    if(r.status===400||r.status===401){localStorage.removeItem(STORE);saveSession(null);location.reload();return false}
+    if(r.status===400||r.status===401){clearAccountStorage(session?.user?.id);saveSession(null);location.reload();return false}
     if(!r.ok){syncState('Server gerade nicht erreichbar. Dein Lernstand bleibt auf diesem Gerät gespeichert.',true);return false}
     saveSession(await r.json());return true;
   };
@@ -215,7 +235,7 @@ async function showTurnstile(){
 // A token is valid for one check only, so every attempt gets a fresh one.
 function resetTurnstile(){turnstileToken='';if(turnstileWidget!==null)try{window.turnstile?.reset(turnstileWidget)}catch{}}
 async function register(username,password){
-  username=normalizeUsername(username);checkPassword(password);
+  username=normalizeUsername(username);checkNewPassword(password);
   if(TURNSTILE_SITE_KEY&&!turnstileToken){showTurnstile();throw new Error('Bitte warte kurz, bis die Sicherheitsprüfung unter dem Formular abgeschlossen ist.');}
   let r;
   try{r=await api('/functions/v1/register',{method:'POST',body:JSON.stringify({username,password,turnstileToken})})}finally{resetTurnstile()}
@@ -224,7 +244,7 @@ async function register(username,password){
   const guestState=currentLearning();await login(username,password,false,guestState);return result.recoveryCode;
 }
 async function recover(username,recoveryCode,newPassword){
-  username=normalizeUsername(username);checkPassword(newPassword);
+  username=normalizeUsername(username);checkNewPassword(newPassword);
   const r=await api('/functions/v1/recover',{method:'POST',body:JSON.stringify({username,recoveryCode:String(recoveryCode||'').trim().toUpperCase(),newPassword})});
   const result=await r.json().catch(()=>({}));
   if(!r.ok)throw new Error(result.error||'Wiederherstellung fehlgeschlagen.');
@@ -257,8 +277,7 @@ async function deleteAccount(username,password,decisions){
   const result=await r.json().catch(()=>({}));
   if(!r.ok)throw new Error(result.error||'Das Konto konnte nicht gelöscht werden.');
   clearTimeout(timer);timer=null;syncQueued=false;syncReady=false;
-  localStorage.removeItem(STORE);localStorage.removeItem(SESSION);localStorage.removeItem(STAMP);
-  try{sessionStorage.removeItem('suomi-guest-exercise-accepted')}catch{}
+  clearAccountStorage(session?.user?.id);localStorage.removeItem(STORE);localStorage.removeItem(SESSION);
   session=null;location.reload();
 }
 async function logout(){
@@ -270,7 +289,7 @@ async function logout(){
     await Promise.race([(syncInFlight||Promise.resolve()).then(()=>synchronizeLearning(currentLearning(),false,true)).catch(()=>{}),new Promise(r=>setTimeout(r,5000))]);
   }
   if(session?.access_token)await api('/auth/v1/logout',{method:'POST',headers:authHeaders()}).catch(()=>{});
-  localStorage.removeItem(STORE);localStorage.removeItem(STAMP);
+  clearAccountStorage(session?.user?.id);
   saveSession(null);
   location.reload();
 }
@@ -325,7 +344,7 @@ export const accountUser=()=>session?.user||null;
 export {request as accountRequest};
 window.suomiAccountUser=()=>session?.user||null;
 window.suomiAccountRequest=request;
-import('./classrooms.js?v=80').catch(()=>{});
+import('./classrooms.js?v=81').catch(()=>{});
 import('./quality-review.js?v=4').catch(()=>{});
 if(session?.user&&configured())refreshSession().then(async ok=>{if(!ok)return;try{await pullAndMerge();}catch(err){syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true);status(err.message,true);}}).catch(syncError).finally(()=>{syncReady=true;if(syncQueued)scheduleSync()});
 else syncReady=true;

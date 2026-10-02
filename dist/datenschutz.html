@@ -3,7 +3,7 @@
 <body><header><a class="brand" href="./" aria-label="Vanamo Startseite"><span class="brand-mark">v.</span>vanamo<span class="brand-caption">SPRACHEN LERNEN</span></a></header>
 <main class="legal">
 <h1>Datenschutzerklärung</h1>
-<p>Stand: 25. September 2026 (ergänzt um den Bereich „Spiele“)</p>
+<p>Stand: 2. Oktober 2026 (Liste der im Browser gespeicherten Daten vervollständigt)</p>
 
 <h2>1. Verantwortlich</h2>
 <p>Verantwortlich für die Datenverarbeitung auf dieser Website ist die im <a href="impressum.html">Impressum</a> genannte Person.</p>
@@ -26,9 +26,15 @@
 <ul>
 <li><code>suomi-learning-v1</code>: Lernstand, Favoriten, Einstellungen und deine Hinweise zu Sätzen (nur bei angemeldetem Konto dauerhaft; ohne Konto wird er beim nächsten Laden gelöscht).</li>
 <li><code>suomi-auth-session-v1</code>: Anmeldesitzung, wenn du angemeldet bist.</li><li><code>suomi-cloud-stamp-v1</code>: Konto-ID, Zeitpunkt und Prüfsumme der letzten Synchronisierung, damit nicht jedes Mal der ganze Lernstand übertragen wird (nur bei angemeldetem Konto).</li>
-<li><code>suomi-hyppy…</code>: Einstellungen, Rekord und – ohne Konto – der Lernstand des Spiels Mustikka Hyppy (Bereich „Spiele“).</li>
-<li><code>suomi-guest-exercise-accepted</code>: Merkt sich für die aktuelle Sitzung, dass du ohne Konto üben möchtest.</li>
+<li><code>suomi-hyppy…</code>: Einstellungen (gewählte Wortliste, Design, Tempo, Neigungssteuerung), Rekord und – ohne Konto – der Lernstand des Spiels Mustikka Hyppy (Bereich „Spiele“).</li>
+<li><code>vanamo-daily-sentence</code>: der heutige „Satz des Tages“, bei angemeldetem Konto zusammen mit der Konto-ID, damit er sich im Laufe des Tages nicht ändert.</li>
+<li><code>suomi-dialogs-read</code>: welche Dialoge du schon gelesen hast.</li>
+<li><code>vanamo-quality-exclusions</code>: die zuletzt geladene Liste der Sätze, die gerade geprüft werden (enthält nichts über dich).</li>
+<li><code>vanamo-theme</code>, <code>vanamo-ui-lang</code>: gewähltes Farbdesign und Sprache der Oberfläche.</li>
+<li><code>vanamo-today-open</code>, <code>suomi-word-lookup-hint</code>, <code>vanamo-search-pan-learned</code>: merken sich, ob ein Bereich aufgeklappt ist und ob ein Bedienhinweis schon gezeigt wurde.</li>
+<li><code>suomi-guest-exercise-accepted</code>, <code>vanamo-guest-sentences</code>, <code>vanamo-intro-seen</code>: gelten nur für die aktuelle Sitzung und merken sich, dass du ohne Konto üben möchtest, welche Probesätze du schon gesehen hast und dass die Begrüßungsanimation schon lief.</li>
 </ul>
+<p>Beim Abmelden und beim Löschen des Kontos entfernt die App Lernstand, Anmeldesitzung, Synchronisierungsstempel und den „Satz des Tages“ dieses Kontos von diesem Gerät. Reine Geräteeinstellungen (Design, Sprache, Spieleinstellungen, Rekord) bleiben erhalten.</p>
 <p>Du kannst diese Daten jederzeit über die Browsereinstellungen („Websitedaten löschen“) entfernen. Rechtsgrundlage ist § 25 Abs. 2 Nr. 2 TDDDG, weil die Speicherung für die von dir gewünschte Funktion unbedingt erforderlich ist.</p>
 
 <h2>5. Nutzerkonto, Synchronisierung und Klassenräume (Supabase)</h2>
