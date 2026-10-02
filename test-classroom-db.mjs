@@ -18,7 +18,7 @@ grant select,insert,delete on storage.objects to authenticated;`);
 for(const file of fs.readdirSync(root+'/supabase/migrations').sort()) {
  await db.exec(fs.readFileSync(root+'/supabase/migrations/'+file,'utf8'));
 }
-for(const file of ['classrooms.sql','classroom_owner_delete.sql','classroom_threads.sql','classroom_teacher_roles.sql','classroom_display_names.sql','classroom_stream.sql','classroom_assignment_creators.sql','classroom_assignment_edit.sql','classroom_feedback.sql','classroom_activity.sql','sentence_quality.sql','account_self_deletion.sql','security_bundle.sql']) {
+for(const file of ['classrooms.sql','classroom_owner_delete.sql','classroom_threads.sql','classroom_teacher_roles.sql','classroom_display_names.sql','classroom_stream.sql','classroom_assignment_creators.sql','classroom_assignment_edit.sql','classroom_feedback.sql','classroom_activity.sql','classroom_direction.sql','sentence_quality.sql','account_self_deletion.sql','security_bundle.sql']) {
  const result=await db.exec(fs.readFileSync(root+'/supabase/tests/'+file,'utf8'));
  console.log(file,JSON.stringify(result.flatMap(r=>r.rows)));
 }

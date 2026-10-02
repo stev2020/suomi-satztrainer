@@ -4,9 +4,9 @@ const source=fs.readFileSync(new URL('./dist/classrooms.js',import.meta.url),'ut
 new Function(source.replace(/^import .*$/gm,''));
 const assignment=source.slice(source.indexOf('function assignment('),source.indexOf('function discussion('));
 const render=source.slice(source.indexOf('function renderCustomItems('),source.indexOf('function assignment('));
-const check=new Function('teacher','creator','submitted','closed','manage',`
- const room={teacher,archived:false,member_count:1,members:[],assignments:[{id:'a',own_assignment:creator,title:'Test',can_manage:manage,submissions:submitted?[{own:true,answers:['MY ANSWER'],reactions:{},feedback:[{item_index:0,body:'x',author:'T'}]}]:[],released:closed,items:[{text:'SECRET SOLUTION',translations:[{text:'Hallo'}]}],submitted_count:0}]};
- let selected,dirty;const drafts=new Map(),target={},dropDraft=()=>{},lexiconReady=true,loadLexicon=async()=>{},autoFeedback=()=>'AUTO',teacherNote=(s,i)=>(s.feedback||[]).some(f=>f.item_index===i)?'NOTE':'',feedbackForm=()=>'FORM';const $=()=>target;
+const check=new Function('teacher','creator','submitted','closed','manage','direction',`
+ const room={teacher,archived:false,member_count:1,members:[],assignments:[{id:'a',own_assignment:creator,title:'Test',can_manage:manage,direction,submissions:submitted?[{own:true,answers:['MY ANSWER'],reactions:{},feedback:[{item_index:0,body:'x',author:'T'}]}]:[],released:closed,items:[{text:'SECRET SOLUTION',translations:[{text:'Hallo'}]}],submitted_count:0}]};
+ let selected,dirty;const drafts=new Map(),target={},dropDraft=()=>{},lexiconReady=true,DIRECTIONS={'de-fi':'Deutsch → Finnisch','fi-de':'Finnisch → Deutsch'},directionOf=a=>DIRECTIONS[a.direction]?a.direction:'de-fi',loadLexicon=async()=>{},autoFeedback=()=>'AUTO',teacherNote=(s,i)=>(s.feedback||[]).some(f=>f.item_index===i)?'NOTE':'',feedbackForm=()=>'FORM';const $=()=>target;
  const b=(text)=>text,esc=String,date=()=>'',sources=()=>'',discussion=()=>'',sentenceSourceIcon=()=>'';${assignment}
  assignment('a');return target.innerHTML;
 `);
@@ -28,4 +28,8 @@ const html=new Function(`const customItems=[{added:true,de:'<b>Hallo</b>',fi:'He
 assert(!html.split('</fieldset>')[0].includes('<textarea'));
 assert(html.includes('&lt;b&gt;'));
 assert(html.split('</fieldset>')[1].includes('<textarea'));
-console.log('PASS: assignment role/submission/release matrix, manage buttons, old API compatibility, static confirmed sentence and escaped text.');
+{const open=check(false,false,false,false,false,'fi-de'),done=check(false,false,true,false,false,'fi-de'),old=check(false,false,false,false,false);
+ assert(open.includes('Finnisch → Deutsch')&&open.includes('Finnischer Satz')&&open.includes('SECRET SOLUTION')&&open.includes('Deine deutsche Übersetzung')&&!open.includes('Hallo'),'fi-de shows the Finnish sentence and hides the German one');
+ assert(done.includes('Deutsche Vorlage')&&done.includes('Hallo'));
+ assert(old.includes('Deutsch → Finnisch')&&old.includes('Deutscher Satz')&&old.includes('Hallo')&&!old.includes('SECRET SOLUTION'),'packages without a direction stay German → Finnish');}
+console.log('PASS: assignment role/submission/release matrix, both directions, manage buttons, old API compatibility, static confirmed sentence and escaped text.');
