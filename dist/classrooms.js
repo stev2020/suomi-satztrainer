@@ -1,5 +1,5 @@
-import {uiLocale} from './i18n.mjs?v=15';
-import {accountUser,accountRequest} from './auth.js?v=109';
+import {uiLocale} from './i18n.mjs?v=16';
+import {accountUser,accountRequest} from './auth.js?v=110';
 import {GRAMMAR_TOPICS,topicNotes} from './grammar-topics.mjs';
 
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -8,8 +8,32 @@ const date=v=>v?new Date(v).toLocaleString(uiLocale,{dateStyle:'short',timeStyle
 let room=null,selected=null,deck=null,grammar=null,customItems=[],busy=false,dirty=false;
 let classroomHidden=new Map(),globalQuality={sentence_ids:[],translations:[]};
 const replyDrafts=new Map();
-const drafts=new Map(); // Memory only; never localStorage or service-worker data.
-const css=document.createElement('link');css.rel='stylesheet';css.href='./classrooms.css?v=72';document.head.append(css);
+// Answer drafts stay on this device (localStorage, one entry per account) until
+// they are submitted; they never go to the server or the service-worker cache.
+const drafts=new Map(),draftTimes=new Map(),DRAFT_KEY='vanamo-classroom-drafts:';
+function loadDrafts(){
+ drafts.clear();draftTimes.clear();
+ const id=accountUser()?.id;if(!id)return;
+ try{
+  const saved=JSON.parse(localStorage.getItem(DRAFT_KEY+id)||'{}'),oldest=Date.now()-60*864e5;
+  for(const [aid,d] of Object.entries(saved&&typeof saved==='object'?saved:{})){
+   if(!d||!Array.isArray(d.answers)||!(d.at>oldest))continue;
+   drafts.set(aid,d.answers.slice(0,20).map(v=>String(v||'').slice(0,2000)));draftTimes.set(aid,d.at);
+  }
+ }catch{}
+}
+function storeDrafts(){
+ const id=accountUser()?.id;if(!id)return;
+ try{
+  const kept=[...drafts].filter(([,answers])=>answers.some(v=>v&&v.trim())).sort((x,y)=>(draftTimes.get(y[0])||0)-(draftTimes.get(x[0])||0)).slice(0,40);
+  if(!kept.length)return localStorage.removeItem(DRAFT_KEY+id);
+  localStorage.setItem(DRAFT_KEY+id,JSON.stringify(Object.fromEntries(kept.map(([aid,answers])=>[aid,{answers,at:draftTimes.get(aid)||Date.now()}]))));
+ }catch{}
+}
+function dropDraft(id){if(drafts.delete(id)){draftTimes.delete(id);storeDrafts();}}
+let editItems=[];
+const localInput=v=>{if(!v)return '';const d=new Date(v);d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16);};
+const css=document.createElement('link');css.rel='stylesheet';css.href='./classrooms.css?v=73';document.head.append(css);
 const button=document.createElement('button');button.id='classrooms-button';button.type='button';button.dataset.view='classrooms';button.textContent='Klassenräume';
 const headerNav=document.querySelector('.header-nav');
 if(headerNav)headerNav.insertBefore(button,headerNav.querySelector('[data-view="progress"]'));else $('account-button').before(button);
@@ -65,6 +89,7 @@ function updateHeading(){
  $('classrooms-refresh').hidden=!room;
 }
 async function home(){
+ loadDrafts();
  room=null;selected=null;dirty=false;streamFilter='all';updateHeading();
  if(!accountUser()){$('classrooms-content').innerHTML=`<p>Gemeinsam Finnisch lernen: Erstelle einen Raum oder tritt deiner Klasse per Code bei.</p><p>Zum Beitreten und Speichern brauchst du ein Konto.</p>${b('Anmelden / Registrieren','login')}`;return;}
  const rooms=await api('list');
@@ -143,8 +168,9 @@ function assignment(id){
  selected=id;dirty=false;
  const own=a.submissions.find(s=>s.own),closed=room.archived||a.released||(a.due_at&&new Date(a.due_at)<new Date());
  const isCreator=a.own_assignment===undefined?room.teacher:a.own_assignment===true,showOverview=room.teacher&&(isCreator||Boolean(own)||a.released);
+ if(own)dropDraft(id);
  const canSubmit=!isCreator&&!own&&!closed,answers=drafts.get(id)||[],statusText=a.released?'Vergleich freigegeben':own?'Abgegeben':closed?'Geschlossen':'Offen';
- $('classrooms-content').innerHTML=`<div class="cr-toolbar cr-assignment-nav">${b('← Zum Klassenraum','back')}</div><section class="cr-assignment-hero"><span class="cr-assignment-kicker">Klassenaufgabe</span><h2>${esc(a.title)}</h2><div class="cr-assignment-meta"><span><strong>Frist</strong>${esc(date(a.due_at))}</span><span><strong>Abgaben</strong>${a.submitted_count} von ${room.member_count}</span><span class="cr-assignment-status">${esc(statusText)}</span></div></section><div class="cr-assignment-intro"><span aria-hidden="true">✦</span><p><strong>Deutsch → Finnisch</strong><br>Andere Formulierungen können ebenfalls richtig sein. Es gibt keine automatische Benotung; die Satzvorlagen dienen zum gemeinsamen Üben.</p></div>${room.teacher&&!a.released&&!room.archived?`<p>${b('Abgaben schließen & Vergleich freigeben','release')}</p><p class="cr-note">Danach sind keine weiteren Abgaben möglich. Die Klasse sieht die Antworten ohne Nutzernamen.</p>`:''}${canSubmit?'<form data-cr-form="submit">':''}${a.items.map((s,i)=>`<article class="cr-card cr-assignment-item"><div class="cr-assignment-number" aria-hidden="true">${i+1}</div><div class="cr-assignment-item-body"><span class="cr-assignment-language">Deutscher Satz</span><h3>${esc(s.translations[0].text)}${sentenceSourceIcon(s.translations[0])}</h3>${canSubmit?`<label for="cr-answer-${i}">Deine finnische Übersetzung</label><textarea id="cr-answer-${i}" name="answer-${i}" data-answer="${i}" required maxlength="2000" rows="2" lang="fi">${esc(answers[i]||'')}</textarea>`:own?`<p lang="fi">Deine Antwort: ${esc(own.answers[i])}</p>`:''}${isCreator||own||a.released?`<p lang="fi"><strong>${s.origin==='teacher_created'?'Richtige Lösung':'Finnische Vorlage'}:</strong> ${esc(s.text)}${sentenceSourceIcon(s)}</p>`:''}${sources(s)}</div></article>`).join('')}${canSubmit?'<p class="cr-note">Abgabe ist verbindlich. Entwürfe bleiben nur in dieser geöffneten Seite erhalten und gehen beim Neuladen verloren.</p><button class="primary">Alle Antworten verbindlich abgeben</button></form>':`<p>${own?'Deine Antworten sind gespeichert.':isCreator?'Hier siehst du die eingereichten Antworten.':'Abgabe ist geschlossen.'}</p>`}
+ $('classrooms-content').innerHTML=`<div class="cr-toolbar cr-assignment-nav">${b('← Zum Klassenraum','back')}</div><section class="cr-assignment-hero"><span class="cr-assignment-kicker">Klassenaufgabe</span><h2>${esc(a.title)}</h2><div class="cr-assignment-meta"><span><strong>Frist</strong>${esc(date(a.due_at))}</span><span><strong>Abgaben</strong>${a.submitted_count} von ${room.member_count}</span><span class="cr-assignment-status">${esc(statusText)}</span></div></section><div class="cr-assignment-intro"><span aria-hidden="true">✦</span><p><strong>Deutsch → Finnisch</strong><br>Andere Formulierungen können ebenfalls richtig sein. Es gibt keine automatische Benotung; die Satzvorlagen dienen zum gemeinsamen Üben.</p></div>${a.can_manage&&!room.archived?`<div class="cr-toolbar cr-assignment-manage">${b('Aufgabe bearbeiten','edit_assignment')}<button type="button" class="quiet cr-danger" data-cr="delete_assignment">Aufgabe löschen</button></div>`:''}${room.teacher&&!a.released&&!room.archived?`<p>${b('Abgaben schließen & Vergleich freigeben','release')}</p><p class="cr-note">Danach sind keine weiteren Abgaben möglich. Die Klasse sieht die Antworten ohne Nutzernamen.</p>`:''}${canSubmit?'<form data-cr-form="submit">':''}${a.items.map((s,i)=>`<article class="cr-card cr-assignment-item"><div class="cr-assignment-number" aria-hidden="true">${i+1}</div><div class="cr-assignment-item-body"><span class="cr-assignment-language">Deutscher Satz</span><h3>${esc(s.translations[0].text)}${sentenceSourceIcon(s.translations[0])}</h3>${canSubmit?`<label for="cr-answer-${i}">Deine finnische Übersetzung</label><textarea id="cr-answer-${i}" name="answer-${i}" data-answer="${i}" required maxlength="2000" rows="2" lang="fi">${esc(answers[i]||'')}</textarea>`:own?`<p lang="fi">Deine Antwort: ${esc(own.answers[i])}</p>`:''}${isCreator||own||a.released?`<p lang="fi"><strong>${s.origin==='teacher_created'?'Richtige Lösung':'Finnische Vorlage'}:</strong> ${esc(s.text)}${sentenceSourceIcon(s)}</p>`:''}${sources(s)}</div></article>`).join('')}${canSubmit?'<p class="cr-note">Abgabe ist verbindlich. Dein Entwurf wird auf diesem Gerät gespeichert, bis du abgibst.</p><button class="primary">Alle Antworten verbindlich abgeben</button></form>':`<p>${own?'Deine Antworten sind gespeichert.':isCreator?'Hier siehst du die eingereichten Antworten.':'Abgabe ist geschlossen.'}</p>`}
  ${showOverview||a.released?`<div class="cr-assignment-section-title"><span aria-hidden="true">✓</span><div><span class="cr-assignment-language">Auswertung</span><h3>${room.teacher?'Abgabenübersicht':'Gemeinsamer Lösungsvergleich'}</h3></div></div>${room.teacher?`<p>Noch ohne Abgabe: ${room.members.filter(m=>m.role!=='teacher'&&!m.blocked&&!a.submissions.some(s=>s.author_id===m.id)).map(m=>esc(m.name)).join(', ')||'niemand'}</p>`:''}${a.submissions.map((s,i)=>`<article class="cr-card cr-submission-card"><h4>${room.teacher?esc(s.author):s.own?'Deine Lösung':`Lösung ${i+1}`}</h4>${s.answers.map((v,j)=>`<p><strong>${j+1}.</strong> <span lang="fi">${esc(v)}</span></p>`).join('')}${a.released&&!room.archived?`<div class="cr-toolbar">${Object.entries({helpful:'Hilfreich',interesting:'Interessant',encouraging:'Gut gemacht'}).map(([k,label])=>b(`${label} · ${s.reactions[k]||0}`,'react',`data-id="${s.id}" data-kind="${k}"`)).join('')}</div>`:''}</article>`).join('')||'<p>Noch keine Abgaben.</p>'}`:'<p>Der gemeinsame Lösungsvergleich wird von der Lehrkraft freigegeben.</p>'}
  <div class="cr-assignment-section-title cr-discussion-title"><span aria-hidden="true">?</span><div><span class="cr-assignment-language">Gemeinsam klären</span><h3>Fragen &amp; Austausch</h3></div></div><p class="cr-note cr-discussion-note">Für alle im Raum sichtbar, mit deinem Klassenraumnamen. Keine persönlichen Daten posten. Die Lehrkraft kann Beiträge entfernen.</p>${discussion(a)}${!room.archived?`<form data-cr-form="message" class="cr-card"><h4>Neue Diskussion starten</h4><label>Zu welchem Satz?<select name="item_index">${a.items.map((s,i)=>`<option value="${i}">${i+1}. ${esc(s.translations[0].text)}</option>`).join('')}</select></label><label>Frage oder Diskussionsbeitrag<textarea name="body" required maxlength="1500" rows="3"></textarea></label><button class="primary">Beitrag senden</button></form>`:''}`;
 }
@@ -166,8 +192,20 @@ function discussion(a){
  }
  return `<ul class="cr-discussions" aria-label="Diskussionen">${render(null)}</ul>`;
 }
+function renderEditItems(){
+ const host=$('cr-edit-items');if(!host)return;
+ const left=editItems.filter(item=>!item.removed).length;
+ host.innerHTML=editItems.map((item,i)=>`<fieldset class="cr-custom-item cr-edit-item ${item.removed?'cr-edit-removed':''}"><legend>Satz ${i+1}${item.removed?' · wird entfernt':''}</legend>${item.custom&&!item.removed?`<label>Deutscher Satz<textarea data-edit-index="${i}" data-edit-field="de" maxlength="500" rows="2" lang="de">${esc(item.de)}</textarea></label><label>Richtige finnische Übersetzung<textarea data-edit-index="${i}" data-edit-field="fi" maxlength="500" rows="2" lang="fi">${esc(item.fi)}</textarea></label>`:`<p class="cr-custom-text" lang="de">${esc(item.de)}</p><p class="cr-custom-text cr-note" lang="fi">${esc(item.fi)}</p>`}<div class="cr-toolbar">${item.removed?b('Satz behalten','edit_toggle',`data-index="${i}"`):left>1?b('Satz entfernen','edit_toggle',`data-index="${i}"`):''}</div></fieldset>`).join('');
+}
+function editAssignment(id){
+ const a=room.assignments.find(x=>x.id===id);if(!a||!a.can_manage)throw new Error('Aufgabe nicht mehr verfügbar.');
+ selected=id;dirty=false;
+ editItems=a.items.map(s=>({de:s.translations[0].text,fi:s.text,custom:s.origin==='teacher_created',removed:false}));
+ $('classrooms-content').innerHTML=`<div class="cr-toolbar cr-assignment-nav">${b('← Zurück zur Aufgabe','assignment',`data-id="${id}"`)}</div><form data-cr-form="update_assignment" class="cr-card"><h3>Aufgabe bearbeiten</h3><label>Titel<input name="title" required minlength="3" maxlength="100" value="${esc(a.title)}"></label><label>Abgabetermin (optional)<input name="due" type="datetime-local" value="${esc(localInput(a.due_at))}"></label><section class="cr-assignment-source"><h4>Sätze</h4>${a.items_locked?`<p class="cr-note">Die Sätze lassen sich nicht mehr ändern, weil es schon Abgaben oder Fragen gibt oder der Vergleich freigegeben ist.</p><ol class="cr-edit-locked">${a.items.map(s=>`<li lang="de">${esc(s.translations[0].text)}</li>`).join('')}</ol>`:'<p class="cr-note">Eigene Sätze kannst du korrigieren, vorhandene Sätze nur entfernen. Das geht, solange es keine Abgaben und keine Fragen gibt.</p><div id="cr-edit-items"></div>'}</section><div class="cr-toolbar"><button class="primary">Änderungen speichern</button>${b('Abbrechen','assignment',`data-id="${id}"`)}</div></form>`;
+ renderEditItems();
+}
 async function refreshAssignment(){const id=selected;room=await api('room',{room_id:room.id});assignment(id);}
-function canNavigate(){return !dirty||confirm('Ungespeicherte Eingaben verlassen? Antwortentwürfe bleiben bis zum Neuladen dieser Seite erhalten.');}
+function canNavigate(){return !dirty||confirm('Ungespeicherte Eingaben verlassen? Antwortentwürfe bleiben auf diesem Gerät gespeichert.');}
 function openClassrooms(){
  document.querySelectorAll('.app-view').forEach(view=>{view.hidden=true;});
  $('classrooms-view').hidden=false;
@@ -178,10 +216,11 @@ function openClassrooms(){
 button.onclick=openClassrooms;
 $('classrooms-refresh').onclick=()=>{if(room&&canNavigate())run(()=>open(room.id));};
 $('classrooms-content').addEventListener('input',e=>{
- dirty=true;
+ if(!e.target.matches('[data-answer]'))dirty=true;
  if(e.target.closest('[data-cr-form=stream_post]'))saveStreamDraft();
  if(e.target.matches('[data-stream-reply]'))replyDrafts.set('stream-'+e.target.dataset.streamReply,e.target.value);
- if(e.target.matches('[data-answer]')){const v=drafts.get(selected)||[];v[Number(e.target.dataset.answer)]=e.target.value;drafts.set(selected,v);}
+ if(e.target.matches('[data-answer]')){const v=drafts.get(selected)||[];v[Number(e.target.dataset.answer)]=e.target.value;drafts.set(selected,v);draftTimes.set(selected,Date.now());storeDrafts();}
+ if(e.target.matches('[data-edit-field]'))editItems[Number(e.target.dataset.editIndex)][e.target.dataset.editField]=e.target.value;
  if(e.target.matches('[data-reply-id]'))replyDrafts.set(e.target.dataset.replyId,e.target.value);
  if(e.target.matches('[data-custom-field]'))customItems[Number(e.target.dataset.customIndex)][e.target.dataset.customField]=e.target.value;
 });
@@ -203,6 +242,14 @@ $('classrooms-content').addEventListener('click',e=>{
    if(action==='assignment')return assignment(el.dataset.id);
    if(action==='refresh_assignment')return refreshAssignment();
    if(action==='new_assignment')return composer();
+   if(action==='edit_assignment')return editAssignment(selected);
+   if(action==='edit_toggle'){const item=editItems[Number(el.dataset.index)];item.removed=!item.removed;dirty=true;renderEditItems();return;}
+   if(action==='delete_assignment'){
+     const a=room.assignments.find(x=>x.id===selected);
+     if(!confirm(`Aufgabe „${a.title}“ endgültig löschen? Alle Abgaben und Fragen dazu werden mitgelöscht.`))return;
+     await api('delete_assignment',{room_id:room.id,assignment_id:selected});dropDraft(selected);await open(room.id);
+     $('classrooms-content').insertAdjacentHTML('afterbegin','<p role="status">Die Aufgabe wurde gelöscht.</p>');return;
+   }
    if(action==='cancel_assignment'){if(!canNavigate())return;$('cr-composer').innerHTML='';dirty=false;return;}
    if(action==='hide_sentence'){
      const id=Number(el.dataset.id),sentence=deck?.find(s=>Number(s.id)===id);if(!sentence)throw new Error('Satz nicht gefunden.');
@@ -288,6 +335,22 @@ $('classrooms-content').addEventListener('submit',e=>{
      });
      payload={title:data.get('title'),items:[...selected.values(),...own],due_at:data.get('due')?new Date(data.get('due')).toISOString():null};
    }
+   if(action==='update_assignment'){
+     const a=room.assignments.find(x=>x.id===selected);
+     payload={assignment_id:selected,title:String(data.get('title')||'').trim(),due_at:data.get('due')?new Date(data.get('due')).toISOString():''};
+     if(!a.items_locked){
+       const items=[];
+       editItems.forEach((item,i)=>{
+         if(item.removed)return;
+         if(!item.custom){items.push(a.items[i]);return;}
+         const de=item.de.trim(),fi=item.fi.trim();
+         if(!de||!fi)throw new Error(`Bitte deutschen Satz und finnische Lösung für Satz ${i+1} eingeben.`);
+         items.push({...a.items[i],text:fi,translations:[{...a.items[i].translations[0],text:de},...a.items[i].translations.slice(1)]});
+       });
+       if(!items.length)throw new Error('Eine Aufgabe braucht mindestens einen Satz.');
+       if(JSON.stringify(items)!==JSON.stringify(a.items))payload.items=items;
+     }
+   }
    if(action==='submit'){
      const a=room.assignments.find(x=>x.id===selected);
      payload={assignment_id:selected,answers:a.items.map((s,i)=>String(data.get(`answer-${i}`)||'').trim())};
@@ -297,10 +360,11 @@ $('classrooms-content').addEventListener('submit',e=>{
    if(action==='delete_room'&&data.get('confirm_name')!==room.name)throw new Error('Bitte den Raumnamen exakt eingeben.');
    if(room)payload.room_id=room.id;
    const value=await api(action,payload);dirty=false;
-   if(action==='delete_room'){accountRequest('/functions/v1/storage-sweep',{method:'POST',body:'{}'}).catch(()=>{});streamDrafts.delete(room.id);for(const a of room.assignments)drafts.delete(a.id);await home();$('classrooms-content').insertAdjacentHTML('afterbegin','<p role="status">Klassenraum und zugehörige Inhalte wurden endgültig gelöscht.</p>');return;}
+   if(action==='delete_room'){accountRequest('/functions/v1/storage-sweep',{method:'POST',body:'{}'}).catch(()=>{});streamDrafts.delete(room.id);for(const a of room.assignments)dropDraft(a.id);await home();$('classrooms-content').insertAdjacentHTML('afterbegin','<p role="status">Klassenraum und zugehörige Inhalte wurden endgültig gelöscht.</p>');return;}
    if(action==='rename'){await open(room.id);$('classrooms-content').insertAdjacentHTML('afterbegin','<p role="status">Dein Name wurde für diesen Klassenraum geändert.</p>');return;}
    if(action==='create'||action==='join')return open(value.id);
-   if(action==='submit'){drafts.delete(selected);return refreshAssignment();}
+   if(action==='submit'){dropDraft(selected);return refreshAssignment();}
+   if(action==='update_assignment')return refreshAssignment();
    if(action==='message'){
      if(payload.parent_id)replyDrafts.delete(payload.parent_id);
      await refreshAssignment();

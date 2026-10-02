@@ -292,3 +292,9 @@ header{flex-wrap:wrap}
 @media(max-width:850px){.cr-stream-layout:has(#cr-composer>form) .cr-stream-sidebar{display:none}}
 /* Knöpfe brechen am Handy als Ganzes um, nicht ihr Text. */
 @media(max-width:640px){#classrooms-view .cr-toolbar button{flex:1 1 auto;white-space:nowrap}}
+/* Aufgabe bearbeiten und löschen */
+.cr-assignment-manage{margin:0 0 14px}
+.cr-edit-removed legend,.cr-edit-removed .cr-custom-text{opacity:.55}
+.cr-edit-removed .cr-custom-text{text-decoration:line-through}
+.cr-edit-locked{margin:8px 0 0;padding-left:22px}
+.cr-edit-locked li{margin:6px 0}

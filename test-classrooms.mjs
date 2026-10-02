@@ -31,10 +31,12 @@ try{
    const members=room.members.map(m=>({...m,own:teacher?m.id==='owner':m.id==='s1'}));
    if(action==='list')result=[{...room,teacher,owner:teacher}];
    if(action==='create'||action==='join')result={id};
-   if(action==='room')result={...room,teacher,owner:teacher,members,code:teacher?room.code:null,assignments:room.assignments.map(a=>({...a,own_assignment:teacher}))};
+   if(action==='room')result={...room,teacher,owner:teacher,members,code:teacher?room.code:null,assignments:room.assignments.map(a=>({...a,own_assignment:teacher,can_manage:teacher,items_locked:a.released||a.submissions.length>0||a.messages.length>0}))};
    if(action==='assign')room.assignments.push({id:'22222222-2222-4222-a222-222222222222',title:payload.title,items:payload.items,due_at:payload.due_at,created_at:'2026-10-02T08:00:00Z',released:false,submissions:[],messages:[],submitted_count:0});
    if(action==='submit'){room.assignments[0].submissions.push({id:'submission',own:!teacher,answers:payload.answers,author_id:'s1',author:'Anna Müller',reactions:{}});room.assignments[0].submitted_count=1;}
    if(action==='release')room.assignments[0].released=true;
+   if(action==='update_assignment'){const a=room.assignments[0];a.title=payload.title;a.due_at=payload.due_at||null;if(payload.items){assert.ok(!a.submissions.length&&!a.messages.length);a.items=payload.items;}}
+   if(action==='delete_assignment'){assert.equal(payload.assignment_id,room.assignments[0].id);room.assignments=[];}
    if(action==='message')room.assignments[0].messages.push({id:'message-'+(room.assignments[0].messages.length+1),author:teacher?'Frau Virtanen':'Anna Müller',teacher,own:true,body:payload.body,item_index:Number(payload.item_index),parent_id:payload.parent_id||null,deleted:false});
    if(action==='stream_list')result={posts,has_more:false,open_questions:posts.filter(p=>p.kind==='question'&&!p.resolved).length,assignment_dates:Object.fromEntries(room.assignments.map(a=>[a.id,a.created_at]))};
    if(action==='stream_post'){posts.unshift({id:payload.request_id,kind:payload.kind,body:payload.body,author:teacher?'Frau Virtanen':'Anna Müller',own:true,teacher,resolved:false,created_at:'2026-10-02T09:00:00Z',files:[],replies:[]});result={id:payload.request_id};}
@@ -88,15 +90,32 @@ try{
   await page.locator('[data-cr=assignment]').first().click();
   await page.getByRole('heading',{name:'Unsere erste Runde'}).waitFor();
   assert.ok(await page.locator('[data-cr=release]').isVisible());await check('aufgabe-lehrkraft');
+  // Aufgabe bearbeiten: Titel, eigener Satz; ein Satz lässt sich entfernen und wieder behalten
+  await page.locator('[data-cr=edit_assignment]').click();
+  await page.locator('[data-cr-form=update_assignment] [name=title]').fill('Unsere erste Runde, korrigiert');
+  assert.equal(await page.locator('#cr-edit-items textarea').count(),2,'nur der eigene Satz ist als Text änderbar');
+  await page.locator('#cr-edit-items [data-edit-field=fi]').fill('Tänään opiskelemme yhdessä!');
+  await page.locator('#cr-edit-items [data-cr=edit_toggle]').first().click();
+  assert.equal(await page.locator('.cr-edit-removed').count(),1);assert.equal(await page.locator('#cr-edit-items [data-cr=edit_toggle]').count(),1,'der letzte Satz lässt sich nicht entfernen');await check('aufgabe-bearbeiten');
+  await page.locator('#cr-edit-items [data-cr=edit_toggle]').first().click();assert.equal(await page.locator('.cr-edit-removed').count(),0);
+  await page.locator('[data-cr-form=update_assignment] button.primary').click();
+  await page.getByRole('heading',{name:'Unsere erste Runde, korrigiert'}).waitFor();
+  assert.equal(room.assignments[0].items.length,2);assert.equal(room.assignments[0].items[1].text,'Tänään opiskelemme yhdessä!');assert.equal(room.assignments[0].items[1].origin,'teacher_created');
   // Teilnehmerin: beantworten, abgeben, Frage stellen
   await page.locator('#classrooms-button').click();teacher=false;
   await page.locator('[data-cr=open]').click();await page.locator('.cr-stream-layout').waitFor();
   assert.equal(await page.locator('[data-cr=new_assignment]').count(),0);await check('raum-teilnehmerin');
   await page.locator('[data-cr=assignment]').first().click();
+  assert.equal(await page.locator('[data-cr=edit_assignment],[data-cr=delete_assignment]').count(),0,'Teilnehmer können Aufgaben nicht ändern');
   const answers=page.locator('[data-answer]');assert.equal(await answers.count(),2);
   await answers.nth(0).fill('<img src=x onerror=alert(1)> Hei!');await answers.nth(1).fill('Tänään me opiskelemme yhdessä.');await check('aufgabe-beantworten');
+  // Entwurf übersteht das Neuladen
+  await page.reload();await page.locator('#classrooms-button').click();await page.locator('[data-cr=open]').click();await page.locator('[data-cr=assignment]').first().click();
+  assert.equal(await answers.nth(1).inputValue(),'Tänään me opiskelemme yhdessä.','Entwurf ist nach dem Neuladen noch da');
+  assert.ok(await page.evaluate(id=>localStorage.getItem('vanamo-classroom-drafts:'+id),id));
   await page.locator('[data-cr-form=submit] button.primary').click();
   await page.getByText('Deine Antworten sind gespeichert.').waitFor();
+  assert.equal(await page.evaluate(id=>localStorage.getItem('vanamo-classroom-drafts:'+id),id),null,'nach der Abgabe ist der Entwurf entfernt');
   assert.equal(await page.locator('#classrooms-content img').count(),0,'answers are shown as text');
   await page.locator('[data-cr-form=message] textarea').first().fill('Warum steht hier diese Form?');
   await page.locator('[data-cr-form=message] button').first().click();await page.locator('.cr-message').waitFor();await check('abgegeben-mit-frage');
@@ -104,10 +123,16 @@ try{
   await page.locator('#classrooms-button').click();teacher=true;
   await page.locator('[data-cr=open]').click();await page.locator('[data-cr=assignment]').first().click();
   await page.locator('[data-cr=release]').waitFor();await check('abgaben-lehrkraft');
+  await page.locator('[data-cr=edit_assignment]').click();await page.locator('.cr-edit-locked').waitFor();
+  assert.equal(await page.locator('#cr-edit-items').count(),0,'nach einer Abgabe sind die Sätze fest');await check('bearbeiten-saetze-fest');
+  await page.locator('[data-cr-form=update_assignment] [data-cr=assignment]').click();await page.locator('[data-cr=release]').waitFor();
   await page.locator('[data-cr=release]').click();await page.locator('[data-cr=react]').first().waitFor();await check('vergleich-freigegeben');
   await page.locator('[data-cr=back]').click();await page.locator('.cr-stream-layout').waitFor();await check('zurueck-im-raum');
+  // Aufgabe löschen
+  await page.locator('[data-cr=assignment]').first().click();await page.locator('[data-cr=delete_assignment]').click();
+  await page.getByText('Die Aufgabe wurde gelöscht.').waitFor();assert.equal(await page.locator('[data-cr=assignment]').count(),0);assert.equal(room.assignments.length,0);await check('aufgabe-geloescht');
   assert.deepEqual(errors,[],`${tag}: Fehler in der Konsole`);
   await context.close();
  }
- console.log('PASS: Klassenräume auf Handy und Desktop – Gast, Raum, Stream, Mitglieder, Aufgabe, Abgabe, Frage, Freigabe, keine Überbreite, keine Konsolenfehler');
+ console.log('PASS: Klassenräume auf Handy und Desktop – Gast, Raum, Stream, Mitglieder, Aufgabe, Bearbeiten, Entwurf, Abgabe, Frage, Freigabe, Löschen, keine Überbreite, keine Konsolenfehler');
 }finally{await browser?.close();server.kill();}

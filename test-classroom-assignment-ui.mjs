@@ -4,9 +4,9 @@ const source=fs.readFileSync(new URL('./dist/classrooms.js',import.meta.url),'ut
 new Function(source.replace(/^import .*$/gm,''));
 const assignment=source.slice(source.indexOf('function assignment('),source.indexOf('function discussion('));
 const render=source.slice(source.indexOf('function renderCustomItems('),source.indexOf('function assignment('));
-const check=new Function('teacher','creator','submitted','closed',`
- const room={teacher,archived:false,member_count:1,members:[],assignments:[{id:'a',own_assignment:creator,title:'Test',submissions:submitted?[{own:true,answers:['MY ANSWER'],reactions:{}}]:[],released:closed,items:[{text:'SECRET SOLUTION',translations:[{text:'Hallo'}]}],submitted_count:0}]};
- let selected,dirty;const drafts=new Map(),target={};const $=()=>target;
+const check=new Function('teacher','creator','submitted','closed','manage',`
+ const room={teacher,archived:false,member_count:1,members:[],assignments:[{id:'a',own_assignment:creator,title:'Test',can_manage:manage,submissions:submitted?[{own:true,answers:['MY ANSWER'],reactions:{}}]:[],released:closed,items:[{text:'SECRET SOLUTION',translations:[{text:'Hallo'}]}],submitted_count:0}]};
+ let selected,dirty;const drafts=new Map(),target={},dropDraft=()=>{};const $=()=>target;
  const b=(text)=>text,esc=String,date=()=>'',sources=()=>'',discussion=()=>'',sentenceSourceIcon=()=>'';${assignment}
  assignment('a');return target.innerHTML;
 `);
@@ -18,8 +18,11 @@ for(const teacher of [false,true])for(const creator of [false,true])for(const su
 }
 assert(!check(true,undefined,false,false).includes('data-cr-form="submit"'),'old API remains compatible until migration');
 assert(check(false,undefined,false,false).includes('data-cr-form="submit"'));
+assert(!check(true,true,false,false).includes('Aufgabe löschen'),'no manage buttons until the migration reports can_manage');
+assert(check(true,true,false,false,true).includes('Aufgabe bearbeiten')&&check(true,true,true,true,true).includes('Aufgabe löschen'));
+assert(!check(false,false,false,false,false).includes('Aufgabe bearbeiten'));
 const html=new Function(`const customItems=[{added:true,de:'<b>Hallo</b>',fi:'Hei'},{added:false,de:'',fi:''}];const host={};const document={querySelectorAll:()=>[host]};const b=(text)=>text;const esc=v=>String(v).replaceAll('<','&lt;').replaceAll('>','&gt;');${render};renderCustomItems();return host.innerHTML;`)();
 assert(!html.split('</fieldset>')[0].includes('<textarea'));
 assert(html.includes('&lt;b&gt;'));
 assert(html.split('</fieldset>')[1].includes('<textarea'));
-console.log('PASS: assignment role/submission/release matrix, old API compatibility, static confirmed sentence and escaped text.');
+console.log('PASS: assignment role/submission/release matrix, manage buttons, old API compatibility, static confirmed sentence and escaped text.');
