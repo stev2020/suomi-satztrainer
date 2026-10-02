@@ -176,6 +176,13 @@ try{
   await page.locator('[data-cr=new_assignment]').first().click();
   await page.locator('[data-cr-form=assign] input[name=title]').fill('Vom Finnischen ins Deutsche');
   await page.locator('[data-cr-form=assign] [name=direction]').selectOption('fi-de');
+  // Satzauswahl: der finnische Satz steht jetzt oben, der deutsche klein darunter; zurückgestellt ist es wieder umgekehrt
+  await page.locator('[data-cr=tab_existing]').click();
+  const firstPick=page.locator('#cr-sentence-picker .cr-pick>span').first();
+  assert.equal(await firstPick.getAttribute('lang'),'fi');assert.equal(await firstPick.locator('small').getAttribute('lang'),'de');await check('auswahl-fi-de');
+  await page.locator('[data-cr-form=assign] [name=direction]').selectOption('de-fi');assert.equal(await firstPick.locator('small').getAttribute('lang'),'fi');
+  await page.locator('[data-cr-form=assign] [name=direction]').selectOption('fi-de');await page.locator('[data-cr=tab_custom]').click();
+  assert.ok(await page.evaluate(()=>{const f=document.querySelector('#cr-tab-custom [data-custom-field=fi]').getBoundingClientRect(),d=document.querySelector('#cr-tab-custom [data-custom-field=de]').getBoundingClientRect();return f.top<d.top;}),'eigener Satz: finnisches Feld zuerst');
   await page.locator('#cr-tab-custom [data-custom-field=de]').fill('Ich habe eine Frage.');
   await page.locator('#cr-tab-custom [data-custom-field=fi]').fill('Minulla on kysymys.');await check('aufgabe-fi-de-erstellen');
   await page.locator('#cr-tab-custom [data-cr=confirm_custom]').click();

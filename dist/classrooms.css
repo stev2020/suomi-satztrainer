@@ -315,3 +315,8 @@ header{flex-wrap:wrap}
 .cr-new{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:var(--orange);color:var(--on-orange);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;line-height:1.5;vertical-align:middle}
 .cr-open-tasks{margin:0 0 10px;font-weight:700}
 .cr-room-action>summary{list-style-position:inside}
+/* Finnisch → Deutsch: beim Zusammenstellen steht der finnische Satz zuerst */
+.cr-fi-first .cr-custom-item{display:flex;flex-direction:column}
+.cr-fi-first .cr-custom-item>p[lang=fi],.cr-fi-first .cr-custom-item>label:has([lang=fi]){order:1}
+.cr-fi-first .cr-custom-item>p[lang=de],.cr-fi-first .cr-custom-item>label:has([lang=de]){order:2}
+.cr-fi-first .cr-custom-item>.cr-toolbar{order:3}

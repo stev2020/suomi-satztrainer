@@ -1,5 +1,5 @@
 import {uiLocale} from './i18n.mjs?v=19';
-import {accountUser,accountRequest} from './auth.js?v=115';
+import {accountUser,accountRequest} from './auth.js?v=116';
 import {GRAMMAR_TOPICS,topicNotes} from './grammar-topics.mjs';
 import {translationFeedbackMarkup} from './translation-feedback.mjs?v=1';
 import {loadLexicon} from './word-lookup.mjs?v=2';
@@ -37,6 +37,8 @@ let editItems=[],lexiconReady=false;
 // Translation direction of an assignment; packages from before this choice are German → Finnish.
 const DIRECTIONS={'de-fi':'Deutsch → Finnisch','fi-de':'Finnisch → Deutsch'};
 const directionOf=a=>DIRECTIONS[a.direction]?a.direction:'de-fi';
+// While an assignment is being put together: the sentence the class will see stands first.
+const composingFiDe=()=>document.querySelector('[data-cr-form=assign] [name=direction]')?.value==='fi-de';
 const directionSelect=value=>`<label>Richtung<select name="direction">${Object.entries(DIRECTIONS).map(([key,label])=>`<option value="${key}"${key===value?' selected':''}>${label}</option>`).join('')}</select></label>`;
 // What is new: `list` reports the newest thing somebody else did in each room. This
 // device remembers per account what it has already shown (localStorage) and marks
@@ -86,7 +88,7 @@ const feedbackFor=(submission,i)=>(submission.feedback||[]).find(f=>f.item_index
 const teacherNote=(submission,i)=>{const f=feedbackFor(submission,i);return f?`<div class="cr-teacher-note"><strong>Rückmeldung von ${esc(f.author)}</strong><p>${esc(f.body)}</p></div>`:'';};
 const feedbackForm=(submission,i)=>{const f=feedbackFor(submission,i);return `<details class="cr-feedback-edit"${f?' open':''}><summary>${f?'Kommentar bearbeiten':'Kommentar schreiben'}</summary><form data-cr-form="feedback"><input type="hidden" name="submission_id" value="${esc(submission.id)}"><input type="hidden" name="item_index" value="${i}"><label>Kommentar zu Satz ${i+1}<textarea name="body" maxlength="1000" rows="2">${esc(f?.body||'')}</textarea></label><div class="cr-toolbar"><button class="primary">Kommentar speichern</button></div><p class="cr-note">Nur wer die Abgabe eingereicht hat, sieht diesen Kommentar. Leer speichern löscht ihn.</p></form></details>`;};
 const localInput=v=>{if(!v)return '';const d=new Date(v);d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16);};
-const css=document.createElement('link');css.rel='stylesheet';css.href='./classrooms.css?v=75';document.head.append(css);
+const css=document.createElement('link');css.rel='stylesheet';css.href='./classrooms.css?v=76';document.head.append(css);
 const button=document.createElement('button');button.id='classrooms-button';button.type='button';button.dataset.view='classrooms';button.textContent='Klassenräume';
 const headerNav=document.querySelector('.header-nav');
 if(headerNav)headerNav.insertBefore(button,headerNav.querySelector('[data-view="progress"]'));else $('account-button').before(button);
@@ -206,13 +208,13 @@ function picker(){
  const matches=availableDeck().filter(s=>s.level===level&&s.translations?.length&&(showAll||topicNotes(s,grammar,topicId).length));
  $('cr-topic-hint').textContent=showAll?'Alle vorhandenen Sätze dieses Levels.':topic?.hint||'';
  const visible=showAll?matches:matches.slice(0,80);
- $('cr-sentence-picker').innerHTML=visible.map(s=>`<div class="cr-pick-row"><label class="cr-pick"><input type="checkbox" data-sentence="${s.id}" ${selected.has(s.id)?'checked':''}><span>${esc(s.translations[0].text)}${sentenceSourceIcon(s.translations[0])}<small lang="fi">${esc(s.text)}${sentenceSourceIcon(s)}</small></span></label>${b('Ausblenden','hide_sentence',`data-id="${s.id}" aria-label="Satz nur in diesem Klassenraum ausblenden"`)}</div>`).join('')||'<p>Keine passenden Sätze.</p>';
+ $('cr-sentence-picker').innerHTML=visible.map(s=>`<div class="cr-pick-row"><label class="cr-pick"><input type="checkbox" data-sentence="${s.id}" ${selected.has(s.id)?'checked':''}>${composingFiDe()?`<span lang="fi">${esc(s.text)}${sentenceSourceIcon(s)}<small lang="de">${esc(s.translations[0].text)}${sentenceSourceIcon(s.translations[0])}</small></span>`:`<span>${esc(s.translations[0].text)}${sentenceSourceIcon(s.translations[0])}<small lang="fi">${esc(s.text)}${sentenceSourceIcon(s)}</small></span>`}</label>${b('Ausblenden','hide_sentence',`data-id="${s.id}" aria-label="Satz nur in diesem Klassenraum ausblenden"`)}</div>`).join('')||'<p>Keine passenden Sätze.</p>';
  if(!showAll&&matches.length>80)$('cr-sentence-picker').insertAdjacentHTML('beforeend','<p>Die ersten 80 Treffer. Wähle bei Bedarf ein anderes Level oder Thema.</p>');
 }
 function renderHiddenSentences(){
  if(!$('cr-hidden-list'))return;
  $('cr-hidden-count').textContent=classroomHidden.size;
- $('cr-hidden-list').innerHTML=[...classroomHidden.keys()].map(id=>{const s=deck.find(item=>Number(item.id)===id);return `<div class="cr-hidden-row"><span>${s?`${esc(s.translations?.[0]?.text||'')}<small lang="fi">${esc(s.text)}</small>`:`Satz #${id}`}</span>${b('Wieder einblenden','restore_sentence',`data-id="${id}"`)}</div>`;}).join('')||'<p class="cr-note">Noch keine Sätze ausgeblendet.</p>';
+ $('cr-hidden-list').innerHTML=[...classroomHidden.keys()].map(id=>{const s=deck.find(item=>Number(item.id)===id);return `<div class="cr-hidden-row"><span>${s?composingFiDe()?`<span lang="fi">${esc(s.text)}</span><small lang="de">${esc(s.translations?.[0]?.text||'')}</small>`:`${esc(s.translations?.[0]?.text||'')}<small lang="fi">${esc(s.text)}</small>`:`Satz #${id}`}</span>${b('Wieder einblenden','restore_sentence',`data-id="${id}"`)}</div>`;}).join('')||'<p class="cr-note">Noch keine Sätze ausgeblendet.</p>';
 }
 function renderCustomItems(){
  const html=customItems.map((item,i)=>`<fieldset class="cr-custom-item ${item.added?'cr-custom-added':''}"><legend>Eigener Satz ${i+1}${item.added?' · ✓ Hinzugefügt':''}</legend>${item.added?`<p class="cr-added" role="status">✓ Hinzugefügt – dieser Satz ist Teil der Aufgabe.</p><p class="cr-custom-text" lang="de"><strong>Deutscher Satz</strong><br>${esc(item.de)}</p><p class="cr-custom-text" lang="fi"><strong>Finnischer Satz</strong><br>${esc(item.fi)}</p>`:`<label>Deutscher Satz<textarea data-custom-index="${i}" data-custom-field="de" maxlength="500" rows="2" lang="de" placeholder="Der Satz auf Deutsch">${esc(item.de)}</textarea></label><label>Finnischer Satz<textarea data-custom-index="${i}" data-custom-field="fi" maxlength="500" rows="2" lang="fi" placeholder="Der Satz auf Finnisch">${esc(item.fi)}</textarea></label>`}<div class="cr-toolbar">${item.added?b('Satz bearbeiten','edit_custom',`data-index="${i}"`):b('Satz hinzufügen','confirm_custom',`data-index="${i}"`)}${b('Satz entfernen','remove_custom',`data-index="${i}"`)}</div></fieldset>`).join('')||'<p class="cr-note">Noch keine eigenen Sätze eingegeben.</p>';
@@ -285,6 +287,7 @@ $('classrooms-content').addEventListener('change',e=>{
  if(e.target.closest('[data-cr-form=stream_post]'))saveStreamDraft();
  if(e.target.id==='cr-level'){renderTopicOptions();picker();}
  if(e.target.id==='cr-topic')picker();
+ if(e.target.matches('[data-cr-form=assign] [name=direction]')){picker();renderHiddenSentences();e.target.form.classList.toggle('cr-fi-first',composingFiDe());}
  if(e.target.matches('[data-sentence]')){const id=Number(e.target.dataset.sentence);if(e.target.checked){if(selectionSize()>=20){e.target.checked=false;status('Maximal 20 Sätze pro Aufgabe.',true);return;}selected.set(id,deck.find(s=>s.id===id));}else selected.delete(id);updateSelectionCount();}
 });
 $('classrooms-content').addEventListener('click',e=>{
