@@ -119,6 +119,14 @@ try{
   assert.equal(await page.evaluate(id=>localStorage.getItem('vanamo-classroom-drafts:'+id),id),null,'nach der Abgabe ist der Entwurf entfernt');
   assert.equal(await page.locator('#classrooms-content img').count(),0,'answers are shown as text');
   assert.ok(await page.locator('.cr-assignment-item .translation-diffs').count(),'Vergleich mit der Vorlage nach der Abgabe');
+  // Vorhandenen Satz ins eigene Wiederholen übernehmen; der eigene Satz der Lehrkraft bleibt im Klassenraum
+  assert.ok((await page.locator('.cr-review-offer').textContent()).includes('1 eigener Satz der Lehrkraft bleibt im Klassenraum.'));
+  const stockId=room.assignments[0].items[0].id;
+  await page.locator('[data-cr=add_reviews]').click();await page.getByText('1 Satz ist jetzt im Wiederholen fällig.').waitFor();
+  const saved=await page.evaluate(key=>JSON.parse(localStorage.getItem('suomi-learning-v1')).reviews[key],`${stockId}:de-fi`);
+  assert.ok(saved&&saved.due<=Date.now()&&saved.repetitions===1,'Satz ist im Lernstand fällig');
+  assert.equal(await page.evaluate(()=>Object.keys(JSON.parse(localStorage.getItem('suomi-learning-v1')).reviews).length),1,'nur der vorhandene Satz wurde übernommen');
+  await page.locator('[data-cr=add_reviews]').click();await page.getByText('1 Satz war dort schon fällig.').waitFor();await check('ins-wiederholen');
   await page.locator('[data-cr-form=message] textarea').first().fill('Warum steht hier diese Form?');
   await page.locator('[data-cr-form=message] button').first().click();await page.locator('.cr-message').waitFor();await check('abgegeben-mit-frage');
   // Lehrkraft: Abgaben ansehen und Vergleich freigeben
@@ -205,5 +213,5 @@ try{
   assert.deepEqual(errors,[],`${tag}: Fehler in der Konsole`);
   await context.close();
  }
- console.log('PASS: Klassenräume auf Handy und Desktop – Gast, Raum, Stream, Mitglieder, Aufgabe, Bearbeiten, Entwurf, Abgabe, Vergleich, Kommentar, Frage, Freigabe, Neues, Löschen, Finnisch → Deutsch, keine Überbreite, keine Konsolenfehler');
+ console.log('PASS: Klassenräume auf Handy und Desktop – Gast, Raum, Stream, Mitglieder, Aufgabe, Bearbeiten, Entwurf, Abgabe, Vergleich, Wiederholen, Kommentar, Frage, Freigabe, Neues, Löschen, Finnisch → Deutsch, keine Überbreite, keine Konsolenfehler');
 }finally{await browser?.close();server.kill();}

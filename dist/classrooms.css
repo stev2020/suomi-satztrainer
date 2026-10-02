@@ -320,3 +320,9 @@ header{flex-wrap:wrap}
 .cr-fi-first .cr-custom-item>p[lang=fi],.cr-fi-first .cr-custom-item>label:has([lang=fi]){order:1}
 .cr-fi-first .cr-custom-item>p[lang=de],.cr-fi-first .cr-custom-item>label:has([lang=de]){order:2}
 .cr-fi-first .cr-custom-item>.cr-toolbar{order:3}
+/* Sätze einer Aufgabe ins eigene Wiederholen übernehmen */
+.cr-review-offer{margin:16px 0;padding:14px 16px;border:1.5px solid var(--line);border-radius:12px;background:var(--paper)}
+.cr-review-offer h4{margin:0 0 6px}
+.cr-review-offer p{margin:6px 0}
+#cr-review-result:empty{display:none}
+#cr-review-result{font-weight:700;color:var(--ink)}
