@@ -112,7 +112,7 @@ export async function runGuestIntro(){
   await hold(T.sentenceGap);if(done)return;
   card.classList.add('intro-growing');
   card.classList.remove('intro-bare');
-  play(card,[{transform:'scale(.97)'},{transform:'none'}],{duration:700,easing:EASE_OUT});
+  // Die Karte hat keinen Rahmen mehr: Der Satz bleibt stehen, der Rest blendet ein (style.css).
  }
  if(done)return;
 
