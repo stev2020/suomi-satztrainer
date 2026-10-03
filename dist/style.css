@@ -775,3 +775,8 @@ header>.today .today-streak{font-size:12px}
    lernen“ da. Für Gäste bleiben sie beim Laden weg; die Satzkarte hält ihren Platz frei. */
 .is-guest #home-view.is-loading :is(.home-daily,.home-new,.home-verbs){display:none}
 .is-guest #home-view.is-loading #guest-card[hidden]{display:block!important;min-height:420px}
+/* Gäste: kurzer oranger Strich zwischen Überschrift und Satz; während des Intros bleibt er unsichtbar. */
+.is-guest #home-view .intro{margin-bottom:36px}
+.is-guest #home-view .intro::after{content:"";width:56px;height:2px;margin-top:22px;border-radius:2px;background:var(--orange);transition:opacity .6s ease}
+.is-guest.intro-pending #home-view .intro::after{opacity:0}
+@media(max-width:640px){.is-guest #home-view .intro{margin-bottom:28px}.is-guest #home-view .intro::after{margin-top:14px}}
