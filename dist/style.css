@@ -787,3 +787,24 @@ header>.today .today-streak{font-size:12px}
 #guest-card.is-loading .guest-top{visibility:hidden}
 #guest-card.intro-growing :is(.guest-top,.guest-actions,.guest-gloss,.guest-translation,.sentence-source-icon){transition:opacity .7s ease}
 @media(max-width:640px){.is-guest #home-view.is-loading #guest-card[hidden],#guest-card.is-loading{min-height:400px}}
+/* Logo: das „v.“ als Zeichnung (ein fliegender Vogel) statt als Georgia-Buchstabe – sieht überall gleich aus. */
+.brand-mark svg{width:77%;height:77%;fill:currentColor;stroke:currentColor;stroke-linejoin:round}
+/* Vogel-Intro für Gäste (guest-intro.mjs, intro-birds.mjs): Die Logo-Kachel ist zuerst leer. Landet der
+   farbige Vogel, läuft die Farbe von der Mitte in die Kachel und das „V“ springt hinein. */
+html.intro-pending:not(.intro-user) .brand-mark:not(.is-filled){background:var(--paper)}
+html.intro-pending:not(.intro-user) .brand-mark:not(.is-filled) svg{opacity:0;transform:scale(.3) rotate(-25deg)}
+.brand-mark.is-filling{position:relative;overflow:hidden;background:var(--paper)}
+.brand-mark.is-filling::before{content:"";position:absolute;inset:0;background:var(--mint);clip-path:circle(0% at 50% 50%);transition:clip-path .5s cubic-bezier(.2,.7,.2,1)}
+.brand-mark.is-filling.is-filled::before{clip-path:circle(80% at 50% 50%)}
+.brand-mark.is-filling svg{position:relative;transition:transform .55s cubic-bezier(.3,1.6,.5,1),opacity .2s}
+.brand-mark.pop{animation:brand-pop .5s ease-out}
+@keyframes brand-pop{0%{transform:rotate(-7deg) scale(1)}40%{transform:rotate(-13deg) scale(1.2)}100%{transform:rotate(-7deg) scale(1)}}
+/* Zeichenfläche für Schwarm und Schwalben: oben auf der Seite, scrollt mit, fängt keine Klicks ab. */
+canvas.intro-birds{position:absolute;top:0;left:0;z-index:40;pointer-events:none}
+/* Die Überschrift wird Buchstabe für Buchstabe sichtbar, sobald der Schwarm vorbeigezogen ist. */
+.intro-running #home-view .intro h1.intro-birds-h1>span{opacity:1}
+h1 .intro-w,h1 .intro-ch{color:inherit}
+.intro-w{display:inline-block;white-space:nowrap}
+.intro-ch{display:inline-block;opacity:0;transform:translateY(.18em);filter:blur(4px);transition:opacity .4s ease,transform .5s cubic-bezier(.2,.7,.2,1),filter .4s ease}
+.intro-ch.on{opacity:1;transform:none;filter:none}
+@media print{canvas.intro-birds{display:none}}
