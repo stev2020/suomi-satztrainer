@@ -195,11 +195,28 @@ export function createBirds(){
   ['account',()=>{const el=shown(document.getElementById('account-button'));return el&&rect(el);},0],
   // der orange Trennstrich unter der Überschrift (ein ::after, deshalb aus dem Block berechnet)
   ['rule',()=>{const el=shown(document.querySelector('#home-view .intro'));if(!el||getComputedStyle(el,'::after').content==='none')return null;const r=rect(el);return {l:r.cx-28,r:r.cx+28,t:r.b-2};},0],
-  ['logo',()=>{const el=shown(document.querySelector('header .brand-mark'));return el&&rect(el);},1]
+  // am Logo: eine auf der oberen rechten Ecke der (gedrehten) Kachel, die andere auf dem „v“ von „vanamo“
+  ['brand',brandSeats,0]
  ];
+ function brandSeats(){
+  const mark=shown(document.querySelector('header .brand-mark')),brand=mark?.parentElement;
+  const text=brand&&[...brand.childNodes].find(n=>n.nodeType===3&&n.data.trim());
+  if(!mark||!text)return null;
+  // Punkt auf der Oberkante der Kachel, kurz vor der runden Ecke, mit der Drehung der Kachel
+  const r=rect(mark),m=new DOMMatrix(getComputedStyle(mark).transform),w=mark.offsetWidth/2,h=mark.offsetHeight/2,lx=w-10,ly=-h;
+  const corner={x:r.cx+lx*m.a+ly*m.c,y:r.cy+lx*m.b+ly*m.d+1};
+  // Oberkante des ersten Buchstabens: Grundlinie minus Höhe des „v“
+  const range=document.createRange(),at=text.data.search(/\S/);range.setStart(text,at);range.setEnd(text,at+1);
+  const box=range.getBoundingClientRect();if(!box.width)return null;
+  const cs=getComputedStyle(brand);ctx.save();ctx.font=`${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;const tm=ctx.measureText(text.data[at]);ctx.restore();
+  const asc=tm.fontBoundingBoxAscent,desc=tm.fontBoundingBoxDescent;
+  const base=asc+desc?box.top+box.height*asc/(asc+desc):box.bottom-box.height*.25;
+  const letter={x:box.left+scrollX+box.width*.3,y:base-tm.actualBoundingBoxAscent+scrollY+1};
+  return {l:corner.x-12,r:letter.x+12,t:Math.min(corner.y,letter.y),pts:[corner,letter]};
+ }
  function available(){
   if(!html.classList.contains('is-guest')||!shown(document.getElementById('home-view')))return [];
-  return PERCH.map(([name,find,dy])=>{const r=find();return r&&r.r-r.l>=24&&r.t>24&&r.t<H-4?{name,l:r.l,r:r.r,t:r.t+dy}:null;}).filter(Boolean);
+  return PERCH.map(([name,find,dy])=>{const r=find();return r&&r.r-r.l>=24&&r.t>(r.pts?4:24)&&r.t<H-4?{name,l:r.l,r:r.r,t:r.t+dy,pts:r.pts}:null;}).filter(Boolean);
  }
  // Sucht einen Platz für beide nebeneinander. `prefer`: Wunschplatz; sonst ein anderer als der jetzige.
  function seat(prefer,allowSame){
@@ -207,7 +224,8 @@ export function createBirds(){
   if(!pick){const others=all.filter(p=>allowSame||p.name!==seatAt?.name),pool=others.length?others:all;pick=pool[Math.floor(Math.random()*pool.length)];}
   if(!pick)return false;
   const c=pick.l+(pick.r-pick.l)*(.25+.5*Math.random());
-  pets().forEach((b,i)=>{b.tx=Math.max(pick.l+6,Math.min(pick.r-6,c+(i?5:-5)));b.ty=pick.t;});
+  // feste Punkte (am Logo) oder nebeneinander auf der Kante
+  pets().forEach((b,i)=>{const pt=pick.pts?.[i];b.tx=pt?pt.x:Math.max(pick.l+6,Math.min(pick.r-6,c+(i?5:-5)));b.ty=pt?pt.y:pick.t;});
   seatAt={name:pick.name,l:pick.l,t:pick.t};return true;
  }
  function flyTogether(prefer,kick,allowSame){
