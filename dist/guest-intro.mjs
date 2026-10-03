@@ -7,28 +7,33 @@
 //
 // Besucher ohne Konto:
 // Ablauf (nur beim ersten Aufruf pro Tab, nicht bei „Bewegung reduzieren“):
-//   1. „Ein bisschen Finnisch.“ erscheint groß in der Bildschirmmitte
-//      und gleitet an seinen Platz,
-//   2. danach erscheint „Jeden Tag.“ an derselben Stelle
-//   3. und gleitet ebenfalls an seinen Platz,
-//   4. der finnische Satz der Satzkarte erscheint allein,
-//   5. danach wächst die Karte um ihn herum auf, der Rest der Seite blendet ein.
-// Logo und „vanamo“ im Header stehen von Anfang an.
+//   1. Die Logo-Kachel ist leer, ein Vogelschwarm kreist in der Bildschirmmitte (intro-birds.mjs),
+//   2. der Schwarm schreibt „Ein bisschen Finnisch.“ groß in die Mitte – die Buchstaben erscheinen
+//      hinter ihm –, dann gleitet die Zeile an ihren Platz,
+//   3. der Schwarm sammelt sich an derselben Stelle und schreibt „Jeden Tag.“,
+//   4. die Vögel fliegen davon; der eine farbige Vogel landet im Logo, färbt die Kachel und wird
+//      zum „V“; „Jeden Tag.“ gleitet an seinen Platz,
+//   5. der finnische Satz der Satzkarte erscheint Wort für Wort (ohne Vögel),
+//   6. der Rest der Seite blendet ein, zwei Vögel bleiben übrig und setzen sich auf den Hauptknopf.
+// „vanamo“ im Header steht von Anfang an.
 // Ein Klick, Tipp, Scrollen oder Tastendruck springt sofort zum fertigen Zustand.
 // Der Inline-Schnipsel in index.html setzt vorher `intro-pending` (versteckt die Seite
 // ohne Aufblitzen); dieses Modul übernimmt ab dort und räumt am Ende alles wieder weg.
 
 // Pausen zählen jeweils ab dem Moment, in dem der vorige Schritt fertig zu sehen ist.
 const T={
- fadeMs:800,        // Einblenden einer Zeile
- tailGap:300,       // „Ein bisschen Finnisch.“ steht an seinem Platz, dann kommt „Jeden Tag.“
- moveGap:500,       // eine Zeile steht groß in der Mitte, dann gleitet sie an ihren Platz
+ circleMs:2000,     // so lange kreist der Schwarm, bevor er schreibt (deckt das Laden der Satzdaten ab)
+ birds:140,         // Größe des Schwarms; auf schmalen Bildschirmen:
+ birdsSmall:50,
+ moveGap:300,       // eine Zeile steht fertig groß in der Mitte, dann gleitet sie an ihren Platz
  moveMs:1000,
  sentenceGap:300,   // Satz steht allein, dann wächst die Karte
  cardWait:4000      // so lange höchstens auf die Satzkarte warten
 };
 const EASE_MOVE='cubic-bezier(.65,0,.25,1)',EASE_OUT='cubic-bezier(.2,.7,.2,1)';
 const SEEN='vanamo-intro-seen';
+
+import {createBirds} from './intro-birds.mjs?v=1';
 
 const html=document.documentElement;
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -50,17 +55,39 @@ async function waitFor(check,timeout){
  return true;
 }
 
+// Zerlegt den Text einer Zeile in einzelne Buchstaben (Wörter bleiben zusammen) und liefert sie.
+function splitChars(el){
+ const chars=[],words=el.textContent.split(' ');el.textContent='';
+ words.forEach((word,i)=>{
+  const w=document.createElement('span');w.className='intro-w';
+  for(const c of word){const x=document.createElement('span');x.className='intro-ch';x.textContent=c;w.append(x);chars.push(x);}
+  el.append(w);if(i<words.length-1)el.append(' ');
+ });
+ return chars;
+}
+
+// Gäste ohne Intro (schon gesehen in diesem Tab): nur die zwei Schwalben auf der Startseite.
+// Nicht bei „Bewegung reduzieren“ und nicht in automatisierten Browsern (außer mit ?birds).
+function startGuestBirds(){
+ try{
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  if(navigator.webdriver&&!/[?&]birds\b/.test(location.search))return;
+  createBirds().startPets();
+ }catch{}
+}
+
 export async function runGuestIntro(){
- if(!html.classList.contains('intro-pending'))return;
+ if(!html.classList.contains('intro-pending'))return startGuestBirds();
  if(html.classList.contains('intro-user'))return runUserIntro();
  const h1=document.querySelector('#home-view .intro h1');
  const lead=h1?.querySelector('.intro-lead'),tail=h1?.querySelector('.intro-tail');
  if(!h1||!lead||!tail||typeof h1.animate!=='function'){html.classList.remove('intro-pending');return;}
+ const mark=document.querySelector('header .brand-mark');
  html.classList.add('intro-running');
  try{sessionStorage.setItem(SEEN,'1');}catch{}
 
- const animations=[],controller=new AbortController();
- let done=false;
+ const animations=[],controller=new AbortController(),flock=createBirds(),spans=[lead,tail];
+ let done=false,settled=false,texts=null;
  const play=(el,frames,options)=>{const a=el.animate(frames,options);animations.push(a);return a;};
 
  // Sofort zum Endzustand – auch der normale Abschluss läuft hier durch.
@@ -68,13 +95,16 @@ export async function runGuestIntro(){
   if(done)return;done=true;
   controller.abort();
   animations.forEach(a=>a.cancel());
-  for(const span of [lead,tail]){span.style.transform='';span.style.display='';}
+  spans.forEach((span,i)=>{if(texts)span.textContent=texts[i];span.style.transform='';span.style.display='';});
+  h1.classList.remove('intro-birds-h1');
+  mark?.classList.remove('is-filling','is-filled','pop');
   const card=document.getElementById('guest-card');
   card?.classList.remove('intro-bare','intro-growing','intro-shown');
   html.classList.remove('intro-pending','intro-running');
+  if(!settled)flock.skip();
  }
  for(const type of ['pointerdown','keydown','wheel','touchstart'])addEventListener(type,finish,{signal:controller.signal,passive:true});
- setTimeout(finish,15000); // Sicherheitsnetz
+ setTimeout(finish,25000); // Sicherheitsnetz
 
  // Übersetzung und Schriften abwarten, sonst stimmen die Maße nicht.
  await waitFor(()=>!html.classList.contains('i18n-pending'),3000);
@@ -83,29 +113,36 @@ export async function runGuestIntro(){
 
  scrollTo(0,0);
  const vw=innerWidth,vh=innerHeight;
- // Jede Zeile für sich: groß in der Bildschirmmitte einblenden, kurz stehen lassen, an ihren Platz
- // gleiten – erst „Ein bisschen Finnisch.“, danach „Jeden Tag.“ an derselben Stelle.
+ // Jede Zeile steht für sich groß in der Bildschirmmitte, wird dort vom Schwarm geschrieben und
+ // gleitet dann an ihren Platz – erst „Ein bisschen Finnisch.“, danach „Jeden Tag.“ an derselben Stelle.
  // Endposition messen (FLIP); inline-block, damit sich die Zeilen einzeln verschieben lassen.
+ texts=spans.map(span=>span.textContent);
+ const chars=spans.map(splitChars);
+ h1.classList.add('intro-birds-h1');
+ mark?.classList.add('is-filling');
  lead.style.display=tail.style.display='inline-block';
- const all=[lead.getBoundingClientRect(),tail.getBoundingClientRect()];
+ const all=spans.map(span=>span.getBoundingClientRect());
  const width=Math.max(...all.map(r=>r.right))-Math.min(...all.map(r=>r.left)),height=Math.max(...all.map(r=>r.bottom))-Math.min(...all.map(r=>r.top));
  // Größe wie bisher für beide Zeilen zusammen, einzeln ein Stück größer.
  const pair=Math.max(1,Math.min(vw*.86/width,vh*.5/height,4));
  // Beide Zeilen gleich groß; auf schmalen Bildschirmen begrenzt die längere Zeile.
  const scale=Math.max(1,Math.min(Math.max(pair*1.25,1.6),vw*.86/Math.max(...all.map(r=>r.width)),vh*.5/Math.max(...all.map(r=>r.height))));
- async function line(span){
-  const r=span.getBoundingClientRect();
-  const big=`translate(${vw/2-(r.left+r.right)/2}px,${vh/2-(r.top+r.bottom)/2}px) scale(${scale})`;
-  span.style.transform=big;
-  await finished(play(span,[{opacity:0,transform:`${big} translateY(.35em)`,filter:'blur(6px)'},{opacity:1,transform:big,filter:'blur(0)'}],{duration:T.fadeMs,easing:EASE_OUT,fill:'both'}));
-  await hold(T.moveGap);if(done)return;
-  await finished(play(span,[{transform:big},{transform:'none'}],{duration:T.moveMs,easing:EASE_MOVE,fill:'forwards'}));
-  if(!done)span.style.transform='';
- }
- await hold(50);if(done)return; // erst zeichnen lassen, dann starten
- await line(lead);if(done)return;
- await hold(T.tailGap);if(done)return;
- await line(tail);if(done)return;
+ const bigs=all.map(r=>`translate(${vw/2-(r.left+r.right)/2}px,${vh/2-(r.top+r.bottom)/2}px) scale(${scale})`);
+ spans.forEach((span,i)=>{span.style.transform=bigs[i];});
+ const glide=i=>finished(play(spans[i],[{transform:bigs[i]},{transform:'none'}],{duration:T.moveMs,easing:EASE_MOVE,fill:'forwards'})).then(()=>{if(!done)spans[i].style.transform='';});
+
+ // Der Schwarm kreist, schreibt die erste Zeile; während sie an ihren Platz gleitet, sammelt er
+ // sich für die zweite.
+ flock.begin(vw<560?T.birdsSmall:T.birds);
+ if(!await flock.wait(T.circleMs)||done)return;
+ if(!await flock.write(chars[0])||done)return;
+ await hold(T.moveGap);if(done)return;
+ const leadMoved=glide(0);
+ if(!await flock.write(chars[1])||done)return;
+ await hold(T.moveGap);if(done)return;
+ // Die Vögel fliegen davon; der farbige landet im Logo und wird zum „V“ (style.css: .brand-mark.is-filled).
+ const landing=flock.release(mark,()=>{if(!done)mark?.classList.add('is-filled','pop');});
+ await Promise.all([leadMoved,glide(1)]);if(done)return;
 
  // Satzkarte: erst nur der finnische Satz, dann wächst die Karte drumherum.
  const card=document.getElementById('guest-card');
@@ -121,12 +158,16 @@ export async function runGuestIntro(){
   // Die Karte hat keinen Rahmen mehr: Der Satz bleibt stehen, der Rest blendet ein (style.css).
  }
  if(done)return;
+ await landing;if(done)return;
 
  // Restliche Seite gestaffelt einblenden (Reihenfolge = Lesereihenfolge).
  const rest=[...document.querySelectorAll('header .header-nav, .today, #home-view>:not(.intro), .page-tools, footer')].filter(el=>!el.hidden&&!el.classList.contains('intro-shown'));
  rest.forEach((el,i)=>play(el,[{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'none'}],{duration:650,delay:120+i*90,easing:EASE_OUT,fill:'backwards'}));
  html.classList.remove('intro-pending');
  await sleep(120+rest.length*90+700);
+ if(done)return;
+ // Die zwei übrigen Vögel setzen sich.
+ settled=true;flock.settle();
  finish();
 }
 
