@@ -696,3 +696,78 @@ header>.today .today-streak{font-size:12px}
 .home-new button:not(.path-toggle){min-height:52px;padding:12px 22px;border:2px solid var(--line);border-radius:12px;font-weight:800;color:var(--ink)}
 .home-new button:not(.path-toggle):not(:disabled):hover{background:color-mix(in srgb,var(--lavender) 88%,var(--ink))}
 @media(prefers-reduced-motion:reduce){.home-view button,.home-more>summary{transition:none}}
+/* ---- Gäste-Startseite, reduzierter Stil (Okt 2026) ----
+   Besucher ohne Konto (html.is-guest, gesetzt im Inline-Schnipsel und in syncGuestHome):
+   Satzkarte ohne Rahmen auf dem Seitenhintergrund, alles zentriert, der Satz ist das größte Element.
+   Schritte als Punkte, „Anhören“ als Symbol daneben; Sprachschild und Zähler bleiben für Screenreader.
+   Hauptknopf: Rand in Textfarbe, kleiner versetzter Schatten in Orange; beim Überfahren/Antippen
+   füllt er sich von links orange und der Schatten wird dunkel. */
+.is-guest header{border-bottom-color:transparent}
+.is-guest .brand-caption{display:none}
+.is-guest header .header-nav{gap:24px}
+.is-guest header .header-nav button{min-height:44px;padding:0;border:0;background:none;box-shadow:none;color:var(--ink-soft)}
+.is-guest header .header-nav button:hover,.is-guest header .header-nav button.selected{background:none;color:var(--ink);text-decoration:underline;text-decoration-color:var(--orange);text-decoration-thickness:2px;text-underline-offset:6px}
+.is-guest header .header-nav #account-button{padding:8px 18px;border:1px solid color-mix(in srgb,var(--ink) 35%,transparent);border-radius:999px;color:var(--ink)}
+.is-guest header .header-nav #account-button:hover{border-color:var(--ink);text-decoration:none}
+.is-guest #home-view .intro{flex-direction:column;align-items:center;gap:14px;margin:44px 0 64px;text-align:center}
+.is-guest #home-view .intro h1{font-size:22px;font-weight:500;line-height:1.3;letter-spacing:0}
+.is-guest #home-view .intro h1 br{display:none}
+.is-guest #home-view .intro-tail{margin-left:.25em}
+.is-guest #home-view .today{order:-1;gap:6px;padding:0;border:0;background:none;box-shadow:none;color:var(--muted);letter-spacing:1.6px;text-transform:uppercase}
+.is-guest #home-view .today #today-count{font:600 12px/1 'DM Sans',sans-serif}
+.is-guest #home-view .today>div{max-width:none;font-size:12px;font-weight:600}
+#guest-card{align-items:center;gap:0;max-width:900px;min-height:0;margin:0 auto 64px;padding:0;overflow:visible;border:0;background:transparent;box-shadow:none}
+#guest-card .guest-top{order:3;justify-content:center;gap:20px;margin-top:44px}
+#guest-card :is(.guest-lang,.guest-count,.guest-audio span){position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+#guest-card .guest-steps{align-items:center;gap:8px}
+#guest-card .guest-steps li{gap:0;padding:0;background:none;font-size:0}
+#guest-card .guest-steps li span{width:7px;height:7px;border:0;background:color-mix(in srgb,var(--ink) 20%,transparent);font-size:0}
+#guest-card .guest-steps li.done span{background:var(--heading-accent)}
+#guest-card .guest-steps li.current span{width:22px;border-radius:999px;background:var(--orange)}
+#guest-card .guest-audio{order:-1;min-width:44px;min-height:44px;margin:0;padding:0;justify-content:center;border:0;border-radius:50%;background:none;box-shadow:none;color:var(--ink-soft)}
+#guest-card .guest-audio:hover,#guest-card .guest-audio.playing{background:none;color:var(--orange)}
+#guest-card .guest-stage{align-items:center;gap:30px;width:100%;min-height:0}
+#guest-card.is-loading .guest-stage{min-height:170px}
+#guest-card .guest-words{justify-content:center;gap:14px 36px;padding-top:0}
+#guest-card .guest-word{align-items:center;gap:12px}
+#guest-card .guest-fi{padding-bottom:0;border-bottom:0;font-size:clamp(40px,8.4vw,76px);font-weight:500;letter-spacing:-.03em}
+#guest-card .guest-gloss{font-size:14px;font-weight:500}
+#guest-card .guest-fi .sentence-source-icon{width:20px;height:20px;margin:.5em 0 0 8px;border-width:1px;background:transparent;box-shadow:none;font-size:13px;letter-spacing:0;vertical-align:top;opacity:.75}
+#guest-card .guest-translation{padding-top:0;border-top:0;font-size:19px;color:var(--muted);text-align:center}
+#guest-card .guest-actions{flex-direction:column;gap:20px;margin-top:44px}
+#guest-card .guest-actions button{flex:none;margin:0}
+#guest-card :is(.guest-next,.guest-check){min-height:58px;padding:10px 32px;border:2px solid var(--ink);border-radius:14px;background:linear-gradient(var(--orange),var(--orange)) no-repeat left/0 100%,var(--paper);box-shadow:3.5px 3.5px 0 var(--orange);font:600 21px/1 var(--heading);letter-spacing:-.2px;color:var(--ink)!important;transition:background-size .45s cubic-bezier(.65,0,.35,1),box-shadow .45s ease,color .3s ease}
+#guest-card :is(.guest-next,.guest-check):not(:disabled):is(:active,:focus-visible){background-size:100% 100%;box-shadow:3.5px 3.5px 0 var(--ink);color:var(--on-orange)!important}
+@media(hover:hover){#guest-card :is(.guest-next,.guest-check):not(:disabled):hover{background-size:100% 100%;box-shadow:3.5px 3.5px 0 var(--ink);color:var(--on-orange)!important}}
+#guest-card .guest-secondary{min-height:44px;padding:0;border:0;background:none;box-shadow:none;font-size:14px;font-weight:500;color:var(--ink-soft)}
+#guest-card .guest-secondary:hover{background:none;color:var(--ink)}
+/* Schritt 2 und 3 im selben Stil */
+#guest-card .guest-sentence,#guest-card .guest-context{align-self:center;padding:0;border:0;background:none;box-shadow:none;font:500 clamp(30px,5.6vw,46px)/1.15 var(--heading);letter-spacing:-.02em;color:var(--ink);text-align:center}
+#guest-card .guest-sentence .sentence-source-icon{width:20px;height:20px;margin:.3em 0 0 8px;border-width:1px;background:transparent;box-shadow:none;font-size:13px;vertical-align:top;opacity:.75}
+#guest-card .guest-build{width:min(560px,100%)}
+#guest-card .guest-build .word-answer{justify-content:center;border-radius:14px}
+#guest-card .guest-build .word-answer:not(.is-right,.is-wrong){border:1.5px dashed color-mix(in srgb,var(--ink) 35%,transparent);background:none}
+#guest-card .guest-build .word-bank{justify-content:center}
+#guest-card .guest-build :is(.word-answer,.word-bank) button{border:1.5px solid var(--ink);border-radius:12px;background:var(--paper);box-shadow:2px 2px 0 var(--ink)}
+#guest-card .guest-build .word-bank button:disabled{box-shadow:none}
+#guest-card .guest-feedback{text-align:center}
+#guest-card .guest-face{box-shadow:3.5px 3.5px 0 var(--ink);border-radius:14px}
+#guest-card .guest-finale{text-align:center}
+.is-guest #home-view .home-more{max-width:560px;margin-inline:auto}
+.is-guest #home-view .home-more>summary{justify-content:center;padding:8px 0;border:0;border-radius:0;background:none;box-shadow:none;transform:none}
+.is-guest #home-view .home-more-title{font:500 14px/1.4 'DM Sans',sans-serif;color:var(--ink-soft)}
+.is-guest #home-view .home-more-list{display:none}
+.is-guest #home-view .home-more-chevron{width:20px;height:20px;border:0}
+.is-guest .page-tools{display:flex;justify-content:center;gap:28px;max-width:none;margin:14px 0 0}
+.is-guest .page-tools>#manage,.is-guest .page-tools>#about{width:auto;min-height:44px;padding:0;border:0;background:none;box-shadow:none;font-size:13px;color:var(--muted)}
+.is-guest .page-tools>:is(#manage,#about):hover{color:var(--ink);text-decoration:underline;text-underline-offset:4px}
+.is-guest footer{margin-top:72px}
+@media(max-width:640px){
+.is-guest #home-view .intro{margin:26px 0 40px}
+#guest-card{margin-bottom:44px}
+#guest-card .guest-words{gap:12px 22px}
+#guest-card .guest-actions{margin-top:34px}
+#guest-card .guest-top{margin-top:34px}
+.is-guest header .header-nav{gap:16px}
+}
+@media(prefers-reduced-motion:reduce){#guest-card :is(.guest-next,.guest-check){transition:none}}
