@@ -25,6 +25,7 @@ try{
  assert.equal(await opacity(page,'header'),1);
  assert.equal(await page.locator('canvas.intro-birds').count(),0,'no birds for automated browsers');
  assert.equal(await opacity(page,'header .brand-mark svg'),1,'logo drawn');
+ assert.equal(await page.locator('#home-view .today').isVisible(),false,'guests see no "heute geübt" counter');
  await page.context().close();
 
  // Mit ?intro: Seite verborgen, Logo-Kachel leer, der Schwarm schreibt die Überschrift groß in die Mitte,
@@ -38,7 +39,6 @@ try{
  assert.equal(await opacity(page,'header .header-nav'),0,'header navigation hidden during intro');
  assert.equal(await opacity(page,'header'),1,'name stays visible from the start');
  assert.equal(await opacity(page,'header .brand'),1);
- assert.equal(await opacity(page,'#home-view .today'),0);
  assert.equal(await opacity(page,'header .brand-mark svg'),0,'logo tile starts empty');
  assert.equal(await page.locator('canvas.intro-birds').evaluate(el=>getComputedStyle(el).pointerEvents),'none','birds never catch clicks');
  assert.equal(await written(page,'#home-view .intro h1'),0,'no letters while the flock circles');
