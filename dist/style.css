@@ -713,9 +713,8 @@ header>.today .today-streak{font-size:12px}
 .is-guest #home-view .intro h1{font-size:22px;font-weight:500;line-height:1.3;letter-spacing:0}
 .is-guest #home-view .intro h1 br{display:none}
 .is-guest #home-view .intro-tail{margin-left:.25em}
-.is-guest #home-view .today{order:-1;gap:6px;padding:0;border:0;background:none;box-shadow:none;color:var(--muted);letter-spacing:1.6px;text-transform:uppercase}
-.is-guest #home-view .today #today-count{font:600 12px/1 'DM Sans',sans-serif}
-.is-guest #home-view .today>div{max-width:none;font-size:12px;font-weight:600}
+/* Gäste sehen keinen Zähler „heute geübt“ – für sie zählt nur der Satz. */
+.is-guest #home-view .today{display:none}
 #guest-card{align-items:center;gap:0;max-width:900px;min-height:0;margin:0 auto 64px;padding:0;overflow:visible;border:0;background:transparent;box-shadow:none}
 #guest-card .guest-top{order:3;justify-content:center;gap:20px;margin-top:44px}
 #guest-card :is(.guest-lang,.guest-count,.guest-audio span){position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
