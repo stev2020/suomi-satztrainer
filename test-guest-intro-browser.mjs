@@ -33,15 +33,23 @@ try{
  assert.equal(await opacity(page,'header'),1,'logo and name stay visible from the start');
  assert.equal(await opacity(page,'header .brand'),1);
  assert.equal(await opacity(page,'#home-view .today'),0);
- const scale=await page.locator('#home-view .intro h1').evaluate(el=>new DOMMatrix(getComputedStyle(el).transform).a);
- assert.ok(scale>1.5,`headline starts large (scale ${scale})`);
+ // Erst „Ein bisschen Finnisch.“ groß in der Bildschirmmitte, „Jeden Tag.“ kommt danach an derselben Stelle.
+ const lineState=sel=>page.locator(sel).evaluate(el=>{const r=el.getBoundingClientRect();return {scale:new DOMMatrix(getComputedStyle(el).transform).a,x:Math.round((r.left+r.right)/2),y:Math.round((r.top+r.bottom)/2),opacity:Number(getComputedStyle(el).opacity)};});
+ const leadBig=await lineState('.intro-lead');
+ assert.ok(leadBig.scale>1.5,`first line starts large (scale ${leadBig.scale})`);
+ assert.ok(Math.abs(leadBig.x-640)<=2,`first line centred (${leadBig.x})`);
+ assert.equal((await lineState('.intro-tail')).opacity,0,'second line waits until the first one is in place');
+ await page.waitForFunction(()=>{const el=document.querySelector('.intro-tail');return Number(getComputedStyle(el).opacity)>.9&&new DOMMatrix(getComputedStyle(el).transform).a>1.5;},null,{timeout:8000});
+ const tailBig=await lineState('.intro-tail');
+ assert.ok(Math.abs(tailBig.x-leadBig.x)<=2&&Math.abs(tailBig.y-leadBig.y)<=6,`second line appears where the first one did (${tailBig.x},${tailBig.y} vs ${leadBig.x},${leadBig.y})`);
+ assert.equal(await page.locator('.intro-lead').evaluate(el=>new DOMMatrix(getComputedStyle(el).transform).isIdentity),true,'first line already in place');
  // Satz steht zuerst allein, dann wächst die Karte
  await page.waitForFunction(()=>document.getElementById('guest-card')?.classList.contains('intro-bare'),null,{timeout:8000});
  assert.equal(await opacity(page,'#guest-card .guest-top'),0,'card chrome hidden while the sentence stands alone');
  assert.equal(await page.locator('#guest-card').evaluate(el=>getComputedStyle(el).backgroundColor),'rgba(0, 0, 0, 0)');
  await page.waitForFunction(()=>!/intro-/.test(document.documentElement.className),null,{timeout:8000});
  assert.equal(await page.locator('#guest-card').evaluate(el=>el.className.includes('intro-')),false,'card classes cleaned up');
- assert.equal(await page.locator('#home-view .intro h1').evaluate(el=>el.style.transform),'');
+ assert.deepEqual(await page.locator('.intro-lead,.intro-tail').evaluateAll(els=>els.map(el=>el.style.transform+el.style.display)),['',''],'headline styles cleaned up');
  assert.equal(await opacity(page,'header'),1);
  assert.equal(await page.evaluate(()=>sessionStorage.getItem('vanamo-intro-seen')),'1');
  await page.context().close();
@@ -56,8 +64,9 @@ try{
  await page.goto(origin+'/?intro');
  await page.waitForFunction(()=>window.__introLog.length>=1);
  const blockEnd=await page.evaluate(()=>new Promise(resolve=>setTimeout(()=>{const end=performance.now()+1000;while(performance.now()<end){}resolve(performance.now());},200)));
- await page.waitForFunction(()=>window.__introLog.length>=2,null,{timeout:8000});
- const log=Object.fromEntries(await page.evaluate(()=>window.__introLog));
+ await page.waitForFunction(()=>window.__introLog.some(([name])=>name==='intro-tail'),null,{timeout:8000});
+ // erster Eintrag je Zeile = ihr Einblenden (danach folgt jeweils das Gleiten an den Platz)
+ const log=Object.fromEntries((await page.evaluate(()=>window.__introLog)).reverse());
  assert.ok(log['intro-tail']-blockEnd>=350,`tail waits for visible time after the stall (${Math.round(log['intro-tail']-blockEnd)} ms)`);
  assert.ok(log['intro-tail']-log['intro-lead']>=1150,`gap lead → tail ${Math.round(log['intro-tail']-log['intro-lead'])} ms`);
  await page.context().close();
