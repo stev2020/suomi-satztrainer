@@ -7,9 +7,10 @@
 //
 // Besucher ohne Konto:
 // Ablauf (nur beim ersten Aufruf pro Tab, nicht bei „Bewegung reduzieren“):
-//   1. „Ein bisschen Finnisch.“ erscheint groß in der Bildschirmmitte,
-//   2. kurz danach „Jeden Tag.“,
-//   3. beides gleitet an seinen Platz oben links,
+//   1. „Ein bisschen Finnisch.“ erscheint groß in der Bildschirmmitte
+//      und gleitet an seinen Platz,
+//   2. danach erscheint „Jeden Tag.“ an derselben Stelle
+//   3. und gleitet ebenfalls an seinen Platz,
 //   4. der finnische Satz der Satzkarte erscheint allein,
 //   5. danach wächst die Karte um ihn herum auf, der Rest der Seite blendet ein.
 // Logo und „vanamo“ im Header stehen von Anfang an.
@@ -20,8 +21,8 @@
 // Pausen zählen jeweils ab dem Moment, in dem der vorige Schritt fertig zu sehen ist.
 const T={
  fadeMs:800,        // Einblenden einer Zeile
- tailGap:400,       // „Ein bisschen Finnisch.“ steht allein, dann kommt „Jeden Tag.“
- moveGap:500,       // beide Zeilen stehen, dann gleiten sie an ihren Platz
+ tailGap:300,       // „Ein bisschen Finnisch.“ steht an seinem Platz, dann kommt „Jeden Tag.“
+ moveGap:500,       // eine Zeile steht groß in der Mitte, dann gleitet sie an ihren Platz
  moveMs:1000,
  sentenceGap:300,   // Satz steht allein, dann wächst die Karte
  cardWait:4000      // so lange höchstens auf die Satzkarte warten
@@ -67,7 +68,7 @@ export async function runGuestIntro(){
   if(done)return;done=true;
   controller.abort();
   animations.forEach(a=>a.cancel());
-  h1.style.transform='';h1.style.transformOrigin='';
+  for(const span of [lead,tail]){span.style.transform='';span.style.display='';}
   const card=document.getElementById('guest-card');
   card?.classList.remove('intro-bare','intro-growing','intro-shown');
   html.classList.remove('intro-pending','intro-running');
@@ -82,24 +83,29 @@ export async function runGuestIntro(){
 
  scrollTo(0,0);
  const vw=innerWidth,vh=innerHeight;
- const fadeIn=[{opacity:0,transform:'translateY(.35em)',filter:'blur(6px)'},{opacity:1,transform:'none',filter:'blur(0)'}];
- // FLIP: Endposition des Textes messen (nicht des ganzen Blocks), dann groß in die Mitte
- // setzen und von dort zurückgleiten. Umbrüche bleiben dabei genau wie am Ende.
- const el=h1.getBoundingClientRect(),rects=[...lead.getClientRects(),...tail.getClientRects()];
- const left=Math.min(...rects.map(r=>r.left)),right=Math.max(...rects.map(r=>r.right));
- const top=Math.min(...rects.map(r=>r.top)),bottom=Math.max(...rects.map(r=>r.bottom));
- const scale=Math.max(1,Math.min(vw*.86/(right-left),vh*.5/(bottom-top),4));
- h1.style.transformOrigin=`${(left+right)/2-el.left}px ${(top+bottom)/2-el.top}px`;
- const big=`translate(${vw/2-(left+right)/2}px,${vh/2-(top+bottom)/2}px) scale(${scale})`;
- h1.style.transform=big;
+ // Jede Zeile für sich: groß in der Bildschirmmitte einblenden, kurz stehen lassen, an ihren Platz
+ // gleiten – erst „Ein bisschen Finnisch.“, danach „Jeden Tag.“ an derselben Stelle.
+ // Endposition messen (FLIP); inline-block, damit sich die Zeilen einzeln verschieben lassen.
+ lead.style.display=tail.style.display='inline-block';
+ const all=[lead.getBoundingClientRect(),tail.getBoundingClientRect()];
+ const width=Math.max(...all.map(r=>r.right))-Math.min(...all.map(r=>r.left)),height=Math.max(...all.map(r=>r.bottom))-Math.min(...all.map(r=>r.top));
+ // Größe wie bisher für beide Zeilen zusammen, einzeln ein Stück größer.
+ const pair=Math.max(1,Math.min(vw*.86/width,vh*.5/height,4));
+ // Beide Zeilen gleich groß; auf schmalen Bildschirmen begrenzt die längere Zeile.
+ const scale=Math.max(1,Math.min(Math.max(pair*1.25,1.6),vw*.86/Math.max(...all.map(r=>r.width)),vh*.5/Math.max(...all.map(r=>r.height))));
+ async function line(span){
+  const r=span.getBoundingClientRect();
+  const big=`translate(${vw/2-(r.left+r.right)/2}px,${vh/2-(r.top+r.bottom)/2}px) scale(${scale})`;
+  span.style.transform=big;
+  await finished(play(span,[{opacity:0,transform:`${big} translateY(.35em)`,filter:'blur(6px)'},{opacity:1,transform:big,filter:'blur(0)'}],{duration:T.fadeMs,easing:EASE_OUT,fill:'both'}));
+  await hold(T.moveGap);if(done)return;
+  await finished(play(span,[{transform:big},{transform:'none'}],{duration:T.moveMs,easing:EASE_MOVE,fill:'forwards'}));
+  if(!done)span.style.transform='';
+ }
  await hold(50);if(done)return; // erst zeichnen lassen, dann starten
- await finished(play(lead,fadeIn,{duration:T.fadeMs,easing:EASE_OUT,fill:'both'}));
+ await line(lead);if(done)return;
  await hold(T.tailGap);if(done)return;
- await finished(play(tail,fadeIn,{duration:T.fadeMs,easing:EASE_OUT,fill:'both'}));
- await hold(T.moveGap);if(done)return;
- const move=play(h1,[{transform:big},{transform:'none'}],{duration:T.moveMs,easing:EASE_MOVE,fill:'forwards'});
- await finished(move);if(done)return;
- h1.style.transform='';h1.style.transformOrigin='';
+ await line(tail);if(done)return;
 
  // Satzkarte: erst nur der finnische Satz, dann wächst die Karte drumherum.
  const card=document.getElementById('guest-card');
