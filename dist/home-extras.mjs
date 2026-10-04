@@ -3,7 +3,7 @@
 // - Begrüßung je nach Tageszeit: steht zuerst auf Deutsch und dreht sich zwei Sekunden nachdem
 //   die Startseite fertig zu sehen ist auf Finnisch um (antippen dreht sie wieder zurück)
 // - „heute geübt“ als Ring zum Tagesziel, Wochenreihe Mo–So und Serie in Tagen
-// - „Satz des Tages“: ein Satz aus den eigenen Sätzen, Wörter antippen, Übersetzung aufdecken, anhören
+// - „Satz des Tages“: ein Satz aus den eigenen Sätzen mit Wortbedeutungen und Übersetzung, zum Anhören
 // - kleine Animationen (Hochzählen, Ring füllen); bei „reduzierter Bewegung“ entfallen sie
 // Gäste sehen weiterhin die ursprüngliche Startseite mit Intro und Satzkarte.
 import {loadLexicon,lookupForSentence,splitSentence} from './word-lookup.mjs?v=2';
@@ -160,9 +160,8 @@ function fits(s){
 }
 
 // userKey: Konto-ID – jedes Konto bekommt seinen eigenen Satz, auf allen Geräten derselbe.
-const TILTS=[-4,3,-2,4,-3,2];
 export function createDailySentence(root,{sentences,learnedIds,fallbackLevel=()=>1,sourceIcon=()=>'',userKey=()=>''}){
- let lexicon=null,sentence=null,cols=[],audio=null,revealed=false,poolKey='',pool=[],own=false;
+ let lexicon=null,sentence=null,cols=[],audio=null,poolKey='',pool=[],own=false;
  const storeKey=()=>{const user=String(userKey()||'');return user?`${DAILY_KEY}:${user}`:DAILY_KEY;};
  if(!root)return {render(){}};
  const stopAudio=()=>{if(audio){audio.pause();audio=null;}root.querySelector('.daily-audio')?.classList.remove('playing');};
@@ -232,26 +231,19 @@ export function createDailySentence(root,{sentences,learnedIds,fallbackLevel=()=
   },3000);
  }
  function markup(){
-  // Jedes Wort ist eine leicht gekippte Kachel: vorn das finnische Wort, hinten die Kurzbedeutung.
-  const words=cols.map((c,i)=>`<button type="button" class="guest-word cycle-word daily-tile" data-tone="${i%5}" style="--i:${i};--r:${TILTS[i%TILTS.length]}deg" aria-label="${esc(c.fi)}: Bedeutung zeigen"><span class="daily-tile-inner"><span class="guest-fi">${esc(c.fi)}</span><span class="guest-gloss"${c.gloss?' lang="de"':''}>${esc(c.gloss||c.fi)}</span></span></button>`);
-  // Das Quellen-Symbol gehört zum Satz: es hängt an der letzten Kachel und bricht nie allein um.
-  const tail=`<span class="daily-tail">${words.pop()||''}<span class="daily-source">${sourceIcon(sentence)}</span></span>`;
+  // Wie die Satzkarte der Gäste: der Satz groß, unter jedem Wort die Kurzbedeutung, darunter immer die Übersetzung.
+  // Das Quellen-Symbol gehört zum Satz: es hängt am letzten Wort und bricht nie allein um.
+  const words=cols.map((c,i)=>`<span class="guest-word" style="--i:${i}"><span class="guest-fi">${esc(c.fi)}${i===cols.length-1?`<span class="daily-source">${sourceIcon(sentence)}</span>`:''}</span><span class="guest-gloss"${c.gloss?' lang="de"':''}>${esc(c.gloss)}</span></span>`).join('');
   const t=sentence.translations[0];
-  return `<div class="daily-sentence-top"><h2 id="daily-sentence-title">Satz des Tages</h2><span class="daily-sentence-tools">${sentence.audios?.length?'<button type="button" class="daily-audio" aria-label="Anhören"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4 5 9H2v6h3l6 5V4Z"/><path d="M15 8a6 6 0 0 1 0 8M18 4a11 11 0 0 1 0 16"/></svg></button>':''}${'<button type="button" class="daily-translate" aria-pressed="'+revealed+'" aria-controls="daily-translation" aria-label="Übersetzung zeigen" title="Übersetzung zeigen"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h10M8 3v3M11 6c-1 4-4 7-8 9M5.5 9.5c1.2 2.2 3 4 5.5 5.5"/><path d="m13 21 4.5-11L22 21M14.6 17.5h5.8"/></svg></button>'}</span></div>
-<div class="guest-words daily-words" lang="fi">${words.join('')}${tail}</div>
-<div class="daily-sentence-bottom"><p id="daily-translation" class="daily-translation${revealed?' shown':''}" lang="de">${esc(t.text)}${sourceIcon(t)}</p></div>`;
+  return `<div class="daily-sentence-top"><h2 id="daily-sentence-title">Satz des Tages</h2>${sentence.audios?.length?'<span class="daily-sentence-tools"><button type="button" class="daily-audio" aria-label="Anhören"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4 5 9H2v6h3l6 5V4Z"/><path d="M15 8a6 6 0 0 1 0 8M18 4a11 11 0 0 1 0 16"/></svg></button></span>':''}</div>
+<div class="guest-words daily-words" lang="fi">${words}</div>
+<p id="daily-translation" class="daily-translation" lang="de">${esc(t.text)}${sourceIcon(t)}</p>`;
  }
  function paint(animate){
   root.innerHTML=markup();root.classList.toggle('is-entering',!!animate&&!reducedMotion());
-  // Die Kacheln fallen nacheinander herunter und hüpfen kurz nach.
-  if(animate)setTimeout(()=>root.classList.remove('is-entering'),1100+cols.length*120);
-  const list=root.querySelector('.daily-words');
-  root.querySelectorAll('.cycle-word').forEach(b=>b.onclick=()=>{list.classList.remove('staggered');b.classList.toggle('show');});
-  // Übersetzen dreht alle Kacheln um und zeigt den ganzen Satz; der Knopf bleibt und schaltet hin und her.
-  // Die Übersetzung steht immer schon unsichtbar an ihrem Platz – beim Auf- und Zudecken verschiebt sich nichts.
-  const tr=root.querySelector('.daily-translate');
-  if(tr)tr.onclick=()=>{revealed=!revealed;tr.setAttribute('aria-pressed',String(revealed));const p=root.querySelector('.daily-translation');p?.classList.toggle('shown',revealed);p?.classList.toggle('is-new',revealed);list.classList.add('staggered');root.querySelectorAll('.cycle-word').forEach(b=>b.classList.toggle('show',revealed));};
-    const a=root.querySelector('.daily-audio');
+  // Die Wörter blenden nacheinander ein.
+  if(animate)setTimeout(()=>root.classList.remove('is-entering'),700+cols.length*70);
+  const a=root.querySelector('.daily-audio');
   if(a)a.onclick=()=>{if(audio){stopAudio();return;}const url=audioURL(sentence?.audios?.[0]);if(!url)return;audio=new Audio(url);a.classList.add('playing');audio.onended=stopAudio;audio.onerror=stopAudio;audio.play().catch(stopAudio);};
  }
  return {
@@ -261,7 +253,7 @@ export function createDailySentence(root,{sentences,learnedIds,fallbackLevel=()=
    // Karte von heute schon auf dem Gerät: sofort zeigen. Sind die Sätze geladen, muss es den Satz noch geben.
    const kept=keptCard();
    if(kept&&(!ready||(sentences()||[]).some(s=>s.id===kept.id))){
-    if(sentence?.id!==kept.id||root.hidden||!root.firstChild){sentence=kept.card.sentence;cols=kept.card.cols;own=!!kept.own;revealed=false;root.hidden=false;paint(true);}
+    if(sentence?.id!==kept.id||root.hidden||!root.firstChild){sentence=kept.card.sentence;cols=kept.card.cols;own=!!kept.own;root.hidden=false;paint(true);}
     if(ready)prepareTomorrow();
     return;
    }
@@ -272,7 +264,7 @@ export function createDailySentence(root,{sentences,learnedIds,fallbackLevel=()=
    buildPool();
    const next=pick();
    if(!next){root.hidden=true;return;}
-   if(sentence?.id!==next.id||root.hidden||!root.firstChild){sentence=next;cols=columns();revealed=false;root.hidden=false;paint(true);keepCard();}
+   if(sentence?.id!==next.id||root.hidden||!root.firstChild){sentence=next;cols=columns();root.hidden=false;paint(true);keepCard();}
   },
   stop:stopAudio
  };

@@ -615,38 +615,9 @@ html.intro-running,.intro-running body{overflow:hidden}
 @media(min-width:701px){.daily-sentence .guest-fi{font-size:clamp(28px,3.8vw,36px)}}
 .daily-sentence .guest-gloss{font-size:14px;min-height:1.3em}
 .daily-sentence-bottom{display:flex;align-items:center;justify-content:flex-start;gap:10px 16px;flex-wrap:wrap;min-height:40px;margin-top:12px}
-.daily-translation{margin:0;font-size:18px;font-weight:600;color:var(--ink-soft);visibility:hidden}
-.daily-translation.shown{visibility:visible}
-.daily-translation.is-new{animation:daily-flip .45s ease-out}
-@keyframes daily-flip{from{opacity:0;transform:rotateX(80deg)}to{opacity:1;transform:none}}
-/* Wortkacheln: jedes Wort eine gekippte Kachel. Beim Start fallen sie von vorn oben herunter und hüpfen nach,
-   beim Überfahren wackeln sie, beim Antippen oder Übersetzen drehen sie sich um (hinten die Bedeutung). */
+.daily-translation{margin:0}
 .daily-sentence-top,.daily-sentence-bottom{justify-content:center}
 .daily-sentence .daily-words{justify-content:center;align-items:center;gap:18px 16px;padding:12px 0 8px}
-.daily-tile{--tile:var(--paper);--tile-ink:var(--ink);--tile-edge:var(--line);border-radius:14px;rotate:var(--r,0deg);perspective:700px;transform-origin:50% 100%}
-.daily-tile[data-tone="0"]{--tile:var(--orange);--tile-ink:var(--on-orange)}
-.daily-tile[data-tone="2"]{--tile:var(--lavender)}
-.daily-tile[data-tone="3"]{--tile:var(--purple);--tile-ink:var(--on-accent)}
-.daily-tile[data-tone="4"]{--tile:var(--mint)}
-.daily-tile-inner{display:grid;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.3,1.3,.5,1)}
-.daily-words.staggered .daily-tile-inner{transition-delay:calc(var(--i)*70ms)}
-.daily-tile.show .daily-tile-inner{transform:rotateY(180deg)}
-.daily-tile :is(.guest-fi,.guest-gloss){grid-area:1/1;display:grid;place-items:center;padding:.2em .5em .28em;border:2px solid var(--line);border-radius:14px;box-shadow:5px 5px 0 var(--tile-edge);white-space:nowrap;backface-visibility:hidden;-webkit-backface-visibility:hidden}
-.daily-tile .guest-fi{background:var(--tile);color:var(--tile-ink);font-size:clamp(24px,6.4vw,32px)}
-.daily-tile .guest-gloss{min-height:0;background:var(--warm-soft);color:var(--warm-ink);font:700 clamp(15px,3.6vw,19px)/1.2 var(--heading);box-shadow:-5px 5px 0 var(--tile-edge);transform:rotateY(180deg)}
-/* Dunkle Paletten: --line ist dort hell – der Schatten der Kacheln wird stattdessen dunkler als der Hintergrund. */
-:root:is([data-theme=revontulet],[data-theme=kaamos]) .daily-tile{--tile-edge:color-mix(in srgb,var(--bg) 45%,#000)}
-@media(min-width:701px){.daily-tile .guest-fi{font-size:clamp(30px,3.6vw,38px)}.daily-tile .guest-gloss{font-size:clamp(17px,2vw,21px)}}
-.daily-tail{display:flex;align-items:flex-start;gap:8px}
-.daily-tile:active{translate:2px 2px}
-.daily-tile:active .guest-fi{box-shadow:3px 3px 0 var(--tile-edge)}
-.daily-tile:active .guest-gloss{box-shadow:-3px 3px 0 var(--tile-edge)}
-@media(hover:hover){.daily-sentence:not(.is-entering,.intro-drop) .daily-tile:hover{animation:daily-wobble .7s ease-in-out}}
-@keyframes daily-wobble{0%,100%{transform:none}15%{transform:rotate(-7deg)}35%{transform:rotate(6deg)}55%{transform:rotate(-4deg)}75%{transform:rotate(2deg)}}
-.daily-sentence:is(.is-entering,.intro-drop) .daily-tile{animation:daily-drop .95s both;animation-delay:calc(var(--i)*120ms)}
-@keyframes daily-drop{0%{opacity:0;transform:translateY(-70px) scale(3.4);animation-timing-function:cubic-bezier(.6,0,.9,.5)}12%{opacity:1}45%{opacity:1;transform:none;animation-timing-function:ease-out}53%{transform:scale(1.1,.84);animation-timing-function:ease-out}68%{transform:translateY(-22px) scale(.97,1.04);animation-timing-function:ease-in}82%{transform:scale(1.05,.93);animation-timing-function:ease-out}91%{transform:translateY(-7px);animation-timing-function:ease-in}100%{opacity:1;transform:none}}
-main:has(.daily-sentence:is(.is-entering,.intro-drop)){overflow-x:clip}
-.daily-translate[aria-pressed="true"]{background:var(--lavender)}
 /* Angemeldet: die Begrüßung steht schlicht über dem Satz des Tages; „heute geübt“ sitzt als Pille im Header. */
 .home-view .intro h1.is-greeting{margin:0;font-size:clamp(22px,2.6vw,28px);line-height:1.2}
 .home-view:has(h1.is-greeting) .intro{margin-bottom:6px}
@@ -671,7 +642,7 @@ header>.today .today-streak{font-size:12px}
 .home-daily-done-text small{font-size:12px;color:var(--ink-soft)}
 .home-daily-stats span.bump{animation:today-pop .45s ease-out}
 @media(max-width:700px){.daily-sentence{padding:16px 0 18px}.today-ring{width:50px;height:50px}.today.is-account .today-ring>span{font-size:21px}.today.is-account{grid-template-columns:auto;justify-items:center;gap:6px}.today.is-account .today-label{text-align:center;font-size:11px;max-width:none}.today-week{gap:2px}.today-week li{width:17px;height:17px;font-size:8px}.today-streak{font-size:11px}}
-@media(prefers-reduced-motion:reduce){.today-flame,.today.goal-reached .today-ring,.home-daily.all-done .home-daily-done,.daily-sentence:is(.is-entering,.intro-drop) .daily-tile,.daily-tile:hover,.daily-translation.is-new,.home-daily-stats span.bump{animation:none!important}.today-ring-fill,.greeting-face,.daily-tile-inner{transition:none}}
+@media(prefers-reduced-motion:reduce){.today-flame,.today.goal-reached .today-ring,.home-daily.all-done .home-daily-done,.home-daily-stats span.bump{animation:none!important}.today-ring-fill,.greeting-face{transition:none}}
 /* „Wiederholen“ mit Verbformen (daily-mix.mjs) */
 .home-daily-stats span[hidden]{display:none}
 .verb-new-tag{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--mint);color:var(--ink);font-weight:800}
@@ -1129,8 +1100,8 @@ h1 .intro-w,h1 .intro-ch{color:inherit}
 #guest-card .guest-finale-text{max-width:460px;margin:22px auto 0;text-wrap:balance}
 /* ---- Startseite für Angemeldete im reduzierten Stil (Okt 2026) ----
    Derselbe Aufbau wie für Gäste: Begrüßung klein und mittig über dem orangen Strich, darunter der Satz
-   des Tages als Wortkacheln (dünner dunkler Rand, kleiner versetzter Schatten – wie die Wörter in
-   „Satz bauen“; Rückseite in --mint), dann „Wiederholen“ ohne Kasten mit dem Hauptknopf. „Neue Sätze
+   des Tages wie die Satzkarte der Gäste (groß, unter jedem Wort die Bedeutung, die Übersetzung steht
+   immer dabei), dann „Wiederholen“ ohne Kasten mit dem Hauptknopf. „Neue Sätze
    lernen“, „Weitere Übungen“ und die Fußzeile teilen sich die Regeln der Gäste-Startseite (oben, ohne
    .is-guest); „Verbformen“ ist eine schmale Karte mit feinem Rand. */
 #home-view .intro h1.is-greeting{font-size:22px;line-height:1.3}
@@ -1143,16 +1114,6 @@ h1 .intro-w,h1 .intro-ch{color:inherit}
 #daily-sentence .daily-sentence-tools{gap:0;margin:0}
 #home-view #daily-sentence .daily-sentence-tools button{width:44px;height:44px;border:0;border-radius:50%;background:none;box-shadow:none;color:var(--ink-soft);transform:none}
 #home-view #daily-sentence .daily-sentence-tools button:hover,#home-view #daily-sentence .daily-sentence-tools :is(.daily-audio.playing,.daily-translate[aria-pressed="true"]){background:none;box-shadow:none;transform:none;color:var(--orange)}
-#daily-sentence .daily-words{gap:20px 18px;padding:8px 0 10px}
-#daily-sentence .daily-tile{--tile:var(--paper);--tile-ink:var(--ink);--tile-edge:var(--ink);border-radius:14px}
-#daily-sentence .daily-tile :is(.guest-fi,.guest-gloss){padding:.16em .5em .24em;border:1.5px solid var(--ink);border-radius:14px;box-shadow:3px 3px 0 var(--tile-edge)}
-#daily-sentence .daily-tile .guest-fi{font-size:clamp(30px,6.6vw,52px);font-weight:500;letter-spacing:-.02em}
-#daily-sentence .daily-tile .guest-gloss{background:var(--mint);color:var(--ink);font:500 clamp(16px,3.4vw,22px)/1.2 var(--heading);box-shadow:-3px 3px 0 var(--tile-edge)}
-#daily-sentence .daily-tile:active .guest-fi{box-shadow:1px 1px 0 var(--tile-edge)}
-#daily-sentence .daily-tile:active .guest-gloss{box-shadow:-1px 1px 0 var(--tile-edge)}
-#daily-sentence .daily-source .sentence-source-icon,#daily-sentence .daily-translation .sentence-source-icon{width:20px;height:20px;border-width:1px;background:transparent;box-shadow:none;font-size:13px;opacity:.75}
-#daily-sentence .daily-sentence-bottom{margin-top:18px}
-#daily-sentence .daily-translation{font-size:19px;font-weight:400;color:var(--muted);text-align:center}
 /* „Wiederholen“: kein Kasten – Etikett, Hauptknopf, darunter leise der Hinweis und die Zahlen. */
 #home-view .home-daily{display:flex;flex-direction:column;align-items:center;gap:0;max-width:720px;margin:0 auto 64px;padding:0;border:0;border-radius:0;background:none;box-shadow:none;overflow:visible;text-align:center}
 #home-view .home-daily::after{display:none}
@@ -1187,7 +1148,7 @@ h1 .intro-w,h1 .intro-ch{color:inherit}
 @media(max-width:640px){
 #home-view:has(h1.is-greeting) .intro{margin-bottom:28px}
 #daily-sentence{margin-bottom:44px}
-#daily-sentence .daily-words{gap:16px 14px}
+#daily-sentence .guest-words{gap:12px 22px}
 #home-view .home-daily{margin-bottom:44px}
 #home-view .home-verbs{flex-direction:column;align-items:center;padding:20px 18px;border-radius:18px;text-align:center}
 #home-view .quick-verb-review{flex:none}
@@ -1303,3 +1264,19 @@ header>.today>.today-details,.today-goal-picker{border:1.5px solid var(--ink);bo
 /* Bewertung direkt unter der Lösung; Grammatik, Quellen und „Fehler melden“ folgen darunter. */
 #practice-view.is-path #card>:is(.grammar,.sources,.report-error){order:3}
 #practice-view.is-path #card>.grammar{margin-top:30px}
+/* Satz des Tages wie die Satzkarte der Gäste: groß, Bedeutungen unter den Wörtern, Übersetzung immer sichtbar.
+   Beim Erscheinen blenden die Wörter nacheinander ein. */
+#daily-sentence .guest-words{justify-content:center;gap:14px 36px;padding:0}
+#daily-sentence .guest-word{align-items:center;gap:12px}
+#daily-sentence .guest-fi{padding-bottom:0;border-bottom:0;font-size:clamp(40px,8.4vw,76px);font-weight:500;letter-spacing:-.03em}
+#daily-sentence .guest-gloss{min-height:1.3em;font-size:14px;font-weight:500}
+#daily-sentence .daily-source{margin:0}
+#daily-sentence .sentence-source-icon{width:20px;height:20px;border-width:1px;background:transparent;box-shadow:none;font-size:13px;letter-spacing:0;opacity:.75}
+#daily-sentence .guest-fi .sentence-source-icon{margin:.5em 0 0 8px;vertical-align:top}
+#daily-sentence .daily-translation{margin:30px 0 0;font-size:19px;font-weight:400;color:var(--muted);text-align:center}
+#daily-sentence:is(.is-entering,.intro-drop) .guest-word{animation:daily-rise .6s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i)*70ms)}
+#daily-sentence.is-entering .daily-translation{animation:daily-rise .6s ease .3s both}
+@keyframes daily-rise{from{opacity:0;transform:translateY(.18em)}to{opacity:1;transform:none}}
+.daily-sentence.intro-bare .daily-translation{opacity:0}
+.daily-sentence.intro-growing :is(.daily-translation,.guest-gloss){transition:opacity .6s ease .25s}
+@media(prefers-reduced-motion:reduce){#daily-sentence :is(.guest-word,.daily-translation){animation:none!important}}
