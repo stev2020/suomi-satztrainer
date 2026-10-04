@@ -702,13 +702,15 @@ header>.today .today-streak{font-size:12px}
    Schritte als Punkte, „Anhören“ als Symbol daneben; Sprachschild und Zähler bleiben für Screenreader.
    Hauptknopf: Rand in Textfarbe, kleiner versetzter Schatten in Orange; beim Überfahren/Antippen
    füllt er sich von links orange und der Schatten wird dunkel. */
-.is-guest header{border-bottom-color:transparent}
-.is-guest .brand-caption{display:none}
-.is-guest header .header-nav{gap:24px}
-.is-guest header .header-nav button{min-height:44px;padding:0;border:0;background:none;box-shadow:none;color:var(--ink-soft)}
-.is-guest header .header-nav button:hover,.is-guest header .header-nav button.selected{background:none;color:var(--ink);text-decoration:underline;text-decoration-color:var(--orange);text-decoration-thickness:2px;text-underline-offset:6px}
-.is-guest header .header-nav #account-button{padding:8px 18px;border:1px solid color-mix(in srgb,var(--ink) 35%,transparent);border-radius:999px;color:var(--ink)}
-.is-guest header .header-nav #account-button:hover{border-color:var(--ink);text-decoration:none}
+header{border-bottom-color:transparent}
+.brand-caption{display:none}
+header .header-nav{gap:24px}
+header .header-nav button{min-height:44px;padding:0;border:0;background:none;box-shadow:none;color:var(--ink-soft)}
+header .header-nav button:hover,header .header-nav button.selected{background:none;color:var(--ink);text-decoration:underline;text-decoration-color:var(--orange);text-decoration-thickness:2px;text-underline-offset:6px}
+header .header-nav #account-button{padding:8px 18px;border:1px solid color-mix(in srgb,var(--ink) 35%,transparent);border-radius:999px;color:var(--ink)}
+header .header-nav #account-button:hover{border-color:var(--ink);text-decoration:none}
+/* Angemeldet: derselbe ruhige Kopf wie für Gäste; der Tageszähler bleibt als mintfarbene Kachel daneben. */
+header>.today.is-account~.header-nav{margin-left:8px}
 .is-guest #home-view .intro{flex-direction:column;align-items:center;gap:14px;margin:44px 0 64px;text-align:center}
 .is-guest #home-view .intro h1{font-size:22px;font-weight:500;line-height:1.3;letter-spacing:0}
 .is-guest #home-view .intro h1 br{display:none}
@@ -767,7 +769,7 @@ header>.today .today-streak{font-size:12px}
 #guest-card .guest-words{gap:12px 22px}
 #guest-card .guest-actions{margin-top:34px}
 #guest-card .guest-top{margin-top:34px}
-.is-guest header .header-nav{gap:16px}
+header .header-nav{gap:16px}
 }
 @media(prefers-reduced-motion:reduce){#guest-card :is(.guest-next,.guest-check){transition:none}}
 /* Gäste, Ladezustand: Bevor app.js läuft, standen kurz die Platzhalter von „Wiederholen“ und „Neue Sätze
