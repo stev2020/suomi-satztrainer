@@ -154,28 +154,28 @@ export function createBirds(){
   size:mint?10:3.4+Math.random()*3,flap:Math.random()*6.28,rate:17+Math.random()*10});
  // Intro für Angemeldete: Es gibt zuerst nur den farbigen Vogel, er startet in `markEl` (dem Logo).
  function beginFrom(markEl){
-  intro=true;first=true;VH=innerHeight;mount(VH);
+  intro=true;first=false;VH=innerHeight;mount(VH);
   const m=rect(markEl);
   birds=[newBird(m.cx,m.cy,true)];sparks=[];hist=[];
   spread={x:34,y:16};mode='';att={x:m.cx,y:m.cy};loop();
  }
  // Der farbige Vogel fliegt an den Anfang der Zeichen in `list` und zieht darüber hinweg. Jedes überflogene
  // Zeichen verschwindet (Klasse `on` fällt weg) und wird zu Vögeln – am Ende sind es `count`.
- async function dissolve(list,count){
+ async function dissolve(list,count,flyMs=520,speed=.8){
   const pos=list.map(el=>({el,...rect(el)})).sort((a,b)=>a.cx-b.cx);
   if(!pos.length)return true;
   const x0=Math.max(14,pos[0].l-24),x1=Math.max(...pos.map(p=>p.r))+50,h=Math.max(...pos.map(p=>p.b-p.t));
   const cy=pos.reduce((sum,p)=>sum+p.cy,0)/pos.length,from={...att};
-  if(!await tween(520,p=>{const e=ease(p);att.x=lerp(from.x,x0,e);att.y=lerp(from.y,cy,e)-Math.sin(p*Math.PI)*h*.5;}))return false;
+  if(!await tween(flyMs,p=>{const e=ease(p);att.x=lerp(from.x,x0,e);att.y=lerp(from.y,cy,e)-Math.sin(p*Math.PI)*h*.5;}))return false;
   let made=0,gone=0;
   const burst=c=>{
    c.el.classList.remove('on');gone++;
    for(const want=Math.round(count*gone/pos.length);made<want;made++){
     const b=newBird(c.cx+(Math.random()-.5)*(c.r-c.l),c.cy+(Math.random()-.5)*(c.b-c.t)*.6,false);
-    b.vx=120+Math.random()*160;b.vy=-(40+Math.random()*160);birds.push(b);
+    b.vx=40+Math.random()*90;b.vy=-(20+Math.random()*90);birds.push(b);
    }
   };
-  const ok=await tween(Math.max(520,(x1-x0)/.8),p=>{
+  const ok=await tween(Math.max(520,(x1-x0)/speed),p=>{
    att.x=lerp(x0,x1,p);att.y=cy+Math.sin(p*Math.PI*2)*h*.14;
    for(const c of pos)if(!c.done&&c.cx<att.x-12){c.done=true;burst(c);}
   });
@@ -190,9 +190,10 @@ export function createBirds(){
   for(const row of rows){
    const x0=Math.max(14,Math.min(...row.items.map(p=>p.l))-30),x1=Math.max(...row.items.map(p=>p.r))+70;
    const from={...att},s0={...spread},s1={x:34,y:Math.max(14,row.h*.42)};
-   if(!await tween(first?480:700,p=>{const e=ease(p);att.x=lerp(from.x,x0,e);att.y=lerp(from.y,row.cy,e)-Math.sin(p*Math.PI)*row.h*.9;spread.x=lerp(s0.x,s1.x,e);spread.y=lerp(s0.y,s1.y,e);}))return false;
+   const calm=speed<.5;
+   if(!await tween(first?480:calm?1100:700,p=>{const e=ease(p);att.x=lerp(from.x,x0,e);att.y=lerp(from.y,row.cy,e)-Math.sin(p*Math.PI)*row.h*.9;spread.x=lerp(s0.x,s1.x,e);spread.y=lerp(s0.y,s1.y,e);}))return false;
    // Warten, bis auch die Nachzügler am Zeilenanfang sind – sie sollen die Zeile von Anfang an begleiten.
-   if(!first&&!await tween(430,p=>{att.x=x0+Math.sin(p*Math.PI*2)*6;att.y=row.cy+Math.cos(p*Math.PI*2)*row.h*.1;}))return false;
+   if(!first&&!await tween(calm?650:430,p=>{att.x=x0+Math.sin(p*Math.PI*2)*6;att.y=row.cy+Math.cos(p*Math.PI*2)*row.h*.1;}))return false;
    first=false;
    if(!await tween(Math.max(650,(x1-x0)/speed),p=>{
     att.x=lerp(x0,x1,p);att.y=row.cy+Math.sin(p*Math.PI*3)*row.h*.14;
