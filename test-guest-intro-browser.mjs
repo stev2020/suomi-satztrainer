@@ -133,10 +133,10 @@ try{
  assert.ok(await page.locator('#daily-sentence.intro-bare').count(),'only the sentence, no card chrome');
  assert.equal(await opacity(page,'#daily-sentence .daily-sentence-top'),0,'card chrome hidden at first');
  assert.ok(await page.locator('#daily-sentence .intro-ch').count()>0,'the sentence is written letter by letter');
- await page.waitForFunction(()=>document.querySelectorAll('.intro-greet .intro-ch.on').length===0,null,{timeout:6000});
- await page.waitForFunction(()=>document.querySelectorAll('#daily-sentence .intro-ch.on').length>0,null,{timeout:6000});
+ await page.waitForFunction(()=>document.querySelectorAll('.intro-greet .intro-ch.on').length===0,null,{timeout:12000});
+ await page.waitForFunction(()=>document.querySelectorAll('#daily-sentence .intro-ch.on').length>0,null,{timeout:12000});
  await page.waitForFunction(()=>document.querySelector('header .brand-mark').classList.contains('is-filled'),null,{timeout:8000});
- await page.waitForFunction(()=>!/intro-/.test(document.documentElement.className),null,{timeout:10000});
+ await page.waitForFunction(()=>!/intro-/.test(document.documentElement.className),null,{timeout:15000});
  assert.equal(await page.locator('.intro-greet, #daily-sentence .intro-w, #daily-sentence .intro-ch').count(),0,'intro layers cleaned up');
  assert.doesNotMatch(await page.locator('header .brand-mark').getAttribute('class'),/is-fill|pop/);
  assert.ok((await page.locator('#daily-sentence .guest-fi').first().textContent()).trim().length>0,'sentence text intact');

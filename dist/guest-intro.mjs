@@ -36,7 +36,7 @@ const T={
 const EASE_MOVE='cubic-bezier(.65,0,.25,1)',EASE_OUT='cubic-bezier(.2,.7,.2,1)';
 const SEEN='vanamo-intro-seen';
 
-import {createBirds} from './intro-birds.mjs?v=3';
+import {createBirds} from './intro-birds.mjs?v=4';
 
 const html=document.documentElement;
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -184,13 +184,16 @@ function revealRest(selector,play){
 
 const USER={
  cardWait:6000,     // Satz des Tages braucht Sätze und Wortanalyse – so lange höchstens warten
- greetIn:350,       // Begrüßung blendet ein …
- greetHold:650,     // … und steht kurz allein
- greetScale:1.5,    // so viel größer als später an ihrem Platz
+ greetIn:700,       // Begrüßung blendet ein …
+ greetHold:1300,    // … und steht gut eine Sekunde allein
+ greetScale:3,      // so viel größer als später an ihrem Platz (höchstens 86 % der Breite)
+ greetAt:.36,       // Höhe der Begrüßung im Bild
  birds:110,         // Größe des Schwarms; auf schmalen Bildschirmen:
  birdsSmall:45,
- writeSpeed:.95,    // der Schwarm schreibt schneller als bei den Gästen (px je ms)
- sentenceGap:200    // Satz steht fertig da, dann fliegt der Schwarm davon
+ flyMs:1000,        // der Vogel fliegt in Ruhe vom Logo zur Begrüßung
+ dissolveSpeed:.34, // … und zieht langsam darüber (px je ms)
+ writeSpeed:.42,    // der Schwarm schreibt ruhig, langsamer als bei den Gästen (px je ms)
+ sentenceGap:700    // Satz steht fertig da, dann fliegt der Schwarm davon
 };
 const DAY='vanamo-user-intro-day'; // das Intro für Angemeldete läuft nur beim ersten Öffnen am Tag (index.html)
 
@@ -244,7 +247,7 @@ export async function runUserIntro(){
  if(done)return;
  scrollTo(0,0);
 
- // 1. Logo und „vanamo“ stehen; die Begrüßung (deutsch) erscheint etwas größer an ihrem Platz.
+ // 1. Logo und „vanamo“ stehen; die Begrüßung (deutsch) erscheint groß im oberen Drittel.
  //    Sie ist eine eigene Ebene über der Seite – die echte Überschrift bleibt verborgen und unberührt.
  const source=h1.querySelector('.greeting-de')||h1,place=h1.getBoundingClientRect(),style=getComputedStyle(h1);
  greet=document.createElement('div');greet.className='intro-greet';greet.setAttribute('aria-hidden','true');
@@ -253,10 +256,13 @@ export async function runUserIntro(){
  document.body.append(greet);
  const base=parseFloat(style.fontSize)||22;
  greet.style.fontSize=base*USER.greetScale+'px';
- const wide=greet.scrollWidth;if(wide>innerWidth*.9)greet.style.fontSize=Math.max(base,base*USER.greetScale*innerWidth*.9/wide)+'px';
- greet.style.top=(place.top+place.bottom)/2+scrollY-greet.offsetHeight/2+'px';
+ // Breite des Textes selbst messen (die Ebene ist so breit wie die Seite).
+ const lineWidth=()=>{const r=document.createRange();r.selectNodeContents(greet);return r.getBoundingClientRect().width;};
+ const wide=lineWidth();if(wide>innerWidth*.86)greet.style.fontSize=Math.max(base,base*USER.greetScale*innerWidth*.86/wide)+'px';
+ // groß im oberen Drittel, aber nie über der Stelle, an der sie später steht
+ greet.style.top=Math.max((place.top+place.bottom)/2,innerHeight*USER.greetAt)+scrollY-greet.offsetHeight/2+'px';
  const greeting=splitTextNodes(greet,true);
- play(greet,[{opacity:0,transform:'translateY(8px)'},{opacity:1,transform:'none'}],{duration:USER.greetIn,easing:EASE_OUT,fill:'backwards'});
+ play(greet,[{opacity:0,transform:'translateY(14px)'},{opacity:1,transform:'none'}],{duration:USER.greetIn,easing:EASE_OUT,fill:'backwards'});
  await hold(USER.greetIn+USER.greetHold);if(done)return;
 
  // 2. Sobald der Satz des Tages da ist: Der Vogel fliegt aus dem Logo (die Kachel wird leer), überfliegt
@@ -270,7 +276,7 @@ export async function runUserIntro(){
   void mark.offsetWidth;
   mark.classList.remove('is-filled');
   flock.beginFrom(mark);
-  if(!await flock.dissolve(greeting,innerWidth<560?USER.birdsSmall:USER.birds)||done)return;
+  if(!await flock.dissolve(greeting,innerWidth<560?USER.birdsSmall:USER.birds,USER.flyMs,USER.dissolveSpeed)||done)return;
   if(!await flock.write(sentence,USER.writeSpeed)||done)return;
   await hold(USER.sentenceGap);if(done)return;
   // 3. Wie bei den Gästen: Der Schwarm fliegt davon, der farbige Vogel landet im Logo und wird wieder

@@ -1285,13 +1285,14 @@ header>.today>.today-details,.today-goal-picker{border:1.5px solid var(--ink);bo
 /* Vogel-Intro für Angemeldete (guest-intro.mjs: runUserIntro): Die Begrüßung steht als eigene Ebene über der
    Seite, der Vogel verlässt das Logo (die Kachel wird leer), die Begrüßung löst sich Buchstabe für Buchstabe
    in den Schwarm auf, der Schwarm schreibt den Satz des Tages. */
-.intro-greet{position:absolute;left:0;right:0;z-index:30;margin:0;line-height:1.3;text-align:center;white-space:nowrap;pointer-events:none}
+.intro-greet{position:absolute;left:0;right:0;z-index:30;margin:0;line-height:1.2;letter-spacing:-.02em;text-align:center;white-space:nowrap;pointer-events:none}
 .intro-greet .intro-lead{color:var(--ink)}
 .intro-greet .intro-tail{margin-left:.25em;color:var(--heading-accent)}
 .intro-greet br{display:none}
-.intro-greet .intro-ch{transition:opacity .3s ease,transform .45s cubic-bezier(.2,.7,.2,1),filter .3s ease}
+.intro-greet .intro-ch{transition:opacity .55s ease,transform .7s cubic-bezier(.2,.7,.2,1),filter .55s ease}
 .intro-greet .intro-ch:not(.on){transform:translateY(-.3em) scale(.6)}
 .brand-mark.is-filling::before{transition:clip-path .45s cubic-bezier(.2,.7,.2,1)}
 .intro-user .brand-mark.is-filling:not(.is-filled) svg{opacity:0;transform:scale(.3) rotate(-25deg)}
 #daily-sentence.intro-write:is(.is-entering,.intro-drop) .guest-word{animation:none}
 @media print{.intro-greet{display:none}}
+.daily-sentence.intro-bare .daily-source{transition:none}
