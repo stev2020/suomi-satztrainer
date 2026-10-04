@@ -1,6 +1,8 @@
-// Vanamo – Vogelschwarm für das Gäste-Intro und die zwei Schwalben auf der Gäste-Startseite.
+// Vanamo – Vogelschwarm für das Intro und die zwei Schwalben auf der Startseite (Gäste und Angemeldete).
 //
-// Im Intro (guest-intro.mjs steuert den Ablauf):
+// Intro für Angemeldete: beginFrom() – nur der farbige Vogel startet am Logo –, dissolve() – er überfliegt
+// die Begrüßung, jeder Buchstabe wird zu Vögeln –, danach write(), release(), settle() wie unten.
+// Im Gäste-Intro (guest-intro.mjs steuert den Ablauf):
 //   begin()   – der Schwarm kreist in der Bildmitte,
 //   write()   – er fliegt an den Zeilenanfang, sammelt sich und zieht durch die Zeile;
 //               hinter ihm erscheinen die Buchstaben (Klasse `on`),
@@ -147,8 +149,41 @@ export function createBirds(){
   spread={x:Math.max(70,W*.12),y:Math.max(60,VH*.13)};mode='circle';
   att={x:W/2,y:VH*.45};loop();
  }
- // Schreibt die Zeichen in `list` (Elemente mit Klasse `intro-ch`), Zeile für Zeile.
- async function write(list){
+ const newBird=(x,y,mint)=>({x,y,vx:0,vy:0,mode:'follow',mint,alpha:1,
+  lag:mint?70:Math.random()*380,r:mint?.3:Math.sqrt(Math.random()),ang:Math.random()*6.28,spin:(Math.random()<.5?-1:1)*(1.2+Math.random()*2.6),
+  size:mint?10:3.4+Math.random()*3,flap:Math.random()*6.28,rate:17+Math.random()*10});
+ // Intro für Angemeldete: Es gibt zuerst nur den farbigen Vogel, er startet in `markEl` (dem Logo).
+ function beginFrom(markEl){
+  intro=true;first=true;VH=innerHeight;mount(VH);
+  const m=rect(markEl);
+  birds=[newBird(m.cx,m.cy,true)];sparks=[];hist=[];
+  spread={x:34,y:16};mode='';att={x:m.cx,y:m.cy};loop();
+ }
+ // Der farbige Vogel fliegt an den Anfang der Zeichen in `list` und zieht darüber hinweg. Jedes überflogene
+ // Zeichen verschwindet (Klasse `on` fällt weg) und wird zu Vögeln – am Ende sind es `count`.
+ async function dissolve(list,count){
+  const pos=list.map(el=>({el,...rect(el)})).sort((a,b)=>a.cx-b.cx);
+  if(!pos.length)return true;
+  const x0=Math.max(14,pos[0].l-24),x1=Math.max(...pos.map(p=>p.r))+50,h=Math.max(...pos.map(p=>p.b-p.t));
+  const cy=pos.reduce((sum,p)=>sum+p.cy,0)/pos.length,from={...att};
+  if(!await tween(520,p=>{const e=ease(p);att.x=lerp(from.x,x0,e);att.y=lerp(from.y,cy,e)-Math.sin(p*Math.PI)*h*.5;}))return false;
+  let made=0,gone=0;
+  const burst=c=>{
+   c.el.classList.remove('on');gone++;
+   for(const want=Math.round(count*gone/pos.length);made<want;made++){
+    const b=newBird(c.cx+(Math.random()-.5)*(c.r-c.l),c.cy+(Math.random()-.5)*(c.b-c.t)*.6,false);
+    b.vx=120+Math.random()*160;b.vy=-(40+Math.random()*160);birds.push(b);
+   }
+  };
+  const ok=await tween(Math.max(520,(x1-x0)/.8),p=>{
+   att.x=lerp(x0,x1,p);att.y=cy+Math.sin(p*Math.PI*2)*h*.14;
+   for(const c of pos)if(!c.done&&c.cx<att.x-12){c.done=true;burst(c);}
+  });
+  for(const c of pos)if(!c.done){c.done=true;if(ok)burst(c);else c.el.classList.remove('on');}
+  return ok;
+ }
+ // Schreibt die Zeichen in `list` (Elemente mit Klasse `intro-ch`), Zeile für Zeile. `speed`: px je ms.
+ async function write(list,speed=.62){
   mode='';
   const pos=list.map(el=>({el,...rect(el)})),rows=[];
   for(const p of pos){const row=rows.find(r=>Math.abs(r.cy-p.cy)<(p.b-p.t)*.5);if(row)row.items.push(p);else rows.push({cy:p.cy,h:p.b-p.t,items:[p]});}
@@ -159,7 +194,7 @@ export function createBirds(){
    // Warten, bis auch die Nachzügler am Zeilenanfang sind – sie sollen die Zeile von Anfang an begleiten.
    if(!first&&!await tween(430,p=>{att.x=x0+Math.sin(p*Math.PI*2)*6;att.y=row.cy+Math.cos(p*Math.PI*2)*row.h*.1;}))return false;
    first=false;
-   if(!await tween(Math.max(650,(x1-x0)/.62),p=>{
+   if(!await tween(Math.max(650,(x1-x0)/speed),p=>{
     att.x=lerp(x0,x1,p);att.y=row.cy+Math.sin(p*Math.PI*3)*row.h*.14;
     for(const c of row.items)if(c.cx<att.x-28)c.el.classList.add('on');
    }))return false;
@@ -188,13 +223,16 @@ export function createBirds(){
   })();
  }
 
- // ---- Sitzplätze: Oberkanten von Elementen der Gäste-Startseite ----
+ // ---- Sitzplätze: Oberkanten von Elementen der Startseite ----
  const shown=el=>el&&!el.hidden&&el.getClientRects().length?el:null;
  const PERCH=[
-  ['button',()=>{const el=shown(document.querySelector('#guest-card .guest-first'));return el&&rect(el);},0],
+  // der Hauptknopf: für Gäste an der Satzkarte, für Angemeldete „Aufgaben starten“
+  ['button',()=>{const el=shown(document.querySelector('#guest-card .guest-first'))||shown(document.getElementById('start-daily-session'));return el&&rect(el);},0],
   ['account',()=>{const el=shown(document.getElementById('account-button'));return el&&rect(el);},0],
   // der orange Trennstrich unter der Überschrift (ein ::after, deshalb aus dem Block berechnet)
   ['rule',()=>{const el=shown(document.querySelector('#home-view .intro'));if(!el||getComputedStyle(el,'::after').content==='none')return null;const r=rect(el);return {l:r.cx-28,r:r.cx+28,t:r.b-2};},0],
+  // Angemeldete: der zweite orange Strich über „Wiederholen“
+  ['rule2',()=>{const el=shown(document.querySelector('#home-view .home-daily'));if(!el||getComputedStyle(el,'::before').content==='none')return null;const r=rect(el);return {l:r.cx-28,r:r.cx+28,t:r.t};},0],
   // am Logo: eine auf der oberen rechten Ecke der (gedrehten) Kachel, die andere auf dem „v“ von „vanamo“
   ['brand',brandSeats,0]
  ];
@@ -215,7 +253,7 @@ export function createBirds(){
   return {l:corner.x-12,r:letter.x+12,t:Math.min(corner.y,letter.y),pts:[corner,letter]};
  }
  function available(){
-  if(!html.classList.contains('is-guest')||!shown(document.getElementById('home-view')))return [];
+  if(!shown(document.getElementById('home-view')))return [];
   return PERCH.map(([name,find,dy])=>{const r=find();return r&&r.r-r.l>=24&&r.t>(r.pts?4:24)&&r.t<H-4?{name,l:r.l,r:r.r,t:r.t+dy,pts:r.pts}:null;}).filter(Boolean);
  }
  // Sucht einen Platz für beide nebeneinander. `prefer`: Wunschplatz; sonst ein anderer als der jetzige.
@@ -243,7 +281,7 @@ export function createBirds(){
   if(ps.some(b=>Math.hypot(b.x-e.pageX,b.y-5-e.pageY)<46))flyTogether(null,true);
  }
  function areaHeight(){
-  const card=shown(document.getElementById('guest-card'));
+  const card=shown(document.getElementById('guest-card'))||shown(document.querySelector('#home-view .home-daily'));
   return Math.min(Math.max(innerHeight,card?rect(card).b+60:0),1600);
  }
  // Regelmäßiger Blick: Stimmt der Sitzplatz noch? Gibt es wieder einen? Ab und zu zuckt ein Flügel.
@@ -289,5 +327,5 @@ export function createBirds(){
  // Gäste ohne Intro: Die zwei kommen angeflogen, sobald es einen Sitzplatz gibt.
  function startPets(){mount(areaHeight());watch();check();}
 
- return {begin,wait,write,release,settle,skip,startPets};
+ return {begin,beginFrom,dissolve,wait,write,release,settle,skip,startPets};
 }
