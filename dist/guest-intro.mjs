@@ -36,7 +36,7 @@ const T={
 const EASE_MOVE='cubic-bezier(.65,0,.25,1)',EASE_OUT='cubic-bezier(.2,.7,.2,1)';
 const SEEN='vanamo-intro-seen';
 
-import {createBirds} from './intro-birds.mjs?v=4';
+import {createBirds} from './intro-birds.mjs?v=5';
 
 const html=document.documentElement;
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -185,14 +185,14 @@ function revealRest(selector,play){
 const USER={
  cardWait:6000,     // Satz des Tages braucht Sätze und Wortanalyse – so lange höchstens warten
  greetIn:700,       // Begrüßung blendet ein …
- greetHold:1300,    // … und steht gut eine Sekunde allein
+ greetHold:100,     // … und sobald sie dasteht, fliegt der Vogel los (er braucht ja kurz bis dahin)
  greetScale:3,      // so viel größer als später an ihrem Platz (höchstens 86 % der Breite)
  greetAt:.36,       // Höhe der Begrüßung im Bild
  birds:110,         // Größe des Schwarms; auf schmalen Bildschirmen:
  birdsSmall:45,
- flyMs:1000,        // der Vogel fliegt in Ruhe vom Logo zur Begrüßung
- dissolveSpeed:.34, // … und zieht langsam darüber (px je ms)
- writeSpeed:.42,    // der Schwarm schreibt ruhig, langsamer als bei den Gästen (px je ms)
+ flyMs:900,         // der Vogel fliegt in Ruhe vom Logo zur Begrüßung
+ dissolveSpeed:.4,  // … und zieht langsam darüber (px je ms)
+ writeSpeed:.5,     // der Schwarm schreibt ruhig, langsamer als bei den Gästen (px je ms)
  sentenceGap:700    // Satz steht fertig da, dann fliegt der Schwarm davon
 };
 const DAY='vanamo-user-intro-day'; // das Intro für Angemeldete läuft in jedem neuen Tab, beim Neuladen im selben Tab erst am nächsten Tag wieder (index.html)
