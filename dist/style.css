@@ -1101,3 +1101,9 @@ h1 .intro-w,h1 .intro-ch{color:inherit}
 :is(#manage-dialog,#about-dialog) :is(#close-manage,#close-about){display:grid;place-items:center;flex:none;width:44px;height:44px;min-height:0;margin:-8px -12px -8px 0;padding:0;border:0;border-radius:50%;background:none;box-shadow:none;font-size:18px;color:var(--ink-soft)}
 :is(#manage-dialog,#about-dialog) :is(#close-manage,#close-about):hover{background:color-mix(in srgb,var(--ink) 7%,transparent);color:var(--ink)}
 @media(max-width:640px){:is(#manage-dialog,#about-dialog){padding:24px 20px 22px;border-radius:18px}}
+/* Wort-Fenster (Wort antippen) im reduzierten Stil: dünner dunkler Rand ohne Schatten, Wort in der
+   dünneren Serifenschrift, Wortart als runde Marke in --mint; das angetippte Wort ist in --mint hinterlegt. */
+.word-popover{padding:14px 16px;border:1.5px solid var(--ink);border-radius:16px;box-shadow:none}
+.word-popover-word{font-size:22px;font-weight:500;letter-spacing:-.01em}
+.word-popover-form{display:inline-block;padding:3px 10px;border-radius:999px;background:color-mix(in srgb,var(--mint) 60%,transparent);font-size:12px;font-weight:600}
+.fi-word:hover,.fi-word:focus-visible,.fi-word.active{background:color-mix(in srgb,var(--mint) 55%,transparent);text-decoration-color:var(--ink)}
