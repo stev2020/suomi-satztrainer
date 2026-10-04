@@ -1057,3 +1057,41 @@ h1 .intro-w,h1 .intro-ch{color:inherit}
 #report-dialog #report-status:empty{display:none}
 @media(max-width:640px){#report-dialog{padding:24px 20px 22px;border-radius:18px}}
 @media(prefers-reduced-motion:reduce){#report-dialog .primary{transition:none}}
+/* „Alle Einstellungen“ in der reduzierten Übungskarte (#practice-view.is-path): Einstellungen stehen oben
+   in der Karte, ohne eigene Fläche. Übungsart als Textreiter (gewählte orange unterstrichen), Lernrichtung
+   als runde Segmente (Auswahl in --mint), Lernauswahl als Reiter mit feiner Linie. */
+#practice-view.is-path .practice-settings{order:-4;width:min(648px,100%);margin:0 0 34px;padding:0 0 4px;border:0;border-bottom:1px solid color-mix(in srgb,var(--ink) 14%,transparent);border-radius:0;background:none}
+#practice-view.is-path .settings-body{padding:0;border:0;text-align:center}
+#practice-view.is-path .settings-level-row{justify-content:center;gap:14px;margin:0 0 18px;padding:0;border:0}
+#practice-view.is-path .settings-level-row>span{display:flex;align-items:baseline;gap:8px}
+#practice-view.is-path .settings-level-row small{font-size:12px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase}
+#practice-view.is-path .settings-level-row strong{font-size:14px}
+#practice-view.is-path .settings-level-row .quiet{min-height:36px;padding:5px 14px;border:1px solid color-mix(in srgb,var(--ink) 30%,transparent);border-radius:999px;background:none;box-shadow:none;font-size:13px;font-weight:500}
+#practice-view.is-path .settings-level-row .quiet:hover{border-color:var(--ink)}
+#practice-view.is-path .practice-settings .choice-field legend{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+#practice-view.is-path .activity-field{margin:0 0 20px}
+#practice-view.is-path .activity-field .choice-buttons{display:flex;flex-wrap:wrap;justify-content:center;gap:0 18px;border-bottom:1px solid color-mix(in srgb,var(--ink) 14%,transparent)}
+#practice-view.is-path .activity-field .choice-buttons button{flex:none;min-height:44px;margin-bottom:-1px;padding:8px 0;border:0;border-bottom:2px solid transparent;border-radius:0;background:none;box-shadow:none;font-size:13px;font-weight:500;color:var(--muted);transform:none}
+#practice-view.is-path .activity-field .choice-buttons button:not(.is-locked):hover{background:none;color:var(--ink)}
+#practice-view.is-path .activity-field .choice-buttons button.is-locked{cursor:not-allowed}
+#practice-view.is-path .activity-field .choice-buttons button.selected{border-bottom-color:var(--orange);background:none;font-weight:700;color:var(--ink)}
+#practice-view.is-path .toolbar{flex-direction:column;align-items:center;gap:10px}
+#practice-view.is-path .direction-field{flex:none}
+#practice-view.is-path .direction-field .choice-buttons{display:inline-flex;gap:0;max-width:100%;padding:3px;border:1px solid color-mix(in srgb,var(--ink) 25%,transparent);border-radius:999px}
+#practice-view.is-path .direction-field .choice-buttons button{min-height:38px;padding:6px 14px;border:0;border-radius:999px;background:none;box-shadow:none;font-size:14px;font-weight:500;color:var(--ink-soft);white-space:nowrap;transform:none}
+#practice-view.is-path .direction-field .choice-buttons button:not(.selected):hover{background:color-mix(in srgb,var(--ink) 7%,transparent);color:var(--ink)}
+#practice-view.is-path .direction-field .choice-buttons button.selected{background:var(--mint);font-weight:600;color:var(--ink)}
+#practice-view.is-path .audio-filter{font-size:13px;color:var(--ink-soft)}
+#practice-view.is-path .audio-filter input{accent-color:var(--heading-accent)}
+#practice-view.is-path .modes{justify-content:center;gap:0 22px;margin-top:14px;border-bottom:0}
+#practice-view.is-path .modes button{margin-bottom:0;padding:8px 0;border-bottom:2px solid transparent;font-size:13px}
+#practice-view.is-path .modes button.selected{border-color:var(--orange);color:var(--ink)}
+#practice-view.is-path .modes span{border:0;border-radius:999px;background:color-mix(in srgb,var(--ink) 8%,transparent);color:var(--ink-soft);font-size:11px}
+#practice-view.is-path .modes .selected span{background:var(--mint);color:var(--ink)}
+@media(max-width:640px){
+#practice-view.is-path .practice-settings{margin:0 0 26px}
+#practice-view.is-path .activity-field .choice-buttons{gap:0 14px}
+#practice-view.is-path .direction-field .choice-buttons{flex-wrap:wrap;justify-content:center;border-radius:22px}
+#practice-view.is-path .direction-field .choice-buttons button{padding:6px 10px;font-size:13px}
+#practice-view.is-path .modes{gap:0 14px}
+}
