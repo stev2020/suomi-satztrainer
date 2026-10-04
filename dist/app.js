@@ -15,7 +15,7 @@ import {mountWordLookup,loadLexicon,lookupForSentence,splitSentence,getLexicon} 
 import {planVerbs,planEndings,interleave,alternate,verbCard,endingCard} from './daily-mix.mjs?v=3';
 import {validateEndingsProgress,mergeEndingsProgress,markEndingAnswered,missedEndings} from './endings-progress.mjs?v=1';
 import {createGuestCard,shortGloss,flipWordIndex} from './guest-card.mjs?v=12';
-import {renderGreeting,renderToday,createDailySentence,animateProgress,GOAL_CHOICES,DAILY_GOAL} from './home-extras.mjs?v=9';
+import {renderGreeting,renderToday,createDailySentence,animateProgress,GOAL_CHOICES,DAILY_GOAL} from './home-extras.mjs?v=10';
 import {buildDifficultDeck} from './difficult-words.mjs?v=2';
 import {buildEndingItems,indexLexicon,renderEndings,hasEndingChoices} from './endings-practice.mjs?v=2';
 import {translationFeedbackMarkup} from './translation-feedback.mjs?v=1';

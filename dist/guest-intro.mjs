@@ -224,8 +224,8 @@ export async function runUserIntro(){
   words.style.transformOrigin=`${(left+right)/2-box.left}px ${(top+bottom)/2-box.top}px`;
   const big=`scale(${scale})`;
   words.style.transform=big;
-  // Die Wortkacheln fallen herunter und hüpfen nach (CSS: daily-drop).
-  await hold(1000+words.querySelectorAll('.cycle-word').length*120);if(done)return;
+  // Die Wörter blenden nacheinander ein (CSS: daily-rise).
+  await hold(700+words.querySelectorAll('.guest-word').length*70);if(done)return;
   await hold(USER.sentenceGap);if(done)return;
   card.classList.add('intro-growing');
   card.classList.remove('intro-bare');
