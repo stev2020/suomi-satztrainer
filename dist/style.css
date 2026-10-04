@@ -943,3 +943,19 @@ h1 .intro-w,h1 .intro-ch{color:inherit}
 #account-dialog .recovery-result code{border-color:color-mix(in srgb,var(--ink) 30%,transparent);border-radius:10px}
 @media(max-width:640px){#account-dialog{padding:24px 20px 22px;border-radius:18px}#account-dialog .account-tabs{gap:0 14px}#account-dialog .account-tabs button{font-size:13px}}
 @media(prefers-reduced-motion:reduce){#account-dialog .primary{transition:none}}
+/* „Fortschritt speichern?“ (erste Aufgabe als Gast) im Stil des Kontofensters:
+   feiner Rand, „Registrieren“ als Hauptknopf, „Anmelden“ und „Ohne Konto fortfahren“ als schmale Knöpfe. */
+#guest-start-dialog{max-width:420px;padding:30px 36px 28px;border:1px solid color-mix(in srgb,var(--ink) 22%,transparent);border-radius:22px;box-shadow:none}
+#guest-start-dialog .dialog-top h2{font-size:26px;font-weight:500;letter-spacing:-.01em}
+#guest-start-dialog #close-guest-start{display:grid;place-items:center;width:44px;height:44px;min-height:0;margin:-8px -12px -8px 0;padding:0;border:0;border-radius:50%;background:none;box-shadow:none;font-size:18px;color:var(--ink-soft)}
+#guest-start-dialog #close-guest-start:hover{background:color-mix(in srgb,var(--ink) 7%,transparent);color:var(--ink)}
+#guest-start-dialog>p{margin:12px 0 0}
+#guest-start-dialog .guest-start-actions{grid-template-columns:1fr;gap:10px;margin-top:24px}
+#guest-start-dialog .guest-start-actions .primary{grid-column:1/-1;width:100%;min-height:56px;padding:10px 24px;border:2px solid var(--ink);border-radius:14px;background:linear-gradient(var(--orange),var(--orange)) no-repeat left/0 100%,var(--paper);box-shadow:3.5px 3.5px 0 var(--orange);font:600 20px/1 var(--heading);letter-spacing:-.2px;color:var(--ink);transition:background-size .45s cubic-bezier(.65,0,.35,1),box-shadow .45s ease,color .3s ease}
+#guest-start-dialog .guest-start-actions .primary:is(:active,:focus-visible){transform:none;background-size:100% 100%;box-shadow:3.5px 3.5px 0 var(--ink);color:var(--on-orange)}
+@media(hover:hover){#guest-start-dialog .guest-start-actions .primary:hover{transform:none;background-size:100% 100%;box-shadow:3.5px 3.5px 0 var(--ink);color:var(--on-orange)}}
+#guest-start-dialog .guest-start-actions .primary{margin-bottom:8px}
+#guest-start-dialog .guest-start-actions button:not(.primary){grid-column:auto;min-height:46px;margin:0;padding:8px 12px;border:1px solid color-mix(in srgb,var(--ink) 30%,transparent);border-radius:999px;background:none;box-shadow:none;font-size:14px;font-weight:500;color:var(--ink)}
+#guest-start-dialog .guest-start-actions button:not(.primary):hover{border-color:var(--ink);background:none}
+@media(max-width:640px){#guest-start-dialog{padding:24px 20px 22px;border-radius:18px}}
+@media(prefers-reduced-motion:reduce){#guest-start-dialog .guest-start-actions .primary{transition:none}}
