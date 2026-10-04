@@ -32,3 +32,25 @@ body:not([data-account="authenticated"]) .game-preview{display:block;width:min(1
 body:not([data-account="authenticated"]) .game-guest-note{display:block;margin:0 0 16px;padding:12px 14px;border-radius:12px;background:var(--lavender-tint);line-height:1.5}
 @media(max-width:700px){.game-card{grid-template-columns:minmax(0,1fr);padding:18px;gap:16px;box-shadow:4px 4px 0 var(--lavender)}body:not([data-account="authenticated"]) .game-preview{width:min(100%,210px)}}
 @media(max-width:380px){.game-decks .choice-row{grid-template-columns:1fr}}
+/* ---- Spiele im reduzierten Stil (Okt 2026) ----
+   Überschrift mittig in der dünneren Serifenschrift, Karte mit feinem Rand statt Schatten, Vorschau ohne
+   dunklen Rahmen, Hinweis ohne Kasten, Startknopf mit dunklem Rand und orangem Schatten (füllt sich beim
+   Überfahren). Die Deck-Auswahl für Angemeldete hat feine Ränder, die Auswahl ist in --mint gefüllt. */
+#games-view .games-intro{margin:20px auto 30px;text-align:center}
+#games-view .games-intro h1{font-size:clamp(28px,5vw,34px);font-weight:500;line-height:1.15;letter-spacing:-.02em;color:var(--ink)}
+#games-view .games-intro p{margin-inline:auto}
+#games-view .game-card{gap:36px;padding:30px 36px;border:1px solid color-mix(in srgb,var(--ink) 22%,transparent);border-radius:22px;box-shadow:none}
+#games-view .game-card img,#games-view .game-preview{border:1px solid color-mix(in srgb,var(--ink) 22%,transparent);box-shadow:none}
+#games-view .game-card h2{margin-bottom:10px;font-size:30px;font-weight:500;line-height:1.15;letter-spacing:-.02em}
+#games-view .game-card>div>p{color:var(--muted)}
+#games-view .game-guest-note{padding:0;background:none;font-size:14px}
+#games-view .game-decks legend{font-weight:600;letter-spacing:1.4px;color:var(--muted)}
+#games-view .game-decks button{border:1px solid color-mix(in srgb,var(--ink) 30%,transparent);border-radius:14px;background:none;box-shadow:none;font-weight:600}
+#games-view .game-decks button:hover{border-color:var(--ink)}
+#games-view .game-decks button[aria-pressed="true"]{border-color:var(--ink);background:var(--mint)}
+#games-view .game-start{width:auto;max-width:100%;min-height:58px;margin-top:10px;padding:10px 32px;border:2px solid var(--ink);border-radius:14px;background:linear-gradient(var(--orange),var(--orange)) no-repeat left/0 100%,var(--paper);box-shadow:3.5px 3.5px 0 var(--orange);font:600 21px/1.15 var(--heading);letter-spacing:-.2px;color:var(--ink);transition:background-size .45s cubic-bezier(.65,0,.35,1),box-shadow .45s ease,color .3s ease}
+#games-view .game-start:not(:disabled):is(:active,:focus-visible){transform:none;background-size:100% 100%;box-shadow:3.5px 3.5px 0 var(--ink);color:var(--on-orange)}
+@media(hover:hover){#games-view .game-start:not(:disabled):hover{transform:none;background-size:100% 100%;box-shadow:3.5px 3.5px 0 var(--ink);color:var(--on-orange)}}
+#games-view .games-more{text-align:center}
+@media(max-width:700px){#games-view .game-card{gap:20px;padding:22px 18px;border-radius:18px;text-align:center}#games-view .game-decks button{text-align:left}}
+@media(prefers-reduced-motion:reduce){#games-view .game-start{transition:none}}
