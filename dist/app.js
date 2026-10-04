@@ -223,11 +223,11 @@ function renderDailyPlan(){
  renderLearningPath();
  $('daily-plan-note').textContent=dailyNote(stats);
  button.disabled=!ready||(!available&&!(dailySession?.active&&queue.length));
- // Ohne Konto steht dort die Satzkarte; „Sätze wiederholen“ erscheint nur, wenn in dieser Sitzung etwas fällig ist.
+ // Ohne Konto steht dort die Satzkarte; „Wiederholen“ gibt es für Gäste nicht – sie machen mit neuen Sätzen weiter.
  // Satzkarte und „Sätze wiederholen“ immer aus demselben Kontostand ableiten, damit nie beides falsch zusammen steht.
  const card=typeof guestCard==='undefined'?null:guestCard,guest=!accountActive()&&!!card?.available;
  if(card){$('guest-card').hidden=!guest;if(guest)card.start();else card.stop();}
- document.querySelector('.home-daily').hidden=guest&&!stats.dueCount&&!(dailySession?.active&&queue.length);
+ document.querySelector('.home-daily').hidden=guest;
  button.textContent=dailySession?.active&&queue.length?'Wiederholung fortsetzen':!available?'Alles wiederholt':onlySentences?`${available} ${available===1?'Satz':'Sätze'} wiederholen`:`${available} ${available===1?'Aufgabe':'Aufgaben'} starten`;
  $('header-practice').disabled=button.disabled;
  const favs=ready?favoriteSentences().length:0;if($('home-favorites')){$('home-favorites').hidden=!favs;$('fav-home-count').textContent=favs;}

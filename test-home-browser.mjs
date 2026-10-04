@@ -86,12 +86,14 @@ try{
  assert.ok(Number(await page.locator('#daily-due').textContent())>0);
  // Tageswiederholung als Gast: Hinweis, dass ohne Konto nichts gespeichert wird
  await page.evaluate(()=>{document.body.dataset.account='guest';});
- await page.locator('#start-daily-session').click();
+ // Gäste sehen die „Wiederholen“-Box nicht mehr; die Runde selbst wird hier weiter über den (verborgenen) Knopf geprüft.
+ await page.waitForFunction(()=>document.querySelector('.home-daily').hidden);
+ await page.locator('#start-daily-session').evaluate(button=>button.click());
  assert.ok(await page.locator('#guest-start-dialog').isVisible());
  assert.match(await page.locator('#guest-start-dialog').textContent(),/Ohne Konto wird dein Fortschritt nicht gespeichert/);
  assert.equal(await page.locator('[data-guest-account]').count(),2);
  await page.locator('[data-guest-account="register"]').click();assert.ok(await page.locator('#register-form').isVisible());await page.locator('#close-account').click();
- await page.locator('#start-daily-session').click();await page.locator('#guest-continue').click();
+ await page.locator('#start-daily-session').evaluate(button=>button.click());await page.locator('#guest-continue').click();
  assert.ok((await page.locator('#session-progress').textContent()).endsWith('/ 4'));
  await page.evaluate(()=>{document.body.dataset.account='authenticated';});
  await home();
@@ -168,7 +170,7 @@ try{
  for(const s of reviewSentences)focusedState.reviews[s.id+':fi-de']={due:now,interval:0,repetitions:1,updatedAt:now};
  await focused.evaluate(state=>window.suomiLearningState.applyCloud(state),focusedState);
  assert.equal(await focused.locator('#daily-due').textContent(),'3');
- await focused.locator('#start-daily-session').click();assert.ok(await focused.locator('#guest-start-dialog').isVisible());await focused.locator('#guest-continue').click();
+ await focused.locator('#start-daily-session').evaluate(button=>button.click());assert.ok(await focused.locator('#guest-start-dialog').isVisible());await focused.locator('#guest-continue').click();
  // Explicit retry keeps its difficulty and comes after two other sentences.
  const expected=[reviewSentences[0],reviewSentences[1],reviewSentences[2],reviewSentences[0]];
  const difficulties=['easy','easy','hard','easy'];
@@ -178,7 +180,7 @@ try{
   if(i===0){
    await focused.locator('#practice-view [data-view="home"]').click();
    assert.equal(await focused.locator('#start-daily-session').textContent(),'Wiederholung fortsetzen');
-   await focused.locator('#start-daily-session').click();
+   await focused.locator('#start-daily-session').evaluate(button=>button.click());
   }
   if(difficulties[i]==='easy')await focused.locator('[data-pick-word]').first().click();
   await focused.locator('#reveal').click();
@@ -187,7 +189,7 @@ try{
    await focused.locator('#practice-view [data-view="home"]').click();
    await focused.keyboard.press('1');
    assert.deepEqual(await focused.evaluate(()=>window.suomiLearningState.snapshot().reviews),before);
-   await focused.locator('#start-daily-session').click();
+   await focused.locator('#start-daily-session').evaluate(button=>button.click());
   }
   await focused.locator(i===0?'#grade-again':'[data-grade="hard"]').click();
  }
