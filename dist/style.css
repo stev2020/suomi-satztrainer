@@ -1095,3 +1095,9 @@ h1 .intro-w,h1 .intro-ch{color:inherit}
 #practice-view.is-path .direction-field .choice-buttons button{padding:6px 10px;font-size:13px}
 #practice-view.is-path .modes{gap:0 14px}
 }
+/* „Lernstand & Hinweise“ und „Über die Sätze“: Rahmen wie die anderen Fenster (feiner Rand, ✕ ohne Kasten). */
+:is(#manage-dialog,#about-dialog){border:1px solid color-mix(in srgb,var(--ink) 22%,transparent);border-radius:22px;padding:30px 36px 28px;box-shadow:none}
+:is(#manage-dialog,#about-dialog) .dialog-top h2{font-size:26px;font-weight:500;letter-spacing:-.01em}
+:is(#manage-dialog,#about-dialog) :is(#close-manage,#close-about){display:grid;place-items:center;flex:none;width:44px;height:44px;min-height:0;margin:-8px -12px -8px 0;padding:0;border:0;border-radius:50%;background:none;box-shadow:none;font-size:18px;color:var(--ink-soft)}
+:is(#manage-dialog,#about-dialog) :is(#close-manage,#close-about):hover{background:color-mix(in srgb,var(--ink) 7%,transparent);color:var(--ink)}
+@media(max-width:640px){:is(#manage-dialog,#about-dialog){padding:24px 20px 22px;border-radius:18px}}
