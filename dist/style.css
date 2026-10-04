@@ -1031,3 +1031,8 @@ h1 .intro-w,h1 .intro-ch{color:inherit}
 #practice-view.is-path #card .sentence-tap:hover{transform:none;box-shadow:none}
 #practice-view.is-path #card .sentence-flip .sentence-back{background:none}
 #practice-view.is-path .grammar{border:1px solid color-mix(in srgb,var(--ink) 25%,transparent);border-radius:14px;box-shadow:none}
+/* Herkunft der Übersetzung: „Direkte Tatoeba-Übersetzung“ ist der Normalfall und wird nicht mehr angezeigt
+   (die Quelle steht am ⓘ und unter „Quellen & Aufnahmen“). Indirekte und KI-Übersetzungen bleiben als
+   kleine graue Zeile ohne Rahmen – dort hilft der Hinweis, weil die Übersetzung ungenau sein kann. */
+.translation-provenance.direct,.sentence-flip+.translation-provenance.direct{display:none}
+.translation-provenance:is(.indirect,.generated){padding:0;border:0;border-radius:0;background:none;font-size:12px;font-weight:500;color:var(--muted)}
