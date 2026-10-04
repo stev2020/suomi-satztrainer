@@ -107,7 +107,9 @@ try{
  assert.equal(await page.locator('#continue-practice').textContent(),'Üben');
  const colors=await page.evaluate(()=>['.today','#home-review','.home-exercises .selected','#continue-practice'].map(selector=>getComputedStyle(document.querySelector(selector)).backgroundColor));
  assert.equal(colors[1],colors[2]);assert.notEqual(colors[1],colors[3]);
- assert.equal(colors[0],await page.evaluate(()=>getComputedStyle(document.querySelector('.home-verbs')).backgroundColor),'„heute geübt“ hat die Farbe der Verbformen-Box');
+ // Reduzierter Stil: „Verbformen“ ist eine ruhige Karte wie „Neue Sätze lernen“, nur „heute geübt“ bleibt farbig.
+ const cards=await page.evaluate(()=>['.home-verbs','.home-new'].map(selector=>getComputedStyle(document.querySelector(selector)).backgroundColor));
+ assert.equal(cards[0],cards[1],'„Verbformen“ hat den Kartenhintergrund von „Neue Sätze lernen“');assert.notEqual(colors[0],cards[0]);
  assert.equal(await page.locator('#home-view').getByText('3 Verbformen zur Wiederholung').count(),0);
  if(process.env.HOME_SCREENSHOTS)await page.screenshot({path:process.env.HOME_SCREENSHOTS+'/home-desktop.png',fullPage:true});
  for(const width of [390,320]){
