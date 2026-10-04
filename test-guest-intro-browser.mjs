@@ -115,32 +115,43 @@ try{
  await page.waitForFunction(()=>document.querySelector('canvas.intro-birds')?.dataset.pets==='none',null,{timeout:8000});
  await page.context().close();
 
- // Angemeldete: nur Logo und Satz des Tages (größer), dann wächst die Karte, der Satz wird normal groß,
- // der Rest blendet ein; die Begrüßung steht zuerst auf Deutsch und dreht sich nach 2 s auf Finnisch.
+ // Angemeldete: Logo und Begrüßung, dann fliegt der Vogel aus dem Logo, die Begrüßung wird zum Schwarm,
+ // der Schwarm schreibt den Satz des Tages, der Vogel kehrt ins Logo zurück, zwei Schwalben bleiben;
+ // der Rest blendet ein, die Begrüßung steht zuerst auf Deutsch und dreht sich nach 2 s auf Finnisch.
  page=await newPage();
  await page.addInitScript(()=>localStorage.setItem('suomi-auth-session-v1',JSON.stringify({access_token:'a',refresh_token:'r',user:{id:'u',user_metadata:{username:'testi'}}})));
  await page.goto(origin+'/?intro');
  await page.waitForFunction(()=>document.documentElement.classList.contains('intro-user')&&document.documentElement.classList.contains('intro-running'));
- await page.waitForFunction(()=>document.getElementById('daily-sentence')?.classList.contains('intro-bare'),null,{timeout:8000});
- await page.waitForTimeout(300);
+ await page.locator('.intro-greet').waitFor({state:'attached',timeout:8000});
+ assert.match(await page.locator('.intro-greet').textContent(),/Testi!/,'greeting stands alone first');
  assert.equal(await opacity(page,'header .brand'),1,'logo visible from the start');
- assert.equal(await opacity(page,'header .header-nav'),0,'navigation hidden while the sentence stands alone');
- assert.equal(await opacity(page,'#home-view .intro h1'),0,'greeting hidden while the sentence stands alone');
- assert.equal(await opacity(page,'header>.today'),0,'counter pill hidden while the sentence stands alone');
+ assert.equal(await opacity(page,'header .header-nav'),0,'navigation hidden during the intro');
+ assert.equal(await opacity(page,'#home-view .intro h1'),0,'the real greeting stays hidden under the intro layer');
+ assert.equal(await opacity(page,'header>.today'),0,'counter pill hidden during the intro');
+ // Der Vogel verlässt das Logo: die Kachel wird leer, die Begrüßung löst sich auf, der Satz wird geschrieben.
+ await page.waitForFunction(()=>{const m=document.querySelector('header .brand-mark');return m.classList.contains('is-filling')&&!m.classList.contains('is-filled');},null,{timeout:10000});
+ assert.ok(await page.locator('#daily-sentence.intro-bare').count(),'only the sentence, no card chrome');
  assert.equal(await opacity(page,'#daily-sentence .daily-sentence-top'),0,'card chrome hidden at first');
- const big=await page.locator('#daily-sentence .daily-words').evaluate(el=>new DOMMatrix(getComputedStyle(el).transform).a);
- assert.ok(big>1.1,`sentence starts larger (scale ${big})`);
+ assert.ok(await page.locator('#daily-sentence .intro-ch').count()>0,'the sentence is written letter by letter');
+ await page.waitForFunction(()=>document.querySelectorAll('.intro-greet .intro-ch.on').length===0,null,{timeout:6000});
+ await page.waitForFunction(()=>document.querySelectorAll('#daily-sentence .intro-ch.on').length>0,null,{timeout:6000});
+ await page.waitForFunction(()=>document.querySelector('header .brand-mark').classList.contains('is-filled'),null,{timeout:8000});
  await page.waitForFunction(()=>!/intro-/.test(document.documentElement.className),null,{timeout:10000});
- assert.equal(await page.locator('#daily-sentence .daily-words').evaluate(el=>getComputedStyle(el).transform),'none','sentence back to normal size');
+ assert.equal(await page.locator('.intro-greet, #daily-sentence .intro-w, #daily-sentence .intro-ch').count(),0,'intro layers cleaned up');
+ assert.doesNotMatch(await page.locator('header .brand-mark').getAttribute('class'),/is-fill|pop/);
+ assert.ok((await page.locator('#daily-sentence .guest-fi').first().textContent()).trim().length>0,'sentence text intact');
+ assert.equal(await page.evaluate(()=>localStorage.getItem('vanamo-user-intro-day')),await page.evaluate(()=>new Date().toLocaleDateString('sv-SE')),'the intro is remembered for today');
  assert.equal(await opacity(page,'#home-view .intro h1'),1);
  assert.equal(await page.locator('.greeting').getAttribute('aria-pressed'),'true','greeting starts in German');
  assert.equal(await page.locator('.greeting-hint, .daily-tip').count(),0,'no tap hints');
  await page.waitForFunction(()=>document.querySelector('.greeting')?.getAttribute('aria-pressed')==='false',null,{timeout:4000});
  assert.equal(await page.locator('.greeting-de').getAttribute('aria-hidden'),'true','greeting turned to Finnish');
+ // Zwei Schwalben bleiben und setzen sich – für Angemeldete auf „Aufgaben starten“ oder einen anderen Platz.
+ await page.waitForFunction(()=>/^sit:/.test(document.querySelector('canvas.intro-birds')?.dataset.pets),null,{timeout:12000});
  await page.context().close();
 
  assert.deepEqual(errors,[]);
- console.log('PASS: guest intro with flock writing the headline, bird becoming the logo, two swallows that perch and take off, no jump after a stall, card reveal, skip on click, cleanup, no intro for automation, signed-in intro with daily sentence and greeting flip.');
+ console.log('PASS: guest intro with flock writing the headline, bird becoming the logo, two swallows that perch and take off, no jump after a stall, card reveal, skip on click, cleanup, no intro for automation, signed-in intro (bird leaves the logo, greeting becomes the flock, flock writes the daily sentence, swallows stay) and greeting flip.');
 }finally{
  await browser?.close();server.kill();
 }

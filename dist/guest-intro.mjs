@@ -1,9 +1,12 @@
 // Vanamo – Intro auf der Startseite.
 //
-// Angemeldete (Klasse `intro-user`, siehe runUserIntro unten): nur Logo und der finnische
-// „Satz des Tages“, etwas größer als normal; dann wächst die Karte um ihn herum auf, der Satz
-// schrumpft auf seine normale Größe und der Rest der Seite blendet ein. Die Begrüßung steht
-// zuerst auf Deutsch und dreht sich danach auf Finnisch (home-extras.mjs).
+// Angemeldete (Klasse `intro-user`, siehe runUserIntro unten; nur beim ersten Öffnen am Tag):
+//   1. Logo und „vanamo“ stehen, kurz darauf erscheint die Begrüßung („Guten Abend, …“),
+//   2. der Vogel fliegt aus dem Logo – die Kachel wird leer –, überfliegt die Begrüßung, sie löst sich
+//      dabei in einen Schwarm auf, und der Schwarm schreibt den finnischen „Satz des Tages“,
+//   3. der farbige Vogel fliegt zurück ins Logo, der Schwarm davon, zwei Vögel bleiben und setzen sich,
+//   4. der Rest der Seite blendet ein; die Begrüßung steht wieder da und dreht sich danach auf
+//      Finnisch (home-extras.mjs).
 //
 // Besucher ohne Konto:
 // Ablauf (nur beim ersten Aufruf pro Tab, nicht bei „Bewegung reduzieren“):
@@ -33,7 +36,7 @@ const T={
 const EASE_MOVE='cubic-bezier(.65,0,.25,1)',EASE_OUT='cubic-bezier(.2,.7,.2,1)';
 const SEEN='vanamo-intro-seen';
 
-import {createBirds} from './intro-birds.mjs?v=2';
+import {createBirds} from './intro-birds.mjs?v=3';
 
 const html=document.documentElement;
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -66,7 +69,7 @@ function splitChars(el){
  return chars;
 }
 
-// Gäste ohne Intro (schon gesehen in diesem Tab): nur die zwei Schwalben auf der Startseite.
+// Ohne Intro (Gäste: schon gesehen in diesem Tab, Angemeldete: heute schon gesehen): nur die zwei Schwalben.
 // Nicht bei „Bewegung reduzieren“ und nicht in automatisierten Browsern (außer mit ?birds).
 function startGuestBirds(){
  try{
@@ -180,61 +183,112 @@ function revealRest(selector,play){
 }
 
 const USER={
- sentenceScale:1.3, // so viel größer steht der Satz am Anfang allein
  cardWait:6000,     // Satz des Tages braucht Sätze und Wortanalyse – so lange höchstens warten
- sentenceGap:700,   // Satz steht allein, dann wächst die Karte
- shrinkMs:800
+ greetIn:350,       // Begrüßung blendet ein …
+ greetHold:650,     // … und steht kurz allein
+ greetScale:1.5,    // so viel größer als später an ihrem Platz
+ birds:110,         // Größe des Schwarms; auf schmalen Bildschirmen:
+ birdsSmall:45,
+ writeSpeed:.95,    // der Schwarm schreibt schneller als bei den Gästen (px je ms)
+ sentenceGap:200    // Satz steht fertig da, dann fliegt der Schwarm davon
 };
+const DAY='vanamo-user-intro-day'; // das Intro für Angemeldete läuft nur beim ersten Öffnen am Tag (index.html)
+
+// Zerlegt alle Textknoten in `el` in einzelne Buchstaben (Klasse `intro-ch`), Leerzeichen bleiben stehen.
+function splitTextNodes(el,shown){
+ const chars=[],walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT),nodes=[];
+ while(walker.nextNode())nodes.push(walker.currentNode);
+ for(const node of nodes){
+  if(!node.data.trim()||node.parentElement.closest('button,.sentence-source-icon'))continue;
+  const frag=document.createDocumentFragment();
+  node.data.split(/(\s+)/).forEach(part=>{
+   if(!part)return;
+   if(/^\s+$/.test(part)){frag.append(part);return;}
+   const w=document.createElement('span');w.className='intro-w';
+   for(const c of part){const x=document.createElement('span');x.className=shown?'intro-ch on':'intro-ch';x.textContent=c;w.append(x);chars.push(x);}
+   frag.append(w);
+  });
+  node.replaceWith(frag);
+ }
+ return chars;
+}
+const unsplit=root=>root?.querySelectorAll('.intro-w').forEach(w=>w.replaceWith(w.textContent));
 
 export async function runUserIntro(){
- const card=document.getElementById('daily-sentence');
- if(!card||typeof card.animate!=='function'){html.classList.remove('intro-pending','intro-user');return;}
+ const card=document.getElementById('daily-sentence'),h1=document.querySelector('#home-view .intro h1');
+ const mark=document.querySelector('header .brand-mark');
+ if(!card||!h1||!mark||typeof card.animate!=='function'){html.classList.remove('intro-pending','intro-user');return;}
  html.classList.add('intro-running');
- try{sessionStorage.setItem(SEEN,'1');}catch{}
+ try{sessionStorage.setItem(SEEN,'1');localStorage.setItem(DAY,new Date().toLocaleDateString('sv-SE'));}catch{}
 
- const animations=[],controller=new AbortController();
- let done=false,words=null;
+ const animations=[],controller=new AbortController(),flock=createBirds();
+ let done=false,settled=false,greet=null;
  const play=(el,frames,options)=>{const a=el.animate(frames,options);animations.push(a);return a;};
+ // Sofort zum Endzustand – auch der normale Abschluss läuft hier durch.
  function finish(){
   if(done)return;done=true;
   controller.abort();
   animations.forEach(a=>a.cancel());
-  if(words){words.style.transform='';words.style.transformOrigin='';}
-  card.classList.remove('intro-bare','intro-growing','intro-shown','intro-drop');
+  greet?.remove();
+  unsplit(card);
+  card.classList.remove('intro-bare','intro-growing','intro-shown','intro-write');
+  mark.classList.remove('is-filling','is-filled','pop');
   html.classList.remove('intro-pending','intro-running','intro-user');
+  if(!settled)flock.skip();
  }
  for(const type of ['pointerdown','keydown','wheel','touchstart'])addEventListener(type,finish,{signal:controller.signal,passive:true});
- setTimeout(finish,15000); // Sicherheitsnetz
+ setTimeout(finish,20000); // Sicherheitsnetz
 
  await waitFor(()=>!html.classList.contains('i18n-pending'),3000);
  try{await Promise.race([document.fonts?.ready,sleep(1500)]);}catch{}
+ if(done)return;
+ scrollTo(0,0);
+
+ // 1. Logo und „vanamo“ stehen; die Begrüßung (deutsch) erscheint etwas größer an ihrem Platz.
+ //    Sie ist eine eigene Ebene über der Seite – die echte Überschrift bleibt verborgen und unberührt.
+ const source=h1.querySelector('.greeting-de')||h1,place=h1.getBoundingClientRect(),style=getComputedStyle(h1);
+ greet=document.createElement('div');greet.className='intro-greet';greet.setAttribute('aria-hidden','true');
+ greet.innerHTML=source.innerHTML;
+ greet.style.fontFamily=style.fontFamily;greet.style.fontWeight=style.fontWeight;
+ document.body.append(greet);
+ const base=parseFloat(style.fontSize)||22;
+ greet.style.fontSize=base*USER.greetScale+'px';
+ const wide=greet.scrollWidth;if(wide>innerWidth*.9)greet.style.fontSize=Math.max(base,base*USER.greetScale*innerWidth*.9/wide)+'px';
+ greet.style.top=(place.top+place.bottom)/2+scrollY-greet.offsetHeight/2+'px';
+ const greeting=splitTextNodes(greet,true);
+ play(greet,[{opacity:0,transform:'translateY(8px)'},{opacity:1,transform:'none'}],{duration:USER.greetIn,easing:EASE_OUT,fill:'backwards'});
+ await hold(USER.greetIn+USER.greetHold);if(done)return;
+
+ // 2. Sobald der Satz des Tages da ist: Der Vogel fliegt aus dem Logo (die Kachel wird leer), überfliegt
+ //    die Begrüßung – sie löst sich in den Schwarm auf – und der Schwarm schreibt den finnischen Satz.
  const ready=()=>!card.hidden&&card.querySelector('.daily-words .guest-fi');
  if(await waitFor(ready,USER.cardWait)&&!done){
-  scrollTo(0,0);
   card.classList.remove('is-entering');
-  card.classList.add('intro-bare','intro-shown','intro-drop');
-  words=card.querySelector('.daily-words');
-  // Satz etwas größer, um die Mitte der tatsächlichen Wörter herum (nicht die ganze Kartenbreite),
-  // damit er auch auf dem Handy im Bild bleibt.
-  const box=words.getBoundingClientRect(),rects=[...words.querySelectorAll('.guest-fi')].map(el=>el.getBoundingClientRect());
-  const left=Math.min(...rects.map(r=>r.left)),right=Math.max(...rects.map(r=>r.right));
-  const top=Math.min(...rects.map(r=>r.top)),bottom=Math.max(...rects.map(r=>r.bottom));
-  const room=Math.min(left,innerWidth-right)*2+(right-left); // Platz, wenn der Satz um seine Mitte wächst
-  const scale=Math.max(1,Math.min(USER.sentenceScale,(room-32)/(right-left))); // mind. 16px Rand je Seite
-  words.style.transformOrigin=`${(left+right)/2-box.left}px ${(top+bottom)/2-box.top}px`;
-  const big=`scale(${scale})`;
-  words.style.transform=big;
-  // Die Wörter blenden nacheinander ein (CSS: daily-rise).
-  await hold(700+words.querySelectorAll('.guest-word').length*70);if(done)return;
+  card.classList.add('intro-bare','intro-shown','intro-write');
+  const sentence=[...card.querySelectorAll('.daily-words .guest-fi')].flatMap(word=>splitTextNodes(word,false));
+  mark.classList.add('is-filling','is-filled');
+  void mark.offsetWidth;
+  mark.classList.remove('is-filled');
+  flock.beginFrom(mark);
+  if(!await flock.dissolve(greeting,innerWidth<560?USER.birdsSmall:USER.birds)||done)return;
+  if(!await flock.write(sentence,USER.writeSpeed)||done)return;
   await hold(USER.sentenceGap);if(done)return;
+  // 3. Wie bei den Gästen: Der Schwarm fliegt davon, der farbige Vogel landet im Logo und wird wieder
+  //    zum „V“, zwei Vögel bleiben. Bedeutungen und Übersetzung blenden ein.
+  const landing=flock.release(mark,()=>{if(!done)mark.classList.add('is-filled','pop');});
   card.classList.add('intro-growing');
   card.classList.remove('intro-bare');
-  play(words,[{transform:big},{transform:'none'}],{duration:USER.shrinkMs,easing:EASE_MOVE,fill:'forwards'});
-  words.style.transform='';
-  play(card,[{transform:'scale(.97)'},{transform:'none'}],{duration:700,easing:EASE_OUT});
-  await hold(250);
+  await landing;if(done)return;
+  // 4. Der Rest der Seite erscheint, auch die Begrüßung – sie dreht sich kurz darauf auf Finnisch (home-extras.mjs).
+  await revealRest('header .header-nav, #home-view .intro h1, .today, #home-view>:not(.intro), .page-tools, footer',play);
+  if(done)return;
+  settled=true;flock.settle();
+  finish();
+  return;
  }
  if(done)return;
+ // Kein Satz des Tages in Sicht: ohne Schwarm weiter.
+ play(greet,[{opacity:1},{opacity:0}],{duration:250,fill:'forwards'});
  await revealRest('header .header-nav, #home-view .intro h1, .today, #home-view>:not(.intro), .page-tools, footer',play);
  finish();
 }
