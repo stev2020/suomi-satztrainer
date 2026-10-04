@@ -1,6 +1,6 @@
 // Vanamo – Intro auf der Startseite.
 //
-// Angemeldete (Klasse `intro-user`, siehe runUserIntro unten; nur beim ersten Öffnen am Tag):
+// Angemeldete (Klasse `intro-user`, siehe runUserIntro unten; in jedem neuen Tab, im selben Tab einmal am Tag):
 //   1. Logo und „vanamo“ stehen, kurz darauf erscheint die Begrüßung („Guten Abend, …“),
 //   2. der Vogel fliegt aus dem Logo – die Kachel wird leer –, überfliegt die Begrüßung, sie löst sich
 //      dabei in einen Schwarm auf, und der Schwarm schreibt den finnischen „Satz des Tages“,
@@ -69,7 +69,7 @@ function splitChars(el){
  return chars;
 }
 
-// Ohne Intro (Gäste: schon gesehen in diesem Tab, Angemeldete: heute schon gesehen): nur die zwei Schwalben.
+// Ohne Intro (Gäste: schon gesehen in diesem Tab, Angemeldete: in diesem Tab heute schon gesehen): nur die zwei Schwalben.
 // Nicht bei „Bewegung reduzieren“ und nicht in automatisierten Browsern (außer mit ?birds).
 function startGuestBirds(){
  try{
@@ -195,7 +195,7 @@ const USER={
  writeSpeed:.42,    // der Schwarm schreibt ruhig, langsamer als bei den Gästen (px je ms)
  sentenceGap:700    // Satz steht fertig da, dann fliegt der Schwarm davon
 };
-const DAY='vanamo-user-intro-day'; // das Intro für Angemeldete läuft nur beim ersten Öffnen am Tag (index.html)
+const DAY='vanamo-user-intro-day'; // das Intro für Angemeldete läuft in jedem neuen Tab, beim Neuladen im selben Tab erst am nächsten Tag wieder (index.html)
 
 // Zerlegt alle Textknoten in `el` in einzelne Buchstaben (Klasse `intro-ch`), Leerzeichen bleiben stehen.
 function splitTextNodes(el,shown){
@@ -222,7 +222,7 @@ export async function runUserIntro(){
  const mark=document.querySelector('header .brand-mark');
  if(!card||!h1||!mark||typeof card.animate!=='function'){html.classList.remove('intro-pending','intro-user');return;}
  html.classList.add('intro-running');
- try{sessionStorage.setItem(SEEN,'1');localStorage.setItem(DAY,new Date().toLocaleDateString('sv-SE'));}catch{}
+ try{sessionStorage.setItem(SEEN,'1');sessionStorage.setItem(DAY,new Date().toLocaleDateString('sv-SE'));localStorage.removeItem(DAY);}catch{}
 
  const animations=[],controller=new AbortController(),flock=createBirds();
  let done=false,settled=false,greet=null;
