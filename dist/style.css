@@ -1107,3 +1107,17 @@ h1 .intro-w,h1 .intro-ch{color:inherit}
 .word-popover-word{font-size:22px;font-weight:500;letter-spacing:-.01em}
 .word-popover-form{display:inline-block;padding:3px 10px;border-radius:999px;background:color-mix(in srgb,var(--mint) 60%,transparent);font-size:12px;font-weight:600}
 .fi-word:hover,.fi-word:focus-visible,.fi-word.active{background:color-mix(in srgb,var(--mint) 55%,transparent);text-decoration-color:var(--ink)}
+/* Klassenräume für Gäste im reduzierten Stil: Überschrift mittig in der dünneren Serifenschrift, der Hinweis
+   in einer Karte mit feinem Rand, „Anmelden / Registrieren“ als Hauptknopf (dunkler Rand, oranger Schatten,
+   füllt sich beim Überfahren von links). Angemeldete sehen ihre Räume unverändert. */
+.is-guest #classrooms-view>.view-heading{display:block;margin:20px auto 26px;text-align:center}
+.is-guest #classrooms-view .cr-view-title{display:block}
+.is-guest #classrooms-view .eyebrow{font-size:12px;font-weight:600;letter-spacing:1.4px;color:var(--muted)}
+.is-guest #classrooms-view h1{margin:8px 0 0;font-size:clamp(28px,5vw,34px);font-weight:500;line-height:1.15;letter-spacing:-.02em;color:var(--ink)}
+.is-guest #classrooms-content{max-width:560px;margin:0 auto 24px;padding:30px 36px 34px;border:1px solid color-mix(in srgb,var(--ink) 22%,transparent);border-radius:22px;background:var(--paper);text-align:center}
+.is-guest #classrooms-content>p{margin:0 0 10px;font-size:17px;line-height:1.5}
+.is-guest #classrooms-content>p+p{margin-bottom:26px;font-size:14px;color:var(--muted)}
+.is-guest #classrooms-status{text-align:center}
+.is-guest #classrooms-content>button[data-cr=login]{min-height:54px;margin:0;padding:0 30px;border:2px solid var(--ink);border-radius:14px;background:linear-gradient(var(--orange),var(--orange)) no-repeat left/0 100%,var(--paper);box-shadow:3.5px 3.5px 0 var(--orange);font:600 21px/1 var(--heading);color:var(--ink);transform:none;transition:background-size .28s ease,color .2s ease,box-shadow .2s ease}
+.is-guest #classrooms-content>button[data-cr=login]:is(:hover,:active,:focus-visible){background-size:100% 100%,auto;box-shadow:3.5px 3.5px 0 var(--ink);color:var(--on-orange);transform:none}
+@media(max-width:640px){.is-guest #classrooms-content{padding:26px 20px 30px}.is-guest #classrooms-content>button[data-cr=login]{padding:0 20px;font-size:18px;white-space:nowrap}}
