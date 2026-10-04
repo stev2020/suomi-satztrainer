@@ -873,3 +873,39 @@ h1 .intro-w,h1 .intro-ch{color:inherit}
 #practice-view.is-path .inline-grades .grade{flex:1 1 150px;max-width:220px;border:1.5px solid var(--ink);border-radius:12px;box-shadow:2px 2px 0 var(--ink)}
 #practice-view.is-path .card.empty~.actions,#practice-view.is-path .completion-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:14px}
 #practice-view.is-path #card.empty>*{text-align:center}
+/* Gäste: „Neue Sätze lernen“ im reduzierten Stil – Karte mit feinem Rand wie die Lernpfad-Runde,
+   alles mittig, Hauptknopf mit dunklem Rand und orangem Schatten, Fortschritt als feine Linie.
+   „Kostenlos registrieren“ ist ein Textlink (stand vorher versehentlich als Knopf da). */
+.is-guest #home-view .home-new{max-width:720px;padding:30px 36px 26px;border:1px solid color-mix(in srgb,var(--ink) 22%,transparent);border-radius:22px;background:var(--paper);box-shadow:none;text-align:center}
+.is-guest #home-view .home-new.is-collapsed{padding-block:18px}
+.is-guest #home-view .home-new .path-heading{position:relative;justify-content:center}
+.is-guest #home-view .home-new #path-title{margin:0;font:600 12px/1.5 'DM Sans',sans-serif;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted)}
+.is-guest #home-view .home-new .path-toggle{position:absolute;right:-10px;top:50%;margin:-20px 0 0;border:0;background:none!important;box-shadow:none;color:var(--ink-soft)}
+.is-guest #home-view .home-new .path-toggle:hover{transform:none;box-shadow:none;color:var(--ink)}
+.is-guest #home-view .home-new.is-collapsible:not(.is-collapsed) .path-heading{margin-bottom:22px}
+.is-guest #home-view .home-new h3{margin:0 0 8px;font:500 clamp(26px,5vw,34px)/1.15 var(--heading);letter-spacing:-.02em}
+.is-guest #home-view .home-new #path-goal{margin-bottom:6px;color:var(--muted)}
+.is-guest #home-view .home-new #new-sentences-note{margin-bottom:0}
+.is-guest #home-view .home-new .path-level-control{order:9;justify-content:center;margin:0 0 6px;font-size:13px;color:var(--muted)}
+.is-guest #home-view .home-new .path-level-control select{padding:6px 10px;border:1px solid color-mix(in srgb,var(--ink) 35%,transparent);border-radius:999px;font-size:13px}
+.is-guest #home-view .home-new .path-level-hint{margin:0 0 22px}
+.is-guest #home-view .home-new button.link-button{display:inline;width:auto;min-height:0;padding:0;border:0;border-radius:0;background:none;box-shadow:none;font:inherit;font-weight:700;color:var(--heading-accent);transform:none}
+.is-guest #home-view .home-new button.link-button:hover{background:none;box-shadow:none;transform:none;color:var(--ink)}
+.is-guest #home-view .home-new :is(#start-new-sentences,#path-next-level){width:auto;min-height:58px;margin-top:24px;padding:10px 32px;border:2px solid var(--ink);border-radius:14px;background:linear-gradient(var(--orange),var(--orange)) no-repeat left/0 100%,var(--paper);box-shadow:3.5px 3.5px 0 var(--orange);font:600 21px/1 var(--heading);letter-spacing:-.2px;color:var(--ink);transition:background-size .45s cubic-bezier(.65,0,.35,1),box-shadow .45s ease,color .3s ease}
+.is-guest #home-view .home-new :is(#start-new-sentences,#path-next-level):not(:disabled):is(:active,:focus-visible){transform:none;background-size:100% 100%;box-shadow:3.5px 3.5px 0 var(--ink);color:var(--on-orange)}
+@media(hover:hover){.is-guest #home-view .home-new :is(#start-new-sentences,#path-next-level):not(:disabled):hover{transform:none;background-size:100% 100%;box-shadow:3.5px 3.5px 0 var(--ink);color:var(--on-orange)}}
+.is-guest #home-view .home-new .path-progress-wrap{max-width:320px;margin:30px auto 14px}
+.is-guest #home-view .home-new .path-progress-wrap label{margin-bottom:10px;font-size:12px;color:var(--muted)}
+.is-guest #home-view .home-new #path-progress{height:3px;border-radius:3px;background:color-mix(in srgb,var(--ink) 12%,transparent)}
+.is-guest #home-view .home-new #path-progress::-webkit-progress-bar{background:color-mix(in srgb,var(--ink) 12%,transparent)}
+.is-guest #home-view .home-new #path-progress::-webkit-progress-value{background:var(--orange)}
+.is-guest #home-view .home-new #path-progress::-moz-progress-bar{background:var(--orange)}
+.is-guest #home-view .home-new .path-details>summary{display:inline-block;list-style:none;font-size:13px;font-weight:500;color:var(--ink-soft)}
+.is-guest #home-view .home-new .path-details>summary::-webkit-details-marker{display:none}
+.is-guest #home-view .home-new .path-details>summary:hover{color:var(--ink);text-decoration:underline;text-underline-offset:4px}
+.is-guest #home-view .home-new .path-details[open]>summary{margin-bottom:6px}
+.is-guest #home-view .home-new .path-overview{max-width:440px;margin-inline:auto;text-align:left}
+.is-guest #home-view .home-new .path-number{border-width:1.5px}
+.is-guest #home-view .home-new .path-explanation{max-width:520px;margin-inline:auto}
+@media(max-width:640px){.is-guest #home-view .home-new{padding:24px 18px 20px;border-radius:18px}.is-guest #home-view .home-new .path-toggle{right:-6px}}
+@media(prefers-reduced-motion:reduce){.is-guest #home-view .home-new :is(#start-new-sentences,#path-next-level){transition:none}}
