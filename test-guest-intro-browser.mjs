@@ -140,7 +140,8 @@ try{
  assert.equal(await page.locator('.intro-greet, #daily-sentence .intro-w, #daily-sentence .intro-ch').count(),0,'intro layers cleaned up');
  assert.doesNotMatch(await page.locator('header .brand-mark').getAttribute('class'),/is-fill|pop/);
  assert.ok((await page.locator('#daily-sentence .guest-fi').first().textContent()).trim().length>0,'sentence text intact');
- assert.equal(await page.evaluate(()=>localStorage.getItem('vanamo-user-intro-day')),await page.evaluate(()=>new Date().toLocaleDateString('sv-SE')),'the intro is remembered for today');
+ assert.equal(await page.evaluate(()=>sessionStorage.getItem('vanamo-user-intro-day')),await page.evaluate(()=>new Date().toLocaleDateString('sv-SE')),'the intro is remembered for today in this tab only');
+ assert.equal(await page.evaluate(()=>localStorage.getItem('vanamo-user-intro-day')),null,'a new tab shows the intro again');
  assert.equal(await opacity(page,'#home-view .intro h1'),1);
  assert.equal(await page.locator('.greeting').getAttribute('aria-pressed'),'true','greeting starts in German');
  assert.equal(await page.locator('.greeting-hint, .daily-tip').count(),0,'no tap hints');
