@@ -190,10 +190,10 @@ export function createBirds(){
   for(const row of rows){
    const x0=Math.max(14,Math.min(...row.items.map(p=>p.l))-30),x1=Math.max(...row.items.map(p=>p.r))+70;
    const from={...att},s0={...spread},s1={x:34,y:Math.max(14,row.h*.42)};
-   const calm=speed<.5;
-   if(!await tween(first?480:calm?1100:700,p=>{const e=ease(p);att.x=lerp(from.x,x0,e);att.y=lerp(from.y,row.cy,e)-Math.sin(p*Math.PI)*row.h*.9;spread.x=lerp(s0.x,s1.x,e);spread.y=lerp(s0.y,s1.y,e);}))return false;
+   const calm=speed<=.5;
+   if(!await tween(first?480:calm?950:700,p=>{const e=ease(p);att.x=lerp(from.x,x0,e);att.y=lerp(from.y,row.cy,e)-Math.sin(p*Math.PI)*row.h*.9;spread.x=lerp(s0.x,s1.x,e);spread.y=lerp(s0.y,s1.y,e);}))return false;
    // Warten, bis auch die Nachzügler am Zeilenanfang sind – sie sollen die Zeile von Anfang an begleiten.
-   if(!first&&!await tween(calm?650:430,p=>{att.x=x0+Math.sin(p*Math.PI*2)*6;att.y=row.cy+Math.cos(p*Math.PI*2)*row.h*.1;}))return false;
+   if(!first&&!await tween(calm?550:430,p=>{att.x=x0+Math.sin(p*Math.PI*2)*6;att.y=row.cy+Math.cos(p*Math.PI*2)*row.h*.1;}))return false;
    first=false;
    if(!await tween(Math.max(650,(x1-x0)/speed),p=>{
     att.x=lerp(x0,x1,p);att.y=row.cy+Math.sin(p*Math.PI*3)*row.h*.14;
