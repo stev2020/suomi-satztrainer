@@ -909,3 +909,37 @@ h1 .intro-w,h1 .intro-ch{color:inherit}
 .is-guest #home-view .home-new .path-explanation{max-width:520px;margin-inline:auto}
 @media(max-width:640px){.is-guest #home-view .home-new{padding:24px 18px 20px;border-radius:18px}.is-guest #home-view .home-new .path-toggle{right:-6px}}
 @media(prefers-reduced-motion:reduce){.is-guest #home-view .home-new :is(#start-new-sentences,#path-next-level){transition:none}}
+/* ---- Kontofenster im reduzierten Stil (Okt 2026) ----
+   Feiner Rand statt dickem Rahmen und orangem Schatten, Tabs als Textreiter mit orangem Unterstrich,
+   schmale Eingabefelder, Hauptknopf mit dunklem Rand und orangem Schatten (füllt sich beim Überfahren). */
+#account-dialog{max-width:460px;padding:30px 36px 28px;border:1px solid color-mix(in srgb,var(--ink) 22%,transparent);border-radius:22px;box-shadow:none}
+#account-dialog .dialog-top h2{font-size:26px;font-weight:500;letter-spacing:-.01em}
+#account-dialog #close-account{display:grid;place-items:center;width:44px;height:44px;min-height:0;margin:-8px -12px -8px 0;padding:0;border:0;border-radius:50%;background:none;box-shadow:none;font-size:18px;color:var(--ink-soft)}
+#account-dialog #close-account:hover{background:color-mix(in srgb,var(--ink) 7%,transparent);color:var(--ink)}
+#account-dialog .account-tabs{display:flex;flex-wrap:wrap;gap:4px 24px;margin:20px 0 24px;border-bottom:1px solid color-mix(in srgb,var(--ink) 14%,transparent)}
+#account-dialog .account-tabs button{min-height:44px;margin-bottom:-1px;padding:8px 0;border:0;border-bottom:2px solid transparent;border-radius:0;background:none;box-shadow:none;font-size:14px;font-weight:500;color:var(--muted)}
+#account-dialog .account-tabs button:hover{color:var(--ink)}
+#account-dialog .account-tabs button.selected{border-bottom-color:var(--orange);background:none;font-weight:700;color:var(--ink)}
+#account-dialog .account-form{gap:16px}
+#account-dialog .account-form label{gap:7px;font-size:13px;font-weight:600;color:var(--ink-soft)}
+#account-dialog .account-form input{min-height:48px;padding:10px 14px;border:1.5px solid color-mix(in srgb,var(--ink) 30%,transparent);border-radius:12px;background:var(--bg);font-size:16px}
+#account-dialog .account-form input:hover{border-color:color-mix(in srgb,var(--ink) 55%,transparent)}
+#account-dialog .account-form input:focus-visible{border-color:var(--ink);outline:2px solid var(--orange);outline-offset:2px}
+#account-dialog .primary{width:100%;min-height:56px;margin-top:8px;padding:10px 24px;border:2px solid var(--ink);border-radius:14px;background:linear-gradient(var(--orange),var(--orange)) no-repeat left/0 100%,var(--paper);box-shadow:3.5px 3.5px 0 var(--orange);font:600 20px/1 var(--heading);letter-spacing:-.2px;color:var(--ink);transition:background-size .45s cubic-bezier(.65,0,.35,1),box-shadow .45s ease,color .3s ease}
+#account-dialog .primary:not(:disabled):is(:active,:focus-visible){transform:none;background-size:100% 100%;box-shadow:3.5px 3.5px 0 var(--ink);color:var(--on-orange)}
+@media(hover:hover){#account-dialog .primary:not(:disabled):hover{transform:none;background-size:100% 100%;box-shadow:3.5px 3.5px 0 var(--ink);color:var(--on-orange)}}
+#account-dialog .primary:disabled{opacity:.55}
+#account-dialog .account-hint{margin-top:4px!important;text-align:center}
+#account-dialog #account-status{margin:14px 0 0;text-align:center}
+#account-dialog #account-status:empty{display:none}
+#account-dialog #account-logged-in>p{margin:14px 0 0}
+#account-dialog #account-logged-in .account-progress{margin:20px 0 18px}
+#account-dialog .quiet:not(#close-account){min-height:44px;padding:8px 16px;border:1px solid color-mix(in srgb,var(--ink) 30%,transparent);border-radius:999px;background:none;box-shadow:none;font-weight:500}
+#account-dialog .quiet:not(#close-account):hover{border-color:var(--ink);background:none}
+#account-dialog .account-danger{border-width:1px!important;border-style:solid;border-radius:999px;background:none;box-shadow:none}
+#account-dialog .account-delete-form{padding:18px;border-width:1px;border-radius:16px}
+#account-dialog .account-delete-actions .account-danger{min-height:44px;padding:8px 16px;font-weight:700}
+#account-dialog .recovery-result{padding:18px;border:1px solid color-mix(in srgb,var(--ink) 22%,transparent);border-radius:16px}
+#account-dialog .recovery-result code{border-color:color-mix(in srgb,var(--ink) 30%,transparent);border-radius:10px}
+@media(max-width:640px){#account-dialog{padding:24px 20px 22px;border-radius:18px}#account-dialog .account-tabs{gap:0 14px}#account-dialog .account-tabs button{font-size:13px}}
+@media(prefers-reduced-motion:reduce){#account-dialog .primary{transition:none}}
