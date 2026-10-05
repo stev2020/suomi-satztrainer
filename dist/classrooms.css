@@ -552,3 +552,32 @@ header{flex-wrap:wrap}
  #classrooms-view form>.primary{width:100%}
  #classrooms-view .cr-feed-card .cr-toolbar button,#classrooms-view .cr-message .cr-toolbar button{flex:none}
 }
+
+/* ---- Farbakzente im Klassenraum (Okt 2026, Variante „Farbflächen“) ----
+   Zart getönte Flächen je Art statt Rändern und Schatten: Aufgaben warm (Akzentfarbe ins Papier gemischt),
+   Fragen mint, Ankündigungen lavendel, normale Beiträge bleiben Papier. Schreibfeld und Aufgabenkopf mint,
+   „Heute & demnächst“ lavendel. Etiketten gefüllt, Satznummern in der Akzentfarbe. Alles über die
+   Farbvariablen – jede der sechs Farbpaletten bringt ihre eigenen Töne mit. */
+#classrooms-view .cr-feed-card .cr-feed-type{padding:4px 11px;border-radius:999px;font-size:11px;letter-spacing:1.2px;color:var(--ink)}
+#classrooms-view :is(.cr-feed-assignment,.cr-feed-announcement) .cr-feed-type::before{display:none}
+#classrooms-view .cr-feed-post .cr-feed-type{background:var(--mint)}
+#classrooms-view .cr-feed-question .cr-feed-type{background:var(--lavender);color:var(--purple-ink)}
+#classrooms-view .cr-feed-assignment .cr-feed-type{background:var(--orange);color:var(--on-orange)}
+#classrooms-view .cr-feed-announcement .cr-feed-type{background:var(--purple);color:var(--on-accent)}
+#classrooms-view .cr-assignment-number{border-color:var(--ink);background:var(--orange);color:var(--on-orange)}
+#classrooms-view .cr-badge{color:var(--heading-accent)}
+#classrooms-view .eyebrow{color:var(--heading-accent)}
+#classrooms-view .cr-stream-layout .cr-feed-card{border-color:transparent!important}
+#classrooms-view .cr-stream-layout .cr-feed-post{background:var(--paper);border-color:var(--cr-edge)!important}
+#classrooms-view .cr-stream-layout .cr-feed-question{background:color-mix(in srgb,var(--mint) 55%,var(--paper))}
+#classrooms-view .cr-stream-layout .cr-feed-assignment{background:color-mix(in srgb,var(--orange) 20%,var(--paper))}
+#classrooms-view .cr-stream-layout .cr-feed-announcement{background:var(--lavender)}
+#classrooms-view .cr-feed-card>.cr-author,#classrooms-view .cr-feed-replies{border-color:color-mix(in srgb,var(--ink) 14%,transparent)}
+#classrooms-view .cr-stream-layout .cr-stream-compose{background:var(--mint);border-color:transparent}
+#classrooms-view .cr-stream-layout .cr-stream-sidebar .cr-today{background:var(--lavender);border-color:transparent}
+#classrooms-view .cr-room-card{background:color-mix(in srgb,var(--mint) 55%,var(--paper));border-color:transparent}
+#classrooms-view .cr-assignment-hero{background:var(--mint);border-color:transparent}
+#classrooms-view .cr-assignment-meta .cr-assignment-status{background:var(--paper)}
+#classrooms-view .cr-review-offer{background:var(--lavender-tint);border-color:transparent}
+#classrooms-view .cr-feed-question .cr-feed-type{background:var(--paper)}
+#classrooms-view .cr-feed-announcement .cr-feed-type{background:var(--purple)}

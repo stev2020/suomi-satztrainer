@@ -1,7 +1,7 @@
 // Klassenräume im Browser (Handy und Desktop): Gast-Hinweis, Raum anlegen, Aufgabe
 // erstellen, abgeben, Frage stellen, Vergleich freigeben, Stream, Mitglieder.
 // Die API-Antworten sind simuliert; die echten Rechte prüft test-classroom-db.mjs.
-// CLASSROOM_SCREENSHOTS=<Ordner> speichert von jedem Schritt ein Bild.
+// CLASSROOM_SCREENSHOTS=<Ordner> speichert von jedem Schritt ein Bild, CLASSROOM_THEME=<Palette> wählt die Farbpalette.
 import assert from 'node:assert/strict';
 import {spawn} from 'node:child_process';
 import {chromium} from 'playwright';
@@ -21,6 +21,8 @@ try{
   const posts=[{id:'post-1',kind:'question',body:'Wann benutzt man den Partitiv? Siehe https://example.org/partitiv',author:'Anna Müller',own:false,teacher:false,resolved:false,created_at:'2026-10-01T09:00:00Z',files:[],
    replies:[{id:'reply-1',reply_to_id:null,body:'Zum Beispiel nach Zahlen: kaksi kahvia.',author:'Frau Virtanen',own:true,teacher:true,created_at:'2026-10-01T09:05:00Z'}]}];
   const context=await browser.newContext({viewport,serviceWorkers:'block',locale:'de-DE'});
+  // CLASSROOM_THEME=<Palette> prüft die Seiten in einer anderen Farbpalette (z. B. kaamos).
+  if(process.env.CLASSROOM_THEME)await context.addInitScript(theme=>localStorage.setItem('vanamo-theme',theme),process.env.CLASSROOM_THEME);
   await context.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());
   await context.route('**/auth/v1/**',route=>route.fulfill(json({access_token:'test',refresh_token:'test',user:{id,user_metadata:{username:'teacher'}}})));
   await context.route('**/rest/v1/learning_state**',route=>route.fulfill(json([])));
