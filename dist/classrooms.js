@@ -159,7 +159,7 @@ const feedbackFor=(submission,i)=>(submission.feedback||[]).find(f=>f.item_index
 const teacherNote=(submission,i)=>{const f=feedbackFor(submission,i);return f?`<div class="cr-teacher-note"><strong>Rückmeldung von ${esc(f.author)}</strong><p>${esc(f.body)}</p></div>`:'';};
 const feedbackForm=(submission,i)=>{const f=feedbackFor(submission,i);return `<details class="cr-feedback-edit"${f?' open':''}><summary>${f?'Kommentar bearbeiten':'Kommentar schreiben'}</summary><form data-cr-form="feedback"><input type="hidden" name="submission_id" value="${esc(submission.id)}"><input type="hidden" name="item_index" value="${i}"><label>Kommentar zu Satz ${i+1}<textarea name="body" maxlength="1000" rows="2">${esc(f?.body||'')}</textarea></label><div class="cr-toolbar"><button class="primary">Kommentar speichern</button></div><p class="cr-note">Nur wer die Abgabe eingereicht hat, sieht diesen Kommentar. Leer speichern löscht ihn.</p></form></details>`;};
 const localInput=v=>{if(!v)return '';const d=new Date(v);d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16);};
-const css=document.createElement('link');css.rel='stylesheet';css.href='./classrooms.css?v=80';document.head.append(css);
+const css=document.createElement('link');css.rel='stylesheet';css.href='./classrooms.css?v=81';document.head.append(css);
 const button=document.createElement('button');button.id='classrooms-button';button.type='button';button.dataset.view='classrooms';button.textContent='Klassenräume';
 const headerNav=document.querySelector('.header-nav');
 if(headerNav)headerNav.insertBefore(button,headerNav.querySelector('[data-view="progress"]'));else $('account-button').before(button);
