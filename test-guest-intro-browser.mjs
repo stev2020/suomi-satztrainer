@@ -115,15 +115,26 @@ try{
  await page.waitForFunction(()=>document.querySelector('canvas.intro-birds')?.dataset.pets==='none',null,{timeout:8000});
  await page.context().close();
 
+ // Handy: Die große Begrüßung steht zweizeilig (Name darunter) und passt ganz ins Bild.
+ page=await newPage({viewport:{width:360,height:740},isMobile:true,hasTouch:true});
+ await page.addInitScript(()=>localStorage.setItem('suomi-auth-session-v1',JSON.stringify({access_token:'a',refresh_token:'r',user:{id:'u',user_metadata:{username:'maximiliane'}}})));
+ await page.goto(origin+'/?intro');
+ await page.locator('.intro-greet .intro-ch').first().waitFor({state:'attached',timeout:8000});
+ const fit=await page.evaluate(()=>{const g=document.querySelector('.intro-greet'),rs=[...g.querySelectorAll('.intro-ch')].map(c=>c.getBoundingClientRect());return {stacked:g.classList.contains('is-stacked'),left:Math.min(...rs.map(r=>r.left)),right:Math.max(...rs.map(r=>r.right)),rows:new Set(rs.map(r=>Math.round(r.top/10))).size,w:innerWidth,size:parseFloat(getComputedStyle(g).fontSize)};});
+ assert.ok(fit.stacked&&fit.rows>=2,'greeting uses two lines on a phone');
+ assert.ok(fit.left>=4&&fit.right<=fit.w-4,`greeting fits the phone screen (${Math.round(fit.left)}–${Math.round(fit.right)} of ${fit.w})`);
+ assert.ok(fit.size>=28,'greeting is still large on a phone');
+ await page.context().close();
+
  // Angemeldete: Logo und Begrüßung, dann fliegt der Vogel aus dem Logo, die Begrüßung wird zum Schwarm,
  // der Schwarm schreibt den Satz des Tages, der Vogel kehrt ins Logo zurück, zwei Schwalben bleiben;
- // der Rest blendet ein, die Begrüßung steht zuerst auf Deutsch und dreht sich nach 2 s auf Finnisch.
+ // der Rest blendet ein. Die Begrüßung ist von Anfang an finnisch und bleibt es.
  page=await newPage();
  await page.addInitScript(()=>localStorage.setItem('suomi-auth-session-v1',JSON.stringify({access_token:'a',refresh_token:'r',user:{id:'u',user_metadata:{username:'testi'}}})));
  await page.goto(origin+'/?intro');
  await page.waitForFunction(()=>document.documentElement.classList.contains('intro-user')&&document.documentElement.classList.contains('intro-running'));
  await page.locator('.intro-greet').waitFor({state:'attached',timeout:8000});
- assert.match(await page.locator('.intro-greet').textContent(),/Testi!/,'greeting stands alone first');
+ assert.match(await page.locator('.intro-greet').textContent(),/^(Hyvää|Huomenta)[^,]*,\s*Testi!$/,'greeting stands alone first, in Finnish');
  assert.equal(await opacity(page,'header .brand'),1,'logo visible from the start');
  assert.equal(await opacity(page,'header .header-nav'),0,'navigation hidden during the intro');
  assert.equal(await opacity(page,'#home-view .intro h1'),0,'the real greeting stays hidden under the intro layer');
@@ -143,10 +154,11 @@ try{
  assert.equal(await page.evaluate(()=>sessionStorage.getItem('vanamo-user-intro-day')),await page.evaluate(()=>new Date().toLocaleDateString('sv-SE')),'the intro is remembered for today in this tab only');
  assert.equal(await page.evaluate(()=>localStorage.getItem('vanamo-user-intro-day')),null,'a new tab shows the intro again');
  assert.equal(await opacity(page,'#home-view .intro h1'),1);
- assert.equal(await page.locator('.greeting').getAttribute('aria-pressed'),'true','greeting starts in German');
+ assert.equal(await page.locator('.greeting').getAttribute('aria-pressed'),'false','greeting is Finnish after the intro');
+ assert.equal(await page.locator('.greeting-de').getAttribute('aria-hidden'),'true','German side hidden');
  assert.equal(await page.locator('.greeting-hint, .daily-tip').count(),0,'no tap hints');
- await page.waitForFunction(()=>document.querySelector('.greeting')?.getAttribute('aria-pressed')==='false',null,{timeout:4000});
- assert.equal(await page.locator('.greeting-de').getAttribute('aria-hidden'),'true','greeting turned to Finnish');
+ await page.waitForTimeout(2600);
+ assert.equal(await page.locator('.greeting').getAttribute('aria-pressed'),'false','greeting stays Finnish');
  // Zwei Schwalben bleiben und setzen sich – für Angemeldete auf „Aufgaben starten“ oder einen anderen Platz.
  await page.waitForFunction(()=>/^sit:/.test(document.querySelector('canvas.intro-birds')?.dataset.pets),null,{timeout:12000});
  await page.context().close();
