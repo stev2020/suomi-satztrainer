@@ -36,7 +36,7 @@ const T={
 const EASE_MOVE='cubic-bezier(.65,0,.25,1)',EASE_OUT='cubic-bezier(.2,.7,.2,1)';
 const SEEN='vanamo-intro-seen';
 
-import {createBirds} from './intro-birds.mjs?v=5';
+import {createBirds} from './intro-birds.mjs?v=6';
 
 const html=document.documentElement;
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -193,7 +193,8 @@ const USER={
  flyMs:900,         // der Vogel fliegt in Ruhe vom Logo zur Begrüßung
  dissolveSpeed:.4,  // … und zieht langsam darüber (px je ms)
  writeSpeed:.5,     // der Schwarm schreibt ruhig, langsamer als bei den Gästen (px je ms)
- sentenceGap:700    // Satz steht fertig da, dann fliegt der Schwarm davon
+ sentenceGap:700,   // Satz steht fertig da, dann fliegt der Schwarm davon
+ moveMs:1000        // … und der Satz gleitet an seinen Platz unter „Wiederholen“
 };
 const DAY='vanamo-user-intro-day'; // das Intro für Angemeldete läuft in jedem neuen Tab, beim Neuladen im selben Tab erst am nächsten Tag wieder (index.html)
 
@@ -235,6 +236,7 @@ export async function runUserIntro(){
   greet?.remove();
   unsplit(card);
   card.classList.remove('intro-bare','intro-growing','intro-shown','intro-write');
+  card.style.transform='';
   mark.classList.remove('is-filling','is-filled','pop');
   html.classList.remove('intro-pending','intro-running','intro-user');
   if(!settled)flock.skip();
@@ -283,6 +285,12 @@ export async function runUserIntro(){
  if(await waitFor(ready,USER.cardWait)&&!done){
   card.classList.remove('is-entering');
   card.classList.add('intro-bare','intro-shown','intro-write');
+  // Der Satz steht auf der Seite unter „Wiederholen“. Im Intro wird er weiter oben geschrieben – dort, wo gleich
+  // die Aufgaben stehen – und gleitet danach an seinen Platz (auf dem Handy läge er sonst am unteren Rand).
+  const above=document.querySelector('#home-view .home-daily');
+  const lift=above&&!above.hidden?Math.min(0,above.getBoundingClientRect().top-card.getBoundingClientRect().top):0;
+  const lifted=lift?`translateY(${lift}px)`:'';
+  card.style.transform=lifted;
   const sentence=[...card.querySelectorAll('.daily-words .guest-fi')].flatMap(word=>splitTextNodes(word,false));
   mark.classList.add('is-filling','is-filled');
   void mark.offsetWidth;
@@ -294,9 +302,10 @@ export async function runUserIntro(){
   // 3. Wie bei den Gästen: Der Schwarm fliegt davon, der farbige Vogel landet im Logo und wird wieder
   //    zum „V“, zwei Vögel bleiben. Bedeutungen und Übersetzung blenden ein.
   const landing=flock.release(mark,()=>{if(!done)mark.classList.add('is-filled','pop');});
+  const moved=lifted?finished(play(card,[{transform:lifted},{transform:'none'}],{duration:USER.moveMs,easing:EASE_MOVE,fill:'forwards'})).then(()=>{if(!done)card.style.transform='';}):null;
+  await Promise.all([landing,moved]);if(done)return;
   card.classList.add('intro-growing');
   card.classList.remove('intro-bare');
-  await landing;if(done)return;
   // 4. Der Rest der Seite erscheint, auch die Begrüßung – finnisch, wie eben im Intro.
   await revealRest('header .header-nav, #home-view .intro h1, .today, #home-view>:not(.intro), .page-tools, footer',play);
   if(done)return;

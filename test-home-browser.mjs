@@ -172,6 +172,10 @@ try{
  for(const s of reviewSentences)focusedState.reviews[s.id+':fi-de']={due:now,interval:0,repetitions:1,updatedAt:now};
  await focused.evaluate(state=>window.suomiLearningState.applyCloud(state),focusedState);
  assert.equal(await focused.locator('#daily-due').textContent(),'3');
+ // Die große Zeile nennt die Größe der Runde, der Knopf startet sie; „Wiederholen“ steht vor dem Satz des Tages.
+ assert.equal(await focused.locator('#daily-plan-title').textContent(),'3 Sätze zum Wiederholen');
+ assert.equal(await focused.locator('#start-daily-session').textContent(),'Jetzt starten →');
+ assert.ok(await focused.evaluate(()=>!!(document.querySelector('.home-daily').compareDocumentPosition(document.getElementById('daily-sentence'))&Node.DOCUMENT_POSITION_FOLLOWING)),'reviews come before the sentence of the day');
  await focused.locator('#start-daily-session').evaluate(button=>button.click());assert.ok(await focused.locator('#guest-start-dialog').isVisible());await focused.locator('#guest-continue').click();
  // Explicit retry keeps its difficulty and comes after two other sentences.
  const expected=[reviewSentences[0],reviewSentences[1],reviewSentences[2],reviewSentences[0]];

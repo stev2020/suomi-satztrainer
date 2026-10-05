@@ -232,8 +232,8 @@ export function createBirds(){
   ['account',()=>{const el=shown(document.getElementById('account-button'));return el&&rect(el);},0],
   // der orange Trennstrich unter der Überschrift (ein ::after, deshalb aus dem Block berechnet)
   ['rule',()=>{const el=shown(document.querySelector('#home-view .intro'));if(!el||getComputedStyle(el,'::after').content==='none')return null;const r=rect(el);return {l:r.cx-28,r:r.cx+28,t:r.b-2};},0],
-  // Angemeldete: der zweite orange Strich über „Wiederholen“
-  ['rule2',()=>{const el=shown(document.querySelector('#home-view .home-daily'));if(!el||getComputedStyle(el,'::before').content==='none')return null;const r=rect(el);return {l:r.cx-28,r:r.cx+28,t:r.t};},0],
+  // Angemeldete: der zweite orange Strich über dem Satz des Tages
+  ['rule2',()=>{const el=shown(document.getElementById('daily-sentence'));if(!el||getComputedStyle(el,'::before').content==='none')return null;const r=rect(el);return {l:r.cx-28,r:r.cx+28,t:r.t};},0],
   // am Logo: eine auf der oberen rechten Ecke der (gedrehten) Kachel, die andere auf dem „v“ von „vanamo“
   ['brand',brandSeats,0]
  ];
