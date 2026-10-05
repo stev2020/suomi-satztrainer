@@ -1,4 +1,4 @@
-import {tc} from './i18n.mjs?v=22';
+import {tc} from './i18n.mjs?v=23';
 import {canSearch,createSearch} from './wordsearch.mjs';
 import {mountSearch,searchInstructions} from './wordsearch-ui.mjs?v=64';
 import {createWordExercise,wordAnswerMatches,finnishSentenceMatches,sentenceWords} from './word-practice.mjs?v=61';
@@ -203,13 +203,14 @@ function renderLearningPath(){
 function dailyPlanStats(){
  const {verbs,endings,sentencesDue}=extrasPlan();
  return {dueCount:sentencesDue,verbDue:verbs.dueTotal,verbNew:verbs.fresh.length,endingDue:endings.dueTotal,endingNew:endings.fresh.length,
+  roundSentences:Math.min(10,sentencesDue),roundVerbs:verbs.due.length+verbs.fresh.length,roundEndings:endings.due.length+endings.fresh.length,
   roundSize:Math.min(10,sentencesDue)+verbs.due.length+verbs.fresh.length+endings.due.length+endings.fresh.length,newCount:unseenSentences(data,memory.reviews,level).length};
 }
 function dailyNote(stats){
  const due=stats.dueCount||stats.verbDue||stats.endingDue;
  const fresh=stats.verbNew&&stats.endingNew?'Verbformen und Endungen':stats.verbNew?'Verbformen':stats.endingNew?'Endungen':'';
  if(due&&fresh)return `Fällige Wiederholungen – dazu ein paar neue ${fresh}.`;
- if(due)return stats.verbDue||stats.endingDue?'Alles, was heute fällig ist – bunt gemischt.':'Bekannte, fällige Sätze – abwechslungsreich üben, ohne neue Sätze.';
+ if(due)return stats.verbDue||stats.endingDue?'Sätze, Verbformen und Endungen – bunt gemischt.':'Bekannte, fällige Sätze – abwechslungsreich üben, ohne neue Sätze.';
  return fresh?`Heute ein paar neue ${fresh}.`:'Für heute ist alles wiederholt.';
 }
 // Bis die Sätze geladen sind, zeigt die Startseite nur leere Kästen statt Platzhaltertexten.
@@ -217,9 +218,11 @@ function homeLoaded(){const home=$('home-view');home.classList.remove('is-loadin
 function renderDailyPlan(){
  const button=$('start-daily-session');if(!button)return;
  const stats=dailyPlanStats(),available=stats.roundSize,onlySentences=available===Math.min(10,stats.dueCount);
- if($('daily-due').textContent!==String(stats.dueCount)){$('daily-due').textContent=stats.dueCount;const chip=$('daily-due').parentElement;if(chip?.classList?.add){chip.classList.remove('bump');void chip.offsetWidth;chip.classList.add('bump');}}
+ // Unter der großen Zeile steht, was in dieser Runde steckt (höchstens 10 Sätze) – nicht der ganze Rückstand.
+ if($('daily-due').textContent!==String(stats.roundSentences)){$('daily-due').textContent=stats.roundSentences;const chip=$('daily-due').parentElement;if(chip?.classList?.add){chip.classList.remove('bump');void chip.offsetWidth;chip.classList.add('bump');}}
+ {const chip=$('daily-due').parentElement;if(chip)chip.hidden=ready&&(!stats.roundSentences||onlySentences);if($('daily-due-label'))$('daily-due-label').textContent=stats.roundSentences===1?'Satz':'Sätze';}
  document.querySelector('.home-daily').classList.toggle('all-done',ready&&accountActive()&&!available&&!(dailySession?.active&&queue.length));
- for(const [id,n] of [['daily-verbs',stats.verbDue+stats.verbNew],['daily-endings',stats.endingDue+stats.endingNew]]){const chip=$(id);if(chip){chip.textContent=n;if(chip.parentElement)chip.parentElement.hidden=!n;}}
+ for(const [id,n] of [['daily-verbs',stats.roundVerbs],['daily-endings',stats.roundEndings]]){const chip=$(id);if(chip){chip.textContent=n;if(chip.parentElement)chip.parentElement.hidden=!n;}}
  renderLearningPath();
  $('daily-plan-note').textContent=dailyNote(stats);
  button.disabled=!ready||(!available&&!(dailySession?.active&&queue.length));
@@ -228,7 +231,10 @@ function renderDailyPlan(){
  const card=typeof guestCard==='undefined'?null:guestCard,guest=!accountActive()&&!!card?.available;
  if(card){$('guest-card').hidden=!guest;if(guest)card.start();else card.stop();}
  document.querySelector('.home-daily').hidden=guest;
- button.textContent=dailySession?.active&&queue.length?'Wiederholung fortsetzen':!available?'Alles wiederholt':onlySentences?`${available} ${available===1?'Satz':'Sätze'} wiederholen`:`${available} ${available===1?'Aufgabe':'Aufgaben'} starten`;
+ const running=dailySession?.active&&queue.length;
+ button.textContent=running?'Wiederholung fortsetzen':!available?'Alles wiederholt':'Jetzt starten →';
+ // Die große Zeile nennt die Größe dieser einen Runde (höchstens 20), nie alles Fällige.
+ $('daily-plan-title').textContent=running?'Deine Runde läuft noch':!available?'Wiederholen':onlySentences?(available===1?'1 Satz zum Wiederholen':`${available} Sätze zum Wiederholen`):(available===1?'1 Aufgabe zum Wiederholen':`${available} Aufgaben zum Wiederholen`);
  $('header-practice').disabled=button.disabled;
  const favs=ready?favoriteSentences().length:0;if($('home-favorites')){$('home-favorites').hidden=!favs;$('fav-home-count').textContent=favs;}
  syncHeaderPractice();
