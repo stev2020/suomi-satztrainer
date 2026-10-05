@@ -1289,6 +1289,9 @@ header>.today>.today-details,.today-goal-picker{border:1.5px solid var(--ink);bo
 .intro-greet .intro-lead{color:var(--ink)}
 .intro-greet .intro-tail{margin-left:.25em;color:var(--heading-accent)}
 .intro-greet br{display:none}
+.intro-greet.is-stacked{line-height:1.12}
+.intro-greet.is-stacked br{display:inline}
+.intro-greet.is-stacked .intro-tail{margin-left:0}
 .intro-greet .intro-ch{transition:opacity .55s ease,transform .7s cubic-bezier(.2,.7,.2,1),filter .55s ease}
 .intro-greet .intro-ch:not(.on){transform:translateY(-.3em) scale(.6)}
 .brand-mark.is-filling::before{transition:clip-path .45s cubic-bezier(.2,.7,.2,1)}

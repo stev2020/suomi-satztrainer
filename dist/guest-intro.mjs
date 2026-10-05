@@ -1,12 +1,12 @@
 // Vanamo – Intro auf der Startseite.
 //
 // Angemeldete (Klasse `intro-user`, siehe runUserIntro unten; in jedem neuen Tab, im selben Tab einmal am Tag):
-//   1. Logo und „vanamo“ stehen, kurz darauf erscheint die Begrüßung („Guten Abend, …“),
+//   1. Logo und „vanamo“ stehen, kurz darauf erscheint die Begrüßung auf Finnisch („Hyvää iltaa, …“),
 //   2. der Vogel fliegt aus dem Logo – die Kachel wird leer –, überfliegt die Begrüßung, sie löst sich
 //      dabei in einen Schwarm auf, und der Schwarm schreibt den finnischen „Satz des Tages“,
 //   3. der farbige Vogel fliegt zurück ins Logo, der Schwarm davon, zwei Vögel bleiben und setzen sich,
-//   4. der Rest der Seite blendet ein; die Begrüßung steht wieder da und dreht sich danach auf
-//      Finnisch (home-extras.mjs).
+//   4. der Rest der Seite blendet ein; die Begrüßung steht wieder da, finnisch wie im Intro
+//      (antippen zeigt die Übersetzung, home-extras.mjs).
 //
 // Besucher ohne Konto:
 // Ablauf (nur beim ersten Aufruf pro Tab, nicht bei „Bewegung reduzieren“):
@@ -247,18 +247,30 @@ export async function runUserIntro(){
  if(done)return;
  scrollTo(0,0);
 
- // 1. Logo und „vanamo“ stehen; die Begrüßung (deutsch) erscheint groß im oberen Drittel.
+ // 1. Logo und „vanamo“ stehen; die Begrüßung (finnisch) erscheint groß im oberen Drittel.
  //    Sie ist eine eigene Ebene über der Seite – die echte Überschrift bleibt verborgen und unberührt.
- const source=h1.querySelector('.greeting-de')||h1,place=h1.getBoundingClientRect(),style=getComputedStyle(h1);
- greet=document.createElement('div');greet.className='intro-greet';greet.setAttribute('aria-hidden','true');
+ // Die Begrüßung kommt gleich auf Finnisch – auch die echte Überschrift steht danach finnisch da
+ // (antippen dreht sie weiterhin auf Deutsch, home-extras.mjs).
+ h1.dataset.flipped='1';
+ const button=h1.querySelector('.greeting');
+ if(button){button.setAttribute('aria-pressed','false');button.querySelector('.greeting-fi')?.setAttribute('aria-hidden','false');button.querySelector('.greeting-de')?.setAttribute('aria-hidden','true');}
+ const source=h1.querySelector('.greeting-fi')||h1,place=h1.getBoundingClientRect(),style=getComputedStyle(h1);
+ greet=document.createElement('div');greet.className='intro-greet';greet.setAttribute('aria-hidden','true');greet.lang='fi';
  greet.innerHTML=source.innerHTML;
  greet.style.fontFamily=style.fontFamily;greet.style.fontWeight=style.fontWeight;
+ // Auf schmalen Bildschirmen (Handy) steht der Name in einer zweiten Zeile – sonst wäre die Zeile zu breit oder winzig.
+ const room=html.clientWidth*.88;
+ if(html.clientWidth<560)greet.classList.add('is-stacked');
  document.body.append(greet);
  const base=parseFloat(style.fontSize)||22;
  greet.style.fontSize=base*USER.greetScale+'px';
- // Breite des Textes selbst messen (die Ebene ist so breit wie die Seite).
- const lineWidth=()=>{const r=document.createRange();r.selectNodeContents(greet);return r.getBoundingClientRect().width;};
- const wide=lineWidth();if(wide>innerWidth*.86)greet.style.fontSize=Math.max(base,base*USER.greetScale*innerWidth*.86/wide)+'px';
+ // Breite des Textes selbst messen (die Ebene ist so breit wie die Seite): die Zeilen einzeln, nebeneinander zusammen.
+ const lineWidth=()=>{
+  const parts=[...greet.querySelectorAll('.intro-lead,.intro-tail')].map(el=>el.getBoundingClientRect());
+  if(!parts.length){const r=document.createRange();r.selectNodeContents(greet);return r.getBoundingClientRect().width;}
+  return greet.classList.contains('is-stacked')?Math.max(...parts.map(r=>r.width)):Math.max(...parts.map(r=>r.right))-Math.min(...parts.map(r=>r.left));
+ };
+ const wide=lineWidth();if(wide>room)greet.style.fontSize=Math.max(base,base*USER.greetScale*room/wide)+'px';
  // groß im oberen Drittel, aber nie über der Stelle, an der sie später steht
  greet.style.top=Math.max((place.top+place.bottom)/2,innerHeight*USER.greetAt)+scrollY-greet.offsetHeight/2+'px';
  const greeting=splitTextNodes(greet,true);
@@ -285,7 +297,7 @@ export async function runUserIntro(){
   card.classList.add('intro-growing');
   card.classList.remove('intro-bare');
   await landing;if(done)return;
-  // 4. Der Rest der Seite erscheint, auch die Begrüßung – sie dreht sich kurz darauf auf Finnisch (home-extras.mjs).
+  // 4. Der Rest der Seite erscheint, auch die Begrüßung – finnisch, wie eben im Intro.
   await revealRest('header .header-nav, #home-view .intro h1, .today, #home-view>:not(.intro), .page-tools, footer',play);
   if(done)return;
   settled=true;flock.settle();
