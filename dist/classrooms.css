@@ -368,3 +368,187 @@ header{flex-wrap:wrap}
 #classrooms-view .cr-switch button[aria-pressed=true],#classrooms-view .cr-switch button[aria-selected=true]{background:var(--lavender);font-weight:800}
 .cr-switch[hidden]{display:none}
 @media(max-width:640px){.cr-switch{display:flex}#classrooms-view .cr-switch button{flex:1;padding-inline:8px}#classrooms-view .cr-type-tabs button{font-size:15px;padding:11px 6px}}
+
+/* ---- Klassenräume im reduzierten Stil (Okt 2026) ----
+   Wie Startseite und Lernpfad-Runde: ruhige Papierflächen mit feinem Rand statt farbiger Karten mit
+   versetztem Schatten, keine Zierkreise, Überschriften in der Serifenschrift (leicht), kleine Etiketten
+   in Großbuchstaben, Nebenknöpfe als feine Pillen. Orange bleibt der kleine Akzent: der versetzte
+   Schatten des Hauptknopfs, der Strich unter dem gewählten Reiter, die „Neu“-Marke. Ausgewählte
+   Umschalter sind mintgrün. Die Regeln für Gäste (style.css: .is-guest #classrooms-view) bleiben. */
+#classrooms-view{--cr-edge:color-mix(in srgb,var(--ink) 22%,transparent);--cr-soft:color-mix(in srgb,var(--ink) 12%,transparent);--cr-pill:color-mix(in srgb,var(--ink) 32%,transparent)}
+#classrooms-view .eyebrow{font:600 12px/1.5 'DM Sans',sans-serif;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted)}
+#classrooms-view>.view-heading{margin:20px 0 22px}
+#classrooms-view h1{margin-top:6px;font-size:clamp(28px,5vw,36px);font-weight:500;line-height:1.15;letter-spacing:-.02em;color:var(--ink)}
+#classrooms-view h2,#classrooms-view h3{font-family:var(--heading);font-weight:500;letter-spacing:-.01em;color:var(--ink)}
+#classrooms-view h4{font-weight:600}
+/* Knöpfe: Nebenknöpfe als feine Pillen, der Hauptknopf wie „Jetzt starten“ */
+#classrooms-view button:where(:not(.primary,[data-cr=confirm_custom],.cr-image-thumb,.cr-image-dialog-close,.cr-gap-word,.sentence-source-icon)){min-height:40px;padding:8px 16px;border:1px solid var(--cr-pill);border-radius:999px;background:none;box-shadow:none;font-size:14px;font-weight:500;color:var(--ink);transform:none;transition:border-color .15s ease,background-color .15s ease}
+#classrooms-view button:where(:not(.primary,[data-cr=confirm_custom],.cr-image-thumb,.cr-image-dialog-close,.cr-gap-word,.sentence-source-icon)):not(:disabled):hover{border-color:var(--ink);background:none;box-shadow:none;transform:none}
+#classrooms-view :is(.primary,[data-cr=confirm_custom]){width:auto;min-height:54px;padding:10px 28px;border:2px solid var(--ink);border-radius:14px;background:linear-gradient(var(--orange),var(--orange)) no-repeat left/0 100%,var(--paper);box-shadow:3.5px 3.5px 0 var(--orange);font:600 19px/1.15 var(--heading);letter-spacing:-.2px;color:var(--ink);transform:none;transition:background-size .45s cubic-bezier(.65,0,.35,1),box-shadow .45s ease,color .3s ease}
+#classrooms-view :is(.primary,[data-cr=confirm_custom]):not(:disabled):is(:active,:focus-visible){transform:none;background-size:100% 100%;box-shadow:3.5px 3.5px 0 var(--ink);color:var(--on-orange)}
+@media(hover:hover){#classrooms-view :is(.primary,[data-cr=confirm_custom]):not(:disabled):hover{transform:none;background-size:100% 100%;box-shadow:3.5px 3.5px 0 var(--ink);color:var(--on-orange)}}
+#classrooms-view [data-cr=confirm_custom]{min-height:46px;padding:8px 22px;font-size:17px}
+#classrooms-view :is(.cr-danger,[data-danger]):not(.primary){color:var(--bad);border-color:color-mix(in srgb,var(--bad) 55%,transparent)}
+#classrooms-view :is(.cr-danger,[data-danger]):not(.primary):not(:disabled):hover{border-color:var(--bad)}
+@media(prefers-reduced-motion:reduce){#classrooms-view :is(.primary,[data-cr=confirm_custom]){transition:none}}
+/* Felder */
+#classrooms-view label{font-size:14px;font-weight:600}
+#classrooms-view input:not([type=checkbox]),#classrooms-view select,#classrooms-view textarea{padding:11px 13px;border:1px solid var(--cr-pill);border-radius:12px;background:var(--paper);box-shadow:none}
+#classrooms-view :is(input:not([type=checkbox]),select,textarea):focus{border-color:var(--ink)}
+#classrooms-view progress{height:3px;margin:8px 0;border:0;border-radius:3px;accent-color:var(--orange)}
+/* Flächen */
+#classrooms-view .cr-card,#classrooms-view .cr-stream-layout .cr-card{border:1px solid var(--cr-edge);border-radius:22px;background:var(--paper);box-shadow:none}
+#classrooms-view .cr-card{padding:24px 26px}
+#classrooms-view .cr-stream-sidebar .cr-card .cr-card{padding:0;border:0;border-radius:0;background:none}
+#classrooms-view .cr-hero{border:1px solid var(--cr-edge);border-radius:22px;background:var(--paper);box-shadow:none}
+#classrooms-view .cr-badge,#classrooms-view .cr-feed-type,#classrooms-view .cr-assignment-kicker,#classrooms-view .cr-assignment-language{font:600 12px/1.5 'DM Sans',sans-serif;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted)}
+#classrooms-view .cr-note,#classrooms-view .cr-sources{color:var(--muted)}
+#classrooms-view .cr-new{font-weight:700}
+
+/* Raumliste (Beitreten, Erstellen): alles mittig, schmal */
+#classrooms-view:has(.cr-room-actions)>.view-heading{display:block;margin:20px auto 18px;text-align:center}
+#classrooms-view:has(.cr-room-actions) .cr-view-title{display:block}
+#classrooms-view:has(.cr-room-actions) #classrooms-content{max-width:720px;margin:0 auto;text-align:center}
+#classrooms-view:has(.cr-room-actions) #classrooms-status{text-align:center}
+#classrooms-view:has(.cr-room-actions) #classrooms-content>p{margin:0 0 34px;font-size:17px;color:var(--muted)}
+#classrooms-view:has(.cr-room-actions) #classrooms-content>p::after{content:"";display:block;width:56px;height:2px;margin:30px auto 0;border-radius:2px;background:var(--orange)}
+#classrooms-view:has(.cr-room-actions) #classrooms-content>h3{margin:0 0 14px;font:600 12px/1.5 'DM Sans',sans-serif;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted)}
+#classrooms-view .cr-grid:not(.cr-room-actions):has(>.cr-room-card){display:flex;flex-wrap:wrap;justify-content:center}
+#classrooms-view .cr-grid:not(.cr-room-actions)>.cr-room-card{flex:1 1 300px;max-width:420px;margin:0}
+#classrooms-view .cr-grid:not(.cr-room-actions)>p{margin:6px 0 10px;color:var(--muted)}
+#classrooms-view .cr-room-card{display:flex;flex-direction:column;align-items:center;padding:26px 24px 28px}
+#classrooms-view .cr-room-card h3{margin:6px 0 16px;font-size:26px;line-height:1.2}
+#classrooms-view .cr-room-card .cr-open-tasks{margin:-6px 0 16px;font-weight:500;color:var(--ink)}
+#classrooms-view .cr-room-card>button[data-cr=open]{margin:0;min-height:50px;padding:8px 26px;border:2px solid var(--ink);border-radius:14px;background:linear-gradient(var(--orange),var(--orange)) no-repeat left/0 100%,var(--paper);box-shadow:3.5px 3.5px 0 var(--orange);font:600 18px/1.15 var(--heading);letter-spacing:-.2px;color:var(--ink);transition:background-size .45s cubic-bezier(.65,0,.35,1),box-shadow .45s ease,color .3s ease}
+#classrooms-view .cr-room-card>button[data-cr=open]:is(:hover,:active,:focus-visible){border-color:var(--ink);background:linear-gradient(var(--orange),var(--orange)) no-repeat left/100% 100%,var(--paper);box-shadow:3.5px 3.5px 0 var(--ink);color:var(--on-orange)}
+#classrooms-view .cr-room-actions{margin-top:30px;gap:14px}
+#classrooms-view .cr-room-action{margin:0;padding:18px 22px;text-align:left}
+#classrooms-view .cr-room-action>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px}
+#classrooms-view .cr-room-action>summary::-webkit-details-marker{display:none}
+#classrooms-view .cr-room-action>summary::after{content:"";flex:none;width:9px;height:9px;margin-right:4px;border-right:1.5px solid var(--ink);border-bottom:1.5px solid var(--ink);transform:translateY(-2px) rotate(45deg);transition:transform .2s ease}
+#classrooms-view .cr-room-action[open]>summary::after{transform:translateY(3px) rotate(225deg)}
+#classrooms-view .cr-room-action>summary>span{max-width:none}
+#classrooms-view .cr-room-action>summary strong{font:500 21px/1.25 var(--heading)}
+#classrooms-view .cr-room-action>summary small{display:none}
+#classrooms-view .cr-room-action>form{border-top-color:var(--cr-soft)}
+#classrooms-view .cr-room-action>form .primary{margin-top:10px}
+
+/* Im Raum: Stream */
+#classrooms-view #classrooms-refresh{min-height:38px}
+#classrooms-view .cr-stream-layout h3{font:500 24px/1.25 var(--heading)}
+#classrooms-view .cr-stream-compose{padding:18px 24px}
+#classrooms-view .cr-stream-compose>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px}
+#classrooms-view .cr-stream-compose>summary::-webkit-details-marker{display:none}
+#classrooms-view .cr-stream-compose>summary::after{content:"";flex:none;width:9px;height:9px;margin-right:4px;border-right:1.5px solid var(--ink);border-bottom:1.5px solid var(--ink);transform:translateY(-2px) rotate(45deg);transition:transform .2s ease}
+#classrooms-view .cr-stream-compose[open]>summary::after{transform:translateY(3px) rotate(225deg)}
+#classrooms-view .cr-stream-compose>summary>span{max-width:none}
+#classrooms-view .cr-stream-compose>summary strong{font:500 21px/1.3 var(--heading)}
+#classrooms-view .cr-stream-compose>form{border-top-color:var(--cr-soft)}
+#classrooms-view .cr-file-picker{border:1px solid var(--cr-pill);border-radius:999px;padding:9px 16px;font-size:14px;font-weight:500}
+/* Filter als Textreiter mit orangem Strich */
+#classrooms-view .cr-feed-filters{gap:4px 22px;margin:22px 2px 18px}
+#classrooms-view .cr-feed-filters button:not(.primary){flex:none;min-height:40px;padding:6px 0;border:0;border-bottom:2px solid transparent;border-radius:0;font-size:15px;color:var(--muted)}
+#classrooms-view .cr-feed-filters button:not(.primary):not(:disabled):hover{border-color:transparent;color:var(--ink)}
+#classrooms-view .cr-feed-filters button[aria-pressed=true]:not(.primary),#classrooms-view .cr-feed-filters button[aria-pressed=true]:not(.primary):not(:disabled):hover{border-bottom-color:var(--orange);background:none;color:var(--ink);font-weight:600}
+/* Beiträge: eine ruhige Karte je Beitrag; die Art steht als kleines Etikett darüber */
+#classrooms-view .cr-feed-card{padding:24px 26px;border:1px solid var(--cr-edge)!important;border-radius:22px!important;background:var(--paper);box-shadow:none;overflow:visible}
+#classrooms-view .cr-feed-card::after{display:none}
+#classrooms-view .cr-feed-card .cr-feed-type{min-height:0;padding:0;border:0;border-radius:0;background:none;color:var(--muted)}
+#classrooms-view .cr-feed-question .cr-feed-type{color:var(--heading-accent)}
+#classrooms-view .cr-feed-assignment .cr-feed-type,#classrooms-view .cr-feed-announcement .cr-feed-type{color:var(--ink)}
+#classrooms-view :is(.cr-feed-assignment,.cr-feed-announcement) .cr-feed-type::before{content:"";display:inline-block;width:18px;height:2px;margin-right:9px;border-radius:2px;background:var(--orange);vertical-align:middle}
+#classrooms-view .cr-feed-card .cr-feed-meta{margin-bottom:10px;padding-right:0}
+#classrooms-view .cr-feed-card>.cr-author{margin:0 0 14px;padding:0 0 12px;border-bottom:1px solid var(--cr-soft)}
+#classrooms-view .cr-feed-assignment h3{margin:8px 0 10px;font-size:26px}
+#classrooms-view .cr-feed-card .cr-toolbar{gap:8px}
+#classrooms-view .cr-feed-card .cr-toolbar button{min-height:36px;padding:6px 14px;border-radius:999px;font-size:13px}
+#classrooms-view .cr-state{padding:4px 12px;border:1px solid var(--cr-pill);border-radius:999px;background:none;box-shadow:none;font-weight:600}
+#classrooms-view .cr-state.cr-resolved{border-color:transparent;background:var(--mint)}
+#classrooms-view .cr-feed-replies{border-top-color:var(--cr-soft)}
+#classrooms-view .cr-feed-replies summary{font-weight:600}
+#classrooms-view .cr-post-body a{color:var(--heading-accent)}
+#classrooms-view .cr-attachment{border-color:var(--cr-edge);border-radius:14px;background:none}
+#classrooms-view .cr-image-thumb{border:1px solid var(--cr-edge);border-radius:14px!important;box-shadow:none}
+#classrooms-view .cr-image-thumb:hover{transform:none;box-shadow:none;border-color:var(--ink)}
+#classrooms-view .cr-message{border-left:2px solid var(--mint);background:none}
+#classrooms-view .cr-replies,#classrooms-view .cr-stream-children{border-left-color:var(--mint)}
+#classrooms-view .cr-reply-form{border-top-color:var(--cr-soft)}
+/* Seitenleiste */
+#classrooms-view .cr-stream-sidebar .cr-card{padding:22px 24px}
+#classrooms-view .cr-stream-sidebar .cr-today{background:var(--paper)}
+#classrooms-view .cr-stream-sidebar h3{margin:4px 0 14px;font-size:22px}
+#classrooms-view .cr-sidebar-disclosure>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;font:500 21px/1.25 var(--heading)}
+#classrooms-view .cr-sidebar-disclosure>summary::-webkit-details-marker{display:none}
+#classrooms-view .cr-sidebar-disclosure>summary::after{content:"";flex:none;width:8px;height:8px;margin-right:4px;border-right:1.5px solid var(--ink);border-bottom:1.5px solid var(--ink);transform:translateY(-2px) rotate(45deg);transition:transform .2s ease}
+#classrooms-view .cr-sidebar-disclosure[open]>summary::after{transform:translateY(3px) rotate(225deg)}
+#classrooms-view .cr-sidebar-disclosure-content,#classrooms-view .cr-upcoming,#classrooms-view .cr-progress-item{border-top-color:var(--cr-soft)}
+#classrooms-view .cr-stream-sidebar .cr-member button,#classrooms-view .cr-upcoming button{min-height:34px;padding:5px 12px;font-size:12px}
+#classrooms-view .cr-code{font-size:18px}
+
+/* Aufgabe erstellen */
+#classrooms-view .cr-tabs{gap:4px 24px;border-bottom:1px solid var(--cr-soft)}
+#classrooms-view .cr-tabs button:not(.primary){min-height:44px;margin-bottom:-1px;padding:8px 0;border:0;border-bottom:2px solid transparent;border-radius:0;background:none;font-size:16px;font-weight:500;color:var(--muted)}
+#classrooms-view .cr-tabs button:not(.primary):not(:disabled):hover{border-color:transparent;color:var(--ink)}
+#classrooms-view .cr-tabs button[aria-selected=true]:not(.primary),#classrooms-view .cr-tabs button[aria-selected=true]:not(.primary):not(:disabled):hover{border-bottom-color:var(--orange);background:none;color:var(--ink);font-weight:600}
+#classrooms-view .cr-switch{border:1px solid var(--cr-pill);background:none}
+#classrooms-view .cr-switch button:not(.primary){min-height:38px;padding:7px 16px;border:0;border-radius:0;font-size:14px;font-weight:500}
+#classrooms-view .cr-switch button+button:not(.primary){border-left:1px solid var(--cr-pill)}
+#classrooms-view .cr-switch button:is([aria-pressed=true],[aria-selected=true]):not(.primary),#classrooms-view .cr-switch button:is([aria-pressed=true],[aria-selected=true]):not(.primary):not(:disabled):hover{background:var(--mint);font-weight:600}
+#classrooms-view .cr-switch button+button:not(.primary):not(:disabled):hover{border-left-color:var(--cr-pill)}
+#classrooms-view #cr-sentence-picker,#classrooms-view #cr-verb-list{border-top-color:var(--cr-soft)}
+#classrooms-view .cr-pick-row>button{min-height:34px;padding:5px 12px;font-size:12px}
+#classrooms-view .cr-hidden-sentences,#classrooms-view .cr-custom-item,#classrooms-view .cr-verb-persons{border:1px solid var(--cr-edge);border-radius:16px}
+#classrooms-view .cr-custom-item.cr-custom-added{border-color:color-mix(in srgb,var(--good) 45%,transparent);background:var(--good-tint)}
+#classrooms-view .cr-assignment-source{border-top-color:var(--cr-soft)}
+#classrooms-view .cr-gap-word{border:1px solid var(--cr-pill);border-radius:10px}
+#classrooms-view .cr-gap-word[aria-pressed=true]{border-color:var(--ink);background:var(--mint);color:var(--ink);font-weight:600}
+#classrooms-view .cr-gap{border-bottom-color:var(--orange);color:var(--ink)}
+#classrooms-view .cr-delete-warning{border:1px solid var(--bad);border-radius:16px}
+
+/* Aufgabe ansehen und beantworten */
+#classrooms-view .cr-assignment-hero{padding:30px 32px;border:1px solid var(--cr-edge);border-radius:22px;background:var(--paper);box-shadow:none;text-align:center}
+#classrooms-view .cr-assignment-hero::after{display:none}
+#classrooms-view .cr-assignment-hero h2{max-width:none;margin:8px 0 20px;font-size:clamp(28px,4.4vw,40px);line-height:1.12}
+#classrooms-view .cr-assignment-meta{justify-content:center;gap:8px 26px}
+#classrooms-view .cr-assignment-meta>span{min-width:0;padding:0;border:0;border-radius:0;background:none;font-size:15px;text-align:center}
+#classrooms-view .cr-assignment-meta strong{font:600 11px/1.5 'DM Sans',sans-serif;letter-spacing:1.2px;color:var(--muted)}
+#classrooms-view .cr-assignment-meta .cr-assignment-status{align-self:center;padding:5px 14px;border-radius:999px;background:var(--mint);font-size:13px;font-weight:600;color:var(--ink)}
+#classrooms-view .cr-assignment-intro{padding:0 4px;border:0;background:none;color:var(--muted)}
+#classrooms-view .cr-assignment-intro>span{display:none}
+#classrooms-view .cr-assignment-intro strong{color:var(--ink)}
+#classrooms-view .cr-assignment-item{border:1px solid var(--cr-edge);box-shadow:none;padding:26px}
+#classrooms-view .cr-assignment-item:nth-of-type(even){box-shadow:none}
+#classrooms-view .cr-assignment-number{border:1.5px solid var(--ink);border-radius:50%;background:none;font:500 20px/1 var(--heading);color:var(--ink)}
+#classrooms-view .cr-assignment-item h3{margin:4px 0 16px;font:500 clamp(22px,3vw,28px)/1.3 var(--heading)}
+#classrooms-view .cr-assignment-item label{color:var(--muted);font-weight:600}
+#classrooms-view .cr-assignment-item textarea{border-width:1px;border-radius:14px;box-shadow:none}
+#classrooms-view .cr-assignment-item>div>p{border-radius:12px;background:color-mix(in srgb,var(--ink) 4%,transparent)}
+#classrooms-view .cr-assignment-item>div>p+p{background:color-mix(in srgb,var(--mint) 45%,transparent)}
+#classrooms-view .cr-assignment-section-title{border-top:1px solid var(--cr-soft)}
+#classrooms-view .cr-assignment-section-title>span{border:1.5px solid var(--ink);border-radius:50%;background:none;font:500 18px/1 var(--heading);color:var(--ink)}
+#classrooms-view .cr-assignment-section-title h3{font:500 25px/1.2 var(--heading)}
+#classrooms-view .cr-submission-card{border:1px solid var(--cr-edge);box-shadow:none}
+#classrooms-view .cr-submission-card h4{font:500 20px/1.3 var(--heading)}
+#classrooms-view .cr-submission-card p{background:color-mix(in srgb,var(--ink) 4%,transparent)}
+#classrooms-view .cr-review-offer{border:1px solid var(--cr-edge);border-radius:22px;padding:22px 26px}
+#classrooms-view .cr-overview>summary{font:500 20px/1.3 var(--heading)}
+#classrooms-view .cr-overview-row,#classrooms-view .cr-gap-row,#classrooms-view .cr-submission-answer{border-top-color:var(--cr-soft)}
+#classrooms-view .cr-overview-spots li{border:1px solid var(--cr-edge);border-radius:12px}
+#classrooms-view .cr-teacher-note{border-left:2px solid var(--orange);border-radius:0 12px 12px 0;background:color-mix(in srgb,var(--ink) 4%,transparent)}
+#classrooms-view .cr-feedback-edit>summary{font-weight:600}
+@media(max-width:640px){
+ #classrooms-view .cr-card,#classrooms-view .cr-feed-card{padding:20px 18px}
+ #classrooms-view .cr-stream-sidebar .cr-card{padding:20px 18px}
+ #classrooms-view .cr-assignment-hero{padding:24px 18px}
+ #classrooms-view .cr-assignment-meta{display:flex}
+ #classrooms-view .cr-assignment-meta .cr-assignment-status{grid-column:auto;min-height:0}
+ #classrooms-view .cr-assignment-item{padding:18px 14px}
+ #classrooms-view .cr-feed-filters{gap:2px 18px}
+ #classrooms-view .cr-feed-filters button:not(.primary){flex:none}
+ #classrooms-view .cr-tabs{gap:4px 12px}
+ #classrooms-view .cr-tabs button:not(.primary){flex:1 1 0;min-width:0;padding-inline:0;font-size:15px}
+ #classrooms-view .cr-switch button:not(.primary){flex:1 1 0;min-width:0;padding-inline:8px}
+ #classrooms-view :is(.primary,[data-cr=confirm_custom]){padding-inline:20px}
+ #classrooms-view form>.primary{width:100%}
+ #classrooms-view .cr-feed-card .cr-toolbar button,#classrooms-view .cr-message .cr-toolbar button{flex:none}
+}
