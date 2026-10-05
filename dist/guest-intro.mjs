@@ -194,7 +194,7 @@ const USER={
  dissolveSpeed:.4,  // … und zieht langsam darüber (px je ms)
  writeSpeed:.5,     // der Schwarm schreibt ruhig, langsamer als bei den Gästen (px je ms)
  sentenceGap:700,   // Satz steht fertig da, dann fliegt der Schwarm davon
- moveMs:1000        // … und der Satz gleitet an seinen Platz unter „Wiederholen“
+ moveMs:1100        // … und der Satz gleitet an seinen Platz unter „Wiederholen“ und wird dabei kleiner
 };
 const DAY='vanamo-user-intro-day'; // das Intro für Angemeldete läuft in jedem neuen Tab, beim Neuladen im selben Tab erst am nächsten Tag wieder (index.html)
 
@@ -236,7 +236,7 @@ export async function runUserIntro(){
   greet?.remove();
   unsplit(card);
   card.classList.remove('intro-bare','intro-growing','intro-shown','intro-write');
-  card.style.transform='';
+  card.style.transform=card.style.transformOrigin='';
   mark.classList.remove('is-filling','is-filled','pop');
   html.classList.remove('intro-pending','intro-running','intro-user');
   if(!settled)flock.skip();
@@ -289,7 +289,13 @@ export async function runUserIntro(){
   // die Aufgaben stehen – und gleitet danach an seinen Platz (auf dem Handy läge er sonst am unteren Rand).
   const above=document.querySelector('#home-view .home-daily');
   const lift=above&&!above.hidden?Math.min(0,above.getBoundingClientRect().top-card.getBoundingClientRect().top):0;
-  const lifted=lift?`translateY(${lift}px)`:'';
+  // … und zwar groß wie auf der Gäste-Startseite; beim Gleiten schrumpft er auf seine Größe auf der Seite.
+  const wordsEl=card.querySelector('.daily-words'),fi=card.querySelector('.daily-words .guest-fi');
+  const wr=wordsEl.getBoundingClientRect(),cr=card.getBoundingClientRect(),now=parseFloat(getComputedStyle(fi).fontSize)||28;
+  const big=Math.min(44,Math.max(28,innerWidth*.052)),inner=Math.max(...[...wordsEl.children].map(el=>el.getBoundingClientRect().right))-Math.min(...[...wordsEl.children].map(el=>el.getBoundingClientRect().left));
+  const grow=Math.max(1,Math.min(big/now,html.clientWidth*.92/Math.max(1,inner)));
+  card.style.transformOrigin=`50% ${(wr.top+wr.bottom)/2-cr.top}px`;
+  const lifted=lift||grow>1?`translateY(${lift}px) scale(${grow})`:'';
   card.style.transform=lifted;
   const sentence=[...card.querySelectorAll('.daily-words .guest-fi')].flatMap(word=>splitTextNodes(word,false));
   mark.classList.add('is-filling','is-filled');
@@ -302,7 +308,7 @@ export async function runUserIntro(){
   // 3. Wie bei den Gästen: Der Schwarm fliegt davon, der farbige Vogel landet im Logo und wird wieder
   //    zum „V“, zwei Vögel bleiben. Bedeutungen und Übersetzung blenden ein.
   const landing=flock.release(mark,()=>{if(!done)mark.classList.add('is-filled','pop');});
-  const moved=lifted?finished(play(card,[{transform:lifted},{transform:'none'}],{duration:USER.moveMs,easing:EASE_MOVE,fill:'forwards'})).then(()=>{if(!done)card.style.transform='';}):null;
+  const moved=lifted?finished(play(card,[{transform:lifted},{transform:'none'}],{duration:USER.moveMs,easing:EASE_MOVE,fill:'forwards'})).then(()=>{if(!done)card.style.transform=card.style.transformOrigin='';}):null;
   await Promise.all([landing,moved]);if(done)return;
   card.classList.add('intro-growing');
   card.classList.remove('intro-bare');
