@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import crypto from 'node:crypto';
 import assert from 'node:assert/strict';
 
-const pages=['index.html','datenschutz.html','impressum.html'];
+const pages=['index.html','datenschutz.html','impressum.html','unterstuetzen.html'];
 for(const page of pages){
   const html=fs.readFileSync(new URL('../dist/'+page,import.meta.url),'utf8');
   const meta=html.match(/<meta http-equiv="Content-Security-Policy" content="([^"]+)">/);

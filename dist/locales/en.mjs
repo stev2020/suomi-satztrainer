@@ -724,6 +724,7 @@ export default {
  "Qualitätsprüfung nicht verfügbar.": "Quality review not available.",
  "Qualitätsprüfung nicht verfügbar. Bitte erneut versuchen.": "Quality check unavailable. Please try again.",
  "Quellcode (AGPL) ↗": "Source code (AGPL) ↗",
+ "Unterstützen": "Support us",
  "Quelle: Tatoeba-Satz #{0} von {1}, Lizenz {2}. Auf Tatoeba öffnen.": "Source: Tatoeba sentence #{0} by {1}, license {2}. Open on Tatoeba.",
  "Quellen & Lizenzen": "Sources & licenses",
  "Raum archivieren": "Archive room",
