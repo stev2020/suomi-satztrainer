@@ -585,3 +585,15 @@ header{flex-wrap:wrap}
 #classrooms-view .cr-review-offer{background:var(--lavender-tint)}
 #classrooms-view .cr-feed-question .cr-feed-type{background:var(--paper)}
 #classrooms-view .cr-feed-announcement .cr-feed-type{background:var(--purple)}
+/* Aufgeklappte Antworten stehen auf Papier – getönt bleibt nur der Beitrag selbst samt der Zeile „N Antworten“.
+   Die weiße Fläche reicht bis an die Kartenränder (und bis zur Unterkante, solange kein Antwortformular folgt). */
+#classrooms-view .cr-stream-layout .cr-feed-card{--cr-pad-x:26px;--cr-pad-y:24px;--cr-tint:var(--paper);overflow:hidden}
+#classrooms-view .cr-stream-layout .cr-feed-question{--cr-tint:color-mix(in srgb,var(--mint) 55%,var(--paper))}
+#classrooms-view .cr-stream-layout .cr-feed-assignment{--cr-tint:color-mix(in srgb,var(--orange) 20%,var(--paper))}
+#classrooms-view .cr-stream-layout .cr-feed-announcement{--cr-tint:var(--lavender)}
+#classrooms-view .cr-feed-replies[open]{margin:0 calc(-1*var(--cr-pad-x));padding:0 var(--cr-pad-x) 18px;border-top:0;background:var(--paper)}
+#classrooms-view .cr-feed-replies[open]:has(+div:empty){margin-bottom:calc(-1*var(--cr-pad-y))}
+#classrooms-view .cr-feed-replies[open]:not(:has(+div:empty)){margin-bottom:16px;border-bottom:1px solid var(--cr-edge)}
+#classrooms-view .cr-feed-replies[open]>summary{margin:0 calc(-1*var(--cr-pad-x)) 16px;padding:12px var(--cr-pad-x);border-top:1px solid color-mix(in srgb,var(--ink) 14%,transparent);border-bottom:1px solid var(--cr-edge);background:var(--cr-tint)}
+#classrooms-view .cr-feed-replies[open]>summary:focus-visible{outline-offset:-4px}
+@media(max-width:640px){#classrooms-view .cr-stream-layout .cr-feed-card{--cr-pad-x:18px;--cr-pad-y:20px}}
