@@ -12,12 +12,12 @@ let browser;
 try{
  browser=await chromium.launch({headless:true,...(process.env.PW_CHROMIUM?{executablePath:process.env.PW_CHROMIUM}:{})});
  const context=await browser.newContext({viewport:{width:390,height:844},serviceWorkers:'block',locale:'de-DE'});
- let hold=false;const requested=[];
+ let hold=false;const requested=[],delivered=[];
  await context.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());
  await context.route('**/auth/v1/**',route=>route.fulfill(json({access_token:'t',refresh_token:'t',user:{id,user_metadata:{username:'stefan'}}})));
  await context.route('**/rest/v1/**',route=>route.fulfill(json([])));
  // Die beiden großen Dateien lassen sich anhalten: so zeigt sich, was ohne sie schon da ist.
- await context.route(/\/(sentences|lexicon)\.json/,async route=>{requested.push(route.request().url().split('/').pop().split('?')[0]);if(hold)await new Promise(resolve=>setTimeout(resolve,4000));await route.continue();});
+ await context.route(/\/(sentences|lexicon)\.json/,async route=>{requested.push(route.request().url().split('/').pop().split('?')[0]);const name=requested.at(-1);if(hold)await new Promise(resolve=>setTimeout(resolve,4000));delivered.push(name);await route.continue();});
  const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto(origin);
  await page.evaluate(id=>localStorage.setItem('suomi-auth-session-v1',JSON.stringify({access_token:'t',refresh_token:'t',user:{id,user_metadata:{username:'stefan'}}})),id);
@@ -40,10 +40,11 @@ try{
  assert.ok(await page.locator('#today-details').isHidden(),'Klick daneben klappt sie zu');
 
  // Zweiter Besuch: Karte ist da, bevor Sätze und Wortanalyse geladen sind.
- hold=true;requested.length=0;
+ hold=true;requested.length=0;delivered.length=0;
  await page.reload();await page.locator('#daily-sentence .daily-words').waitFor({timeout:3000});
  assert.deepEqual(await words(),first,'derselbe Satz');
- assert.ok(!requested.includes('lexicon.json'),'die Wortanalyse wird dafür nicht geladen');
+ // Die Wortanalyse wird für die Tagesaufgaben schon mit angefragt (app.js), die Karte wartet aber nicht darauf.
+ assert.ok(!delivered.includes('lexicon.json')&&!delivered.includes('sentences.json'),'die Karte wartet weder auf die Sätze noch auf die Wortanalyse');
  // Wie die Satzkarte der Gäste: Bedeutungen unter den Wörtern, die Übersetzung steht immer dabei – nichts zum Umdrehen.
  assert.equal(await page.locator('#daily-sentence .guest-word').count(),first.length,'jedes Wort mit seiner Bedeutung');
  assert.ok(await page.locator('#daily-sentence .guest-gloss').first().isVisible(),'Bedeutungen sichtbar');

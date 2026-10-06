@@ -184,6 +184,7 @@ function revealRest(selector,play){
 
 const USER={
  cardWait:6000,     // Satz des Tages braucht Sätze und Wortanalyse – so lange höchstens warten
+ dataWait:2500,     // … und so lange höchstens darauf, dass die Seite fertig gerechnet hat (Sätze, Tagesaufgaben)
  greetIn:700,       // Begrüßung blendet ein …
  greetHold:100,     // … und sobald sie dasteht, fliegt der Vogel los (er braucht ja kurz bis dahin)
  greetScale:3,      // so viel größer als später an ihrem Platz (höchstens 86 % der Breite)
@@ -238,7 +239,7 @@ export async function runUserIntro(){
   card.classList.remove('intro-bare','intro-growing','intro-shown','intro-write');
   card.style.transform=card.style.transformOrigin='';
   mark.classList.remove('is-filling','is-filled','pop');
-  html.classList.remove('intro-pending','intro-running','intro-user');
+  html.classList.remove('intro-pending','intro-running','intro-user','intro-flying');
   if(!settled)flock.skip();
  }
  for(const type of ['pointerdown','keydown','wheel','touchstart'])addEventListener(type,finish,{signal:controller.signal,passive:true});
@@ -283,6 +284,11 @@ export async function runUserIntro(){
  //    die Begrüßung – sie löst sich in den Schwarm auf – und der Schwarm schreibt den finnischen Satz.
  const ready=()=>!card.hidden&&card.querySelector('.daily-words .guest-fi');
  if(await waitFor(ready,USER.cardWait)&&!done){
+  // Erst losfliegen, wenn app.js die Sätze und die Tagesaufgaben fertig berechnet hat: Solange nur die Begrüßung
+  // dasteht, fällt ein Hänger nicht auf – mitten im Flug ruckelt der Schwarm (auf dem Handy deutlich).
+  await waitFor(()=>!window.vanamoHomeBusy?.(),USER.dataWait);if(done)return;
+  await hold(60);if(done)return;
+  html.classList.add('intro-flying');
   card.classList.remove('is-entering');
   card.classList.add('intro-bare','intro-shown','intro-write');
   // Der Satz steht auf der Seite unter „Wiederholen“. Im Intro wird er weiter oben geschrieben – dort, wo gleich

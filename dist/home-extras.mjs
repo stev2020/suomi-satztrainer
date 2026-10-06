@@ -226,6 +226,9 @@ export function createDailySentence(root,{sentences,learnedIds,fallbackLevel=()=
   if(preparing||(saved?.day===dayKey(new Date())&&saved.next?.day===tomorrow))return;
   preparing=true;
   setTimeout(async()=>{
+   // nicht während des Intros: das Durchsuchen aller Sätze kostet auf dem Handy spürbar Rechenzeit
+   const cls=document.documentElement.classList;
+   while(cls.contains('intro-pending')||cls.contains('intro-running'))await new Promise(r=>setTimeout(r,200));
    try{await (lexicon||(lexicon=loadLexicon()));buildPool();if(sentence)keepCard();}catch{lexicon=null;}
    preparing=false;
   },3000);
