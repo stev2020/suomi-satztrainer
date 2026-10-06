@@ -33,7 +33,7 @@ try{
   const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
   await page.goto(origin);await page.evaluate(()=>{document.body.dataset.account='authenticated';});
   await page.locator('#start-new-sentences:not([disabled])').waitFor({state:'attached'});
-  await page.locator('#more-exercises > summary').click();
+  await page.locator('[data-home-tab-button="practice"]').click();
   await page.locator('[data-home-activity="endings"]').click();
   assert.equal(await page.locator('#continue-title').textContent(),'Endungen');
   assert.ok(await page.locator('[data-difficulty-group]').first().isVisible(),'Schwierigkeit wählbar');

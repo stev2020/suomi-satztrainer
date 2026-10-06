@@ -227,6 +227,9 @@ export function createBirds(){
  // ---- Sitzplätze: Oberkanten von Elementen der Startseite ----
  const shown=el=>el&&!el.hidden&&el.getClientRects().length?el:null;
  const PERCH=[
+  // Angemeldete: der „Draht“ unter den Reitern der Startseite, direkt neben dem gewählten Reiter (nicht am Handy,
+  // dort liegt die Leiste fest am unteren Rand)
+  ['wire',()=>{const nav=shown(document.getElementById('home-tabs'));if(!nav||getComputedStyle(nav).position==='fixed')return null;const tab=nav.querySelector('[aria-selected="true"]');if(!tab)return null;const n=rect(nav),t=rect(tab);return tab.dataset.homeTabButton==='new'?{l:t.r+8,r:t.r+40,t:n.b-1.5}:{l:t.l-40,r:t.l-8,t:n.b-1.5};},0],
   // der Hauptknopf: für Gäste an der Satzkarte, für Angemeldete „Aufgaben starten“
   ['button',()=>{const el=shown(document.querySelector('#guest-card .guest-first'))||shown(document.getElementById('start-daily-session'));return el&&rect(el);},0],
   ['account',()=>{const el=shown(document.getElementById('account-button'));return el&&rect(el);},0],
@@ -259,7 +262,8 @@ export function createBirds(){
  }
  // Sucht einen Platz für beide nebeneinander. `prefer`: Wunschplatz; sonst ein anderer als der jetzige.
  function seat(prefer,allowSame){
-  const all=available();let pick=all.find(p=>p.name===prefer);
+  // Mit Reitern ist der Draht der Stammplatz – vor dem Hauptknopf.
+  const all=available();let pick=(prefer==='button'&&all.find(p=>p.name==='wire'))||all.find(p=>p.name===prefer);
   if(!pick){const others=all.filter(p=>allowSame||p.name!==seatAt?.name),pool=others.length?others:all;pick=pool[Math.floor(Math.random()*pool.length)];}
   if(!pick)return false;
   const c=pick.l+(pick.r-pick.l)*(.25+.5*Math.random());
@@ -298,7 +302,8 @@ export function createBirds(){
   if(ps.some(b=>b.mode!=='sit'))return;
   const here=available().find(p=>p.name===seatAt?.name);
   if(!here||Math.abs(here.l-seatAt.l)>2||Math.abs(here.t-seatAt.t)>2){
-   if(!flyTogether(null,true,true)){ps.forEach(leave);loop();}
+   // Reiter gewechselt oder Platz verschwunden: zurück auf den Draht, wenn es ihn gibt.
+   if(!flyTogether(free.some(p=>p.name==='wire')?'wire':null,true,true)){ps.forEach(leave);loop();}
    return;
   }
   if(!raf&&Math.random()<.35){ps[Math.floor(Math.random()*ps.length)].tw=clock;loop();}

@@ -1,4 +1,4 @@
-import {tc} from './i18n.mjs?v=23';
+import {tc} from './i18n.mjs?v=24';
 import {canSearch,createSearch} from './wordsearch.mjs';
 import {mountSearch,searchInstructions} from './wordsearch-ui.mjs?v=64';
 import {createWordExercise,wordAnswerMatches,finnishSentenceMatches,sentenceWords} from './word-practice.mjs?v=61';
@@ -16,6 +16,7 @@ import {planVerbs,planEndings,interleave,alternate,verbCard,endingCard} from './
 import {validateEndingsProgress,mergeEndingsProgress,markEndingAnswered,missedEndings} from './endings-progress.mjs?v=1';
 import {createGuestCard,shortGloss,flipWordIndex} from './guest-card.mjs?v=12';
 import {renderGreeting,renderToday,createDailySentence,animateProgress,GOAL_CHOICES,DAILY_GOAL} from './home-extras.mjs?v=11';
+import {createHomeTabs} from './home-tabs.mjs?v=2';
 import {buildDifficultDeck} from './difficult-words.mjs?v=2';
 import {buildEndingItems,indexLexicon,renderEndings,hasEndingChoices} from './endings-practice.mjs?v=2';
 import {translationFeedbackMarkup} from './translation-feedback.mjs?v=1';
@@ -97,6 +98,9 @@ function syncWritingAvailability(){
  const button=document.querySelector('[data-activity="writing"]'),count=ready?writingPool().length:0,available=ready&&count>=MIN_WRITING_SENTENCES;
  button.disabled=!available;button.setAttribute('aria-disabled',String(!available));button.textContent=available?'Schreibtest':`Schreibtest (${count}/${MIN_WRITING_SENTENCES})`;
  button.title=available?'Schreibtest starten':`Noch ${MIN_WRITING_SENTENCES-count} ${MIN_WRITING_SENTENCES-count===1?'Satz':'Sätze'} üben, dann ist der Schreibtest spielbar.`;
+ // Kachel auf der Startseite (Reiter „Üben“): solange der Schreibtest nicht spielbar ist, sagt sie, was noch fehlt.
+ const tile=document.querySelector('[data-home-activity="writing"]');
+ if(tile){tile.classList.toggle('is-unavailable',ready&&!available);if($('home-writing-note'))$('home-writing-note').textContent=available||!ready?'Fünf oder zehn Sätze ins Finnische, Auswertung am Schluss.':button.title;}
  return available;
 }
 const day=()=>new Date().toLocaleDateString('sv-SE');
@@ -195,6 +199,7 @@ function renderLearningPath(){
  $('start-new-sentences').disabled=!ready||(!active&&!state.lesson?.remaining.length);
  $('start-new-sentences').textContent=active?'Etappe fortsetzen':state.complete?'Levelpfad geschafft':state.seen?'Weiterlernen':'Lernpfad starten';
  $('path-current-title').textContent=topic?.title||`Lernpfad für Level ${level} geschafft!`;
+ if($('welcome-new-note'))$('welcome-new-note').textContent=!ready?'':topic?.title||'Levelpfad geschafft';
  $('new-sentences-note').hidden=!!lesson;
  $('new-sentences-note').textContent=lesson?'':'Alle verfügbaren Themen dieses Levels kennengelernt. Wiederhole deine Sätze oder wechsle zum nächsten Level.';
  $('path-goal').textContent=(topic?.goal||'Dein bisheriger Fortschritt bleibt beim Levelwechsel erhalten.')+(lesson?` (${lesson.index+1}/${topic.lessons.length})`:'');
@@ -203,7 +208,7 @@ function renderLearningPath(){
  $('path-next-level').hidden=!state.complete||!levels.some(n=>n>level);
  $('path-overview').innerHTML=state.topics.map((topic,index)=>{
   const current=active?topic.id===pathSession.topic.id:topic.id===state.topic?.id;
-  return `<li class="path-stop ${current?'current':topic.complete?'complete':'upcoming'}" ${current?'aria-current="step"':''}><span class="path-number" aria-hidden="true">${topic.complete&&!current?'✓':index}</span><div><h4>${escape(topic.title)}</h4><p>${!topic.available?'Noch keine passenden Sätze in diesem Level':`${current?'Du bist hier':topic.complete?'Kennengelernt':'Danach'} · ${topic.seen}/${topic.total}`}</p></div></li>`;
+  return `<li class="path-stop ${current?'current':topic.complete?'complete':'upcoming'}" ${current?'aria-current="step"':''}><span class="path-number" aria-hidden="true">${topic.complete&&!current?'✓':index+1}</span><div><h4>${escape(topic.title)}</h4><p>${!topic.available?'Noch keine passenden Sätze in diesem Level':`${current?'Du bist hier':topic.complete?'Kennengelernt':'Danach'} · ${topic.seen}/${topic.total}`}</p></div></li>`;
  }).join('');
 }
 function dailyPlanStats(){
@@ -241,13 +246,13 @@ function renderDailyPlan(){
  const running=dailySession?.active&&queue.length;
  button.textContent=running?'Wiederholung fortsetzen':!available?'Alles wiederholt':'Jetzt starten →';
  // Die große Zeile nennt die Größe dieser einen Runde (höchstens 20), nie alles Fällige.
- $('daily-plan-title').textContent=running?'Deine Runde läuft noch':!available?'Wiederholen':onlySentences?(available===1?'1 Satz zum Wiederholen':`${available} Sätze zum Wiederholen`):(available===1?'1 Aufgabe zum Wiederholen':`${available} Aufgaben zum Wiederholen`);
- $('header-practice').disabled=button.disabled;
+ const roundTitle=onlySentences?(available===1?'1 Satz zum Wiederholen':`${available} Sätze zum Wiederholen`):(available===1?'1 Aufgabe zum Wiederholen':`${available} Aufgaben zum Wiederholen`);
+ $('daily-plan-title').textContent=running?'Deine Runde läuft noch':!available?'Wiederholen':roundTitle;
+ // Reiter der Startseite (home-tabs.mjs): Knopf auf „Willkommen“ und Zähler am Reiter „Üben“ zeigen dieselbe Runde.
+ if($('welcome-review-note'))$('welcome-review-note').textContent=!ready?'':running?'Deine Runde läuft noch':!available?'Für heute ist alles wiederholt.':roundTitle;
+ if($('home-tab-count')){$('home-tab-count').textContent=available;$('home-tab-count').hidden=!ready||!available||!!running;}
  const favs=ready?favoriteSentences().length:0;if($('home-favorites')){$('home-favorites').hidden=!favs;$('fav-home-count').textContent=favs;}
- syncHeaderPractice();
 }
-// Ohne Konto gibt es nichts zu wiederholen – „Üben“ im Header nur für angemeldete Nutzer zeigen.
-function syncHeaderPractice(){const b=$('header-practice');if(b)b.hidden=!accountActive();}
 function applyDailyCard(){
  if(!dailySession?.active||!queue.length)return;
  if(queue[0].dailyActivity==='verbs'&&!startDailyVerb(queue[0])){queue.shift();return applyDailyCard();}
@@ -391,6 +396,7 @@ function renderHomeSession(verbStats,dueCount){
  $('continue-title').textContent=ACTIVITY_LABELS[activity];
  $('home-session-description').textContent=descriptions[activity];
  $('home-direction-control').hidden=activity!=='translate';
+ if($('home-grammar-control'))$('home-grammar-control').hidden=activity!=='grammar';
  document.querySelectorAll('[data-home-direction]').forEach(b=>{const selected=b.dataset.homeDirection===direction;b.classList.toggle('selected',selected);b.setAttribute('aria-pressed',String(selected));});
  $('home-session-meta').textContent=activity==='verbs'?VERBS.length+' Verben · Präsens · alle sechs Personen':'Level '+level+(activity==='translate'?'':' · '+detail)+(isTranslation()&&audioOnly?' · Nur mit Audio':'');
  $('continue-practice').textContent=activity==='translate'?(direction==='random'?'Beide Lernrichtungen':DIRECTION_LABELS[direction])+' üben':['listen','dictation','verbs','suchsel','endings'].includes(activity)?'Üben':activity==='dialogs'?'Dialoge öffnen':ACTIVITY_LABELS[activity]+' üben';
@@ -478,6 +484,7 @@ function syncControls(){
  if(activity==='grammar'){
   const topic=GRAMMAR_TOPICS.find(t=>t.id===grammarTopic);
   $('grammar-topic').innerHTML=GRAMMAR_TOPICS.map(t=>{const count=data.filter(s=>s.level===level&&(!audioOnly||s.audios.length)&&topicNotes(s,grammar,t.id).length).length;return `<option value="${t.id}" ${t.id===grammarTopic?'selected':''}>${t.label} · ${count} Sätze</option>`;}).join('');
+  if($('home-grammar-topic'))$('home-grammar-topic').innerHTML=$('grammar-topic').innerHTML;
   $('grammar-help').textContent=grammarLoading?'Die Grammatikhilfen werden geladen …':grammarAvailable?`${topic.hint} Bis zu 10 Sätze pro Runde, auch bereits gelernte. Bewertungen zählen zur gewählten Lernrichtung.`:'Die Grammatikhilfen konnten nicht geladen werden. Bitte lade die Seite bei bestehender Verbindung neu.';
  }
  $('practice-toolbar').hidden=['writing','verbs','suchsel','endings','dialogs'].includes(activity);$('learning-modes').hidden=['writing','grammar','verbs','endings','dialogs'].includes(activity);$('writing-help').hidden=activity!=='writing';$('writing-review-controls').hidden=activity!=='writing';$('writing-history').hidden=true;
@@ -1015,7 +1022,6 @@ function showView(name,openSettings=false){
  if(name==='home'&&dailySession?.active){const previous=dailySession.previous;activity=previous.activity;direction=previous.direction;difficulty=previous.difficulty;mode=previous.mode;syncControls();renderStats();}
  for(const view of ['home','practice','progress','classrooms','games']){const node=$(`${view}-view`);if(node)node.hidden=view!==name;}
  document.querySelectorAll('.header-nav [data-view]').forEach(b=>{const selected=b.dataset.view===name;b.classList.toggle('selected',selected);if(selected)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
- const headerPractice=$('header-practice');headerPractice.classList.toggle('selected',name==='practice');if(name==='practice')headerPractice.setAttribute('aria-current','page');else headerPractice.removeAttribute('aria-current');
  if(name!=='practice')stopAudio();
  if(name==='practice'){applyDailyCard();$('practice-settings').open=openSettings;preloadQueueAudio();}
  window.scrollTo({top:0,behavior:'smooth'});
@@ -1066,7 +1072,6 @@ if(typeof MutationObserver!=='undefined')new MutationObserver(()=>{if(typeof syn
 $('path-next-level').onclick=()=>choosePathLevel(levels.find(n=>n>level));
 $('quick-verb-review').onclick=()=>{if(dailySession)finishDailySession();activity='verbs';syncControls();renderStats();$('continue-practice').click();};
 $('start-daily-session').onclick=startDailySession;if($('home-favorites'))$('home-favorites').onclick=startFavorites;
-$('header-practice').onclick=startDailySession;
 $('home-choose').onclick=()=>{if(dailySession?.active||guidedNew){dailySession=null;mode='new';start();}showView('practice',true);$('practice-settings').querySelector('summary')?.focus();};
 document.addEventListener('click',event=>{
  const button=event.target.closest?.('[data-exercise-start]');
@@ -1087,13 +1092,14 @@ document.querySelectorAll('[data-guest-account]').forEach(button=>button.onclick
 });
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>showView(b.dataset.view));
 window.addEventListener('vanamo:view',e=>showView(e.detail));
-document.querySelectorAll('[data-home-activity]').forEach(b=>b.onclick=()=>{if(activityLocked(b.dataset.homeActivity)){openRegister();return;}if(!ready||activity===b.dataset.homeActivity)return;activity=b.dataset.homeActivity;mode='new';start();});
+document.querySelectorAll('[data-home-activity]').forEach(b=>b.onclick=()=>{if(activityLocked(b.dataset.homeActivity)){openRegister();return;}if(!ready||activity===b.dataset.homeActivity)return;if(b.dataset.homeActivity==='writing'&&!syncWritingAvailability())return;activity=b.dataset.homeActivity;mode='new';start();});
 document.querySelectorAll('[data-home-direction]').forEach(b=>b.onclick=()=>{if(!ready||direction===b.dataset.homeDirection)return;direction=b.dataset.homeDirection;mode='new';start();});
 document.querySelectorAll('[data-activity]').forEach(b=>b.onclick=()=>{if(activityLocked(b.dataset.activity)){openRegister();return;}if(b.dataset.activity==='writing'&&!syncWritingAvailability())return;if(activity!==b.dataset.activity){activity=b.dataset.activity;mode='new';start();}});
 document.querySelectorAll('[data-search-difficulty]').forEach(b=>b.onclick=()=>{if(!ready||searchDifficulty===b.dataset.searchDifficulty)return;searchDifficulty=b.dataset.searchDifficulty;searchPuzzle=null;revealed=false;persist();syncControls();render();});
 document.querySelectorAll('[data-difficulty]').forEach(b=>b.onclick=()=>{if(!ready||difficulty===b.dataset.difficulty)return;difficulty=b.dataset.difficulty;wordExercise=null;draft='';revealed=false;persist();syncControls();render();});
 document.querySelectorAll('[data-direction]').forEach(b=>b.onclick=()=>{if(direction!==b.dataset.direction){direction=b.dataset.direction;start();}});
 $('grammar-topic').onchange=e=>{grammarTopic=e.target.value;start();};
+if($('home-grammar-topic'))$('home-grammar-topic').onchange=e=>{grammarTopic=e.target.value;start();};
 $('audio-only').checked=audioOnly;
 $('levels').onclick=e=>{const b=e.target.closest('[data-level]');if(b&&levelLocked(Number(b.dataset.level))){openRegister();return;}if(b){if(activity==='verbs')activity='translate';level=Number(b.dataset.level);start();showView('practice');}};
 $('audio-only').onchange=e=>{audioOnly=e.target.checked;start();};document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;start();});
@@ -1133,7 +1139,11 @@ function revealGuestPath(animate){
 }
 function pulseStart(){const b=$('start-new-sentences');if(!b)return;b.classList.remove('cta-pulse');void b.offsetWidth;b.classList.add('cta-pulse');setTimeout(()=>b.classList.remove('cta-pulse'),2600);}
 function pointToGuestPath(){const section=document.querySelector('.home-new');if(!section||section.hidden)return;section.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'});pulseStart();setTimeout(()=>$('start-new-sentences')?.focus({preventScroll:true}),500);}
-function syncGuestHome(){document.documentElement.classList?.toggle('is-guest',!accountActive());if(typeof renderHomeExtras==='function')renderHomeExtras();syncActivityLocks();syncHeaderPractice();if(!guestCard)return;const guest=!accountActive()&&guestCard.available;syncPathCollapse(guest);syncGuestPathVisibility(guest);$('guest-card').hidden=!guest;if(!guest)guestCard.stop();else if(ready)guestCard.start();if(ready)renderDailyPlan();else document.querySelector('.home-daily').hidden=guest;}
+// Angemeldete: Startseite in drei Reitern (Willkommen · Üben · Neue Sätze), siehe home-tabs.mjs.
+var homeTabs=typeof document!=='undefined'&&$('home-tabs')&&typeof $('home-tabs').querySelectorAll==='function'?createHomeTabs({home:$('home-view'),nav:$('home-tabs'),isAccount:accountActive,
+ startReview:()=>{if(!ready||$('start-daily-session').disabled)return false;startDailySession();return true;},
+ startNew:()=>{if(!ready||$('start-new-sentences').disabled)return false;startNewSentences();return true;},}):null;
+function syncGuestHome(){document.documentElement.classList?.toggle('is-guest',!accountActive());homeTabs?.sync();if(typeof renderHomeExtras==='function')renderHomeExtras();syncActivityLocks();if(!guestCard)return;const guest=!accountActive()&&guestCard.available;syncPathCollapse(guest);syncGuestPathVisibility(guest);$('guest-card').hidden=!guest;if(!guest)guestCard.stop();else if(ready)guestCard.start();if(ready)renderDailyPlan();else document.querySelector('.home-daily').hidden=guest;}
 syncGuestHome();
 // Solange das Intro läuft (index.html: intro-pending, guest-intro.mjs: intro-running), wird nichts Schweres
 // nebenher geladen oder berechnet – auf dem Handy ruckelt sonst der Vogelschwarm.

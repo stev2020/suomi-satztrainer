@@ -31,7 +31,7 @@ async function context(options={}){
  return c;
 }
 async function choose(page,count){
- if(!await page.locator('#home-choose').isVisible())await page.locator('#more-exercises > summary').click();
+ if(!await page.locator('#home-choose').isVisible())await page.locator('[data-home-tab-button="practice"]:visible, #more-exercises > summary:visible').first().click();
  await page.locator('#home-choose').click();
  await page.locator('[data-activity="verbs"]').click();
  await page.locator('[data-verb-count="'+count+'"]').click();
@@ -90,7 +90,7 @@ try {
  await p.goto(origin);await p.evaluate(()=>{document.body.dataset.account='authenticated';});
  await p.waitForFunction(()=>document.querySelector('[data-verb-count="5"]'));
  assert.equal(await p.evaluate(()=>document.getElementById('account-logged-in').hidden),false);assert.equal(await p.locator('#account-button').textContent(),'Konto');
- if(!await p.locator('#continue-practice').isVisible())await p.locator('#more-exercises > summary').click();
+ if(!await p.locator('#continue-practice').isVisible())await p.locator('[data-home-tab-button="practice"]:visible, #more-exercises > summary:visible').first().click();
  await p.locator('#continue-practice').click();
  await p.locator('[data-verb-count="5"]').click();
  const key=await answer(p);

@@ -15,7 +15,7 @@ try{
   const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
   await page.goto(origin);await page.evaluate(()=>{document.body.dataset.account='authenticated';});
   await page.locator('#start-new-sentences:not([disabled])').waitFor({state:'attached'});
-  await page.locator('#more-exercises > summary').click();
+  await page.locator('[data-home-tab-button="practice"]').click();
   await page.locator('[data-home-activity="dialogs"]').click();
   assert.equal(await page.locator('#continue-practice').textContent(),'Dialoge öffnen');
   await page.locator('#continue-practice').click();

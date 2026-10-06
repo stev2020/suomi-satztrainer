@@ -10,7 +10,7 @@ try{
  await context.addInitScript(()=>sessionStorage.setItem('suomi-guest-exercise-accepted','1'));
  await context.route('**/*',route=>new URL(route.request().url()).origin==='http://localhost:4173'?route.continue():route.abort());
  const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto('http://localhost:4173');await page.evaluate(()=>{document.body.dataset.account='authenticated';});await page.locator('#start-new-sentences:not([disabled])').waitFor({state:'attached'});await page.locator('#more-exercises > summary').click();
+ await page.goto('http://localhost:4173');await page.evaluate(()=>{document.body.dataset.account='authenticated';});await page.locator('#start-new-sentences:not([disabled])').waitFor({state:'attached'});await page.locator('[data-home-tab-button="practice"]').click();
  await page.locator('#home-view [data-difficulty="easy"]').click();
  await page.locator('#continue-practice').click();
  for(const direction of ['fi-de','de-fi','random']){

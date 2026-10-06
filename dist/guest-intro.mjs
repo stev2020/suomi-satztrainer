@@ -36,7 +36,7 @@ const T={
 const EASE_MOVE='cubic-bezier(.65,0,.25,1)',EASE_OUT='cubic-bezier(.2,.7,.2,1)';
 const SEEN='vanamo-intro-seen';
 
-import {createBirds} from './intro-birds.mjs?v=6';
+import {createBirds} from './intro-birds.mjs?v=7';
 
 const html=document.documentElement;
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -294,7 +294,7 @@ export async function runUserIntro(){
   // Der Satz steht auf der Seite unter „Wiederholen“. Im Intro wird er weiter oben geschrieben – dort, wo gleich
   // die Aufgaben stehen – und gleitet danach an seinen Platz (auf dem Handy läge er sonst am unteren Rand).
   const above=document.querySelector('#home-view .home-daily');
-  const lift=above&&!above.hidden?Math.min(0,above.getBoundingClientRect().top-card.getBoundingClientRect().top):0;
+  const lift=above&&!above.hidden&&above.getClientRects().length?Math.min(0,above.getBoundingClientRect().top-card.getBoundingClientRect().top):0;
   // … und zwar groß wie auf der Gäste-Startseite; beim Gleiten schrumpft er auf seine Größe auf der Seite.
   const wordsEl=card.querySelector('.daily-words'),fi=card.querySelector('.daily-words .guest-fi');
   const wr=wordsEl.getBoundingClientRect(),cr=card.getBoundingClientRect(),now=parseFloat(getComputedStyle(fi).fontSize)||28;

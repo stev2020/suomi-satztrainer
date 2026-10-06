@@ -78,6 +78,7 @@ try{
   // Angemeldet: wieder „Sätze wiederholen“
   await page.evaluate(()=>{document.body.dataset.account='authenticated';});
   await page.locator('#guest-card').waitFor({state:'hidden'});
+  await page.locator('[data-home-tab-button="practice"]').click();
   assert.equal(await page.locator('.home-daily').isVisible(),true);
   await page.evaluate(()=>{document.body.dataset.account='guest';});
   await page.locator('#guest-card').waitFor({state:'visible'});
