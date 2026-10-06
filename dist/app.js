@@ -6,8 +6,8 @@ import {VERBS} from './verbs-data.mjs';
 import {PRONOUNS,validateVerbProgress,mergeVerbProgress,markAsked,markAnswered,answerMatches,createVerbSession,chooseCombination,verbSummary,unlockedVerbCount} from './verb-practice.mjs';
 import {verbUsage} from './verb-examples.mjs?v=1';
 import {GRAMMAR_TOPICS,topicNotes} from './grammar-topics.mjs';
-import {reviewPlan,dueSentences,unseenSentences,lastPracticed} from './review-plan.mjs';
-import {everydayPathState} from './learning-path.mjs';
+import {reviewPlan,dueSentences,unseenSentences,lastPracticed} from './review-plan.mjs?v=2';
+import {everydayPathState} from './learning-path.mjs?v=2';
 import {addPerformanceEvent,buildLearningInsights,mergePerformanceEvents,validatePerformanceEvents} from './learning-insights.mjs';
 import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './supabase-config.js';
 import {validateGames,mergeGames} from './games-progress.mjs';
@@ -101,9 +101,11 @@ function syncWritingAvailability(){
 }
 const day=()=>new Date().toLocaleDateString('sv-SE');
 const cardDirection=s=>direction==='random'?(s.practiceDirection||'fi-de'):direction;
-const key=(s,dir=cardDirection(s))=>`${s.id}:${isTranslation()?dir:activity}`;
-const review=(s,dir=cardDirection(s))=>memory.reviews[key(s,dir)];
-const due=(s,dir=cardDirection(s))=>{const r=review(s,dir);return r&&Number.isFinite(r.due)&&r.due<=Date.now();};
+// Gespeichert wird unter der Richtung des Lernstands; in „Wiederholen“ kann die gezeigte Richtung davon abweichen (review-plan.mjs).
+const recordDirection=s=>s.reviewDirection||cardDirection(s);
+const key=(s,dir=recordDirection(s))=>`${s.id}:${isTranslation()?dir:activity}`;
+const review=(s,dir=recordDirection(s))=>memory.reviews[key(s,dir)];
+const due=(s,dir=recordDirection(s))=>{const r=review(s,dir);return r&&Number.isFinite(r.due)&&r.due<=Date.now();};
 const studyDirections=()=>isTranslation()&&direction==='random'?['fi-de','de-fi']:[direction];
 const eligibleDirections=(s,selection=mode)=>studyDirections().filter(dir=>selection==='new'?!review(s,dir):selection==='review'?due(s,dir):memory.favorites.includes(s.id));
 const base=(includeArchived=false)=>(includeArchived?[...data,...archived]:data).filter(s=>s.level===level&&(activity==='suchsel'?canSearch(s):(!(audioOnly||!isTranslation())||s.audios.length))&&(activity!=='grammar'||matchesTopic(s)));

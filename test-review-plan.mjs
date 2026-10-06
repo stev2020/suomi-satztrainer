@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {reviewPlan,dueSentences,unseenSentences} from './dist/review-plan.mjs';
+import {reviewPlan,dueSentences,unseenSentences,shownDirection} from './dist/review-plan.mjs';
 const now=100000;
 const sentences=Array.from({length:25},(_,i)=>({id:i+1,level:1,text:'Satz '+i,translations:[{text:'Text '+i}],audios:[{}]}));
 const record=(due=now-100,updatedAt=1)=>({due,updatedAt,interval:1,repetitions:1});
@@ -42,4 +42,12 @@ assert.equal(mixedPlan.length,10);
 assert.equal(mixedPlan.filter(s=>s.dailyActivity==='suchsel').length,1);
 assert.equal(mixedPlan.find(s=>s.id===2)?.dailyActivity,'translate');
 assert.ok(!mixedPlan.some(s=>s.id===3));
-console.log('PASS: due-only, unseen-only, unique sentences, fairness across rounds, levels, audio eligibility, archives, 2:1 difficulty and one Wortsel per round.');
+// Übersetzungen wechseln die Richtung, der Lernstand bleibt der eine vorhandene.
+const flipReviews={'1:fi-de':record(now-5,1),'2:fi-de':record(now-4,2),'3:de-fi':record(now-3,3),'4:fi-de':record(now-2,4),'4:de-fi':record(now+999,5)};
+const flipPlan=reviewPlan(sentences,flipReviews,1,{now});
+assert.deepEqual(flipPlan.map(s=>[s.id,s.practiceDirection,s.reviewDirection]),[[1,'fi-de','fi-de'],[2,'de-fi','fi-de'],[3,'de-fi','de-fi'],[4,'fi-de','fi-de']]);
+// Nach einer weiteren Wiederholung kommt derselbe Satz andersherum.
+assert.equal(shownDirection(sentences[0],'fi-de',{'1:fi-de':{...record(),repetitions:2}}),'de-fi');
+assert.equal(shownDirection(sentences[2],'de-fi',{'3:de-fi':{...record(),repetitions:2}}),'fi-de');
+assert.equal(reviewPlan(sentences,{'5:listen':record()},1,{now})[0].reviewDirection,undefined);
+console.log('PASS: due-only, unseen-only, unique sentences, fairness across rounds, levels, audio eligibility, archives, 2:1 difficulty, one Wortsel per round and alternating translation direction.');

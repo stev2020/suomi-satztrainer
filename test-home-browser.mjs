@@ -180,8 +180,10 @@ try{
  // Explicit retry keeps its difficulty and comes after two other sentences.
  const expected=[reviewSentences[0],reviewSentences[1],reviewSentences[2],reviewSentences[0]];
  const difficulties=['easy','easy','hard','easy'];
+ // Die Richtung wechselt je Satz (review-plan.mjs: shownDirection) – gespeichert wird weiter unter fi-de.
+ const shownText=s=>(1+s.id)%2===1?s.translations[0].text:s.text;
  for(let i=0;i<expected.length;i++){
-  assert.equal(await focused.locator('.sentence').evaluate(el=>{const copy=el.cloneNode(true);copy.querySelectorAll('.sentence-source-icon').forEach(b=>b.remove());return copy.textContent;}),expected[i].text);
+  assert.equal(await focused.locator('.sentence').evaluate(el=>{const copy=el.cloneNode(true);copy.querySelectorAll('.sentence-source-icon').forEach(b=>b.remove());return copy.textContent;}),shownText(expected[i]));
   assert.equal(await focused.locator('#word-bank').isVisible(),difficulties[i]==='easy');
   if(i===0){
    await focused.locator('#practice-view [data-view="home"]').click();
