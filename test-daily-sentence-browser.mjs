@@ -28,6 +28,8 @@ try{
  // Erster Besuch des Tages: Karte erscheint, heute und morgen liegen danach auf dem Gerät.
  await page.reload();await page.locator('#daily-sentence .daily-words').waitFor();
  const first=await words(),saved=await stored();
+ // Der Satz des Tages steht im Reiter „Willkommen“; ab dem zweiten Öffnen am Tag ginge sonst „Üben“ auf.
+ await page.evaluate(()=>sessionStorage.setItem('vanamo-home-tab','welcome'));
  assert.equal(saved.day,today);assert.equal(saved.card.sentence.id,saved.id);assert.deepEqual(saved.card.cols.map(c=>c.fi),first);
  assert.ok(saved.next&&saved.next.day>today&&saved.next.card.cols.length>0,'die Karte von morgen ist vorbereitet');
  assert.ok(requested.includes('lexicon.json'));

@@ -18,6 +18,8 @@ try{
  await context.addInitScript(()=>sessionStorage.setItem('vanamo-guest-sentences',JSON.stringify(['a','b','c','d','e'])));
  const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
  const home=()=>page.locator('.app-view:not([hidden]) .back-link[data-view="home"]').click();
+ // Angemeldete haben die Startseite in drei Reitern (Willkommen · Üben · Neue Sätze); Gäste sehen alles auf einer Seite.
+ const tab=name=>page.locator('[data-home-tab-button="'+name+'"]').click();
  const select=activity=>page.locator('[data-home-activity="'+activity+'"]').evaluate(el=>el.click()); // Verbformen-Kachel ist ausgeblendet (eigene Karte), bleibt aber im DOM
  await page.goto(origin);
  await page.locator('#start-new-sentences:not([disabled])').waitFor({state:'attached'});
@@ -32,18 +34,21 @@ try{
  assert.ok(await page.locator('#start-new-sentences').isVisible(),'clicking the heading expands it again');
  await page.locator('#path-toggle').click();
  await page.evaluate(()=>{document.body.dataset.account='authenticated';});
+ // Erstes Öffnen am Tag: „Willkommen“ mit den zwei Knöpfen; die anderen Bereiche liegen hinter ihren Reitern.
+ assert.ok(await page.locator('#home-tabs').isVisible());
+ assert.equal(await page.locator('[data-home-tab-button="welcome"]').getAttribute('aria-selected'),'true');
+ assert.ok(await page.locator('#welcome-review').isVisible()&&await page.locator('#welcome-new').isVisible());
+ assert.ok(await page.locator('.home-daily').isHidden()&&await page.locator('.home-new').isHidden()&&await page.locator('#more-exercises').isHidden());
+ await tab('new');
  assert.ok(await page.locator('#start-new-sentences').isVisible(),'signed-in users always see the path');
+ assert.ok(await page.locator('#path-overview .path-stop').first().isVisible(),'die Route steht offen da');
+ assert.ok(await page.locator('#welcome-review').isHidden()&&await page.locator('.home-daily').isHidden());
  assert.ok(await page.locator('#path-toggle').isHidden());
  await page.evaluate(()=>{document.body.dataset.account='guest';});
  assert.equal(await page.locator('#account-dialog').count(),1);
  assert.equal(await page.locator('#progress-nav').count(),0);
- // Ohne Konto kein „Üben“ im Header – es gäbe nichts zu wiederholen
- assert.ok(await page.locator('#header-practice').isHidden(),'guests do not see the header practice button');
- await page.evaluate(()=>{document.body.dataset.account='authenticated';});
- assert.ok(await page.locator('#header-practice').isVisible(),'signed-in users see the header practice button');
- // Auch ohne Fälliges gibt es für Angemeldete ein paar neue Verbformen zum Wiederholen.
- assert.equal(await page.locator('#header-practice').isDisabled(),false);
- await page.evaluate(()=>{document.body.dataset.account='guest';});
+ // Im Header gibt es kein „Üben“ mehr – dafür ist der Reiter auf der Startseite da.
+ assert.equal(await page.locator('#header-practice').count(),0);
  assert.equal(await page.locator('#account-button').textContent(),'Anmelden / Registrieren');
  assert.ok(await page.locator('#storage-account-link').isVisible());
  await page.locator('#storage-account-link').click();assert.ok(await page.locator('#login-form').isVisible());await page.locator('#close-account').click();
@@ -80,9 +85,10 @@ try{
  const sentences=sentencePayload.sentences.filter(s=>s.level===1&&s.audios.length).slice(0,6);
  for(const [kind,count] of [['fi-de',1],['de-fi',2],['listen',3],['dictation',4]])for(const s of sentences.slice(0,count))state.reviews[s.id+':'+kind]={due:now,interval:0,repetitions:2,updatedAt:now};
  await page.evaluate(state=>window.suomiLearningState.applyCloud(state),state);
+ await tab('practice');
  assert.ok(await page.locator('.home-daily').isVisible());
+ assert.equal(await page.locator('#home-tab-count').textContent(),await page.locator('#daily-plan-title').textContent().then(t=>t.match(/\d+/)[0]),'Zähler am Reiter „Üben“');
  assert.equal(await page.locator('#start-daily-session').isDisabled(),false);
- assert.equal(await page.locator('#header-practice').isDisabled(),false);
  assert.ok(Number(await page.locator('#daily-due').textContent())>0);
  // Tageswiederholung als Gast: Hinweis, dass ohne Konto nichts gespeichert wird
  await page.evaluate(()=>{document.body.dataset.account='guest';});
@@ -98,7 +104,7 @@ try{
  await page.evaluate(()=>{document.body.dataset.account='authenticated';});
  await home();
  assert.equal(await page.locator('#start-daily-session').textContent(),'Wiederholung fortsetzen');
- await page.locator('#header-practice').click();
+ await page.locator('#start-daily-session').click();
  assert.ok(await page.locator('#practice-view').isVisible());
  assert.equal(await page.locator('#practice-settings').isVisible(),false);
  await home();
@@ -106,10 +112,11 @@ try{
  assert.equal(await page.locator('#home-review').textContent(),'3 Verbformen wiederholen');
  assert.equal(await page.locator('#continue-practice').textContent(),'Üben');
  const colors=await page.evaluate(()=>['.today','#home-review','.home-exercises .selected','#continue-practice'].map(selector=>getComputedStyle(document.querySelector(selector)).backgroundColor));
- assert.equal(colors[1],colors[2]);assert.notEqual(colors[1],colors[3]);
+ // Die gewählte Kachel ist getönt (dazu dunkler Rand mit orangem Schatten).
+ assert.notEqual(colors[1],colors[2]);assert.notEqual(colors[1],colors[3]);
  // Reduzierter Stil: „Verbformen“ ist eine ruhige Karte wie „Neue Sätze lernen“, nur „heute geübt“ bleibt farbig.
- const cards=await page.evaluate(()=>['.home-verbs','.home-new'].map(selector=>getComputedStyle(document.querySelector(selector)).backgroundColor));
- assert.equal(cards[0],cards[1],'„Verbformen“ hat den Kartenhintergrund von „Neue Sätze lernen“');assert.notEqual(colors[0],cards[0]);
+ // Mit Reitern sind die Verbformen eine Kachel wie die anderen Übungen; die eigene Karte gibt es nur noch für Gäste.
+ assert.ok(await page.locator('[data-home-activity="verbs"]').isVisible()&&await page.locator('.home-verbs').isHidden());
  assert.equal(await page.locator('#home-view').getByText('3 Verbformen zur Wiederholung').count(),0);
  if(process.env.HOME_SCREENSHOTS)await page.screenshot({path:process.env.HOME_SCREENSHOTS+'/home-desktop.png',fullPage:true});
  for(const width of [390,320]){
@@ -267,6 +274,7 @@ try{
  // Signed in, all levels are open.
  await focused.evaluate(()=>{document.body.dataset.account='authenticated';});
  await focused.locator('#path-level-hint').waitFor({state:'hidden'});
+ await focused.locator('[data-home-tab-button="new"]').click();
  assert.equal(await focused.locator('#path-level option[value="2"]').isDisabled(),false);
  await focused.locator('#path-next-level').click();
  assert.equal(await focused.locator('#path-level').inputValue(),'2');
@@ -293,7 +301,54 @@ try{
  await focused.locator('#practice-view [data-view="home"]').click();
  await focused.locator('#path-level').selectOption('1');
  assert.equal(await focused.locator('#start-new-sentences').isDisabled(),true);
+ // Reiter der Startseite am Handy: Leiste fest am unteren Rand, Knöpfe auf „Willkommen“, Kacheln, gemerkter Reiter.
+ const tabs=await browser.newContext({viewport:{width:390,height:844},serviceWorkers:'block',locale:'de-DE'});
+ await tabs.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());
+ await tabs.addInitScript(()=>localStorage.setItem('suomi-auth-session-v1',JSON.stringify({access_token:'t',refresh_token:'t',expires_at:Math.floor(Date.now()/1000)+3600,user:{id:'tabs-user',user_metadata:{username:'stefan'}}})));
+ const phone=await tabs.newPage();phone.on('pageerror',e=>errors.push(e.message));
+ await phone.goto(origin);await phone.locator('#start-new-sentences:not([disabled])').waitFor({state:'attached'});
+ assert.equal(await phone.locator('#home-view').getAttribute('data-home-tab'),'welcome','erstes Öffnen am Tag: Willkommen');
+ assert.ok(await phone.locator('#home-view .intro h1').isVisible()&&await phone.locator('#welcome-review').isVisible());
+ assert.ok(await phone.evaluate(()=>{const n=document.getElementById('home-tabs'),r=n.getBoundingClientRect();return getComputedStyle(n).position==='fixed'&&Math.abs(r.bottom-innerHeight)<1&&r.width===innerWidth;}),'Reiterleiste liegt am unteren Rand');
+ assert.ok(await phone.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'kein Querscrollen');
+ assert.equal(await phone.locator('#welcome-new-note').textContent(),await phone.locator('#path-current-title').textContent(),'der Knopf nennt das aktuelle Thema');
+ await phone.locator('#welcome-new').click();
+ assert.ok(await phone.locator('#practice-view').isVisible(),'„Neue Sätze“ startet die Etappe direkt');
+ assert.ok(await phone.locator('#home-tabs').isHidden(),'in der Übung gibt es keine Reiterleiste');
+ await phone.locator('#practice-view [data-view="home"]').click();
+ assert.equal(await phone.locator('#home-view').getAttribute('data-home-tab'),'welcome');
+ await phone.locator('[data-home-tab-button="practice"]').click();
+ assert.ok(await phone.locator('.home-daily').isVisible()&&await phone.locator('#home-view .intro').isHidden());
+ assert.equal(await phone.locator('.home-exercises button:visible').count(),9,'neun Kacheln');
+ assert.ok(await phone.locator('.home-tile-note').first().isVisible());
+ assert.ok(await phone.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'kein Querscrollen mit Kacheln');
+ await phone.locator('[data-home-activity="listen"]').click();
+ assert.equal(await phone.locator('#continue-title').textContent(),'Hörübung');
+ // Grammatik und Schreibtest sind Kacheln wie die anderen: erst die Karte darunter, los geht es mit dem Knopf.
+ await phone.locator('[data-home-activity="writing"]').click();
+ assert.ok(await phone.locator('[data-home-activity="writing"]').evaluate(el=>el.classList.contains('is-unavailable')),'Schreibtest ohne genug geübte Sätze: Kachel blass');
+ assert.match(await phone.locator('#home-writing-note').textContent(),/dann ist der Schreibtest spielbar/);
+ assert.equal(await phone.locator('#continue-title').textContent(),'Hörübung','die gewählte Übung bleibt');
+ await phone.locator('[data-home-activity="grammar"]').click();
+ assert.ok(await phone.locator('#home-view').isVisible(),'die Grammatik-Kachel bleibt auf der Startseite');
+ assert.equal(await phone.locator('#continue-title').textContent(),'Grammatik');
+ assert.ok(await phone.locator('#home-grammar-topic').isVisible()&&await phone.locator('#home-direction-control').isHidden());
+ await phone.locator('#home-grammar-topic').selectOption('possession');
+ assert.match(await phone.locator('#home-session-meta').textContent(),/Besitz/);
+ await phone.locator('#continue-practice').click();
+ assert.ok(await phone.locator('#practice-view').isVisible());
+ assert.equal(await phone.locator('[data-activity="grammar"]').getAttribute('aria-pressed'),'true','„Grammatik üben“ startet die Grammatikübung');
+ assert.equal(await phone.locator('#practice-settings').evaluate(d=>d.open),false,'ohne aufgeklappte Einstellungen');
+ await phone.locator('#practice-view [data-view="home"]').click();
+ await phone.locator('[data-home-tab-button="practice"]').press('ArrowRight');
+ assert.equal(await phone.locator('#home-view').getAttribute('data-home-tab'),'new','Pfeiltasten wechseln den Reiter');
+ await phone.reload();await phone.locator('#start-new-sentences:not([disabled])').waitFor({state:'attached'});
+ assert.equal(await phone.locator('#home-view').getAttribute('data-home-tab'),'new','der gewählte Reiter bleibt beim Neuladen');
+ const second=await tabs.newPage();second.on('pageerror',e=>errors.push(e.message));
+ await second.goto(origin);await second.locator('#start-new-sentences:not([disabled])').waitFor({state:'attached'});
+ assert.equal(await second.locator('#home-view').getAttribute('data-home-tab'),'practice','später am Tag geht direkt „Üben“ auf');
+ await tabs.close();
  assert.deepEqual(errors,[]);
  await context.close();
- console.log('PASS: live cloud apply without reload, daily round, home selector, review counts across levels and launches, guest Level-1 lock, due-only verb round, preserved draft, identical colors, mobile layout, other exercises and guest privacy.');
+ console.log('PASS: Reiter der Startseite, live cloud apply without reload, daily round, home selector, review counts across levels and launches, guest Level-1 lock, due-only verb round, preserved draft, identical colors, mobile layout, other exercises and guest privacy.');
 }finally{await browser?.close();server.kill();}

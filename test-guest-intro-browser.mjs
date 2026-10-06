@@ -134,7 +134,7 @@ try{
  await page.goto(origin+'/?intro');
  await page.waitForFunction(()=>document.documentElement.classList.contains('intro-user')&&document.documentElement.classList.contains('intro-running'));
  await page.locator('.intro-greet').waitFor({state:'attached',timeout:8000});
- assert.match(await page.locator('.intro-greet').textContent(),/^(Hyvää|Huomenta)[^,]*,\s*Testi!$/,'greeting stands alone first, in Finnish');
+ assert.match(await page.locator('.intro-greet').textContent(),/^(Hyvää|Huomenta|Moi)[^!]*,\s*Testi!$/,'greeting stands alone first, in Finnish');
  assert.equal(await opacity(page,'header .brand'),1,'logo visible from the start');
  assert.equal(await opacity(page,'header .header-nav'),0,'navigation hidden during the intro');
  assert.equal(await opacity(page,'#home-view .intro h1'),0,'the real greeting stays hidden under the intro layer');

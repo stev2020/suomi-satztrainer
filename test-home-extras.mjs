@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {finnishGreeting,displayName,weekActivity,practiceStreak,dayKey} from './dist/home-extras.mjs';
+import {initialHomeTab,HOME_TABS} from './dist/home-tabs.mjs';
 
 const at=(y,m,d,h)=>new Date(y,m-1,d,h,15);
 // 2026-09-28 ist ein Montag.
@@ -26,4 +27,13 @@ assert.equal(week[0].key,k(2026,9,28));assert.equal(week[6].key,k(2026,10,4));
 assert.deepEqual(week.map(d=>d.count),[10,4,0,0,0,0,0]);
 assert.ok(week[1].today&&!week[0].today);assert.ok(week[2].future&&!week[1].future);
 assert.equal(weekActivity({},at(2026,10,4,22))[6].today,true,'Sonntag gehört zur laufenden Woche');
-console.log('Startseite: Begrüßung nach Tageszeit, Name, Serie und Wochenreihe geprüft.');
+
+// Reiter der Startseite: Womit geht sie auf?
+assert.deepEqual(HOME_TABS,['welcome','practice','new']);
+assert.equal(initialHomeTab({lastDay:'',day:'2026-10-06'}),'welcome','erstes Öffnen überhaupt');
+assert.equal(initialHomeTab({lastDay:'2026-10-05',day:'2026-10-06'}),'welcome','erstes Öffnen am Tag');
+assert.equal(initialHomeTab({lastDay:'2026-10-06',day:'2026-10-06'}),'practice','später am selben Tag direkt „Üben“');
+assert.equal(initialHomeTab({sessionTab:'new',lastDay:'2026-10-05',day:'2026-10-06'}),'new','in diesem Browser-Tab gewählter Reiter bleibt');
+assert.equal(initialHomeTab({sessionTab:'quatsch',lastDay:'2026-10-06',day:'2026-10-06'}),'practice','unbekannter Wert zählt nicht');
+assert.equal(initialHomeTab({intro:true,sessionTab:'practice',lastDay:'2026-10-06',day:'2026-10-06'}),'welcome','mit Intro immer „Willkommen“');
+console.log('Startseite: Begrüßung nach Tageszeit, Name, Serie, Wochenreihe und Start-Reiter geprüft.');
