@@ -15,7 +15,7 @@ import {mountWordLookup,loadLexicon,lookupForSentence,splitSentence,getLexicon} 
 import {planVerbs,planEndings,interleave,alternate,verbCard,endingCard} from './daily-mix.mjs?v=3';
 import {validateEndingsProgress,mergeEndingsProgress,markEndingAnswered,missedEndings} from './endings-progress.mjs?v=1';
 import {createGuestCard,shortGloss,flipWordIndex} from './guest-card.mjs?v=12';
-import {renderGreeting,renderToday,createDailySentence,animateProgress,GOAL_CHOICES,DAILY_GOAL} from './home-extras.mjs?v=10';
+import {renderGreeting,renderToday,createDailySentence,animateProgress,GOAL_CHOICES,DAILY_GOAL} from './home-extras.mjs?v=11';
 import {buildDifficultDeck} from './difficult-words.mjs?v=2';
 import {buildEndingItems,indexLexicon,renderEndings,hasEndingChoices} from './endings-practice.mjs?v=2';
 import {translationFeedbackMarkup} from './translation-feedback.mjs?v=1';
@@ -137,13 +137,13 @@ function buildDailyEndings(lexicon=getLexicon()){
  dailyEndings={items:buildEndingItems(lexicon,all,null),index:indexLexicon(lexicon,all)};
  dailyEndings.byId=new Map(dailyEndings.items.map(i=>[i.id,i]));
 }
-let dailyEndings=null,dailyEndingsLoading=false;
+let dailyEndings=null,dailyEndingsLoading=false,dailyEndingsFailed=false;
 function allEndingItems(){
  if(dailyEndings)return dailyEndings.items;
  if(!ready||!data.length)return null;
  const lexicon=getLexicon();
  if(!lexicon){
-  if(!dailyEndingsLoading&&ready&&!activityLocked('endings')){dailyEndingsLoading=true;loadLexicon().then(()=>{if(ready)renderDailyPlan();}).catch(()=>{}).finally(()=>{dailyEndingsLoading=false;});}
+  if(!dailyEndingsLoading&&ready&&!activityLocked('endings')){dailyEndingsLoading=true;loadLexicon().then(()=>{dailyEndingsLoading=false;if(ready)renderDailyPlan();}).catch(()=>{dailyEndingsFailed=true;}).finally(()=>{dailyEndingsLoading=false;});}
   return null;
  }
  // Aufbau kostet spürbar Rechenzeit (auf dem Handy mehrere hundert ms): nicht mitten im Start,
@@ -151,7 +151,11 @@ function allEndingItems(){
  if(!dailyEndingsLoading){
   dailyEndingsLoading=true;
   const build=()=>{dailyEndingsLoading=false;if(dailyEndings)return;buildDailyEndings(lexicon);if(ready)renderDailyPlan();};
-  if(typeof requestIdleCallback==='function')requestIdleCallback(build,{timeout:2000});else setTimeout(build,300);
+  // Im Intro wartet der Vogel genau darauf (vanamoHomeBusy): sofort rechnen, solange nur die Begrüßung dasteht.
+  // Fliegt der Schwarm schon (langsame Verbindung), erst nach dem Intro – sonst ruckelt er.
+  if(document.documentElement.classList.contains('intro-flying'))afterIntro().then(build);
+  else if(introActive())setTimeout(build,0);
+  else if(typeof requestIdleCallback==='function')requestIdleCallback(build,{timeout:2000});else setTimeout(build,300);
  }
  return null;
 }
@@ -214,7 +218,8 @@ function dailyNote(stats){
  return fresh?`Heute ein paar neue ${fresh}.`:'Für heute ist alles wiederholt.';
 }
 // Bis die Sätze geladen sind, zeigt die Startseite nur leere Kästen statt Platzhaltertexten.
-function homeLoaded(){const home=$('home-view');home.classList.remove('is-loading');home.removeAttribute('aria-busy');}
+let homeDone=false;
+function homeLoaded(){homeDone=true;const home=$('home-view');home.classList.remove('is-loading');home.removeAttribute('aria-busy');}
 function renderDailyPlan(){
  const button=$('start-daily-session');if(!button)return;
  const stats=dailyPlanStats(),available=stats.roundSize,onlySentences=available===Math.min(10,stats.dueCount);
@@ -1128,17 +1133,26 @@ function pulseStart(){const b=$('start-new-sentences');if(!b)return;b.classList.
 function pointToGuestPath(){const section=document.querySelector('.home-new');if(!section||section.hidden)return;section.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'});pulseStart();setTimeout(()=>$('start-new-sentences')?.focus({preventScroll:true}),500);}
 function syncGuestHome(){document.documentElement.classList?.toggle('is-guest',!accountActive());if(typeof renderHomeExtras==='function')renderHomeExtras();syncActivityLocks();syncHeaderPractice();if(!guestCard)return;const guest=!accountActive()&&guestCard.available;syncPathCollapse(guest);syncGuestPathVisibility(guest);$('guest-card').hidden=!guest;if(!guest)guestCard.stop();else if(ready)guestCard.start();if(ready)renderDailyPlan();else document.querySelector('.home-daily').hidden=guest;}
 syncGuestHome();
+// Solange das Intro läuft (index.html: intro-pending, guest-intro.mjs: intro-running), wird nichts Schweres
+// nebenher geladen oder berechnet – auf dem Handy ruckelt sonst der Vogelschwarm.
+function introActive(){const c=document.documentElement.classList;return c.contains('intro-pending')||c.contains('intro-running');}
+const afterIntro=()=>new Promise(resolve=>{const check=()=>introActive()?setTimeout(check,150):resolve();check();});
+// Für das Intro der Angemeldeten: Der Vogel fliegt erst los, wenn Sätze und Tagesaufgaben fertig berechnet sind.
+window.vanamoHomeBusy=()=>!homeDone||(ready&&accountActive()&&!activityLocked('endings')&&!dailyEndings&&!dailyEndingsFailed);
 const sentencesRequest=fetch('sentences.json'),exclusionsRequest=loadQualityExclusions();
+// Angemeldete brauchen die Wortanalyse gleich nach den Sätzen für die Tagesaufgaben: schon jetzt mitladen,
+// damit sie nicht erst mitten im Intro ankommt.
+if(accountActive()&&!activityLocked('endings'))loadLexicon().catch(()=>{});
 let rawSentences=[],rawArchived=[];
 // Die Grammatikhilfe wird erst nach den Sätzen geladen: Gleichzeitig geladen teilen
 // sich beide Dateien die Leitung, und auf langsamen Handys verzögert das den Start.
-// Gebraucht wird sie erst beim Aufdecken einer Karte (grammarLoaded zieht nach).
+// Gebraucht wird sie erst beim Aufdecken einer Karte (grammarLoaded zieht nach) – deshalb auch erst nach dem Intro.
 let grammarRequest=null;
 const loadGrammar=()=>grammarRequest??=fetch('grammar.json').then(r=>r.ok?r.json():null).then(p=>{if(p){grammar=p.sentences||{};grammarAvailable=true;}}).catch(()=>{}).finally(()=>{grammarLoading=false;grammarLoaded();});
-setTimeout(loadGrammar,8000);
+setTimeout(()=>afterIntro().then(loadGrammar),8000);
 try{const response=await sentencesRequest;if(!response.ok)throw new Error('load');const payload=await response.json();
  // Gäste sehen zuerst die Satzkarte, die das Wörterbuch braucht: erst das laden, dann die Grammatik.
- (accountActive()?Promise.resolve():loadLexicon().catch(()=>{})).finally(loadGrammar);
+ (accountActive()?Promise.resolve():loadLexicon().catch(()=>{})).finally(()=>afterIntro().then(loadGrammar));
  // Mit gespeicherter Sperrliste gar nicht warten, sonst höchstens 1,5 s; Späteres wird nachgezogen.
  const exclusionsInTime=await Promise.race([exclusionsRequest.then(()=>true),new Promise(r=>setTimeout(()=>r(false),qualityCached?0:1500))]);
  rawSentences=payload.sentences;rawArchived=Array.isArray(payload.archived_sentences)?payload.archived_sentences:[];
