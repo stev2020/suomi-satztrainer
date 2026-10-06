@@ -1,4 +1,4 @@
-import {REVIEW_KINDS} from './review-plan.mjs';
+import {REVIEW_KINDS} from './review-plan.mjs?v=2';
 import {LEVEL_PATHS} from './learning-path-data.mjs';
 export {LEVEL_PATHS};
 export const EVERYDAY_PATH=LEVEL_PATHS[1];

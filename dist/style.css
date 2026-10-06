@@ -1187,6 +1187,8 @@ h1 .intro-w,h1 .intro-ch{color:inherit}
 #practice-view:not(.is-path) #card .verb-counts button:first-child{background:var(--paper);box-shadow:3px 3px 0 var(--orange);color:var(--ink)}
 /* Verbformen */
 #practice-view :is(.verb-pronoun,.verb-hero-pronoun){border:1.5px solid var(--ink);background:var(--mint);box-shadow:none;color:var(--ink)}
+/* Beim Würfeln zeigt ::after das wechselnde Pronomen (verbs.css) – das eigentliche bleibt so lange unsichtbar. */
+#practice-view .verb-pronoun.rolling{color:transparent}
 #practice-view .verb-hero-demo{border:1px solid color-mix(in srgb,var(--ink) 22%,transparent);box-shadow:none}
 #practice-view .verb-stats div{border:1px solid color-mix(in srgb,var(--ink) 22%,transparent);border-radius:14px;background:none}
 #practice-view .verb-stats strong{font-weight:500}

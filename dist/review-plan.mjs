@@ -18,6 +18,16 @@ export function dueSentences(sentences,reviews,level,now=Date.now()){
  }
  return [...unique.values()].sort((a,b)=>a.last-b.last||a.items[0].r.due-b.items[0].r.due||a.s.id-b.s.id);
 }
+// Übersetzungen in „Wiederholen“ wechseln die Richtung: Ein Satz, der bisher nur in einer Richtung gelernt wurde,
+// wird mal Finnisch → Deutsch, mal Deutsch → Finnisch gezeigt. Sein Lernstand bleibt dabei ein einziger
+// (reviewDirection), es entstehen keine doppelten Wiederholungen. Über Wiederholungszahl + Satznummer ist jede
+// Runde gemischt, und derselbe Satz kommt beim nächsten Mal andersherum. Wer einen Satz schon in beiden
+// Richtungen übt, behält beide Lernstände unverändert.
+export function shownDirection(sentence,kind,reviews){
+ const other=kind==='fi-de'?'de-fi':'fi-de';
+ if(reviews[`${sentence.id}:${other}`])return kind;
+ return ((Number(reviews[`${sentence.id}:${kind}`]?.repetitions)||0)+(Number(sentence.id)||0))%2===1?other:kind;
+}
 export function reviewPlan(sentences,reviews,level,{now=Date.now(),limit=10,translationOffset=0}={}){
  let translated=translationOffset,searchIncluded=false;
  const plan=[];
@@ -25,7 +35,7 @@ export function reviewPlan(sentences,reviews,level,{now=Date.now(),limit=10,tran
   const item=searchIncluded?items.find(({kind})=>kind!=='suchsel'):items[0];
   if(!item)continue;
   const {kind}=item,translate=['fi-de','de-fi'].includes(kind);
-  plan.push({...s,dailyActivity:translate?'translate':kind,practiceDirection:translate?kind:undefined,
+  plan.push({...s,dailyActivity:translate?'translate':kind,practiceDirection:translate?shownDirection(s,kind,reviews):undefined,reviewDirection:translate?kind:undefined,
    dailyDifficulty:translate?(translated++%3===2?'hard':'easy'):'hard'});
   if(kind==='suchsel')searchIncluded=true;
   if(plan.length>=limit)break;
