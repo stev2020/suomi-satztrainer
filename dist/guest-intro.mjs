@@ -36,7 +36,7 @@ const T={
 const EASE_MOVE='cubic-bezier(.65,0,.25,1)',EASE_OUT='cubic-bezier(.2,.7,.2,1)';
 const SEEN='vanamo-intro-seen';
 
-import {createBirds} from './intro-birds.mjs?v=7';
+import {createBirds} from './intro-birds.mjs?v=11';
 
 const html=document.documentElement;
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -192,7 +192,10 @@ const USER={
  greetScale:3,      // so viel größer als später an ihrem Platz (höchstens 86 % der Breite)
  greetAt:.36,       // Höhe der Begrüßung im Bild
  birds:110,         // Größe des Schwarms; auf schmalen Bildschirmen:
- birdsSmall:45,
+ birdsSmall:80,
+ // Ausbreitung des Schwarms (px): in der Luft x/y, beim Schreiben tx/ty – locker wie ein Schwarm, nicht wie ein Wurm
+ loose:{x:95,y:58,tx:52,ty:34,tk:.75,absorb:true},
+ looseSmall:{x:60,y:40,tx:38,ty:24,tk:.7,absorb:true},
  flyMs:900,         // der Vogel fliegt in Ruhe vom Logo zur Begrüßung
  dissolveSpeed:.4,  // … und zieht langsam darüber (px je ms)
  writeSpeed:.5,     // der Schwarm schreibt ruhig, langsamer als bei den Gästen (px je ms)
@@ -311,7 +314,7 @@ export async function runUserIntro(){
   mark.classList.add('is-filling','is-filled');
   void mark.offsetWidth;
   mark.classList.remove('is-filled');
-  flock.beginFrom(mark);
+  flock.beginFrom(mark,innerWidth<560?USER.looseSmall:USER.loose);
   if(!await flock.dissolve(greeting,innerWidth<560?USER.birdsSmall:USER.birds,USER.flyMs,USER.dissolveSpeed)||done)return;
   if(!await flock.write(sentence,USER.writeSpeed)||done)return;
   await hold(USER.sentenceGap);if(done)return;

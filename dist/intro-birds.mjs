@@ -26,7 +26,7 @@ export function createBirds(){
  const html=document.documentElement;
  const cv=document.createElement('canvas');cv.className='intro-birds';cv.setAttribute('aria-hidden','true');
  const ctx=cv.getContext('2d');
- let W=0,H=0,VH=0,birds=[],sparks=[],hist=[],tweens=[],att={x:0,y:0},spread={x:60,y:60};
+ let W=0,H=0,VH=0,birds=[],sparks=[],hist=[],tweens=[],att={x:0,y:0},spread={x:60,y:60},tight={x:34,y:14,k:.42},absorb=false;
  let col={ink:'#172c38',mint:'#ace0d4',line:'#172c38'};
  let raf=0,last=0,clock=0,mode='',first=true,intro=false,seatAt=null,watching=false,state='';
  const pets=()=>birds.filter(b=>b.pet);
@@ -103,6 +103,8 @@ export function createBirds(){
    else{
     let tx,ty,k,c;
     if(b.mode==='home'){tx=b.tx;ty=b.ty;k=11;c=4.6;}
+    // in den Buchstaben fliegen: zügig, ohne Überschwingen; kurz vor dem Ziel verblasst der Vogel
+    else if(b.mode==='land'){tx=b.tx;ty=b.ty;k=150;c=23;}
     // sanft anfliegen: Der Zug zum Ziel baut sich erst auf, sonst schießen sie los wie eine Rakete.
     else if(b.mode==='petfly'){const g=Math.min(1,(clock-b.t0)/700);tx=b.tx;ty=b.ty;k=16*g*g;c=7.4;}
     else{const p=histAt(clock-b.lag);b.ang+=b.spin*dt;tx=p.x+Math.cos(b.ang)*b.r*spread.x;ty=p.y+Math.sin(b.ang)*b.r*spread.y;k=38;c=8.5;}
@@ -110,8 +112,12 @@ export function createBirds(){
    }
    ax+=(Math.random()-.5)*300;ay+=(Math.random()-.5)*300;
    b.vx+=ax*dt;b.vy+=ay*dt;
-   const sp=Math.hypot(b.vx,b.vy),vmax=b.mode==='petfly'?360:950;if(sp>vmax){b.vx*=vmax/sp;b.vy*=vmax/sp;}
+   const sp=Math.hypot(b.vx,b.vy),vmax=b.mode==='petfly'?360:1200;if(sp>vmax){b.vx*=vmax/sp;b.vy*=vmax/sp;}
    b.x+=b.vx*dt;b.y+=b.vy*dt;b.flap+=b.rate*dt;
+   if(b.mode==='land'){
+    const d=Math.hypot(b.tx-b.x,b.ty-b.y);b.alpha=Math.min(1,d/16);
+    if(d<5||clock-b.t0>520){b.dead=true;b.ch.el.classList.add('on');continue;}
+   }
    if(b.mode==='petfly'&&((Math.hypot(b.tx-b.x,b.ty-b.y)<5&&Math.hypot(b.vx,b.vy)<120)||clock-b.t0>4500)){
     b.mode='sit';b.x=b.tx;b.y=b.ty;b.vx=b.vy=0;b.land=clock;b.from=null;drawSit(b);continue;
    }
@@ -119,7 +125,7 @@ export function createBirds(){
    if(b.from){const t=(clock-b.from.t)/260;if(t<1)drawSwallow(b.from.x,b.from.y,b.size/7.5*SIT,1-t,1);else b.from=null;}
    drawBird(b);
   }
-  birds=birds.filter(b=>b.mode!=='leave'||(b.alpha>0&&b.x>-40&&b.x<W+40&&b.y>scrollY-40&&b.y<H+40));
+  birds=birds.filter(b=>!b.dead&&(b.mode!=='leave'||(b.alpha>0&&b.x>-40&&b.x<W+40&&b.y>scrollY-40&&b.y<H+40)));
   for(const p of sparks){
    p.life-=dt/.6;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=260*dt;
    ctx.globalAlpha=Math.max(0,p.life);ctx.strokeStyle=p.c;ctx.lineWidth=2.2;
@@ -146,18 +152,20 @@ export function createBirds(){
     lag:mint?70:Math.random()*380,r:mint?.3:Math.sqrt(Math.random()),ang:Math.random()*6.28,spin:(Math.random()<.5?-1:1)*(1.2+Math.random()*2.6),
     size:mint?10:3.4+Math.random()*3,flap:Math.random()*6.28,rate:17+Math.random()*10});
   }
-  spread={x:Math.max(70,W*.12),y:Math.max(60,VH*.13)};mode='circle';
+  spread={x:Math.max(70,W*.12),y:Math.max(60,VH*.13)};tight={x:34,y:14,k:.42};absorb=false;mode='circle';
   att={x:W/2,y:VH*.45};loop();
  }
  const newBird=(x,y,mint)=>({x,y,vx:0,vy:0,mode:'follow',mint,alpha:1,
   lag:mint?70:Math.random()*380,r:mint?.3:Math.sqrt(Math.random()),ang:Math.random()*6.28,spin:(Math.random()<.5?-1:1)*(1.2+Math.random()*2.6),
   size:mint?10:3.4+Math.random()*3,flap:Math.random()*6.28,rate:17+Math.random()*10});
  // Intro für Angemeldete: Es gibt zuerst nur den farbigen Vogel, er startet in `markEl` (dem Logo).
- function beginFrom(markEl){
+ // `loose`: wie weit sich der Schwarm ausbreitet – {x,y} in der Luft, {tx,ty,tk} beim Schreiben einer Zeile
+ // (halbe Breite, Mindesthöhe, Anteil der Zeilenhöhe). Ohne Angabe eng wie im Gäste-Intro beim Schreiben.
+ function beginFrom(markEl,loose){
   intro=true;first=false;VH=innerHeight;mount(VH);
   const m=rect(markEl);
   birds=[newBird(m.cx,m.cy,true)];sparks=[];hist=[];
-  spread={x:34,y:16};mode='';att={x:m.cx,y:m.cy};loop();
+  spread={x:loose?.x??34,y:loose?.y??16};tight={x:loose?.tx??34,y:loose?.ty??14,k:loose?.tk??.42};absorb=!!loose?.absorb;mode='';att={x:m.cx,y:m.cy};loop();
  }
  // Der farbige Vogel fliegt an den Anfang der Zeichen in `list` und zieht darüber hinweg. Jedes überflogene
  // Zeichen verschwindet (Klasse `on` fällt weg) und wird zu Vögeln – am Ende sind es `count`.
@@ -187,17 +195,43 @@ export function createBirds(){
   mode='';
   const pos=list.map(el=>({el,...rect(el)})),rows=[];
   for(const p of pos){const row=rows.find(r=>Math.abs(r.cy-p.cy)<(p.b-p.t)*.5);if(row)row.items.push(p);else rows.push({cy:p.cy,h:p.b-p.t,items:[p]});}
+  // Im Intro für Angemeldete erschafft der Schwarm den Satz: Für jeden Buchstaben lösen sich die nächsten Vögel,
+  // fliegen hinein und gehen darin auf – der Buchstabe erscheint, wenn der erste ankommt. Der Schwarm wird dabei
+  // kleiner; übrig bleiben der farbige Vogel, die zwei Schwalben und ein paar, die am Ende davonfliegen.
+  const total=pos.length;let used=0,seen=0;
+  const pool=absorb?Math.max(0,birds.filter(b=>!b.mint&&b.mode==='follow').length-(birds.length>60?9:5)):0;
+  const give=c=>{
+   seen++;const want=Math.round(pool*seen/total)-used;if(want<=0)return false;
+   const free=birds.filter(b=>!b.mint&&b.mode==='follow').map(b=>({b,d:Math.hypot(b.x-c.cx,b.y-c.cy)})).sort((a,z)=>a.d-z.d).slice(0,want);
+   for(const {b} of free){b.mode='land';b.t0=clock;b.ch=c;b.tx=lerp(c.l,c.r,.25+Math.random()*.5);b.ty=lerp(c.t,c.b,.3+Math.random()*.45);}
+   used+=free.length;return free.length>0;
+  };
   for(const row of rows){
    const x0=Math.max(14,Math.min(...row.items.map(p=>p.l))-30),x1=Math.max(...row.items.map(p=>p.r))+70;
-   const from={...att},s0={...spread},s1={x:34,y:Math.max(14,row.h*.42)};
-   const calm=speed<=.5;
-   if(!await tween(first?480:calm?950:700,p=>{const e=ease(p);att.x=lerp(from.x,x0,e);att.y=lerp(from.y,row.cy,e)-Math.sin(p*Math.PI)*row.h*.9;spread.x=lerp(s0.x,s1.x,e);spread.y=lerp(s0.y,s1.y,e);}))return false;
-   // Warten, bis auch die Nachzügler am Zeilenanfang sind – sie sollen die Zeile von Anfang an begleiten.
-   if(!first&&!await tween(calm?550:430,p=>{att.x=x0+Math.sin(p*Math.PI*2)*6;att.y=row.cy+Math.cos(p*Math.PI*2)*row.h*.1;}))return false;
+   const from={...att},s0={...spread},s1={x:tight.x,y:Math.max(tight.y,row.h*tight.k)};
+   if(first){
+    if(!await tween(480,p=>{const e=ease(p);att.x=lerp(from.x,x0,e);att.y=lerp(from.y,row.cy,e)-Math.sin(p*Math.PI)*row.h*.9;spread.x=lerp(s0.x,s1.x,e);spread.y=lerp(s0.y,s1.y,e);}))return false;
+   }else{
+    // Von Zeile zu Zeile in einem Bogen, ohne anzuhalten: Der Schwarm fliegt in seiner Richtung weiter, zieht nach
+    // oben weg, kommt in einer Schleife zurück und geht von links oben in die neue Zeile über – am Anfang und am
+    // Ende so schnell, wie er schreibt, dazwischen etwas schneller. So kommen auch die Nachzügler rechtzeitig an.
+    const L=Math.hypot(x0-from.x,row.cy-from.y),ms=absorb?Math.max(900,L*2.3+400):Math.max(800,L*1.2+330),reach=speed*ms/3; // Gäste: zügiger und flacher
+    const room=(Math.min(from.y,row.cy)-scrollY-28)/.75,A=Math.max(row.h*.6,Math.min(reach*(absorb?.83:.6),room)),k=Math.min(260,Math.sqrt(Math.max(reach*reach-A*A,3600)));
+    const lower=row.cy-from.y>row.h*1.5; // neue Zeile liegt deutlich tiefer: am Anfang nur leicht ansteigen
+    const p1={x:from.x+k,y:from.y-A*(lower?.3:1)},p2={x:x0-k,y:row.cy-A};
+    if(!await tween(ms,p=>{
+     const q=1-p,a=q*q*q,b=3*q*q*p,c=3*q*p*p,d=p*p*p,e=ease(p);
+     att.x=a*from.x+b*p1.x+c*p2.x+d*x0;att.y=a*from.y+b*p1.y+c*p2.y+d*row.cy;
+     spread.x=lerp(s0.x,s1.x,e);spread.y=lerp(s0.y,s1.y,e);
+    }))return false;
+   }
    first=false;
    if(!await tween(Math.max(650,(x1-x0)/speed),p=>{
     att.x=lerp(x0,x1,p);att.y=row.cy+Math.sin(p*Math.PI*3)*row.h*.14;
-    for(const c of row.items)if(c.cx<att.x-28)c.el.classList.add('on');
+    for(const c of row.items){
+     if(pool){if(!c.given&&c.cx<att.x+6){c.given=true;c.wait=give(c);}if(c.wait&&c.cx>att.x-170)continue;}
+     if(c.cx<att.x-28)c.el.classList.add('on');
+    }
    }))return false;
    row.items.forEach(c=>c.el.classList.add('on'));
   }
