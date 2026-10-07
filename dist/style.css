@@ -1460,3 +1460,11 @@ header>.today.streak-gold :is(#today-count,.today-toggle){display:none}
 @keyframes streak-pop{0%{transform:scale(1)}35%{transform:scale(1.1)}100%{transform:scale(1)}}
 @keyframes streak-in{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){header>.today.is-account.streak-gold,.streak-swap,.streak-back,.streak-flame{animation:none!important}}
+/* Angemeldete: keine Statuszeile „Konto verbunden" mehr auf der Startseite. Geht beim Synchronisieren etwas schief, erscheint unten ein Hinweis. */
+:root:not(.is-guest) .home-storage{display:none}
+.sync-toast{position:fixed;left:50%;bottom:22px;z-index:800;transform:translateX(-50%);display:flex;align-items:center;gap:12px;width:max-content;max-width:calc(100% - 28px);padding:11px 12px 11px 16px;border:1.5px solid var(--ink);border-left:5px solid var(--bad);border-radius:14px;background:var(--paper);color:var(--ink);font-size:14px;line-height:1.4;animation:sync-toast-in .3s ease both}
+.sync-toast button{flex-shrink:0;display:grid;place-items:center;width:32px;height:32px;min-height:0;padding:0;border:0;border-radius:50%;background:none;box-shadow:none;font-size:20px;line-height:1;color:var(--ink-soft);cursor:pointer}
+.sync-toast button:hover{background:color-mix(in srgb,var(--ink) 8%,transparent);color:var(--ink)}
+@keyframes sync-toast-in{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
+@media(max-width:700px){.sync-toast{bottom:calc(86px + env(safe-area-inset-bottom,0px))}}
+@media(prefers-reduced-motion:reduce){.sync-toast{animation:none}}
