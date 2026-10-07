@@ -1114,7 +1114,7 @@ function accountName(){try{return JSON.parse(localStorage.getItem('suomi-auth-se
 function accountId(){try{return JSON.parse(localStorage.getItem('suomi-auth-session-v1')||'null')?.user?.id||'';}catch{return '';}}
 var dailySentence=null;
 // Tagesserie: einmal am Tag, beim ersten abgeschlossenen Block, kommt die Animation mit dem goldenen Vogel (streak.mjs).
-function celebrateStreak(){if(!accountActive())return;import('./streak.mjs?v=1').then(m=>m.celebrateStreak(memory.daily)).catch(()=>{});}
+function celebrateStreak(){if(!accountActive())return;import('./streak.mjs?v=2').then(m=>m.celebrateStreak(memory.daily)).catch(()=>{});}
 function renderHomeExtras(){
  if(typeof memory==='undefined'||!memory)return;
  const account=accountActive();
