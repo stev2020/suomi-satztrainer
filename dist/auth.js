@@ -38,9 +38,15 @@ const technicalEmail=u=>`u${hex(u)}@users.suomi.invalid`;
 const api=(path,options={})=>fetch(`${SUPABASE_URL}${path}`,{...options,headers:{apikey:SUPABASE_PUBLISHABLE_KEY,'Content-Type':'application/json',...(options.headers||{})}});
 const authHeaders=()=>session?.access_token?{Authorization:`Bearer ${session.access_token}`}:{};
 const status=(t,error=false)=>{const el=$('account-status');if(el){el.textContent=t;el.classList.toggle('error',error);}};
+let syncToast=null;
 const syncState=(t,error=false)=>{
   const detail=$('account-sync');if(detail){detail.textContent=t;detail.classList.toggle('error',error);}
-  const home=$('storage-note');if(home){home.textContent=`Konto verbunden · ${t}`;home.classList.toggle('error',error);}
+  // Auf der Startseite steht dazu nichts mehr – nur wenn etwas schiefläuft, erscheint unten ein Hinweis (bis es wieder klappt oder man ihn schließt).
+  if(!error){syncToast?.remove();syncToast=null;return;}
+  try{
+   if(!syncToast){const toast=document.createElement('div');toast.id='sync-toast';toast.className='sync-toast';toast.setAttribute('role','alert');toast.innerHTML='<span></span><button type="button" aria-label="Schließen">×</button>';toast.querySelector('button').onclick=()=>{toast.remove();if(syncToast===toast)syncToast=null;};document.body.append(toast);syncToast=toast;}
+   syncToast.querySelector('span').textContent=t;
+  }catch{}
 };
 const stableJSON=value=>JSON.stringify(value,(_,item)=>item&&typeof item==='object'&&!Array.isArray(item)?Object.keys(item).sort().reduce((out,key)=>(out[key]=item[key],out),{}):item);
 const localLearning=()=>{try{return JSON.parse(localStorage.getItem(STORE))||null}catch{return null}};
@@ -344,7 +350,7 @@ export const accountUser=()=>session?.user||null;
 export {request as accountRequest};
 window.suomiAccountUser=()=>session?.user||null;
 window.suomiAccountRequest=request;
-import('./classrooms.js?v=96').catch(()=>{});
+import('./classrooms.js?v=97').catch(()=>{});
 import('./quality-review.js?v=5').catch(()=>{});
 if(session?.user&&configured())refreshSession().then(async ok=>{if(!ok)return;try{await pullAndMerge();}catch(err){syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true);status(err.message,true);}}).catch(syncError).finally(()=>{syncReady=true;if(syncQueued)scheduleSync()});
 else syncReady=true;
