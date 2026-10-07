@@ -1437,7 +1437,7 @@ html.has-home-tabs:has(#home-view[data-home-tab]:not([hidden])) body{padding-bot
 :root[data-theme=revontulet]{--gold:#f3d27a;--gold-hi:#fff6cf;--gold-deep:#c9a24a;--gold-soft:#3d3a22}
 
 /* ---- Tagesserie: Schleier, Zeichenfläche, Beschriftung ---- */
-.streak-veil{position:fixed;inset:0;z-index:900;background:color-mix(in srgb,var(--bg) 97%,transparent);opacity:0;transition:opacity .35s ease;pointer-events:none}
+.streak-veil{position:fixed;inset:0;z-index:900;background:color-mix(in srgb,var(--bg) 97%,transparent);opacity:0;transition:opacity .45s ease;pointer-events:none}
 .streak-veil.on{opacity:1;pointer-events:auto;cursor:pointer}
 .streak-canvas{position:fixed;inset:0;z-index:910;width:100%;height:100%;pointer-events:none}
 .streak-caption{position:fixed;left:0;right:0;z-index:905;display:grid;justify-items:center;gap:14px;pointer-events:none;opacity:0;transform:translateY(8px);transition:opacity .35s ease,transform .35s ease}
@@ -1448,6 +1448,9 @@ html.has-home-tabs:has(#home-view[data-home-tab]:not([hidden])) body{padding-bot
 .streak-caption li.done{border-color:var(--ink);background:var(--mint);color:var(--ink)}
 .streak-caption li.gold{border-color:var(--gold-deep);background:var(--gold);color:#2a1d00;box-shadow:0 0 8px color-mix(in srgb,var(--gold-hi) 60%,transparent)}
 
+/* Ausklang: Die Beschriftung blendet aus, während sie zu Staub zerfällt; die Pille liegt dabei schon über dem Schleier. */
+.streak-caption.fade{transform:none;transition:opacity .4s ease .12s}
+header>.today.is-account.streak-target{z-index:905}
 /* ---- Pille „heute geübt" im Gold-Zustand ---- */
 header>.today.is-account{transition:background .45s ease,border-color .45s ease,box-shadow .45s ease}
 header>.today.is-account.streak-gold{background:var(--gold-soft);border-color:var(--gold-deep);box-shadow:3px 3px 0 var(--gold-deep),0 0 16px color-mix(in srgb,var(--gold-hi) 55%,transparent);animation:streak-pop .5s ease-out}
