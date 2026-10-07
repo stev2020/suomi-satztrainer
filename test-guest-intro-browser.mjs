@@ -97,6 +97,9 @@ try{
  await page.goto(origin+'/?intro');
  await page.waitForFunction(()=>document.documentElement.classList.contains('intro-running'));
  // Mausbewegung, Mausrad und beliebige Tasten brechen nicht ab – nur Klick (oder Escape).
+ // Stellt der Browser mitten im Intro eine alte Scroll-Position wieder her, bleibt die Seite trotzdem oben.
+ await page.evaluate(()=>{const d=document.createElement('div');d.style.height='3000px';document.body.append(d);scrollTo(0,1500);});
+ await page.waitForFunction(()=>scrollY===0,null,{timeout:2000});
  await page.mouse.move(300,300);await page.mouse.move(640,400,{steps:5});await page.mouse.wheel(0,200);await page.keyboard.press('a');
  assert.match(await classes(page),/intro-running/,'moving, scrolling and typing keep the intro running');
  await page.mouse.click(640,400);
