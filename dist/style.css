@@ -983,6 +983,14 @@ h1 .intro-w,h1 .intro-ch{color:inherit}
 #practice-view.is-path .audio-row{margin:22px 0 0;gap:12px}
 #practice-view.is-path .audio-button{width:44px;height:44px;padding:0;border:1px solid color-mix(in srgb,var(--ink) 30%,transparent);border-radius:50%;background:none;box-shadow:none;color:var(--ink-soft)}
 #practice-view.is-path .audio-button:hover{border-color:var(--ink);background:none;color:var(--ink)}
+/* Gibt es eine Aufnahme, fällt der Knopf auf: gefüllt, kräftiger Rand, zwei sanfte Wellen beim Erscheinen. Nach dem Anhören wird er wieder ruhig. */
+#practice-view.is-path #play-audio{width:48px;height:48px}
+#practice-view.is-path #play-audio:not([data-played=true]){border:1.5px solid var(--ink);background:var(--mint);color:var(--ink);animation:audio-hint 1.5s ease-out .35s 2}
+#practice-view.is-path #play-audio:not([data-played=true]) svg{width:23px;height:23px;stroke-width:2}
+#practice-view.is-path #play-audio:not([data-played=true]):hover{background:color-mix(in srgb,var(--mint) 82%,var(--ink))}
+#practice-view.is-path #play-audio[data-state=playing]{animation:none}
+@keyframes audio-hint{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--ink) 30%,transparent)}100%{box-shadow:0 0 0 13px transparent}}
+@media(prefers-reduced-motion:reduce){#practice-view.is-path #play-audio{animation:none!important}}
 #practice-view.is-path .speed-options{padding:3px;border:1px solid color-mix(in srgb,var(--ink) 25%,transparent);background:none;overflow:visible}
 #practice-view.is-path .speed-options button{min-height:32px;border:0;border-radius:999px;font-weight:500}
 #practice-view.is-path .speed-options button[aria-pressed=true]{background:var(--mint);font-weight:600;color:var(--ink)}
@@ -1162,6 +1170,8 @@ h1 .intro-w,h1 .intro-ch{color:inherit}
    Auswahl in --mint der Palette. */
 #practice-view .primary{min-height:54px;padding:10px 28px;border:2px solid var(--ink);border-radius:14px;background:linear-gradient(var(--orange),var(--orange)) no-repeat left/0 100%,var(--paper);box-shadow:3.5px 3.5px 0 var(--orange);font:600 20px/1.15 var(--heading);letter-spacing:-.2px;color:var(--ink);transform:none;transition:background-size .45s cubic-bezier(.65,0,.35,1),box-shadow .45s ease,color .3s ease}
 #practice-view .primary:not(:disabled):is(:active,:focus-visible){transform:none;background-size:100% 100%;box-shadow:3.5px 3.5px 0 var(--ink);color:var(--on-orange)}
+/* Der gefüllte Knopf zeigt den Fokus schon an – der zusätzliche lila Ring passt nicht zum Design. */
+#practice-view .primary:focus-visible{outline:none}
 @media(hover:hover){#practice-view .primary:not(:disabled):hover{transform:none;background-size:100% 100%;box-shadow:3.5px 3.5px 0 var(--ink);color:var(--on-orange)}}
 #practice-view .primary:disabled{opacity:.55}
 #practice-view .practice .quiet,#practice-view .dialog-actions button:not(.primary){min-height:44px;padding:8px 18px;font-size:14px;border:1px solid color-mix(in srgb,var(--ink) 30%,transparent);border-radius:999px;background:none;box-shadow:none;font-weight:500;color:var(--ink);transform:none}
@@ -1418,3 +1428,35 @@ html.has-home-tabs:has(#home-view[data-home-tab]:not([hidden])) body{padding-bot
 #home-view .home-welcome-actions button{flex:1 1 100%}
 }
 @media(prefers-reduced-motion:reduce){.home-tabs button,#home-view .home-welcome-actions button,#home-view[data-home-tab] .home-exercises button{transition:none}}
+/* ---- Tagesserie (streak.mjs): Gold je Farbschema ---- */
+:root{--gold:#e0a31a;--gold-hi:#ffd45e;--gold-deep:#a8730a;--gold-soft:#fff1c9}
+:root[data-theme=mustikka]{--gold:#dfa628;--gold-hi:#ffdc80;--gold-deep:#96690e;--gold-soft:#fff3d2}
+:root[data-theme=ruska]{--gold:#d48f12;--gold-hi:#ffc94d;--gold-deep:#8f5a08;--gold-soft:#ffe9bd}
+:root[data-theme=tunturi]{--gold:#cfa040;--gold-hi:#f3d488;--gold-deep:#86622a;--gold-soft:#f8ebc8}
+:root[data-theme=kaamos]{--gold:#f5c542;--gold-hi:#fff0a8;--gold-deep:#d2a517;--gold-soft:#4a3d12}
+:root[data-theme=revontulet]{--gold:#f3d27a;--gold-hi:#fff6cf;--gold-deep:#c9a24a;--gold-soft:#3d3a22}
+
+/* ---- Tagesserie: Schleier, Zeichenfläche, Beschriftung ---- */
+.streak-veil{position:fixed;inset:0;z-index:900;background:color-mix(in srgb,var(--bg) 97%,transparent);opacity:0;transition:opacity .35s ease;pointer-events:none}
+.streak-veil.on{opacity:1;pointer-events:auto;cursor:pointer}
+.streak-canvas{position:fixed;inset:0;z-index:910;width:100%;height:100%;pointer-events:none}
+.streak-caption{position:fixed;left:0;right:0;z-index:905;display:grid;justify-items:center;gap:14px;pointer-events:none;opacity:0;transform:translateY(8px);transition:opacity .35s ease,transform .35s ease}
+.streak-caption.on{opacity:1;transform:none}
+.streak-caption p{margin:0;font:600 clamp(19px,2.6vw,25px)/1.2 var(--heading);color:var(--ink)}
+.streak-caption ol{display:flex;gap:8px;margin:0;padding:0;list-style:none}
+.streak-caption li{display:grid;place-items:center;width:30px;height:30px;border:1.5px solid color-mix(in srgb,var(--ink) 30%,transparent);border-radius:50%;font:700 11px/1 'DM Sans',sans-serif;color:var(--ink-soft);transition:background .5s ease,border-color .5s ease,box-shadow .5s ease,color .5s ease}
+.streak-caption li.done{border-color:var(--ink);background:var(--mint);color:var(--ink)}
+.streak-caption li.gold{border-color:var(--gold-deep);background:var(--gold);color:#2a1d00;box-shadow:0 0 8px color-mix(in srgb,var(--gold-hi) 60%,transparent)}
+
+/* ---- Pille „heute geübt" im Gold-Zustand ---- */
+header>.today.is-account{transition:background .45s ease,border-color .45s ease,box-shadow .45s ease}
+header>.today.is-account.streak-gold{background:var(--gold-soft);border-color:var(--gold-deep);box-shadow:3px 3px 0 var(--gold-deep),0 0 16px color-mix(in srgb,var(--gold-hi) 55%,transparent);animation:streak-pop .5s ease-out}
+header>.today.streak-gold .today-ring>span{color:var(--gold-deep)}
+:root:is([data-theme=kaamos],[data-theme=revontulet]) header>.today.streak-gold .today-ring>span{color:var(--gold-hi)}
+.streak-flame{display:inline-block;width:11px;height:15px;margin-right:2px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:linear-gradient(to top,var(--gold-deep),var(--gold-hi));transform-origin:50% 100%;animation:today-flicker 1.2s ease-in-out infinite}
+.streak-swap,.streak-back{animation:streak-in .35s ease both}
+header>.today.streak-gold :is(#today-count,.today-toggle){display:none}
+.streak-label{display:inline-flex;align-items:center;gap:6px;padding:4px 0;font-weight:700}
+@keyframes streak-pop{0%{transform:scale(1)}35%{transform:scale(1.1)}100%{transform:scale(1)}}
+@keyframes streak-in{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){header>.today.is-account.streak-gold,.streak-swap,.streak-back,.streak-flame{animation:none!important}}
