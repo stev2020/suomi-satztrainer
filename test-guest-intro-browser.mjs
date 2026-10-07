@@ -96,6 +96,9 @@ try{
  page=await newPage();
  await page.goto(origin+'/?intro');
  await page.waitForFunction(()=>document.documentElement.classList.contains('intro-running'));
+ // Mausbewegung, Mausrad und beliebige Tasten brechen nicht ab – nur Klick (oder Escape).
+ await page.mouse.move(300,300);await page.mouse.move(640,400,{steps:5});await page.mouse.wheel(0,200);await page.keyboard.press('a');
+ assert.match(await classes(page),/intro-running/,'moving, scrolling and typing keep the intro running');
  await page.mouse.click(640,400);
  assert.doesNotMatch(await classes(page),/intro-/);
  assert.equal(await opacity(page,'header'),1);

@@ -106,7 +106,9 @@ export async function runGuestIntro(){
   html.classList.remove('intro-pending','intro-running');
   if(!settled)flock.skip();
  }
- for(const type of ['pointerdown','keydown','wheel','touchstart'])addEventListener(type,finish,{signal:controller.signal,passive:true});
+ // Abbrechen nur bewusst: Klick/Tippen oder Escape – Mausrad, Wischen und andere Tasten lassen das Intro laufen.
+ addEventListener('click',finish,{signal:controller.signal});
+ addEventListener('keydown',e=>{if(e.key==='Escape')finish();},{signal:controller.signal});
  setTimeout(finish,25000); // Sicherheitsnetz
 
  // Übersetzung und Schriften abwarten, sonst stimmen die Maße nicht.
@@ -242,7 +244,9 @@ export async function runUserIntro(){
   html.classList.remove('intro-pending','intro-running','intro-user','intro-flying');
   if(!settled)flock.skip();
  }
- for(const type of ['pointerdown','keydown','wheel','touchstart'])addEventListener(type,finish,{signal:controller.signal,passive:true});
+ // Abbrechen nur bewusst: Klick/Tippen oder Escape – Mausrad, Wischen und andere Tasten lassen das Intro laufen.
+ addEventListener('click',finish,{signal:controller.signal});
+ addEventListener('keydown',e=>{if(e.key==='Escape')finish();},{signal:controller.signal});
  setTimeout(finish,20000); // Sicherheitsnetz
 
  await waitFor(()=>!html.classList.contains('i18n-pending'),3000);
