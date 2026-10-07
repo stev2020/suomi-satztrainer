@@ -38,6 +38,17 @@ const SEEN='vanamo-intro-seen';
 
 import {createBirds} from './intro-birds.mjs?v=11';
 
+// Das Intro spielt ganz oben. Manche Browser (z. B. DuckDuckGo) stellen nach dem Wiederöffnen die alte Scroll-Position
+// erst her, wenn das Intro schon läuft – dann sähe man es gar nicht. Solange es läuft, bleibt die Seite deshalb oben;
+// danach gilt wieder das normale Verhalten des Browsers.
+function keepTop(signal){
+ const before=history.scrollRestoration;
+ try{history.scrollRestoration='manual';}catch{}
+ const pin=()=>{if(scrollY>0||scrollX>0)scrollTo(0,0);};
+ pin();addEventListener('scroll',pin,{signal,passive:true});
+ signal.addEventListener('abort',()=>{try{history.scrollRestoration=before||'auto';}catch{}});
+}
+
 const html=document.documentElement;
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 
@@ -109,6 +120,7 @@ export async function runGuestIntro(){
  // Abbrechen nur bewusst: Klick/Tippen oder Escape – Mausrad, Wischen und andere Tasten lassen das Intro laufen.
  addEventListener('click',finish,{signal:controller.signal});
  addEventListener('keydown',e=>{if(e.key==='Escape')finish();},{signal:controller.signal});
+ keepTop(controller.signal);
  setTimeout(finish,25000); // Sicherheitsnetz
 
  // Übersetzung und Schriften abwarten, sonst stimmen die Maße nicht.
@@ -250,6 +262,7 @@ export async function runUserIntro(){
  // Abbrechen nur bewusst: Klick/Tippen oder Escape – Mausrad, Wischen und andere Tasten lassen das Intro laufen.
  addEventListener('click',finish,{signal:controller.signal});
  addEventListener('keydown',e=>{if(e.key==='Escape')finish();},{signal:controller.signal});
+ keepTop(controller.signal);
  setTimeout(finish,20000); // Sicherheitsnetz
 
  await waitFor(()=>!html.classList.contains('i18n-pending'),3000);
