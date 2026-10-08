@@ -4,9 +4,9 @@
 // der goldene Vogel vorneweg. In der ersten Runde entsteht hinter ihm die Zahl der Serie (wie von einem Uhrzeiger
 // aufgedeckt), in der zweiten zieht der Schwarm ab. Dann schießt der goldene Vogel nach oben in die Pille, während
 // Zahl, Text und Wochentage zu Staub zerfallen. Er trifft die Pille
-// „heute geübt" und zerplatzt dort; die Pille zeigt gut eine Sekunde die Serie in Gold und wird wieder normal.
+// „heute geübt" und zerplatzt dort; die Pille zeigt zwei Sekunden die Serie in Gold und wird wieder normal.
 // Bei „Bewegung reduzieren" wird nur die Pille kurz gold. Farben: --gold, --gold-hi, --gold-deep je Farbschema (style.css).
-import {t} from './i18n.mjs?v=24';
+import {t} from './i18n.mjs?v=25';
 import {practiceStreak,weekActivity} from './home-extras.mjs?v=11';
 
 const KEY='vanamo-streak-day';
@@ -179,31 +179,35 @@ async function playStreak(streak,pill,{label,week}){
  // Ausklang: Zahl, „Tage in Folge" und die Wochentage zerfallen zu Staub und schweben nach oben weg; der Schleier bleibt,
  // bis der Staub fast fort ist. Die Pille liegt dabei schon über dem Schleier.
  pill.classList.add('streak-target');
- // Die Zahl löst sich in Goldstaub auf, der Text blendet aus; danach kommt die Seite zurück.
- const img=nctx.getImageData(0,0,num.width,num.height),step=Math.max(3,Math.round((small?4.4:3.6)*dpr));
- for(let y=0;y<num.height;y+=step)for(let x=0;x<num.width;x+=step){
-  if(img.data[(y*num.width+x)*4+3]<120)continue;
-  const py=box.y+y/dpr,rel=(py-(base+top))/(bottom-top);
-  motes.push({x:box.x+x/dpr+(Math.random()-.5)*2,y:py+(Math.random()-.5)*2,vx:(Math.random()-.5)*30+14,vy:-(18+Math.random()*52),r:1.5+Math.random()*1.6,hi:Math.random()<.3,life:1,dur:.6+Math.random()*.7,t0:clock+rel*260+Math.random()*340});
- }
- // Auch „Tage in Folge" und die Wochentage zerfallen: einmal abzeichnen, die Bildpunkte werden zu Staub in ihrer Farbe.
- try{
-  const cr=cap.getBoundingClientRect(),cc=document.createElement('canvas');cc.width=Math.round(W*dpr);cc.height=Math.round((cr.height+8)*dpr);
-  const g=cc.getContext('2d',{willReadFrequently:true});g.setTransform(dpr,0,0,dpr,0,-(cr.top-4)*dpr);g.textAlign='center';g.textBaseline='middle';
-  for(const el of cap.querySelectorAll('p,li')){
-   const r=el.getBoundingClientRect(),st=getComputedStyle(el),mx=(r.left+r.right)/2,my=(r.top+r.bottom)/2;
-   if(el.tagName==='LI'){g.beginPath();g.arc(mx,my,r.width/2-1,0,6.29);if(st.backgroundColor!=='rgba(0, 0, 0, 0)'){g.fillStyle=st.backgroundColor;g.fill();}g.lineWidth=1.5;g.strokeStyle=st.borderTopColor;g.stroke();}
-   g.font=`${st.fontWeight} ${st.fontSize} ${st.fontFamily}`;g.fillStyle=st.color;g.fillText(el.tagName==='LI'?el.textContent:el.lastChild.textContent,mx,my+1);
+ // Zahl, „Tage in Folge" und Wochentage bleiben noch eine Sekunde stehen, während der Vogel schon losfliegt – dann zerfallen sie.
+ const ending=wait(1000).then(()=>{
+  // Die Zahl löst sich in Goldstaub auf, der Text blendet aus; danach kommt die Seite zurück.
+  const img=nctx.getImageData(0,0,num.width,num.height),step=Math.max(3,Math.round((small?4.4:3.6)*dpr));
+  for(let y=0;y<num.height;y+=step)for(let x=0;x<num.width;x+=step){
+   if(img.data[(y*num.width+x)*4+3]<120)continue;
+   const py=box.y+y/dpr,rel=(py-(base+top))/(bottom-top);
+   motes.push({x:box.x+x/dpr+(Math.random()-.5)*2,y:py+(Math.random()-.5)*2,vx:(Math.random()-.5)*30+14,vy:-(18+Math.random()*52),r:1.5+Math.random()*1.6,hi:Math.random()<.3,life:1,dur:.6+Math.random()*.7,t0:clock+rel*260+Math.random()*340});
   }
-  const ci=g.getImageData(0,0,cc.width,cc.height),cs=Math.max(2,Math.round(2.4*dpr));
-  for(let y=0;y<cc.height;y+=cs)for(let x=0;x<cc.width;x+=cs){
-   const i=(y*cc.width+x)*4;if(ci.data[i+3]<110)continue;
-   motes.push({x:x/dpr,y:cr.top-4+y/dpr,vx:(Math.random()-.5)*26+12,vy:-(14+Math.random()*44),r:1.3+Math.random()*1.2,c:`rgb(${ci.data[i]},${ci.data[i+1]},${ci.data[i+2]})`,life:1,dur:.6+Math.random()*.7,t0:clock+220+Math.random()*380});
-  }
- }catch{}
- cap.classList.add('fade');cap.classList.remove('on');
- tween(380,p=>{numA=1-p;});
- tween(900,()=>{}).then(()=>veil.classList.remove('on'));
+  // Auch „Tage in Folge" und die Wochentage zerfallen: einmal abzeichnen, die Bildpunkte werden zu Staub in ihrer Farbe.
+  try{
+   const cr=cap.getBoundingClientRect(),cc=document.createElement('canvas');cc.width=Math.round(W*dpr);cc.height=Math.round((cr.height+8)*dpr);
+   const g=cc.getContext('2d',{willReadFrequently:true});g.setTransform(dpr,0,0,dpr,0,-(cr.top-4)*dpr);g.textAlign='center';g.textBaseline='middle';
+   for(const el of cap.querySelectorAll('p,li')){
+    const r=el.getBoundingClientRect(),st=getComputedStyle(el),mx=(r.left+r.right)/2,my=(r.top+r.bottom)/2;
+    if(el.tagName==='LI'){g.beginPath();g.arc(mx,my,r.width/2-1,0,6.29);if(st.backgroundColor!=='rgba(0, 0, 0, 0)'){g.fillStyle=st.backgroundColor;g.fill();}g.lineWidth=1.5;g.strokeStyle=st.borderTopColor;g.stroke();}
+    g.font=`${st.fontWeight} ${st.fontSize} ${st.fontFamily}`;g.fillStyle=st.color;g.fillText(el.tagName==='LI'?el.textContent:el.lastChild.textContent,mx,my+1);
+   }
+   const ci=g.getImageData(0,0,cc.width,cc.height),cs=Math.max(2,Math.round(2.4*dpr));
+   for(let y=0;y<cc.height;y+=cs)for(let x=0;x<cc.width;x+=cs){
+    const i=(y*cc.width+x)*4;if(ci.data[i+3]<110)continue;
+    motes.push({x:x/dpr,y:cr.top-4+y/dpr,vx:(Math.random()-.5)*26+12,vy:-(14+Math.random()*44),r:1.3+Math.random()*1.2,c:`rgb(${ci.data[i]},${ci.data[i+1]},${ci.data[i+2]})`,life:1,dur:.6+Math.random()*.7,t0:clock+220+Math.random()*380});
+   }
+  }catch{}
+  cap.classList.add('fade');cap.classList.remove('on');
+  tween(380,p=>{numA=1-p;});
+  tween(900,()=>{}).then(()=>veil.classList.remove('on'));
+  return wait(1300);
+ });
 
  await fly(makePath([[cx-rx,cy],[cx-rx*.92,cy-ry*.5],[lerp(cx-rx,tx,.3),Math.min(cy-ry*1.25,lerp(cy,ty,.7))],[lerp(cx,tx,.8),lerp(cy-ry,ty,.75)],[tx,ty]]),550,p=>lerp(p,p*p*p,.8));
  // 5) Einschlag
@@ -211,7 +215,8 @@ async function playStreak(streak,pill,{label,week}){
  for(let i=0;i<(small?24:34);i++){const a=Math.random()*6.28,s=90+Math.random()*330;sparks.push({x:tx,y:ty,vx:Math.cos(a)*s*1.3,vy:Math.sin(a)*s-40,life:1,dur:.5+Math.random()*.5,r:1+Math.random()*1.5,c:[col.gold,col.hi,col.gold][i%3]});}
  rings.push({x:tx,y:ty,life:1,max:64},{x:tx,y:ty,life:1.2,max:36});
  await goldPill(pill,streak,label,wait);
- await wait(300);
+ await ending;
+ await wait(200);
  }finally{if(alive)done();}
 }
 
@@ -226,7 +231,7 @@ async function goldPill(pill,streak,label,wait){
  pill.classList.add('streak-gold');
  ring.insertAdjacentHTML('beforeend',`<span class="streak-swap" data-no-i18n aria-hidden="true">${streak}</span>`);
  lab.insertAdjacentHTML('beforeend',`<span class="streak-swap streak-label" data-no-i18n aria-hidden="true"><span class="streak-flame"></span>${escape(label)}</span>`);
- await wait(1100);
+ await wait(2000);
  restorePill(pill);
  const count=pill.querySelector('#today-count');
  if(count){count.classList.add('streak-back');setTimeout(()=>count.classList.remove('streak-back'),400);}

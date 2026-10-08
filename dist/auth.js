@@ -1,9 +1,10 @@
-import {uiLocale} from './i18n.mjs?v=24';
+import {uiLocale,uiLanguage} from './i18n.mjs?v=25';
 import {mergeVerbProgress} from './verb-practice.mjs';
 import {mergeEndingsProgress} from './endings-progress.mjs?v=1';
 import {mergePerformanceEvents} from './learning-insights.mjs';
 import {mergeGames} from './games-progress.mjs';
 import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,TURNSTILE_SITE_KEY} from './supabase-config.js?v=2';
+import {accountProfile,avatarSVG,avatarPickerMarkup,bindAvatarPicker,cleanNickname,isAvatar,randomAvatar,NICKNAME_MAX} from './avatars.mjs?v=1';
 
 const STORE='suomi-learning-v1';
 const SESSION='suomi-auth-session-v1';
@@ -37,7 +38,9 @@ const hex=s=>Array.from(new TextEncoder().encode(s)).map(b=>b.toString(16).padSt
 const technicalEmail=u=>`u${hex(u)}@users.suomi.invalid`;
 const api=(path,options={})=>fetch(`${SUPABASE_URL}${path}`,{...options,headers:{apikey:SUPABASE_PUBLISHABLE_KEY,'Content-Type':'application/json',...(options.headers||{})}});
 const authHeaders=()=>session?.access_token?{Authorization:`Bearer ${session.access_token}`}:{};
-const status=(t,error=false)=>{const el=$('account-status');if(el){el.textContent=t;el.classList.toggle('error',error);}};
+const status=(t,error=false)=>{const el=$('account-status');if(el){el.textContent=t;el.classList.toggle('error',error);if(t)try{el.scrollIntoView({block:'nearest'});}catch{}}};
+// Meldung direkt unter dem Formular, zu dem sie gehört – am Ende des Fensters sähe man sie in langen Ansichten nicht.
+const statusAt=(anchor,t,error=false)=>{const el=$('account-status');if(el&&anchor)anchor.after(el);status(t,error);};
 let syncToast=null;
 const syncState=(t,error=false)=>{
   const detail=$('account-sync');if(detail){detail.textContent=t;detail.classList.toggle('error',error);}
@@ -199,12 +202,22 @@ function scheduleSync(){
 }
 function renderAccount(){
   const logged=!!session?.user;
-  $('account-logged-out')?.toggleAttribute('hidden',logged);
-  $('account-logged-in')?.toggleAttribute('hidden',!logged);
-  if(logged&&$('account-name'))$('account-name').textContent=session.user.user_metadata?.username||'Nutzer';
+  renderDialogSections();
+  const profile=accountProfile(session?.user);
+  if(logged&&$('account-name'))$('account-name').textContent=profile.username||'Nutzer';
   document.body.dataset.account=logged?'authenticated':'guest';
-  if($('account-button'))$('account-button').textContent=logged?'Konto':'Anmelden / Registrieren';
-  if(logged)syncState('Synchronisierung wird geprüft …');else if($('storage-note'))$('storage-note').classList.remove('error');
+  // Angemeldet ist der Konto-Knopf ein rundes Icon mit dem gewählten Vogel (ohne Vogel: Anfangsbuchstabe); ein Klick lässt die Kontopunkte einzeln daraus ausfahren.
+  const button=$('account-button');
+  if(button){
+    button.classList.toggle('is-avatar',logged);
+    button.classList.toggle('has-bird',logged&&!!profile.avatar);
+    if(logged&&profile.avatar)button.innerHTML=avatarSVG(profile.avatar);
+    else button.textContent=logged?(Array.from(profile.nickname)[0]||'?').toUpperCase():'Anmelden / Registrieren';
+    if(logged){button.setAttribute('aria-label','Konto');button.setAttribute('aria-haspopup','true');}
+    else for(const attr of ['aria-label','aria-haspopup','aria-expanded'])button.removeAttribute(attr);
+    setAccountMenu(false);
+  }
+  if(logged){if(!syncReady)syncState('Synchronisierung wird geprüft …');}else if($('storage-note'))$('storage-note').classList.remove('error');
 }
 async function login(username,password,syncCloud=true,seedState=null){
   username=normalizeUsername(username);checkPassword(password);
@@ -299,28 +312,220 @@ async function logout(){
   saveSession(null);
   location.reload();
 }
+// E-Mail-Feld mit Hinweis; das Häkchen „mindestens 16“ erscheint erst, wenn im Feld etwas steht.
+const emailFieldsMarkup=prefix=>`<label>E-Mail (freiwillig)<input id="${prefix}-email" type="email" autocomplete="email" maxlength="254" placeholder="name@beispiel.de"></label><p class="account-hint">Nur zum Zurücksetzen deines Passworts. Kein Newsletter.</p><label class="account-check" id="${prefix}-adult-row" hidden><input id="${prefix}-adult" type="checkbox"><span>Ich bin mindestens 16 Jahre alt.</span></label>`;
 function addDialog(){
-  document.body.insertAdjacentHTML('beforeend',`<dialog id="account-dialog" aria-labelledby="account-title"><div class="dialog-top"><h2 id="account-title">Dein Konto</h2><button id="close-account" class="quiet" aria-label="Schließen">✕</button></div><div id="account-unconfigured" hidden><p>Die Kontofunktion ist vorbereitet, aber die Serververbindung ist noch nicht aktiviert.</p></div><div id="account-logged-out"><div class="account-tabs"><button type="button" data-account-tab="login" class="selected">Anmelden</button><button type="button" data-account-tab="register">Registrieren</button><button type="button" data-account-tab="recover">Passwort vergessen</button></div><form id="login-form" class="account-form"><label>Benutzername<input id="login-name" autocomplete="username" required></label><label>Passwort<input id="login-password" type="password" autocomplete="current-password" required minlength="8"></label><button class="primary" type="submit">Anmelden</button></form><form id="register-form" class="account-form" hidden><label>Benutzername<input id="register-name" autocomplete="username" required></label><label>Passwort<input id="register-password" type="password" autocomplete="new-password" required minlength="8"></label><div id="register-turnstile" class="account-turnstile"></div><button class="primary" type="submit">Konto erstellen</button><p class="account-hint">Keine E-Mail nötig. Danach erhältst du einmalig einen Wiederherstellungscode.</p></form><form id="recover-form" class="account-form" hidden><label>Benutzername<input id="recover-name" autocomplete="username" required></label><label>Wiederherstellungscode<input id="recover-code" autocomplete="off" required></label><label>Neues Passwort<input id="recover-password" type="password" autocomplete="new-password" required minlength="8"></label><button class="primary" type="submit">Passwort neu setzen</button></form></div><div id="account-logged-in" hidden><p>Angemeldet als <strong id="account-name"></strong></p><p id="account-sync">Synchronisierung wird geprüft …</p><button id="account-progress" class="primary account-progress" type="button">Mein Fortschritt</button><button id="sync-now" class="quiet" type="button">Jetzt synchronisieren</button><button id="logout" class="quiet" type="button">Abmelden</button><button id="delete-account-open" class="quiet account-danger" type="button">Konto löschen</button><form id="delete-account-form" class="account-form account-delete-form" hidden><h3>Konto endgültig löschen</h3><p>Dein Konto, Lernstand, Beiträge, Abgaben, Meldungen und Mitgliedschaften werden unwiderruflich gelöscht. Eigene Klassenräume kannst du an eine dort aktive Lehrkraft übergeben; ohne Übergabe werden sie mitsamt allen Inhalten gelöscht.</p><div id="delete-account-rooms"></div><label>Benutzername zur Bestätigung<input id="delete-account-name" autocomplete="off" required></label><label>Aktuelles Passwort<input id="delete-account-password" type="password" autocomplete="current-password" required minlength="8"></label><div class="account-delete-actions"><button id="delete-account-confirm" class="account-danger" type="submit">Konto endgültig löschen</button><button id="delete-account-cancel" class="quiet" type="button">Abbrechen</button></div></form></div><div id="recovery-result" class="recovery-result" hidden><h3>Wiederherstellungscode</h3><p>Speichere diesen Code sicher. Er wird nicht noch einmal angezeigt.</p><code id="recovery-code-result"></code><button id="copy-recovery" class="quiet" type="button">Code kopieren</button></div><p id="account-status" role="status"></p></dialog>`);
+  document.body.insertAdjacentHTML('beforeend',`<dialog id="account-dialog" aria-labelledby="account-title"><div class="dialog-top"><h2 id="account-title">Dein Konto</h2><button id="close-account" class="quiet" aria-label="Schließen">✕</button></div><div id="account-unconfigured" hidden><p>Die Kontofunktion ist vorbereitet, aber die Serververbindung ist noch nicht aktiviert.</p></div><div id="account-logged-out"><div class="account-tabs"><button type="button" data-account-tab="login" class="selected">Anmelden</button><button type="button" data-account-tab="register">Registrieren</button><button type="button" data-account-tab="recover">Passwort vergessen</button></div><form id="login-form" class="account-form"><label>Benutzername<input id="login-name" autocomplete="username" required></label><label>Passwort<input id="login-password" type="password" autocomplete="current-password" required minlength="8"></label><button class="primary" type="submit">Anmelden</button></form><form id="register-form" class="account-form" hidden><label>Benutzername<input id="register-name" autocomplete="username" required></label><label>Passwort<input id="register-password" type="password" autocomplete="new-password" required minlength="8"></label><div id="register-turnstile" class="account-turnstile"></div><button class="primary" type="submit">Konto erstellen</button><p class="account-hint">Schritt 1 von 2 · Keine E-Mail nötig. Danach wählst du deinen Vogel.</p></form><div id="recover-email" hidden><form id="reset-request-form" class="account-form"><label>Benutzername oder E-Mail<input id="reset-identifier" autocomplete="username" required maxlength="254"></label><button class="primary" type="submit">Link per E-Mail senden</button><p class="account-hint">Geht nur, wenn du im Konto eine E-Mail-Adresse hinterlegt und bestätigt hast.</p></form><p class="account-or">oder mit deinem Wiederherstellungscode</p></div><form id="recover-form" class="account-form" hidden><label>Benutzername<input id="recover-name" autocomplete="username" required></label><label>Wiederherstellungscode<input id="recover-code" autocomplete="off" required></label><label>Neues Passwort<input id="recover-password" type="password" autocomplete="new-password" required minlength="8"></label><button class="primary" type="submit">Passwort neu setzen</button></form></div><div id="account-logged-in" hidden><p>Angemeldet als <strong id="account-name"></strong></p><form id="profile-form" class="account-form account-profile"><h3>Vogel und Spitzname</h3>${avatarPickerMarkup('profile')}<label>Spitzname<input id="profile-nickname" maxlength="${NICKNAME_MAX}" autocomplete="nickname" required></label><p class="account-hint">So begrüßen wir dich. Im Klassenraum wird er als dein Name vorgeschlagen.</p><button id="profile-save" class="quiet" type="submit">Speichern</button></form><form id="email-form" class="account-form account-profile"><h3>E-Mail zum Zurücksetzen</h3><p id="email-state" class="account-hint" role="status"></p>${emailFieldsMarkup('profile')}<div class="account-row"><button id="email-save" class="quiet" type="submit">Speichern</button><button id="email-remove" class="quiet" type="button" hidden>Entfernen</button></div></form><form id="password-form" class="account-form account-profile"><h3>Passwort ändern</h3><label>Aktuelles Passwort<input id="password-current" type="password" autocomplete="current-password" required minlength="8"></label><label>Neues Passwort<input id="password-new" type="password" autocomplete="new-password" required minlength="8"></label><button id="password-save" class="quiet" type="submit">Passwort ändern</button></form><p id="account-sync">Synchronisierung wird geprüft …</p><button id="sync-now" class="quiet" type="button">Jetzt synchronisieren</button><button id="delete-account-open" class="quiet account-danger" type="button">Konto löschen</button><form id="delete-account-form" class="account-form account-delete-form" hidden><h3>Konto endgültig löschen</h3><p>Dein Konto, Lernstand, Beiträge, Abgaben, Meldungen und Mitgliedschaften werden unwiderruflich gelöscht. Eigene Klassenräume kannst du an eine dort aktive Lehrkraft übergeben; ohne Übergabe werden sie mitsamt allen Inhalten gelöscht.</p><div id="delete-account-rooms"></div><label>Benutzername zur Bestätigung<input id="delete-account-name" autocomplete="off" required></label><label>Aktuelles Passwort<input id="delete-account-password" type="password" autocomplete="current-password" required minlength="8"></label><div class="account-delete-actions"><button id="delete-account-confirm" class="account-danger" type="submit">Konto endgültig löschen</button><button id="delete-account-cancel" class="quiet" type="button">Abbrechen</button></div></form></div><form id="account-onboarding" class="account-form account-onboarding" hidden><p class="account-step">Schritt 2 von 2</p><p class="account-lead">Wähle deinen Vogel</p>${avatarPickerMarkup('onboarding')}<label>Spitzname<input id="onboarding-nickname" maxlength="${NICKNAME_MAX}" autocomplete="nickname"></label><p class="account-hint">So begrüßen wir dich. Im Klassenraum wird er als dein Name vorgeschlagen.</p>${emailFieldsMarkup('onboarding')}<button class="primary" type="submit">Los geht's</button><button id="onboarding-skip" class="text-link" type="button">Überspringen</button></form><form id="reset-form" class="account-form" hidden><p class="account-hint">Lege ein neues Passwort für dein Konto fest.</p><label>Neues Passwort<input id="reset-password" type="password" autocomplete="new-password" required minlength="8"></label><button class="primary" type="submit">Passwort speichern</button></form><div id="recovery-result" class="recovery-result" hidden><p>Speichere diesen Code sicher. Er wird nicht noch einmal angezeigt.</p><code id="recovery-code-result"></code><button id="copy-recovery" class="quiet" type="button">Code kopieren</button><p class="recovery-why">Wir wissen nicht, wer du bist, und können dein Konto deshalb nicht für dich wiederherstellen. Mit diesem Code setzt du ein vergessenes Passwort selbst zurück.</p><button id="recovery-done" class="primary" type="button">Fertig</button></div><p id="account-status" role="status"></p></dialog>`);
 }
-function showRecovery(code){$('recovery-code-result').textContent=code;$('recovery-result').hidden=false}
+const MENU_ICON=d=>`<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+// Die Kontopunkte hängen direkt am Icon im Kopf (kein Fenster mehr). „Konto verwalten“ öffnet das Fenster mit Anmeldestand, Synchronisieren und „Konto löschen“.
+function addMenu(){
+  const button=$('account-button');if(!button||$('account-menu'))return;
+  const wrap=document.createElement('div');wrap.id='account-menu';wrap.className='account-menu';
+  button.before(wrap);wrap.append(button);
+  const item=(id,i,icon,label)=>`<button id="${id}" type="button" role="menuitem" style="--i:${i}">${MENU_ICON(icon)}<span>${label}</span></button>`;
+  wrap.insertAdjacentHTML('beforeend',`<div id="account-menu-items" class="account-menu-items" role="menu" aria-label="Konto" inert>${
+    item('account-progress',0,'<path d="M3 20h18M6 20v-8M12 20V5M18 20v-11"/>','Mein Fortschritt')
+   +item('account-manage',1,'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/>','Konto verwalten')
+   +item('logout',2,'<path d="M10 4H5v16h5M14 8l4 4-4 4M18 12H9"/>','Abmelden')}</div>`);
+}
+let accountMenuOpen=false,accountMenuTimer=null;
+function setAccountMenu(open){
+  const wrap=$('account-menu'),items=$('account-menu-items'),button=$('account-button');
+  if(!wrap||!items||!button)return;
+  accountMenuOpen=!!open&&!!session?.user;
+  wrap.classList.toggle('open',accountMenuOpen);
+  // Anklickbar werden die Punkte erst, wenn sie ausgefahren sind – sonst träfe ein Doppelklick auf das Icon einen Punkt, der gerade darunter hervorkommt.
+  clearTimeout(accountMenuTimer);wrap.classList.remove('ready');
+  if(accountMenuOpen)accountMenuTimer=setTimeout(()=>wrap.classList.add('ready'),340);
+  items.toggleAttribute('inert',!accountMenuOpen);
+  if(session?.user)button.setAttribute('aria-expanded',String(accountMenuOpen));
+}
+// Das Kontofenster zeigt immer genau einen Abschnitt. Nach der Registrierung kommen zwei Zwischenschritte:
+// „onboarding“ (Vogel und Spitzname wählen) und „code“ (der Wiederherstellungscode, der nur einmal erscheint).
+// „reset“ ist das neue Passwort nach einem Klick auf den Link aus der Mail.
+let accountStage=null,registering=false,onboardingPicker=null,profilePicker=null,resetToken='';
+function renderDialogSections(){
+  if(!$('account-dialog'))return;
+  $('account-dialog').append($('account-status'));
+  const ok=configured(),logged=!!session?.user;
+  $('account-unconfigured').hidden=ok;
+  $('account-logged-out').hidden=!ok||!!accountStage||(logged&&!registering);
+  $('account-logged-in').hidden=!logged||!!accountStage||registering;
+  $('account-onboarding').hidden=accountStage!=='onboarding';
+  $('recovery-result').hidden=accountStage!=='code';
+  $('reset-form').hidden=accountStage!=='reset';
+  $('account-title').textContent=accountStage==='onboarding'?'Fast fertig':accountStage==='code'?'Dein Wiederherstellungscode':accountStage==='reset'?'Neues Passwort':'Dein Konto';
+}
+function fillProfileForm(){
+  const profile=accountProfile(session?.user);
+  profilePicker?.set(profile.avatar);
+  if($('profile-nickname'))$('profile-nickname').value=profile.nickname;
+}
+// Vogel und Spitzname liegen in den Kontodaten des Nutzers (Supabase Auth, user_metadata) – keine eigene Tabelle.
+async function updateProfile(nickname,avatar){
+  nickname=cleanNickname(nickname);
+  if(!nickname)throw new Error('Bitte gib einen Spitznamen ein.');
+  if(!isAvatar(avatar))throw new Error('Bitte wähle einen Vogel.');
+  const r=await request('/auth/v1/user',{method:'PUT',body:JSON.stringify({data:{nickname,avatar}})});
+  const user=await r.json().catch(()=>null);
+  if(!r.ok||!user?.id||!session)throw new Error('Vogel und Spitzname konnten nicht gespeichert werden. Bitte versuche es erneut.');
+  saveSession({...session,user});
+}
+// Freiwillige E-Mail-Adresse, nur zum Zurücksetzen des Passworts (Edge Function „account-email“).
+const EMAIL_PATTERN=/^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+async function emailApi(action,body={},withAccount=true){
+  const options={method:'POST',body:JSON.stringify({action,lang:uiLanguage,...body})};
+  const r=withAccount?await request('/functions/v1/account-email',options):await api('/functions/v1/account-email',options);
+  const result=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error(result.error||'Das hat nicht geklappt. Bitte versuche es erneut.');
+  return result;
+}
+// Liest Adresse und Häkchen eines Formulars; leer ist erlaubt (dann gibt es keine Adresse).
+function readEmailFields(prefix){
+  const email=$(prefix+'-email').value.trim().toLowerCase();
+  if(!email)return '';
+  if(email.length>254||!EMAIL_PATTERN.test(email))throw new Error('Bitte gib eine gültige E-Mail-Adresse ein.');
+  if(!$(prefix+'-adult').checked)throw new Error('Bitte bestätige, dass du mindestens 16 Jahre alt bist – oder lass das Feld leer.');
+  return email;
+}
+function bindEmailFields(prefix){
+  const input=$(prefix+'-email'),row=$(prefix+'-adult-row');
+  input.addEventListener('input',()=>{row.hidden=!input.value.trim();});
+}
+function notice(text,error=false){
+  const toast=document.createElement('div');toast.className='sync-toast account-notice'+(error?' error':'');toast.setAttribute('role',error?'alert':'status');
+  toast.innerHTML='<span></span><button type="button" aria-label="Schließen">×</button>';toast.querySelector('span').textContent=text;
+  toast.querySelector('button').onclick=()=>toast.remove();document.body.append(toast);
+  if(!error)setTimeout(()=>toast.remove(),9000);
+}
+let emailState={email:'',verified:false};
+function renderEmailState(note=''){
+  const {email,verified}=emailState,input=$('profile-email');
+  input.value=email;$('profile-adult').checked=!!email;$('profile-adult-row').hidden=!email;
+  $('email-remove').hidden=!email;
+  $('email-save').textContent=email&&!verified?'Link erneut senden':'Speichern';
+  $('email-state').textContent=note||(!email?'Keine Adresse hinterlegt. Ohne Adresse hilft bei vergessenem Passwort nur dein Wiederherstellungscode.':verified?'Bestätigt.':'Noch nicht bestätigt. Öffne den Link in der Mail, die wir dir geschickt haben.');
+}
+async function loadEmailState(){
+  $('email-state').textContent='';
+  try{emailState=await emailApi('status');renderEmailState();}
+  catch{emailState={email:'',verified:false};renderEmailState('Der Stand deiner E-Mail-Adresse konnte gerade nicht geladen werden.');}
+}
+// Links aus den Mails: ?verify-email=… bestätigt die Adresse, ?reset=… öffnet „Neues Passwort“. Der Token verschwindet sofort aus der Adresszeile.
+function handleMailLinks(){
+  const params=new URLSearchParams(location.search),verify=params.get('verify-email'),reset=params.get('reset');
+  if(!verify&&!reset)return;
+  params.delete('verify-email');params.delete('reset');
+  const rest=params.toString();
+  try{history.replaceState(null,'',location.pathname+(rest?'?'+rest:'')+location.hash);}catch{}
+  if(verify){emailApi('verify',{token:verify},false).then(()=>notice('Deine E-Mail-Adresse ist bestätigt.')).catch(err=>notice(err.message,true));return;}
+  if(!configured())return;
+  resetToken=reset;accountStage='reset';renderDialogSections();status('');
+  if(!$('account-dialog').open)$('account-dialog').showModal();
+}
+// Passwort im Konto ändern. Der Server beendet danach alle Anmeldungen; dieses Gerät meldet sich mit dem neuen
+// Passwort gleich wieder an (der Lernstand auf dem Gerät bleibt dabei, wie er ist).
+async function changePassword(currentPassword,newPassword){
+  checkPassword(currentPassword);checkNewPassword(newPassword);
+  if(currentPassword===newPassword)throw new Error('Das neue Passwort muss sich vom aktuellen unterscheiden.');
+  const username=accountProfile(session?.user).username;
+  const r=await request('/functions/v1/change-password',{method:'POST',body:JSON.stringify({currentPassword,newPassword})});
+  const result=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error(result.error||'Das Passwort konnte nicht geändert werden.');
+  const again=await api('/auth/v1/token?grant_type=password',{method:'POST',body:JSON.stringify({email:technicalEmail(normalizeUsername(username)),password:newPassword})}).catch(()=>null);
+  if(!again?.ok)return false;
+  saveSession(await again.json());return true;
+}
+function startOnboarding(){
+  accountStage='onboarding';
+  onboardingPicker?.set(randomAvatar());
+  const input=$('onboarding-nickname');input.value='';input.placeholder=accountProfile(session?.user).username;
+  $('onboarding-email').value='';$('onboarding-adult').checked=false;$('onboarding-adult-row').hidden=true;
+  renderDialogSections();status('');
+}
+let onboardingBusy=false;
+async function finishOnboarding(skip){
+  if(onboardingBusy||accountStage!=='onboarding')return;
+  let email='';
+  if(!skip){try{email=readEmailFields('onboarding');}catch(err){status(err.message,true);return;}}
+  onboardingBusy=true;
+  const profile=accountProfile(session?.user);
+  let note='Konto erstellt und angemeldet.';
+  try{
+    status('Wird gespeichert …');
+    await updateProfile(skip?profile.username:($('onboarding-nickname').value||profile.username),(!skip&&onboardingPicker?.get())||randomAvatar());
+  }catch{note='Konto erstellt. Vogel und Spitzname kannst du später unter „Konto verwalten“ wählen.';}
+  if(email){
+    try{await emailApi('set',{email,adult:true});note+=' Wir haben dir einen Link geschickt, mit dem du deine E-Mail-Adresse bestätigst.';}
+    catch{note+=' Die Bestätigungsmail konnte nicht verschickt werden – versuche es später unter „Konto verwalten“.';}
+  }
+  onboardingBusy=false;
+  accountStage='code';renderDialogSections();status(note);
+}
+function showRecovery(code){$('recovery-code-result').textContent=code;accountStage='code';renderDialogSections();}
 function selectAccountTab(tab='login'){
   const selected=document.querySelector(`[data-account-tab="${tab}"]`)||document.querySelector('[data-account-tab="login"]');
   if(selected)selected.click();
 }
 function openAccount(tab='login'){
-  const ok=configured();$('account-unconfigured').hidden=ok;$('account-logged-out').hidden=!!session||!ok;$('account-logged-in').hidden=!session;
+  const ok=configured();renderDialogSections();
   if(!session&&ok)selectAccountTab(tab);
+  if(session&&!accountStage){fillProfileForm();status('');loadEmailState();}
   if(!$('account-dialog').open)$('account-dialog').showModal();
 }
 function bind(){
-  addDialog();
+  addDialog();addMenu();
   window.suomiOpenAccount=openAccount;
-  $('account-button').onclick=()=>openAccount('login');
+  $('account-button').onclick=()=>{if(session?.user)setAccountMenu(!accountMenuOpen);else openAccount('login');};
+  $('account-manage').onclick=()=>openAccount('login');
+  $('account-menu-items').addEventListener('click',e=>{const item=e.target.closest('button');if(item)setAccountMenu(false);});
+  document.addEventListener('click',e=>{if(accountMenuOpen&&!$('account-menu').contains(e.target))setAccountMenu(false);});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&accountMenuOpen){setAccountMenu(false);$('account-button').focus();}});
   if($('storage-account-link'))$('storage-account-link').onclick=()=>openAccount('login');
-  $('close-account').onclick=()=>$('account-dialog').close();
-  document.querySelectorAll('[data-account-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-account-tab]').forEach(x=>x.classList.toggle('selected',x===b));for(const n of ['login','register','recover'])$(n+'-form').hidden=b.dataset.accountTab!==n;if(b.dataset.accountTab==='register')showTurnstile();$('recovery-result').hidden=true;status('')});
+  onboardingPicker=bindAvatarPicker($('account-onboarding'),'');profilePicker=bindAvatarPicker($('profile-form'),'');
+  // Wer Schritt 2 schließt, überspringt ihn nur – der Wiederherstellungscode muss danach trotzdem noch erscheinen.
+  $('close-account').onclick=()=>{if(accountStage==='onboarding')finishOnboarding(true);else $('account-dialog').close();};
+  $('account-dialog').addEventListener('cancel',e=>{if(accountStage==='onboarding'){e.preventDefault();finishOnboarding(true);}});
+  $('account-dialog').addEventListener('close',()=>{if(!accountStage)return;accountStage=null;$('recovery-code-result').textContent='';renderDialogSections();status('');});
+  $('account-onboarding').onsubmit=e=>{e.preventDefault();finishOnboarding(false);};
+  $('onboarding-skip').onclick=()=>finishOnboarding(true);
+  $('recovery-done').onclick=()=>{$('account-dialog').close();window.dispatchEvent(new CustomEvent('vanamo:view',{detail:'home'}));window.scrollTo?.(0,0);};
+  bindEmailFields('onboarding');bindEmailFields('profile');
+  $('email-form').onsubmit=async e=>{e.preventDefault();const save=$('email-save');try{
+    const email=readEmailFields('profile');if(!email)throw new Error('Bitte gib eine E-Mail-Adresse ein – oder entferne die hinterlegte Adresse.');
+    save.disabled=true;statusAt($('email-form'),'Wird gespeichert …');emailState=await emailApi('set',{email,adult:true});renderEmailState();
+    statusAt($('email-form'),emailState.verified?'Gespeichert.':'Wir haben dir einen Bestätigungslink geschickt. Schau auch im Spam-Ordner nach.');
+  }catch(err){statusAt($('email-form'),err.message,true)}finally{save.disabled=false}};
+  $('email-remove').onclick=async()=>{const remove=$('email-remove');try{remove.disabled=true;emailState=await emailApi('remove');renderEmailState();statusAt($('email-form'),'E-Mail-Adresse entfernt.');}catch(err){statusAt($('email-form'),err.message,true)}finally{remove.disabled=false}};
+  $('reset-request-form').onsubmit=async e=>{e.preventDefault();const form=e.currentTarget,send=form.querySelector('button');if(send.disabled)return;
+    try{
+      send.disabled=true;statusAt(send,'Wird gesendet …');
+      await emailApi('reset-request',{identifier:$('reset-identifier').value},false);
+      // Der Knopf bleibt kurz gesperrt und sagt, dass es geklappt hat – sonst klickt man ein zweites Mal.
+      send.textContent='Link gesendet';
+      statusAt(send,'Falls zu diesem Konto eine bestätigte E-Mail-Adresse gehört, ist jetzt ein Link unterwegs. Er gilt 60 Minuten.');
+      setTimeout(()=>{send.disabled=false;send.textContent='Link per E-Mail senden';},20000);
+    }catch(err){send.disabled=false;statusAt(send,err.message,true)}};
+  $('reset-form').onsubmit=async e=>{e.preventDefault();const save=e.currentTarget.querySelector('button');try{
+    const password=$('reset-password').value;checkNewPassword(password);
+    save.disabled=true;status('Wird gespeichert …');
+    const result=await emailApi('reset-confirm',{token:resetToken,newPassword:password},false);
+    resetToken='';$('reset-password').value='';
+    await login(result.username,password);
+    $('account-dialog').close();notice('Passwort geändert. Du bist angemeldet.');
+    window.dispatchEvent(new CustomEvent('vanamo:view',{detail:'home'}));window.scrollTo?.(0,0);
+  }catch(err){status(err.message,true)}finally{save.disabled=false}};
+  $('password-form').onsubmit=async e=>{e.preventDefault();const form=e.currentTarget,save=$('password-save');try{
+    save.disabled=true;statusAt(form,'Wird gespeichert …');
+    const signedIn=await changePassword($('password-current').value,$('password-new').value);
+    form.reset();
+    statusAt(form,signedIn?'Passwort geändert. Auf anderen Geräten wurdest du abgemeldet.':'Passwort geändert. Bitte melde dich mit dem neuen Passwort neu an.');
+  }catch(err){statusAt(form,err.message,true)}finally{save.disabled=false}};
+  $('profile-form').onsubmit=async e=>{e.preventDefault();const save=$('profile-save');try{save.disabled=true;statusAt($('profile-form'),'Wird gespeichert …');await updateProfile($('profile-nickname').value,profilePicker.get());fillProfileForm();statusAt($('profile-form'),'Gespeichert.');}catch(err){statusAt($('profile-form'),err.message,true)}finally{save.disabled=false}};
+  document.querySelectorAll('[data-account-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-account-tab]').forEach(x=>x.classList.toggle('selected',x===b));for(const n of ['login','register','recover'])$(n+'-form').hidden=b.dataset.accountTab!==n;$('recover-email').hidden=b.dataset.accountTab!=='recover';if(b.dataset.accountTab==='register')showTurnstile();status('')});
   $('login-form').onsubmit=async e=>{e.preventDefault();try{status('Anmeldung …');await login($('login-name').value,$('login-password').value);status('');$('login-password').value='';$('account-dialog').close();window.dispatchEvent(new CustomEvent('vanamo:view',{detail:'home'}));window.scrollTo?.(0,0)}catch(err){status(err.message,true)}};
-  $('register-form').onsubmit=async e=>{e.preventDefault();try{status('Konto wird erstellt …');showRecovery(await register($('register-name').value,$('register-password').value));status('Konto erstellt und angemeldet.')}catch(err){status(err.message,true)}};
+  $('register-form').onsubmit=async e=>{e.preventDefault();if(registering)return;registering=true;try{status('Konto wird erstellt …');const code=await register($('register-name').value,$('register-password').value);$('recovery-code-result').textContent=code;$('register-password').value='';registering=false;startOnboarding();}catch(err){registering=false;renderDialogSections();status(err.message,true)}};
   $('recover-form').onsubmit=async e=>{e.preventDefault();try{status('Konto wird wiederhergestellt …');showRecovery(await recover($('recover-name').value,$('recover-code').value,$('recover-password').value));status('Passwort geändert. Der alte Wiederherstellungscode ist ungültig.')}catch(err){status(err.message,true)}};
   $('logout').onclick=async()=>{await logout()};
 $('account-progress').onclick=()=>{$('account-dialog').close();window.dispatchEvent(new CustomEvent('vanamo:view',{detail:'progress'}));};
@@ -344,13 +549,14 @@ $('account-progress').onclick=()=>{$('account-dialog').close();window.dispatchEv
   window.addEventListener('pagehide',syncChangedNow);
   window.addEventListener('focus',syncChangedNow);window.addEventListener('online',syncChangedNow);
   renderAccount();
+  handleMailLinks();
 }
 loadSession();bind();
 export const accountUser=()=>session?.user||null;
 export {request as accountRequest};
 window.suomiAccountUser=()=>session?.user||null;
 window.suomiAccountRequest=request;
-import('./classrooms.js?v=97').catch(()=>{});
-import('./quality-review.js?v=5').catch(()=>{});
+import('./classrooms.js?v=98').catch(()=>{});
+import('./quality-review.js?v=6').catch(()=>{});
 if(session?.user&&configured())refreshSession().then(async ok=>{if(!ok)return;try{await pullAndMerge();}catch(err){syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true);status(err.message,true);}}).catch(syncError).finally(()=>{syncReady=true;if(syncQueued)scheduleSync()});
 else syncReady=true;

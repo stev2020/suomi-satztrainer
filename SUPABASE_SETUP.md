@@ -27,3 +27,13 @@ Der anon/publishable key ist für Browser-Apps gedacht. Der `service_role`-Key i
 
 ## 5. Vor größerer öffentlicher Nutzung
 Für offene Registrierung sollte zusätzlich Rate-Limiting oder CAPTCHA/Turnstile ergänzt werden, um automatisierte Massenregistrierungen zu begrenzen.
+
+## 6. Freiwillige E-Mail-Adresse (Passwort zurücksetzen)
+- Migration `supabase/migrations/20261008220000_account_emails.sql` anwenden.
+- Edge Function `account-email` deployen (`verify_jwt = false`: Bestätigungs- und Zurücksetz-Links funktionieren ohne Anmeldung; die Konto-Aktionen prüfen das Anmeldetoken selbst).
+- Secret `LETTERMINT_API_TOKEN` setzen (Projekt-Token von Lettermint, lettermint.co). Optional: `MAIL_FROM` (Standard `Vanamo <noreply@vanamo.app>`) und `SITE_URL` (Standard `https://vanamo.app`).
+- Die Absender-Domain muss bei Lettermint bestätigt sein (DNS-Einträge bei Cloudflare).
+- Ein anderer Versanddienst braucht nur eine neue `sendMail()` in `supabase/functions/account-email/index.ts`.
+
+## 7. Passwort im Konto ändern
+- Edge Function `change-password` deployen (`verify_jwt = true`). Sie prüft das aktuelle Passwort, das neue gegen bekannte Datenlecks und beendet danach alle Anmeldungen.

@@ -89,7 +89,7 @@ try {
  const p=await logged.newPage();p.on('pageerror',e=>errors.push(e.message));
  await p.goto(origin);await p.evaluate(()=>{document.body.dataset.account='authenticated';});
  await p.waitForFunction(()=>document.querySelector('[data-verb-count="5"]'));
- assert.equal(await p.evaluate(()=>document.getElementById('account-logged-in').hidden),false);assert.equal(await p.locator('#account-button').textContent(),'Konto');
+ assert.equal(await p.evaluate(()=>document.getElementById('account-logged-in').hidden),false);assert.equal(await p.locator('#account-button').getAttribute('aria-label'),'Konto');
  if(!await p.locator('#continue-practice').isVisible())await p.locator('[data-home-tab-button="practice"]:visible, #more-exercises > summary:visible').first().click();
  await p.locator('#continue-practice').click();
  await p.locator('[data-verb-count="5"]').click();
@@ -99,7 +99,7 @@ try {
  await p.locator('#verb-input').fill('mein Entwurf');
  const current=await p.locator('.verb-question').textContent();
  cloud={...cloud,verbProgress:markAnswered(markAsked(cloud.verbProgress,'olla:2',Date.now()),'olla:2',false,Date.now()+1)};
- await p.locator('#account-button').click();await p.locator('#sync-now').click();
+ await p.locator('#account-button').click();await p.locator('#account-manage').click();await p.locator('#sync-now').click();
  await p.waitForFunction(()=>window.suomiLearningState.snapshot().verbProgress['olla:2']?.errors===1);
  await p.locator('#close-account').click();
  assert.equal(await p.locator('#verb-input').inputValue(),'mein Entwurf');

@@ -68,6 +68,7 @@ try{
  registerStatus=201;
  await page.waitForTimeout(150);
  await page.click('#register-form button[type="submit"]');
+ await page.waitForSelector('#account-onboarding:not([hidden])');await page.click('#onboarding-skip');
  await page.waitForFunction(()=>!document.getElementById('recovery-result').hidden);
  assert.equal(registerBodies.at(-1).turnstileToken,'token-2','a fresh token is used for the next attempt');
  assert.deepEqual(violations,[],'CSP allows Turnstile');

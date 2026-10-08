@@ -49,6 +49,7 @@ jobs:
           node test-home-browser.mjs
           node test-games-browser.mjs
           node test-turnstile-browser.mjs
+          node test-account-profile-browser.mjs
           node test-classrooms.mjs
           node test-daily-sentence-browser.mjs
           node test-support-browser.mjs
