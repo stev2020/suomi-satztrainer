@@ -17,9 +17,9 @@ try{
   const tag=viewport.width<600?'handy':'desktop';
   let teacher=true,step=0,activity=null,seenAt=null;
   const room={id,name:'Finnisch am Mittwoch',teacher:true,owner:true,teacher_count:1,archived:false,code:'ABCD1234ABCD1234',member_count:3,assignments:[],
-   members:[{id:'owner',name:'Frau Virtanen',role:'teacher',owner:true,own:true,blocked:false},{id:'s1',name:'Anna Müller',role:'student',owner:false,blocked:false},{id:'s2',name:'Mika',role:'student',owner:false,blocked:false}]};
-  const posts=[{id:'post-1',kind:'question',body:'Wann benutzt man den Partitiv? Siehe https://example.org/partitiv',author:'Anna Müller',own:false,teacher:false,resolved:false,created_at:'2026-10-01T09:00:00Z',files:[],
-   replies:[{id:'reply-1',reply_to_id:null,body:'Zum Beispiel nach Zahlen: kaksi kahvia.',author:'Frau Virtanen',own:true,teacher:true,created_at:'2026-10-01T09:05:00Z'}]}];
+   members:[{id:'owner',name:'Frau Virtanen',avatar:'tunturipollo',role:'teacher',owner:true,own:true,blocked:false},{id:'s1',name:'Anna Müller',avatar:'sinitiainen',role:'student',owner:false,blocked:false},{id:'s2',name:'Mika',role:'student',owner:false,blocked:false}]};
+  const posts=[{id:'post-1',kind:'question',body:'Wann benutzt man den Partitiv? Siehe https://example.org/partitiv',author:'Anna Müller',avatar:'sinitiainen',own:false,teacher:false,resolved:false,created_at:'2026-10-01T09:00:00Z',files:[],
+   replies:[{id:'reply-1',reply_to_id:null,body:'Zum Beispiel nach Zahlen: kaksi kahvia.',author:'Frau Virtanen',avatar:'tunturipollo',own:true,teacher:true,created_at:'2026-10-01T09:05:00Z'}]}];
   const context=await browser.newContext({viewport,serviceWorkers:'block',locale:'de-DE'});
   // CLASSROOM_THEME=<Palette> prüft die Seiten in einer anderen Farbpalette (z. B. kaamos).
   if(process.env.CLASSROOM_THEME)await context.addInitScript(theme=>localStorage.setItem('vanamo-theme',theme),process.env.CLASSROOM_THEME);
@@ -79,6 +79,12 @@ try{
   // Mitglieder
   for(const details of await page.locator('.cr-sidebar-disclosure').all())await details.locator('summary').first().click();
   assert.ok((await page.locator('.cr-roster').textContent()).includes('Anna Müller'));
+  // Vögel neben den Namen: der eigene bewegt sich, ohne gewählten Vogel steht der Anfangsbuchstabe da (nicht als Text).
+  assert.equal(await page.locator('.cr-roster .avatar[data-avatar="tunturipollo"].is-live').count(),1);
+  assert.equal(await page.locator('.cr-roster .avatar[data-avatar="sinitiainen"]:not(.is-live)').count(),1);
+  assert.equal(await page.locator('.cr-roster .avatar-initial[data-initial="M"]').count(),1);
+  assert.ok(!(await page.locator('.cr-roster').textContent()).includes('MMika'));
+  assert.ok(await page.locator('.cr-feed-card .cr-author .avatar[data-avatar="sinitiainen"]').count()>=1);
   assert.ok((await page.locator('.cr-today').textContent()).includes('1 Frage wartet auf eine Antwort.'));await check('mitglieder');
   // Aufgabe erstellen: eigener Satz und vorhandener Satz
   await page.locator('[data-cr=new_assignment]').first().click();

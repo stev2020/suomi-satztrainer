@@ -33,6 +33,7 @@ window.accountRequest=async(path,options={})=>{
  if(action==='stream_reserve')result={id:'file-'+(++counter)};
  return {ok:true,json:async()=>JSON.parse(JSON.stringify(result))};
 };
+{const avatars=await import('./dist/avatars.mjs');window.avatarMarkup=avatars.avatarMarkup;window.cleanNickname=avatars.cleanNickname;}
 window.eval(fs.readFileSync('./dist/classrooms.js','utf8').replace(/^import .*\n/gm,''));
 const $=s=>window.document.querySelector(s);
 const settle=async(error=false)=>{for(let i=0;i<20;i++)await new Promise(r=>setTimeout(r,0));assert(!$('[aria-busy]'));if(!error)assert(!$('#classrooms-status').classList.contains('error'),$('#classrooms-status').textContent);};

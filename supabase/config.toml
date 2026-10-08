@@ -11,3 +11,9 @@ verify_jwt = true
 
 [functions.storage-sweep]
 verify_jwt = true
+
+[functions.account-email]
+verify_jwt = false
+
+[functions.change-password]
+verify_jwt = true

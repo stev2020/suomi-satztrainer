@@ -1,4 +1,4 @@
-import './i18n.mjs?v=24';
+import './i18n.mjs?v=25';
 // Games-Bereich: Spielauswahl und Start von Mustikka Hyppy (Vokabel-Sprungspiel).
 // Das Spiel selbst liegt fertig gebaut unter games/hyppy/ (siehe scripts/update-hyppy.mjs)
 // und wird erst beim ersten Start geladen.

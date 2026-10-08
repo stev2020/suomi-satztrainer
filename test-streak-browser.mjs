@@ -33,7 +33,8 @@ try{
  await page.locator('.streak-veil.on').waitFor({timeout:3000});
  await page.locator('header>.today.streak-gold').waitFor({timeout:4000});
  assert.equal((await page.locator('header>.today .streak-label').textContent()).trim(),'Tag in Folge');
-  await page.waitForTimeout(1600);
+ // Die Pille bleibt zwei Sekunden gold; danach ist alles aufgeräumt.
+ await page.waitForFunction(()=>!document.querySelector('.streak-veil,.streak-canvas,.streak-caption,.streak-swap'),null,{timeout:6000});
  assert.equal(await page.locator('.streak-veil,.streak-canvas,.streak-caption,.streak-swap').count(),0);
  assert.equal(await page.locator('header>.today.streak-gold').count(),0);
  assert.ok(await page.locator('#today-count').isVisible()&&await page.locator('.today-toggle').isVisible());

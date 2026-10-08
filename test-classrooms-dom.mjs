@@ -31,6 +31,7 @@ window.accountRequest=async(path,opts)=>{
 };
 window.fetch=async url=>({ok:true,json:async()=>JSON.parse(fs.readFileSync(new URL(String(url).includes('grammar.json')?'./dist/grammar.json':'./dist/sentences.json',import.meta.url),'utf8'))});
 const source=fs.readFileSync(new URL('./dist/classrooms.js',import.meta.url),'utf8').replace(/^import .*\n/gm,'');
+{const avatars=await import('./dist/avatars.mjs');window.avatarMarkup=avatars.avatarMarkup;window.cleanNickname=avatars.cleanNickname;}
 window.eval(source);
 const $=s=>window.document.querySelector(s);
 const settle=async()=>{for(let i=0;i<15;i++)await new Promise(r=>setTimeout(r,0));assert(!$('[aria-busy]'),'request finished');const status=$('#classrooms-status');assert(!status.classList.contains('error'),status.textContent);};
