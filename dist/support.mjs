@@ -1,11 +1,14 @@
 // Vanamo – Seite „Unterstützen“.
 //
 // Drei Werte werden hier von Hand gepflegt:
-//  KOFI_URL        Adresse des Ko-fi-Profils. Solange sie leer ist, bleibt der Knopf gesperrt
-//                  und die Seite sagt offen, dass die Zahlung noch eingerichtet wird.
+//  DONORBOX_URL    Adresse des Donorbox-Formulars (z. B. https://donorbox.org/vanamo). Solange sie leer ist,
+//                  bleibt der Knopf gesperrt und die Seite sagt offen, dass die Zahlung noch eingerichtet wird.
+//                  Betrag und Rhythmus werden in der Adresse mitgegeben (amount, default_interval a/m);
+//                  „Einmalig“ ist die Grundeinstellung des Formulars bei Donorbox.
+//                  Die Seite lädt nichts von Donorbox – erst der Klick öffnet das Formular in einem neuen Tab.
 //  MONTH_GOAL      Monatsziel in Euro (Balken ist dann voll).
 //  MONTH_RECEIVED  In diesem Monat eingegangener Betrag in Euro.
-export const KOFI_URL='';
+export const DONORBOX_URL='';
 export const MONTH_GOAL=10;
 export const MONTH_RECEIVED=0;
 
@@ -23,6 +26,16 @@ export function ctaLabel(mode,amount){
  if(mode==='jahr')return `Mit ${euro(amount)} im Jahr unterstützen`;
  if(mode==='monat')return `Mit ${euro(amount)} im Monat unterstützen`;
  return `Einmalig ${euro(amount)} geben`;
+}
+/** Adresse des Donorbox-Formulars mit vorausgewähltem Betrag und Rhythmus. */
+export function donateUrl(base,mode,amount){
+ if(!base)return '';
+ const u=new URL(base);
+ u.searchParams.set('amount',String(amount));
+ if(mode==='jahr')u.searchParams.set('default_interval','a');
+ else if(mode==='monat')u.searchParams.set('default_interval','m');
+ u.searchParams.set('language','de');
+ return u.href;
 }
 /** Hinweiszeile unter den Beträgen. */
 export function hintText(mode,amount){
@@ -50,10 +63,10 @@ if(typeof document!=='undefined'){
  amounts.addEventListener('click',e=>{const b=e.target.closest('[data-support-amount]');if(!b)return;amount=Number(b.dataset.supportAmount);render();});
  render();
 
- if(KOFI_URL){
+ if(DONORBOX_URL){
   cta.disabled=false;
-  cta.addEventListener('click',()=>{window.open(KOFI_URL,'_blank','noopener');});
-  $('support-provider').textContent='Läuft über Ko-fi, mit Karte oder PayPal.';
+  cta.addEventListener('click',()=>{window.open(donateUrl(DONORBOX_URL,mode,amount),'_blank','noopener');});
+  $('support-provider').textContent='Sicher bezahlen über Donorbox. Du brauchst dafür kein Konto.';
  }
 
  const percent=goalPercent(),bar=$('support-goal-bar');

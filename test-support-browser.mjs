@@ -10,7 +10,9 @@ try{
   await p.goto(origin+'/unterstuetzen.html');
   const cta=p.locator('#support-cta');
   await assertText(cta,'Mit 12 € im Jahr unterstützen');
-  assert.equal(await cta.isDisabled(),true,'ohne Ko-fi-Adresse bleibt der Knopf gesperrt');
+  assert.equal(await cta.isDisabled(),true,'ohne Donorbox-Adresse bleibt der Knopf gesperrt');
+  assert.equal(await p.locator('#support-facts').isVisible(),true,'Hinweis direkt unter dem Knopf');
+  assert.match(await p.locator('#support-facts').textContent(),/keine Spende im steuerlichen Sinn/);
   assert.match(await p.locator('#support-provider').textContent(),/richten wir gerade ein/);
   await p.locator('[data-support-amount="36"]').click();
   await assertText(cta,'Mit 36 € im Jahr unterstützen');await assertText(p.locator('#support-hint'),'36 € im Jahr – das ist 3 € im Monat.');
@@ -43,6 +45,6 @@ try{
   }
   await c.close();
  }
- console.log('Unterstützen im Browser: Beträge, Sternchen-Fenster, Monatsziel, sechs Paletten, Handybreite, Links.');
+ console.log('Unterstützen im Browser: Donorbox-Hinweis, Beträge, Sternchen-Fenster, Monatsziel, sechs Paletten, Handybreite, Links.');
 }finally{await b.close();server.kill();}
 async function assertText(locator,expected){assert.equal((await locator.textContent()).trim(),expected);}
