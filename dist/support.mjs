@@ -13,8 +13,8 @@ export const MONTH_GOAL=10;
 export const MONTH_RECEIVED=0;
 
 // Je drei Beträge wie im Donorbox-Formular, der mittlere ist vorausgewählt.
-export const AMOUNTS={einmal:[3,5,10],monat:[2,3,5],jahr:[6,12,24]};
-export const DEFAULT_AMOUNT={einmal:5,monat:3,jahr:12};
+export const AMOUNTS={einmal:[3,5,10],monat:[3,5,10],jahr:[6,12,24]};
+export const DEFAULT_AMOUNT={einmal:5,monat:5,jahr:12};
 
 /** Füllstand des Monatsziels in Prozent (0–100). */
 export function goalPercent(received=MONTH_RECEIVED,goal=MONTH_GOAL){

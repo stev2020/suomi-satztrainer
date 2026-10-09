@@ -21,8 +21,8 @@ try{
   await p.locator('[data-support-amount="24"]').click();
   await assertText(cta,'Mit 24 € im Jahr unterstützen');await assertText(p.locator('#support-hint'),'24 € im Jahr – das ist 2 € im Monat.');
   await p.locator('[data-support-mode="monat"]').click();
-  assert.deepEqual(await p.locator('#support-amounts button').allTextContents(),['2 €','3 €','5 €']);
-  await assertText(cta,'Mit 3 € im Monat unterstützen');
+  assert.deepEqual(await p.locator('#support-amounts button').allTextContents(),['3 €','5 €','10 €']);
+  await assertText(cta,'Mit 5 € im Monat unterstützen');
   await p.locator('[data-support-mode="einmal"]').click();
   assert.deepEqual(await p.locator('#support-amounts button').allTextContents(),['3 €','5 €','10 €']);
   await assertText(cta,'Einmalig 5 € geben');
