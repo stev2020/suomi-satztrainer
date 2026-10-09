@@ -4,7 +4,7 @@ import {mergeEndingsProgress} from './endings-progress.mjs?v=1';
 import {mergePerformanceEvents} from './learning-insights.mjs';
 import {mergeGames} from './games-progress.mjs';
 import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,TURNSTILE_SITE_KEY} from './supabase-config.js?v=2';
-import {accountProfile,avatarSVG,avatarPickerMarkup,bindAvatarPicker,cleanNickname,isAvatar,randomAvatar,NICKNAME_MAX} from './avatars.mjs?v=1';
+import {accountProfile,avatarSVG,avatarPickerMarkup,bindAvatarPicker,cleanNickname,isAvatar,randomAvatar,NICKNAME_MAX} from './avatars.mjs?v=2';
 
 const STORE='suomi-learning-v1';
 const SESSION='suomi-auth-session-v1';
@@ -592,7 +592,7 @@ export const accountUser=()=>session?.user||null;
 export {request as accountRequest};
 window.suomiAccountUser=()=>session?.user||null;
 window.suomiAccountRequest=request;
-import('./classrooms.js?v=100').catch(()=>{});
+import('./classrooms.js?v=101').catch(()=>{});
 import('./quality-review.js?v=7').catch(()=>{});
 if(session?.user&&configured())refreshSession().then(async ok=>{if(!ok)return;try{await pullAndMerge();}catch(err){syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true);status(err.message,true);}}).catch(syncError).finally(()=>{syncReady=true;if(syncQueued)scheduleSync();scheduleEmailHint();});
 else syncReady=true;

@@ -9,7 +9,9 @@ import {chromium} from 'playwright';
 import {AVATARS,accountProfile,cleanNickname,avatarMarkup} from './dist/avatars.mjs';
 
 // Bausteine ohne Browser
-assert.equal(AVATARS.length,11);assert.equal(new Set(AVATARS.map(a=>a.id)).size,11);
+assert.equal(AVATARS.length,16);assert.equal(new Set(AVATARS.map(a=>a.id)).size,16);
+// Die Datenbank (Klassenraum) kennt genau dieselben Vögel – neueste Migration mit classroom_private.avatar.
+{const fs=await import('node:fs');const dir='supabase/migrations';const sql=fs.readdirSync(dir).sort().map(f=>fs.readFileSync(`${dir}/${f}`,'utf8')).filter(t=>/function classroom_private\.avatar\(/.test(t)).at(-1);const ids=[...sql.match(/avatar' in \(([^)]*)\)/)[1].matchAll(/'([^']+)'/g)].map(m=>m[1]);assert.deepEqual(ids.sort(),AVATARS.map(a=>a.id).sort(),'database lists the same birds');}
 assert.deepEqual(accountProfile({user_metadata:{username:'lumi',nickname:'  Lumi   die <b>Erste</b> ',avatar:'kurki'}}),{username:'lumi',nickname:'Lumi die <b>Erste</b>',avatar:'kurki'});
 assert.deepEqual(accountProfile({user_metadata:{username:'lumi',avatar:'<svg onload=1>'}}),{username:'lumi',nickname:'lumi',avatar:''});
 assert.equal(cleanNickname('x'.repeat(80)).length,30);
@@ -82,7 +84,7 @@ try{
  assert.equal(await page.locator('#account-title').textContent(),'Fast fertig');
  assert.equal(await page.locator('#account-logged-in').isVisible(),false);assert.equal(await page.locator('#account-logged-out').isVisible(),false);
  assert.equal(await page.locator('#recovery-result').isVisible(),false,'der Code kommt erst nach Schritt 2');
- assert.equal(await page.locator('[data-avatar-choice]:visible').count(),11);
+ assert.equal(await page.locator('[data-avatar-choice]:visible').count(),16);
  assert.equal(await page.locator('#account-onboarding [data-avatar-choice][aria-pressed="true"]').count(),1,'ein Vogel ist vorausgewählt');
  assert.equal(await page.locator('#onboarding-nickname').getAttribute('placeholder'),'neuer.nutzer');
  await page.click('#account-onboarding [data-avatar-choice="sinitiainen"]');

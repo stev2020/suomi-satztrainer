@@ -1,6 +1,6 @@
 // Vanamo – Vogel-Avatare.
 //
-// Elf flächig gezeichnete Vögel, die man als Profilbild wählen kann. Die Zeichnungen stehen als SVG direkt
+// Sechzehn flächig gezeichnete Vögel, die man als Profilbild wählen kann. Die Zeichnungen stehen als SVG direkt
 // hier (keine Bilddateien); bewegt (Blinzeln, Kopf drehen, Schwanz zucken) wird ein Avatar nur, wenn das
 // umgebende Element die Klasse „is-live“ trägt oder man darüberfährt – die Regeln stehen in style.css.
 // Gespeichert wird nur die Kennung (z. B. „sinitiainen“) im Konto; alles andere kommt aus dieser Datei.
@@ -69,9 +69,35 @@ export const AVATARS=[
 <path d="M9 4 C16 -8 6 -18 9 -30" stroke="#2A2D33" stroke-width="5.5" stroke-linecap="round" fill="none"/><path d="M7 -1 C13 -10 4 -19 7 -29" stroke="#F4F2EC" stroke-width="2.2" stroke-linecap="round" fill="none"/>
 <g class="av-tail av-d3"><path d="M-19 1 Q-35 1 -35 17 Q-27 10 -17 11 Z" fill="#5F666E"/></g>
 <ellipse cx="-5" cy="6" rx="18" ry="10.5" fill="#9AA3AB" transform="rotate(-8 -5 6)"/><path d="M-18 5 Q-6 -1 6 6" stroke="#B4BCC3" stroke-width="2" stroke-linecap="round" fill="none"/>
-<g class="av-head av-d3"><path d="M16 -33.5 L31 -30 L16 -28.5 Z" fill="#C9B88A"/><ellipse cx="11" cy="-31" rx="6" ry="4.8" fill="#2A2D33"/><path d="M11.5 -32 Q5.5 -30 6.5 -25" stroke="#F4F2EC" stroke-width="2.2" stroke-linecap="round" fill="none"/><ellipse cx="10" cy="-35.4" rx="3.6" ry="1.6" fill="#C8372D"/><g class="av-eye av-d3"><circle cx="13.6" cy="-32" r="1.3" fill="#D8572B"/></g></g>`}
+<g class="av-head av-d3"><path d="M16 -33.5 L31 -30 L16 -28.5 Z" fill="#C9B88A"/><ellipse cx="11" cy="-31" rx="6" ry="4.8" fill="#2A2D33"/><path d="M11.5 -32 Q5.5 -30 6.5 -25" stroke="#F4F2EC" stroke-width="2.2" stroke-linecap="round" fill="none"/><ellipse cx="10" cy="-35.4" rx="3.6" ry="1.6" fill="#C8372D"/><g class="av-eye av-d3"><circle cx="13.6" cy="-32" r="1.3" fill="#D8572B"/></g></g>`},
+ {id:'kuukkeli',fi:'Kuukkeli',de:'Unglückshäher',bg:'#E3E8DF',art:
+  `<line x1="-38" y1="37" x2="38" y2="37" stroke="#5E6B4A" stroke-width="4" stroke-linecap="round"/><path d="M-30 37 L-26 31 M-18 37 L-14 32 M22 37 L26 31 M30 37 L33 32" stroke="#5E6B4A" stroke-width="2" stroke-linecap="round"/>
+<g class="av-tail av-d1"><path d="M-18 16 L-37 30 L-31 35 L-13 25 Z" fill="#C9652E"/><path d="M-17 18 L-32 30 L-29 32 L-14 23 Z" fill="#7A6F66"/></g>${legs('#2E2A27')}
+<ellipse cx="-2" cy="8" rx="23" ry="21" fill="#A49A8F"/><path d="M-20 18 Q-2 34 18 18 Q10 29 -2 29 Q-14 29 -20 18 Z" fill="#D9843F"/>
+<g transform="rotate(28 -9 8)"><ellipse cx="-9" cy="8" rx="11" ry="17" fill="#6F665E"/><path d="M-15 2 Q-9 6 -3 2" stroke="#D9843F" stroke-width="3" stroke-linecap="round" fill="none"/></g>
+<g class="av-head av-d1"><path d="M22 -15 L29 -12.5 L22 -10 Z" fill="#1E1C1A"/><circle cx="10" cy="-14" r="13.5" fill="#B8AFA4"/><path d="M-3.5 -15 A13.5 13.5 0 0 1 23.5 -15 Q12 -21 -3.5 -15 Z" fill="#4A433D"/>${eye(15,-14.5,2.1,'#05070B',' av-d1')}</g>`},
+ {id:'kuningaskalastaja',fi:'Kuningaskalastaja',de:'Eisvogel',bg:'#D7EDE9',art:
+  `${branch}<g class="av-tail av-d2"><path d="M-16 16 L-30 28 L-25 31 L-12 23 Z" fill="#1C5F8F"/></g>${legs('#D8452B',2.4,27)}
+<ellipse cx="-2" cy="9" rx="21" ry="19" fill="#E48434"/>
+<g transform="rotate(28 -9 7)"><ellipse cx="-9" cy="7" rx="11" ry="17" fill="#1F86B8"/><circle cx="-12" cy="0" r="1.4" fill="#7FD6E0"/><circle cx="-7" cy="3" r="1.4" fill="#7FD6E0"/><circle cx="-11" cy="7" r="1.4" fill="#7FD6E0"/><circle cx="-6" cy="10" r="1.4" fill="#7FD6E0"/></g>
+<g class="av-head av-d2"><path d="M20 -17 L41 -12.5 L20 -9 Z" fill="#1A1A1D"/><circle cx="9" cy="-14" r="13" fill="#1F86B8"/><path d="M-1 -11 Q8 -15 22 -12 Q16 -4 6 -5 Q0 -6 -1 -11 Z" fill="#E48434"/><ellipse cx="0" cy="-6" rx="3.6" ry="2.6" fill="#FFFFFF"/><path d="M-1 -21 Q8 -26 18 -22" stroke="#4FB6D6" stroke-width="2" stroke-linecap="round" fill="none"/>${eye(13,-15,2,'#05070B',' av-d2')}</g>`},
+ {id:'peippo',fi:'Peippo',de:'Buchfink',bg:'#F2E4DD',art:
+  `${branch}<g class="av-tail av-d3"><path d="M-18 18 L-35 31 L-30 35 L-13 26 Z" fill="#3B3A35"/><path d="M-33 29.5 L-35 31 L-30 35 L-28.5 34 Z" fill="#FFFFFF"/></g>${legs('#9C7F72')}
+<ellipse cx="-2" cy="8" rx="22" ry="21" fill="#C98C76"/><path d="M-14 22 Q-2 31 12 23 Q4 29 -2 29 Q-9 29 -14 22 Z" fill="#EBD9CF"/>
+<g transform="rotate(28 -9 8)"><ellipse cx="-9" cy="8" rx="11" ry="17" fill="#4A4639"/><line x1="-18" y1="1" x2="-1" y2="1" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/><line x1="-17" y1="9" x2="-3" y2="9" stroke="#F2E8C8" stroke-width="2" stroke-linecap="round"/></g>
+<g class="av-head av-d3"><path d="M21 -17 L30 -13 L21 -9 Z" fill="#8E9DA8"/><circle cx="10" cy="-14" r="13.5" fill="#C98C76"/><path d="M-3.5 -14 A13.5 13.5 0 0 1 23 -18 Q14 -21 9 -18 Q2 -14 -3.5 -14 Z" fill="#6D8EA9"/>${eye(15,-14,2,'#0B0B0B',' av-d3')}</g>`},
+ {id:'merikotka',fi:'Merikotka',de:'Seeadler',bg:'#D9E4EC',art:
+  `<path d="M-40 39 Q-30 31 -12 33 Q6 30 22 34 Q34 34 40 39 Z" fill="#8C8F93"/>
+<g class="av-tail av-d1"><path d="M-10 18 L-24 37 L-13 38 L-2 24 Z" fill="#F6F3EA"/></g><line x1="-3" y1="26" x2="-3" y2="33" stroke="#E8B63A" stroke-width="3" stroke-linecap="round"/><line x1="6" y1="26" x2="6" y2="33" stroke="#E8B63A" stroke-width="3" stroke-linecap="round"/>
+<ellipse cx="-1" cy="6" rx="20" ry="24" fill="#6B4E35"/>
+<g transform="rotate(18 -8 6)"><ellipse cx="-8" cy="6" rx="12" ry="22" fill="#4E3826"/><path d="M-14 0 L-6 2 M-15 8 L-6 10 M-14 16 L-6 18" stroke="#7A5C40" stroke-width="2" stroke-linecap="round"/></g>
+<g class="av-head av-d1"><path d="M18 -21 Q29 -22 31 -13 Q31 -10 29 -9 Q27 -12 24 -12 L18 -12 Z" fill="#F0BE34"/><circle cx="8" cy="-17" r="13" fill="#D8C7A6"/><path d="M3 -24 Q11 -27 19 -21" stroke="#B7A27C" stroke-width="2" stroke-linecap="round" fill="none"/><g class="av-eye av-d1"><circle cx="13" cy="-18" r="2.4" fill="#F2DC7A"/><circle cx="13.4" cy="-18" r="1.2" fill="#15171C"/></g><path d="M9 -21.5 L18 -20.5" stroke="#5E4A33" stroke-width="2" stroke-linecap="round"/></g>`},
+ {id:'tuulihaukka',fi:'Tuulihaukka',de:'Turmfalke',bg:'#F4E6D2',art:
+  `${branch}<g class="av-tail av-d2"><path d="M-14 18 L-33 32 L-28 36 L-10 26 Z" fill="#8FA0AE"/><path d="M-29 29 L-33 32 L-28 36 L-25.2 34.4 Z" fill="#1E2228"/></g>${legs('#E8B63A',2.4)}
+<ellipse cx="-2" cy="8" rx="21" ry="22" fill="#F0DABA"/><g fill="#6A4630"><circle cx="2" cy="6" r="1.3"/><circle cx="8" cy="12" r="1.3"/><circle cx="0" cy="16" r="1.3"/><circle cx="7" cy="21" r="1.3"/><circle cx="-4" cy="22" r="1.3"/></g>
+<g transform="rotate(26 -9 7)"><ellipse cx="-9" cy="7" rx="11" ry="18" fill="#C46A38"/><g fill="#2A1E17"><circle cx="-12" cy="0" r="1.5"/><circle cx="-6" cy="4" r="1.5"/><circle cx="-12" cy="9" r="1.5"/><circle cx="-6" cy="13" r="1.5"/></g><path d="M-14 19 Q-9 26 -4 19" fill="#2A1E17"/></g>
+<g class="av-head av-d2"><path d="M20 -17 Q27 -17 28 -12 Q27 -10 26 -9.5 Q25 -12 22 -11 L20 -11 Z" fill="#4A4F57"/><path d="M19.5 -17.5 L22 -17.5 L22 -11 L19.5 -11 Z" fill="#F2C23A"/><circle cx="9" cy="-14" r="13" fill="#8FA0AE"/><path d="M1 -10 Q9 -12 18 -9 Q14 -2 6 -3 Q2 -4 1 -10 Z" fill="#F4E4CC"/><path d="M12 -12 Q12 -6 10 -3" stroke="#3E454E" stroke-width="2.6" stroke-linecap="round" fill="none"/><circle cx="13" cy="-16" r="3.2" fill="#F2C23A"/>${eye(13,-16,2.2,'#0B0B0B',' av-d2')}</g>`}
 ];
-
 const BY_ID=new Map(AVATARS.map(a=>[a.id,a]));
 const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 
