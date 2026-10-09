@@ -1607,3 +1607,10 @@ html:not(.intro-pending):not(.intro-running) #daily-sentence:not(.intro-bare) bu
  .avatar-picker-grid>.avatar-choice:nth-child(4n+1):nth-last-child(2){grid-column:3/span 2}
  .avatar-picker-grid>.avatar-choice:nth-child(4n+1):nth-last-child(1){grid-column:4/span 2}
 }
+/* Intro auf eigener Zeichenfläche (intro-birds.mjs / intro-flock.mjs): Solange ein Buchstabe als Bild gezeichnet wird,
+   bleibt der echte Buchstabe unsichtbar und ohne Übergänge; beim Vermessen ohne Verschiebung. */
+canvas.intro-flock{position:absolute;top:0;left:0;z-index:40;pointer-events:none}
+.intro-ch.is-canvas{opacity:0!important;transition:none!important;animation:none!important}
+.intro-measure .intro-ch{transform:none!important;transition:none!important}
+.intro-probe{display:inline-block;width:0;height:.5em;vertical-align:baseline}
+@media print{canvas.intro-flock{display:none}}
