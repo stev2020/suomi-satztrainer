@@ -1374,4 +1374,6 @@ export default {
  "Das Passwort konnte nicht geändert werden.": "The password could not be changed.",
  "Passwort geändert. Auf anderen Geräten wurdest du abgemeldet.": "Password changed. You were signed out on other devices.",
  "Passwort geändert. Bitte melde dich mit dem neuen Passwort neu an.": "Password changed. Please sign in again with the new password.",
+ "Schon {0} Tage in Folge! Sichere deinen Fortschritt: Mit einer E-Mail-Adresse kannst du ein vergessenes Passwort zurücksetzen.": "{0} days in a row already! Secure your progress: with an email address you can reset a forgotten password.",
+ "E-Mail hinterlegen": "Add email",
 }

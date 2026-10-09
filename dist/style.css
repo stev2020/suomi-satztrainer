@@ -1555,3 +1555,8 @@ header .header-nav #account-button.is-avatar.has-bird{overflow:hidden;background
 #account-dialog #reset-request-form #account-status{text-align:center}
 #account-dialog #reset-request-form button:disabled{opacity:1;border-color:color-mix(in srgb,var(--ink) 30%,transparent);background:var(--sunken);box-shadow:none;color:var(--muted);cursor:default}
 #account-dialog #password-save{justify-self:start}
+/* Hinweis mit Knopf („Sichere deinen Fortschritt“) */
+.sync-toast.has-action{flex-wrap:wrap;max-width:min(560px,calc(100% - 28px))}
+.sync-toast.has-action>span{flex:1 1 240px}
+.sync-toast .account-notice-action{width:auto;height:auto;min-height:36px;padding:6px 14px;border:1px solid var(--ink);border-radius:999px;font-size:14px;font-weight:600;line-height:1.2;color:var(--ink);white-space:nowrap}
+.sync-toast .account-notice-action:hover{background:var(--mint);color:var(--ink)}

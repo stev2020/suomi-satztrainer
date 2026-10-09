@@ -6,7 +6,7 @@
 // Zahl, Text und Wochentage zu Staub zerfallen. Er trifft die Pille
 // „heute geübt" und zerplatzt dort; die Pille zeigt zwei Sekunden die Serie in Gold und wird wieder normal.
 // Bei „Bewegung reduzieren" wird nur die Pille kurz gold. Farben: --gold, --gold-hi, --gold-deep je Farbschema (style.css).
-import {t} from './i18n.mjs?v=25';
+import {t} from './i18n.mjs?v=26';
 import {practiceStreak,weekActivity} from './home-extras.mjs?v=11';
 
 const KEY='vanamo-streak-day';

@@ -1,4 +1,4 @@
-import {uiLocale,uiLanguage} from './i18n.mjs?v=25';
+import {uiLocale,uiLanguage} from './i18n.mjs?v=26';
 import {mergeVerbProgress} from './verb-practice.mjs';
 import {mergeEndingsProgress} from './endings-progress.mjs?v=1';
 import {mergePerformanceEvents} from './learning-insights.mjs';
@@ -393,11 +393,42 @@ function bindEmailFields(prefix){
   const input=$(prefix+'-email'),row=$(prefix+'-adult-row');
   input.addEventListener('input',()=>{row.hidden=!input.value.trim();});
 }
-function notice(text,error=false){
-  const toast=document.createElement('div');toast.className='sync-toast account-notice'+(error?' error':'');toast.setAttribute('role',error?'alert':'status');
-  toast.innerHTML='<span></span><button type="button" aria-label="Schließen">×</button>';toast.querySelector('span').textContent=text;
-  toast.querySelector('button').onclick=()=>toast.remove();document.body.append(toast);
-  if(!error)setTimeout(()=>toast.remove(),9000);
+// Hinweis unten auf der Seite. Mit „action“ bekommt er einen Knopf und bleibt stehen, bis man ihn schließt.
+function notice(text,error=false,action=null){
+  const toast=document.createElement('div');toast.className='sync-toast account-notice'+(error?' error':'')+(action?' has-action':'');toast.setAttribute('role',error?'alert':'status');
+  toast.innerHTML='<span></span>'+(action?'<button type="button" class="account-notice-action"></button>':'')+'<button type="button" class="account-notice-close" aria-label="Schließen">×</button>';toast.querySelector('span').textContent=text;
+  toast.querySelector('.account-notice-close').onclick=()=>toast.remove();
+  if(action){const button=toast.querySelector('.account-notice-action');button.textContent=action.label;button.onclick=()=>{toast.remove();action.run();};}
+  document.body.append(toast);
+  if(!error&&!action)setTimeout(()=>toast.remove(),9000);
+  return toast;
+}
+// „Sichere deinen Fortschritt“: Wer drei Tage in Folge geübt und keine E-Mail-Adresse hinterlegt hat, bekommt genau
+// einmal je Konto und Gerät diesen Hinweis. Er wartet, bis Intro und Serien-Animation vorbei und keine Fenster offen sind.
+const EMAIL_HINT_DAYS=3,EMAIL_HINT_KEY='vanamo-email-hint-';
+function practiceStreakDays(daily={}){
+  const key=d=>d.toLocaleDateString('sv-SE'),d=new Date();d.setHours(12,0,0,0);
+  if(!(Number(daily[key(d)])>0))d.setDate(d.getDate()-1);
+  let n=0;while(Number(daily[key(d)])>0&&n<400){n++;d.setDate(d.getDate()-1);}
+  return n;
+}
+let emailHintBusy=false,emailHintTimer=null;
+// Immer nur eine anstehende Prüfung, egal wie oft sie angestoßen wird.
+function scheduleEmailHint(delay=5000){clearTimeout(emailHintTimer);emailHintTimer=setTimeout(maybeEmailHint,delay);}
+async function maybeEmailHint(){
+  const user=session?.user;if(!user||!configured()||emailHintBusy)return;
+  try{if(localStorage.getItem(EMAIL_HINT_KEY+user.id))return;}catch{return;}
+  if(practiceStreakDays(currentLearning()?.daily||{})<EMAIL_HINT_DAYS)return;
+  const busy=document.documentElement.classList.contains('intro-pending')||document.documentElement.classList.contains('intro-running')||document.querySelector('dialog[open],.streak-veil,.sync-toast');
+  if(busy){scheduleEmailHint(4000);return;}
+  emailHintBusy=true;
+  try{
+    const state=await emailApi('status');
+    if(session?.user?.id!==user.id)return;
+    try{localStorage.setItem(EMAIL_HINT_KEY+user.id,'1');}catch{}
+    if(state.email||!state.configured)return;
+    notice(`Schon ${practiceStreakDays(currentLearning()?.daily||{})} Tage in Folge! Sichere deinen Fortschritt: Mit einer E-Mail-Adresse kannst du ein vergessenes Passwort zurücksetzen.`,false,{label:'E-Mail hinterlegen',run:()=>{openAccount('login');setTimeout(()=>{$('email-form')?.scrollIntoView({block:'center'});$('profile-email')?.focus();},50);}});
+  }catch{}finally{emailHintBusy=false;}
 }
 let emailState={email:'',verified:false};
 function renderEmailState(note=''){
@@ -556,7 +587,9 @@ export const accountUser=()=>session?.user||null;
 export {request as accountRequest};
 window.suomiAccountUser=()=>session?.user||null;
 window.suomiAccountRequest=request;
-import('./classrooms.js?v=98').catch(()=>{});
-import('./quality-review.js?v=6').catch(()=>{});
-if(session?.user&&configured())refreshSession().then(async ok=>{if(!ok)return;try{await pullAndMerge();}catch(err){syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true);status(err.message,true);}}).catch(syncError).finally(()=>{syncReady=true;if(syncQueued)scheduleSync()});
+import('./classrooms.js?v=99').catch(()=>{});
+import('./quality-review.js?v=7').catch(()=>{});
+if(session?.user&&configured())refreshSession().then(async ok=>{if(!ok)return;try{await pullAndMerge();}catch(err){syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true);status(err.message,true);}}).catch(syncError).finally(()=>{syncReady=true;if(syncQueued)scheduleSync();scheduleEmailHint();});
 else syncReady=true;
+// Auch nach einer Übungsrunde prüfen – die Serie kann gerade erst drei Tage erreicht haben.
+window.addEventListener('suomi-learning-changed',()=>scheduleEmailHint());
