@@ -36,7 +36,7 @@ const T={
 const EASE_MOVE='cubic-bezier(.65,0,.25,1)',EASE_OUT='cubic-bezier(.2,.7,.2,1)';
 const SEEN='vanamo-intro-seen';
 
-import {createBirds} from './intro-birds.mjs?v=11';
+import {createBirds} from './intro-birds.mjs?v=12';
 
 // Das Intro spielt ganz oben. Manche Browser (z. B. DuckDuckGo) stellen nach dem Wiederöffnen die alte Scroll-Position
 // erst her, wenn das Intro schon läuft – dann sähe man es gar nicht. Solange es läuft, bleibt die Seite deshalb oben;
