@@ -34,6 +34,11 @@ main.support{max-width:768px;padding:0 24px;margin:auto}
 .support-cta-small{min-height:52px;padding:10px 28px;font-size:18px}
 .support-provider{margin:20px auto 0;max-width:460px;font-size:14px;color:var(--muted)}
 .support-provider:empty{display:none}
+/* „Gut zu wissen“ direkt unter dem Knopf: keine Spende im steuerlichen Sinn, Beenden, Erstattung */
+.support-facts{max-width:520px;margin:28px auto 0;padding-top:20px;border-top:1px solid color-mix(in srgb,var(--line) 18%,transparent);font-size:14px;line-height:1.55;color:var(--muted)}
+.support-facts p{margin:0}
+.support-facts p+p{margin-top:10px}
+.support-facts strong{color:var(--ink);font-weight:600}
 .support-costs{margin-top:64px;text-align:left}
 .support-costs h3{margin:0 0 6px;font-size:22px}
 .support-costs-note{margin:0 0 18px;font-size:14px;color:var(--muted)}
