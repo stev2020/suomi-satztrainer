@@ -1614,3 +1614,15 @@ canvas.intro-flock{position:absolute;top:0;left:0;z-index:40;pointer-events:none
 .intro-measure .intro-ch{transform:none!important;transition:none!important}
 .intro-probe{display:inline-block;width:0;height:.5em;vertical-align:baseline}
 @media print{canvas.intro-flock{display:none}}
+/* Handy: die drei Knöpfe im Header bleiben in einer Reihe (auch iPhone 16 & Co., 393–440 px), darunter eine feine graue Linie */
+@media(max-width:440px){
+ header .header-nav{flex-wrap:nowrap;gap:6px;margin-left:0}
+ header .header-nav>button,header .header-nav .account-menu>#account-button:not(.is-avatar){flex:1 1 auto;min-width:0;padding:6px 10px;font-size:13px;white-space:nowrap}
+ header .header-nav .account-menu{flex:1 1 auto;min-width:0}
+ body[data-account=authenticated] header .header-nav .account-menu{flex:0 0 auto}
+}
+@media(max-width:380px){
+ header .header-nav{gap:5px}
+ header .header-nav>button,header .header-nav .account-menu>#account-button:not(.is-avatar){padding:6px 7px;font-size:12px}
+}
+@media(max-width:700px){header{border-bottom:1px solid color-mix(in srgb,var(--ink) 14%,transparent)}}
