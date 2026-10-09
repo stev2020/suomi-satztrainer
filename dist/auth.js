@@ -403,9 +403,13 @@ function notice(text,error=false,action=null){
   if(!error&&!action)setTimeout(()=>toast.remove(),9000);
   return toast;
 }
-// „Sichere deinen Fortschritt“: Wer drei Tage in Folge geübt und keine E-Mail-Adresse hinterlegt hat, bekommt genau
-// einmal je Konto und Gerät diesen Hinweis. Er wartet, bis Intro und Serien-Animation vorbei und keine Fenster offen sind.
-const EMAIL_HINT_DAYS=3,EMAIL_HINT_KEY='vanamo-email-hint-';
+// „Sichere deinen Fortschritt“: Wer drei Tage in Folge geübt und keine E-Mail-Adresse hinterlegt hat, bekommt diesen
+// Hinweis – und ein zweites Mal nach zehn Tagen in Folge, wenn dann immer noch keine Adresse hinterlegt ist. Gemerkt
+// wird je Konto und Gerät die höchste Stufe, die schon gezeigt wurde. Er wartet, bis Intro und Serien-Animation vorbei
+// und keine Fenster offen sind.
+const EMAIL_HINT_STEPS=[3,10],EMAIL_HINT_KEY='vanamo-email-hint-';
+// Gespeichert ist die Zahl der Tage der zuletzt gezeigten Stufe („1“ aus der ersten Fassung bedeutet: Stufe 3 gezeigt).
+const emailHintShown=userId=>{const value=Number(localStorage.getItem(EMAIL_HINT_KEY+userId))||0;return value===1?3:value;};
 function practiceStreakDays(daily={}){
   const key=d=>d.toLocaleDateString('sv-SE'),d=new Date();d.setHours(12,0,0,0);
   if(!(Number(daily[key(d)])>0))d.setDate(d.getDate()-1);
@@ -417,15 +421,16 @@ let emailHintBusy=false,emailHintTimer=null;
 function scheduleEmailHint(delay=5000){clearTimeout(emailHintTimer);emailHintTimer=setTimeout(maybeEmailHint,delay);}
 async function maybeEmailHint(){
   const user=session?.user;if(!user||!configured()||emailHintBusy)return;
-  try{if(localStorage.getItem(EMAIL_HINT_KEY+user.id))return;}catch{return;}
-  if(practiceStreakDays(currentLearning()?.daily||{})<EMAIL_HINT_DAYS)return;
+  let step=0;
+  try{const shown=emailHintShown(user.id),streak=practiceStreakDays(currentLearning()?.daily||{});step=EMAIL_HINT_STEPS.filter(days=>days>shown&&streak>=days).pop()||0;}catch{return;}
+  if(!step)return;
   const busy=document.documentElement.classList.contains('intro-pending')||document.documentElement.classList.contains('intro-running')||document.querySelector('dialog[open],.streak-veil,.sync-toast');
   if(busy){scheduleEmailHint(4000);return;}
   emailHintBusy=true;
   try{
     const state=await emailApi('status');
     if(session?.user?.id!==user.id)return;
-    try{localStorage.setItem(EMAIL_HINT_KEY+user.id,'1');}catch{}
+    try{localStorage.setItem(EMAIL_HINT_KEY+user.id,String(step));}catch{}
     if(state.email||!state.configured)return;
     notice(`Schon ${practiceStreakDays(currentLearning()?.daily||{})} Tage in Folge! Sichere deinen Fortschritt: Mit einer E-Mail-Adresse kannst du ein vergessenes Passwort zurücksetzen.`,false,{label:'E-Mail hinterlegen',run:()=>{openAccount('login');setTimeout(()=>{$('email-form')?.scrollIntoView({block:'center'});$('profile-email')?.focus();},50);}});
   }catch{}finally{emailHintBusy=false;}
@@ -587,7 +592,7 @@ export const accountUser=()=>session?.user||null;
 export {request as accountRequest};
 window.suomiAccountUser=()=>session?.user||null;
 window.suomiAccountRequest=request;
-import('./classrooms.js?v=99').catch(()=>{});
+import('./classrooms.js?v=100').catch(()=>{});
 import('./quality-review.js?v=7').catch(()=>{});
 if(session?.user&&configured())refreshSession().then(async ok=>{if(!ok)return;try{await pullAndMerge();}catch(err){syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true);status(err.message,true);}}).catch(syncError).finally(()=>{syncReady=true;if(syncQueued)scheduleSync();scheduleEmailHint();});
 else syncReady=true;
