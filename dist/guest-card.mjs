@@ -99,6 +99,11 @@ export function createGuestCard(root,{sentences,level,onUnavailable,onFinished,o
   renderSteps();
   count.textContent=`${seen.length}/${GUEST_LIMIT}`;count.setAttribute('aria-label',`Satz ${seen.length} von ${GUEST_LIMIT}`);
   audioButton.hidden=!sentence?.audios?.length;
+  // Neuer Satz mit Aufnahme: der Knopf fällt wieder auf (wie in den Übungen), bis man ihn einmal anhört.
+  if(sentence&&audioButton.dataset.sentence!==String(sentence.id)){
+   audioButton.dataset.sentence=String(sentence.id);audioButton.dataset.played='false';
+   audioButton.classList.remove('audio-hint');void audioButton.offsetWidth;audioButton.classList.add('audio-hint');
+  }
   if(step===0){
    stage.innerHTML=`<div class="guest-words" lang="fi">${wordsMarkup()}</div><p class="guest-translation guest-l3" lang="de">${esc(sentence.translations[0].text)}${sourceIcon(sentence.translations[0])}</p>`;
    actions.innerHTML=`<button type="button" class="guest-next guest-first" data-guest="step">Satz selbst bauen →</button>${otherButton()}`;
@@ -193,7 +198,7 @@ ${list.length?`<ul class="guest-finale-list guest-l2" lang="fi" aria-label="Dein
   if(audio){stopAudio();return;}
   const url=audioURL(sentence?.audios?.[0]);if(!url)return;
   audio=new Audio(url);audioButton.classList.add('playing');
-  audio.onended=stopAudio;audio.onerror=stopAudio;audio.play().catch(stopAudio);
+  audio.onended=stopAudio;audio.onerror=stopAudio;audio.play().then(()=>{audioButton.dataset.played='true';}).catch(stopAudio);
  };
 
  actions.addEventListener('click',event=>{

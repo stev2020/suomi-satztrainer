@@ -7,7 +7,7 @@
 // - kleine Animationen (Hochzählen, Ring füllen); bei „reduzierter Bewegung“ entfallen sie
 // Gäste sehen weiterhin die ursprüngliche Startseite mit Intro und Satzkarte.
 import {loadLexicon,lookupForSentence,splitSentence} from './word-lookup.mjs?v=2';
-import {shortGloss} from './guest-card.mjs?v=12';
+import {shortGloss} from './guest-card.mjs?v=13';
 const audioURL=a=>a?.download_url||(a?.id?`https://api.tatoeba.org/v1/audios/${encodeURIComponent(a.id)}/file`:'');
 
 export const DAILY_GOAL=20;
@@ -161,7 +161,7 @@ function fits(s){
 
 // userKey: Konto-ID – jedes Konto bekommt seinen eigenen Satz, auf allen Geräten derselbe.
 export function createDailySentence(root,{sentences,learnedIds,fallbackLevel=()=>1,sourceIcon=()=>'',userKey=()=>''}){
- let lexicon=null,sentence=null,cols=[],audio=null,poolKey='',pool=[],own=false;
+ let lexicon=null,sentence=null,cols=[],audio=null,poolKey='',pool=[],own=false,playedId=null;
  const storeKey=()=>{const user=String(userKey()||'');return user?`${DAILY_KEY}:${user}`:DAILY_KEY;};
  if(!root)return {render(){}};
  const stopAudio=()=>{if(audio){audio.pause();audio=null;}root.querySelector('.daily-audio')?.classList.remove('playing');};
@@ -238,7 +238,7 @@ export function createDailySentence(root,{sentences,learnedIds,fallbackLevel=()=
   // Das Quellen-Symbol gehört zum Satz: es hängt am letzten Wort und bricht nie allein um.
   const words=cols.map((c,i)=>`<span class="guest-word" style="--i:${i}"><span class="guest-fi">${esc(c.fi)}${i===cols.length-1?`<span class="daily-source">${sourceIcon(sentence)}</span>`:''}</span><span class="guest-gloss"${c.gloss?' lang="de"':''}>${esc(c.gloss)}</span></span>`).join('');
   const t=sentence.translations[0];
-  return `<div class="daily-sentence-top"><h2 id="daily-sentence-title">Satz des Tages</h2>${sentence.audios?.length?'<span class="daily-sentence-tools"><button type="button" class="daily-audio" aria-label="Anhören"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4 5 9H2v6h3l6 5V4Z"/><path d="M15 8a6 6 0 0 1 0 8M18 4a11 11 0 0 1 0 16"/></svg></button></span>':''}</div>
+  return `<div class="daily-sentence-top"><h2 id="daily-sentence-title">Satz des Tages</h2>${sentence.audios?.length?`<span class="daily-sentence-tools"><button type="button" class="daily-audio audio-hint" data-played="${playedId===sentence.id}" aria-label="Anhören"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4 5 9H2v6h3l6 5V4Z"/><path d="M15 8a6 6 0 0 1 0 8M18 4a11 11 0 0 1 0 16"/></svg></button></span>`:''}</div>
 <div class="guest-words daily-words" lang="fi">${words}</div>
 <p id="daily-translation" class="daily-translation" lang="de">${esc(t.text)}${sourceIcon(t)}</p>`;
  }
@@ -247,7 +247,7 @@ export function createDailySentence(root,{sentences,learnedIds,fallbackLevel=()=
   // Die Wörter blenden nacheinander ein.
   if(animate)setTimeout(()=>root.classList.remove('is-entering'),700+cols.length*70);
   const a=root.querySelector('.daily-audio');
-  if(a)a.onclick=()=>{if(audio){stopAudio();return;}const url=audioURL(sentence?.audios?.[0]);if(!url)return;audio=new Audio(url);a.classList.add('playing');audio.onended=stopAudio;audio.onerror=stopAudio;audio.play().catch(stopAudio);};
+  if(a)a.onclick=()=>{if(audio){stopAudio();return;}const url=audioURL(sentence?.audios?.[0]);if(!url)return;audio=new Audio(url);a.classList.add('playing');audio.onended=stopAudio;audio.onerror=stopAudio;const id=sentence?.id;audio.play().then(()=>{playedId=id;a.dataset.played='true';}).catch(stopAudio);};
  }
  return {
   // Zeigt die Karte nur für Angemeldete, sobald Sätze und Wortanalyse geladen sind.

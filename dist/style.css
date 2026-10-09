@@ -1560,3 +1560,26 @@ header .header-nav #account-button.is-avatar.has-bird{overflow:hidden;background
 .sync-toast.has-action>span{flex:1 1 240px}
 .sync-toast .account-notice-action{width:auto;height:auto;min-height:36px;padding:6px 14px;border:1px solid var(--ink);border-radius:999px;font-size:14px;font-weight:600;line-height:1.2;color:var(--ink);white-space:nowrap}
 .sync-toast .account-notice-action:hover{background:var(--mint);color:var(--ink)}
+/* Startseite (Gäste-Satzkarte und Satz des Tages): gibt es eine Aufnahme, sieht der Knopf aus wie in den Übungen –
+   gefüllt, kräftiger Rand, zwei sanfte Wellen, sobald er zu sehen ist (nicht während eines Intros). Nach dem Anhören wird er ruhig. */
+#guest-card .guest-audio,#home-view #daily-sentence .daily-sentence-tools button.daily-audio{display:grid;place-items:center;width:48px;height:48px;min-width:48px;min-height:48px;padding:0;border:1.5px solid var(--ink);border-radius:50%;background:var(--mint);box-shadow:none;transform:none;color:var(--ink)}
+#guest-card .guest-audio[hidden]{display:none}
+#guest-card .guest-audio svg,#home-view #daily-sentence button.daily-audio svg{width:23px;height:23px;stroke-width:2}
+#guest-card .guest-audio:hover,#home-view #daily-sentence .daily-sentence-tools button.daily-audio:hover{background:color-mix(in srgb,var(--mint) 82%,var(--ink));color:var(--ink)}
+#guest-card .guest-audio[data-played=true],#home-view #daily-sentence .daily-sentence-tools button.daily-audio[data-played=true]{width:44px;height:44px;min-width:44px;min-height:44px;border:1px solid color-mix(in srgb,var(--ink) 30%,transparent);background:none;color:var(--ink-soft)}
+#guest-card .guest-audio[data-played=true] svg,#home-view #daily-sentence button.daily-audio[data-played=true] svg{width:20px;height:20px;stroke-width:1.8}
+#guest-card .guest-audio[data-played=true]:hover,#home-view #daily-sentence .daily-sentence-tools button.daily-audio[data-played=true]:hover{border-color:var(--ink);background:none;color:var(--ink)}
+#guest-card .guest-audio.playing,#home-view #daily-sentence .daily-sentence-tools button.daily-audio.playing{border-color:var(--ink);background:none;color:var(--orange)}
+html:not(.intro-pending):not(.intro-running) #guest-card:not(.is-loading):not(.intro-bare) .guest-audio.audio-hint:not([data-played=true]):not(.playing),
+html:not(.intro-pending):not(.intro-running) #daily-sentence:not(.intro-bare) button.daily-audio.audio-hint:not([data-played=true]):not(.playing){animation:audio-hint 1.5s ease-out .35s 2}
+@media(prefers-reduced-motion:reduce){#guest-card .guest-audio,#daily-sentence button.daily-audio{animation:none!important}}
+/* Umdreh-Karte (Satz ↔ Übersetzung): die abgewandte Seite wird zusätzlich unsichtbar geschaltet. Chrome blendet sie
+   trotz backface-visibility manchmal gespiegelt ein – seit die Rückseite keinen eigenen Hintergrund mehr hat, sah man
+   dann beide Sätze übereinander. Umgeschaltet wird, wenn die Karte die Hälfte (90°) erreicht hat (~0,09 s). */
+.sentence-flip .sentence-flip-inner>:is(.sentence-front,.sentence-back){transition:visibility 0s linear .09s}
+.sentence-flip.is-flipped .sentence-flip-inner>.sentence-front,.sentence-flip:not(.is-flipped) .sentence-flip-inner>.sentence-back{visibility:hidden}
+.sentence-flip.animate.is-flipped .sentence-flip-inner>.sentence-front{animation:flip-face-show 1ms linear .1s backwards}
+.sentence-flip.animate.is-flipped .sentence-flip-inner>.sentence-back{animation:flip-face-hide 1ms linear .1s backwards}
+@keyframes flip-face-hide{from,to{visibility:hidden}}
+@keyframes flip-face-show{from,to{visibility:visible}}
+@media (prefers-reduced-motion:reduce){.sentence-flip .sentence-flip-inner>:is(.sentence-front,.sentence-back){transition:none;animation:none!important}}
