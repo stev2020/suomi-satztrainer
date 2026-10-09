@@ -266,7 +266,17 @@ try{
  await page.waitForFunction(()=>document.activeElement.id==='profile-email');
  await page.click('#close-account');
  await page.reload();await page.waitForTimeout(800);await page.mouse.click(5,5);await page.waitForTimeout(9000);
- assert.equal(await page.locator('.account-notice').count(),0,'der Hinweis kommt nur einmal');
+ assert.equal(await page.locator('.account-notice').count(),0,'bei derselben Serie kommt der Hinweis nicht noch einmal');
+ assert.equal(await page.evaluate(()=>localStorage.getItem('vanamo-email-hint-00000000-0000-4000-8000-000000000009')),'3');
+ // Zehn Tage in Folge und immer noch keine Adresse: der Hinweis kommt ein zweites Mal, danach nicht mehr
+ await page.evaluate(daily=>{const state=JSON.parse(localStorage.getItem('suomi-learning-v1'));state.daily=daily;localStorage.setItem('suomi-learning-v1',JSON.stringify(state));},days(10));
+ await page.reload();await page.waitForTimeout(800);await page.mouse.click(5,5);
+ await page.waitForSelector('.account-notice.has-action',{timeout:30000});
+ assert.match(await page.locator('.account-notice').textContent(),/Schon 10 Tage in Folge! Sichere deinen Fortschritt/);
+ await page.click('.account-notice-close');
+ assert.equal(await page.evaluate(()=>localStorage.getItem('vanamo-email-hint-00000000-0000-4000-8000-000000000009')),'10');
+ await page.reload();await page.waitForTimeout(800);await page.mouse.click(5,5);await page.waitForTimeout(9000);
+ assert.equal(await page.locator('.account-notice').count(),0,'nach der zweiten Stufe kommt nichts mehr');
  assert.deepEqual(s.errors,[]);
  await s.context.close();
  // Mit hinterlegter Adresse oder kürzerer Serie kommt kein Hinweis
