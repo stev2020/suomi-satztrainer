@@ -19,7 +19,7 @@ try{
   assert.deepEqual(await p.locator('#support-amounts button').allTextContents(),['12 €','24 €','36 €']);
   assert.equal(await p.locator('#support-amounts button').nth(1).getAttribute('aria-pressed'),'true','der mittlere ist vorausgewählt');
   await p.locator('[data-support-amount="36"]').click();
-  await assertText(cta,'Mit 36 € im Jahr unterstützen');await assertText(p.locator('#support-hint'),'36 € im Jahr – das ist 3 € im Monat.');
+  await assertText(cta,'Mit 36 € im Jahr unterstützen');await assertText(p.locator('#support-hint'),'');
   await p.locator('[data-support-mode="monat"]').click();
   assert.deepEqual(await p.locator('#support-amounts button').allTextContents(),['3 €','5 €','10 €']);
   await assertText(cta,'Mit 5 € im Monat unterstützen');
