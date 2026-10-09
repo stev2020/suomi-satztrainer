@@ -1583,3 +1583,7 @@ html:not(.intro-pending):not(.intro-running) #daily-sentence:not(.intro-bare) bu
 @keyframes flip-face-hide{from,to{visibility:hidden}}
 @keyframes flip-face-show{from,to{visibility:visible}}
 @media (prefers-reduced-motion:reduce){.sentence-flip .sentence-flip-inner>:is(.sentence-front,.sentence-back){transition:none;animation:none!important}}
+/* Abschluss einer Lernpfad-Runde: Knöpfe in normaler Höhe (das alte „height:100%“ aus dem Raster ließ sie am Handy riesig werden);
+   am Handy untereinander in voller Breite. */
+#practice-view.is-path .completion-actions .primary{height:auto;min-height:58px;padding:10px 24px;line-height:1.15}
+@media(max-width:560px){#practice-view.is-path .completion-actions{flex-direction:column;align-items:stretch;gap:12px;width:min(340px,100%);margin-inline:auto}#practice-view.is-path .completion-actions .primary{width:100%;font-size:19px}}

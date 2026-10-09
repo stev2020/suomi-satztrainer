@@ -266,6 +266,8 @@ export function createBirds(){
   ['wire',()=>{const nav=shown(document.getElementById('home-tabs'));if(!nav||getComputedStyle(nav).position==='fixed')return null;const tab=nav.querySelector('[aria-selected="true"]');if(!tab)return null;const n=rect(nav),t=rect(tab);return tab.dataset.homeTabButton==='new'?{l:t.r+8,r:t.r+40,t:n.b-1.5}:{l:t.l-40,r:t.l-8,t:n.b-1.5};},0],
   // der Hauptknopf: für Gäste an der Satzkarte, für Angemeldete „Aufgaben starten“
   ['button',()=>{const el=shown(document.querySelector('#guest-card .guest-first'))||shown(document.getElementById('start-daily-session'));return el&&rect(el);},0],
+  // Angemeldete, Reiter „Willkommen“: auch der Knopf „Wiederholen“ (nicht „Neue Sätze“ – der liegt am Handy oft außer Sicht)
+  ['review',()=>{const el=shown(document.getElementById('welcome-review'));return el&&rect(el);},0],
   ['account',()=>{const el=shown(document.getElementById('account-button'));return el&&rect(el);},0],
   // der orange Trennstrich unter der Überschrift (ein ::after, deshalb aus dem Block berechnet)
   ['rule',()=>{const el=shown(document.querySelector('#home-view .intro'));if(!el||getComputedStyle(el,'::after').content==='none')return null;const r=rect(el);return {l:r.cx-28,r:r.cx+28,t:r.b-2};},0],
@@ -320,7 +322,7 @@ export function createBirds(){
   if(ps.some(b=>Math.hypot(b.x-e.pageX,b.y-5-e.pageY)<46))flyTogether(null,true);
  }
  function areaHeight(){
-  const card=shown(document.getElementById('guest-card'))||shown(document.querySelector('#home-view .home-daily'));
+  const card=shown(document.getElementById('guest-card'))||shown(document.querySelector('#home-view .home-daily'))||shown(document.getElementById('home-welcome-actions'));
   return Math.min(Math.max(innerHeight,card?rect(card).b+60:0),1600);
  }
  // Regelmäßiger Blick: Stimmt der Sitzplatz noch? Gibt es wieder einen? Ab und zu zuckt ein Flügel.

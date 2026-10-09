@@ -167,10 +167,20 @@ try{
  assert.equal(await page.locator('.greeting').getAttribute('aria-pressed'),'false','greeting stays Finnish');
  // Zwei Schwalben bleiben und setzen sich – für Angemeldete auf „Aufgaben starten“ oder einen anderen Platz.
  await page.waitForFunction(()=>/^sit:/.test(document.querySelector('canvas.intro-birds')?.dataset.pets),null,{timeout:12000});
+ // Aufgescheucht landen sie irgendwann auch auf „Wiederholen“ (Reiter „Willkommen“), nie auf „Neue Sätze“.
+ const seats=new Set();
+ for(let i=0;i<30&&!seats.has('review');i++){
+  await page.waitForFunction(()=>/^sit:/.test(document.querySelector('canvas.intro-birds')?.dataset.pets),null,{timeout:12000});
+  seats.add((await pets(page)).slice(4));
+  await page.evaluate(()=>{for(let y=0;y<innerHeight;y+=25)for(let x=0;x<innerWidth;x+=25)document.dispatchEvent(new PointerEvent('pointermove',{clientX:x,clientY:y,bubbles:true}));});
+  await page.waitForFunction(()=>!/^sit:/.test(document.querySelector('canvas.intro-birds')?.dataset.pets),null,{timeout:3000}).catch(()=>{});
+ }
+ assert.ok(seats.has('review'),`swallows also perch on "Wiederholen" (${[...seats]})`);
+ assert.ok(![...seats].some(name=>/new/.test(name)),'never on "Neue Sätze"');
  await page.context().close();
 
  assert.deepEqual(errors,[]);
- console.log('PASS: guest intro with flock writing the headline, bird becoming the logo, two swallows that perch and take off, no jump after a stall, card reveal, skip on click, cleanup, no intro for automation, signed-in intro (bird leaves the logo, greeting becomes the flock, flock writes the daily sentence, swallows stay) and greeting flip.');
+ console.log('PASS: guest intro with flock writing the headline, bird becoming the logo, two swallows that perch and take off, no jump after a stall, card reveal, skip on click, cleanup, no intro for automation, signed-in intro (bird leaves the logo, greeting becomes the flock, flock writes the daily sentence, swallows stay and also perch on Wiederholen) and greeting flip.');
 }finally{
  await browser?.close();server.kill();
 }
