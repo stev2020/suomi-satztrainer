@@ -5,7 +5,8 @@ import {goalPercent,ctaLabel,hintText,donateUrl,AMOUNTS,DEFAULT_AMOUNT,MONTH_GOA
 assert.equal(goalPercent(0,10),0);assert.equal(goalPercent(5,10),50);assert.equal(goalPercent(25,10),100,'Balken läuft nicht über');
 assert.equal(goalPercent(3,0),0,'ohne Ziel kein Füllstand');assert.equal(goalPercent(-2,10),0);
 assert.equal(MONTH_GOAL,10);
-for(const mode of Object.keys(AMOUNTS))assert(AMOUNTS[mode].includes(DEFAULT_AMOUNT[mode]),`${mode}: Vorauswahl ist ein angebotener Betrag`);
+assert.deepEqual(Object.keys(AMOUNTS),['einmal','monat','jahr'],'Reihenfolge wie bei Donorbox');
+for(const mode of Object.keys(AMOUNTS)){assert.equal(AMOUNTS[mode].length,3,`${mode}: drei Beträge`);assert.equal(AMOUNTS[mode][1],DEFAULT_AMOUNT[mode],`${mode}: der mittlere ist vorausgewählt`);}
 assert.equal(ctaLabel('jahr',12),'Mit 12 € im Jahr unterstützen');
 assert.equal(ctaLabel('monat',3),'Mit 3 € im Monat unterstützen');
 assert.equal(ctaLabel('einmal',5),'Einmalig 5 € geben');
@@ -25,8 +26,8 @@ for(const f of ['unterstuetzen.html','impressum.html','datenschutz.html'])assert
 assert(!read('impressum.html').includes('openlingu'),'alte Adresse entfernt');
 for(const f of ['index.html','impressum.html','datenschutz.html'])assert(read(f).includes('href="unterstuetzen.html"'),`${f}: Link zur Seite`);
 const sw=read('sw.js');
-for(const f of ['./unterstuetzen.html','./support.css?v=2','./support.mjs?v=3'])assert(sw.includes(`'${f}'`),`sw.js: ${f}`);
-assert(page.includes('support.css?v=2')&&page.includes('support.mjs?v=3'));
+for(const f of ['./unterstuetzen.html','./support.css?v=2','./support.mjs?v=4'])assert(sw.includes(`'${f}'`),`sw.js: ${f}`);
+assert(page.includes('support.css?v=2')&&page.includes('support.mjs?v=4'));
 assert(!/ko-fi/i.test(page+read('support.mjs')),'Ko-fi ist raus');
 assert(page.includes('keine Spende im steuerlichen Sinn')&&page.includes('Zuwendungsbestätigung'),'Hinweis: keine Spende im steuerlichen Sinn');
 assert(/innerhalb von 14 Tagen/.test(page)&&/beenden/.test(page),'Beenden und Erstattung erklärt');
