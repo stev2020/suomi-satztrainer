@@ -8,7 +8,7 @@
 //                  Die Seite lädt nichts von Donorbox – erst der Klick öffnet das Formular in einem neuen Tab.
 //  MONTH_GOAL      Monatsziel in Euro (Balken ist dann voll).
 //  MONTH_RECEIVED  In diesem Monat eingegangener Betrag in Euro.
-export const DONORBOX_URL='';
+export const DONORBOX_URL='https://donorbox.org/vanamo';
 export const MONTH_GOAL=10;
 export const MONTH_RECEIVED=0;
 
@@ -66,7 +66,7 @@ if(typeof document!=='undefined'){
  if(DONORBOX_URL){
   cta.disabled=false;
   cta.addEventListener('click',()=>{window.open(donateUrl(DONORBOX_URL,mode,amount),'_blank','noopener');});
-  $('support-provider').textContent='Sicher bezahlen über Donorbox. Du brauchst dafür kein Konto.';
+  $('support-provider').textContent='Sicher bezahlen über Donorbox mit PayPal.';
  }
 
  const percent=goalPercent(),bar=$('support-goal-bar');

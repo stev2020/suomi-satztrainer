@@ -10,10 +10,10 @@ try{
   await p.goto(origin+'/unterstuetzen.html');
   const cta=p.locator('#support-cta');
   await assertText(cta,'Mit 12 € im Jahr unterstützen');
-  assert.equal(await cta.isDisabled(),true,'ohne Donorbox-Adresse bleibt der Knopf gesperrt');
+  assert.equal(await cta.isDisabled(),false,'Knopf führt zu Donorbox');
+  assert.match(await p.locator('#support-provider').textContent(),/Donorbox/);
   assert.equal(await p.locator('#support-facts').isVisible(),true,'Hinweis direkt unter dem Knopf');
   assert.match(await p.locator('#support-facts').textContent(),/keine Spende im steuerlichen Sinn/);
-  assert.match(await p.locator('#support-provider').textContent(),/richten wir gerade ein/);
   await p.locator('[data-support-amount="36"]').click();
   await assertText(cta,'Mit 36 € im Jahr unterstützen');await assertText(p.locator('#support-hint'),'36 € im Jahr – das ist 3 € im Monat.');
   await p.locator('[data-support-mode="monat"]').click();
@@ -21,6 +21,9 @@ try{
   await assertText(cta,'Mit 3 € im Monat unterstützen');
   await p.locator('[data-support-mode="einmal"]').click();await p.locator('[data-support-amount="20"]').click();
   await assertText(cta,'Einmalig 20 € geben');
+  const [request]=await Promise.all([c.waitForEvent('request',r=>r.url().startsWith('https://donorbox.org/')),cta.click()]);
+  assert.equal(request.url(),'https://donorbox.org/vanamo?amount=20&language=de','Klick öffnet Donorbox mit Betrag');
+  for(const page of c.pages())if(page!==p)await page.close();
   assert.equal(await p.locator('[data-support-mode="einmal"]').getAttribute('aria-pressed'),'true');
 
   const note=p.locator('#support-note'),star=p.locator('#support-star');
