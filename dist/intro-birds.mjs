@@ -1,34 +1,36 @@
 // Vanamo – Vogelschwarm für das Intro und die zwei Schwalben auf der Startseite (Gäste und Angemeldete).
 //
-// Intro für Angemeldete: beginFrom() – nur der farbige Vogel startet am Logo –, dissolve() – er überfliegt
-// die Begrüßung, jeder Buchstabe wird zu Vögeln –, danach write(), release(), settle() wie unten.
-// Im Gäste-Intro (guest-intro.mjs steuert den Ablauf):
-//   begin()   – der Schwarm kreist in der Bildmitte,
-//   write()   – er fliegt an den Zeilenanfang, sammelt sich und zieht durch die Zeile;
-//               hinter ihm erscheinen die Buchstaben (Klasse `on`),
-//   release() – alle fliegen davon; der eine farbige Vogel fliegt ins Logo, zwei bleiben übrig,
-//   settle()  – die zwei setzen sich nebeneinander auf den Hauptknopf.
-// Danach (und für Gäste ganz ohne Intro: startPets()) sitzen zwei Schwalben auf der Startseite.
+// Das Intro selbst (createIntroFlock) zeichnet Vögel UND Buchstaben auf eine eigene Zeichenfläche – wenn möglich
+// in einem eigenen Thread (intro-flock-worker.mjs, OffscreenCanvas). So kann die Seite gleichzeitig laden und
+// rechnen, ohne dass der Schwarm ruckelt; ohne Worker läuft dasselbe Zeichenwerk (intro-flock.mjs) hier.
+// guest-intro.mjs steuert den Ablauf:
+//   begin()      – Gäste: der Schwarm kreist in der Bildmitte,
+//   beginFrom()  – Angemeldete: nur der farbige Vogel startet am Logo,
+//   dissolve()   – er überfliegt die Begrüßung, jeder Buchstabe wird zu Vögeln,
+//   write()      – der Schwarm fliegt an den Zeilenanfang und zieht durch die Zeile; hinter ihm erscheinen die
+//                  Buchstaben. Ist die Zeile fertig, wird das Bild unsichtbar gegen den echten Text getauscht,
+//   release()    – alle fliegen davon; der eine farbige Vogel fliegt ins Logo, zwei bleiben übrig,
+//   settle()     – die zwei werden an createBirds() übergeben und setzen sich auf den Hauptknopf.
+// Die Buchstaben (Elemente `.intro-ch`) behalten dabei ihre Klasse `on` wie vorher (für Tests und den Abschluss),
+// sind aber unsichtbar (`is-canvas`), solange sie auf der Zeichenfläche stehen.
+//
+// createBirds(): die zwei Schwalben auf der Startseite (nach dem Intro, und für Gäste ganz ohne Intro: startPets()).
 // Kommt der Mauszeiger oder ein Tipp in ihre Nähe, fliegen sie zusammen auf und setzen sich woanders
 // wieder nebeneinander. Verschwindet ihr Sitzplatz (andere Ansicht, anderer Schritt, Anmeldung),
 // fliegen sie um oder davon und kommen zurück, sobald es wieder einen Platz gibt.
-//
 // Gezeichnet wird auf eine Zeichenfläche oben auf der Seite (Seitenkoordinaten, sie scrollt mit).
-// Alle Zeiten laufen über eine eigene Uhr, die bei Hängern des Browsers stehen bleibt (höchstens
-// 50 ms pro Bild) – so überspringt der Schwarm nichts, während z. B. die Satzdaten verarbeitet werden.
 // Sitzen die Schwalben still, läuft keine Animation.
 
 const SIT=.55;      // Größe der sitzenden Schwalbe im Verhältnis zu ihrer Zeichnung
 const PET_SIZE=7.5; // halbe Spannweite der zwei Schwalben im Flug (px)
-const lerp=(a,b,p)=>a+(b-a)*p,ease=p=>p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;
 
 export function createBirds(){
  const html=document.documentElement;
  const cv=document.createElement('canvas');cv.className='intro-birds';cv.setAttribute('aria-hidden','true');
  const ctx=cv.getContext('2d');
- let W=0,H=0,VH=0,birds=[],sparks=[],hist=[],tweens=[],att={x:0,y:0},spread={x:60,y:60},tight={x:34,y:14,k:.42},absorb=false;
+ let W=0,H=0,birds=[],sparks=[],hist=[],att={x:0,y:0},spread={x:70,y:40};
  let col={ink:'#172c38',mint:'#ace0d4',line:'#172c38'};
- let raf=0,last=0,clock=0,mode='',first=true,intro=false,seatAt=null,watching=false,state='';
+ let raf=0,last=0,clock=0,intro=false,seatAt=null,watching=false,state='';
  const pets=()=>birds.filter(b=>b.pet);
 
  function colors(){
@@ -47,8 +49,6 @@ export function createBirds(){
  const rect=el=>{const r=el.getBoundingClientRect();return {l:r.left+scrollX,r:r.right+scrollX,t:r.top+scrollY,b:r.bottom+scrollY,cx:(r.left+r.right)/2+scrollX,cy:(r.top+r.bottom)/2+scrollY};};
 
  // ---- Uhr und Abläufe ----
- function tween(ms,fn){return new Promise(resolve=>{tweens.push({start:clock,ms,fn,resolve});loop();});}
- const wait=ms=>tween(ms,()=>{});
  function loop(){if(!raf){last=performance.now();raf=requestAnimationFrame(frame);}}
 
  // ---- Zeichnen ----
@@ -87,13 +87,6 @@ export function createBirds(){
  const histAt=t=>{for(let i=hist.length-1;i>=0;i--)if(hist[i].t<=t)return hist[i];return hist[0]||att;};
  function frame(now){
   const dt=Math.min((now-last)/1000,.05);last=now;clock+=dt*1000;
-  for(const t of [...tweens]){
-   const p=t.ms<=0?1:Math.min(1,(clock-t.start)/t.ms);t.fn(p);
-   if(p>=1){const i=tweens.indexOf(t);if(i>=0)tweens.splice(i,1);t.resolve(true);}
-  }
-  const s=clock/1000;
-  if(mode==='circle'){att.x=W/2+Math.cos(s*1.7)*W*.2;att.y=VH*.45+Math.sin(s*2.6)*VH*.15;}
-  else if(mode==='wander'){att.x=W/2+Math.cos(s*1.3)*W*.18;att.y=VH*.3+Math.sin(s*2.1)*VH*.09;}
   hist.push({t:clock,x:att.x,y:att.y});while(hist.length>2&&clock-hist[0].t>700)hist.shift();
   ctx.clearRect(0,0,W,H);ctx.lineCap='round';ctx.lineJoin='round';
   for(const b of birds){
@@ -103,8 +96,6 @@ export function createBirds(){
    else{
     let tx,ty,k,c;
     if(b.mode==='home'){tx=b.tx;ty=b.ty;k=11;c=4.6;}
-    // in den Buchstaben fliegen: zügig, ohne Überschwingen; kurz vor dem Ziel verblasst der Vogel
-    else if(b.mode==='land'){tx=b.tx;ty=b.ty;k=150;c=23;}
     // sanft anfliegen: Der Zug zum Ziel baut sich erst auf, sonst schießen sie los wie eine Rakete.
     else if(b.mode==='petfly'){const g=Math.min(1,(clock-b.t0)/700);tx=b.tx;ty=b.ty;k=16*g*g;c=7.4;}
     else{const p=histAt(clock-b.lag);b.ang+=b.spin*dt;tx=p.x+Math.cos(b.ang)*b.r*spread.x;ty=p.y+Math.sin(b.ang)*b.r*spread.y;k=38;c=8.5;}
@@ -114,10 +105,6 @@ export function createBirds(){
    b.vx+=ax*dt;b.vy+=ay*dt;
    const sp=Math.hypot(b.vx,b.vy),vmax=b.mode==='petfly'?360:1200;if(sp>vmax){b.vx*=vmax/sp;b.vy*=vmax/sp;}
    b.x+=b.vx*dt;b.y+=b.vy*dt;b.flap+=b.rate*dt;
-   if(b.mode==='land'){
-    const d=Math.hypot(b.tx-b.x,b.ty-b.y);b.alpha=Math.min(1,d/16);
-    if(d<5||clock-b.t0>520){b.dead=true;b.ch.el.classList.add('on');continue;}
-   }
    if(b.mode==='petfly'&&((Math.hypot(b.tx-b.x,b.ty-b.y)<5&&Math.hypot(b.vx,b.vy)<120)||clock-b.t0>4500)){
     b.mode='sit';b.x=b.tx;b.y=b.ty;b.vx=b.vy=0;b.land=clock;b.from=null;drawSit(b);continue;
    }
@@ -133,7 +120,7 @@ export function createBirds(){
   }
   ctx.globalAlpha=1;sparks=sparks.filter(p=>p.life>0);
   report();
-  raf=tweens.length||sparks.length||birds.some(b=>b.mode!=='sit'||clock-Math.max(b.tw??-1e9,b.land??-1e9)<470)?requestAnimationFrame(frame):0;
+  raf=sparks.length||birds.some(b=>b.mode!=='sit'||clock-Math.max(b.tw??-1e9,b.land??-1e9)<470)?requestAnimationFrame(frame):0;
  }
  // Zustand der zwei Schwalben, für Tests ablesbar: none | fly | sit:<Platz>
  function report(){
@@ -141,122 +128,17 @@ export function createBirds(){
   if(next!==state){state=next;cv.dataset.pets=next;}
  }
 
- // ---- Schwarm im Intro ----
+ // ---- Übernahme vom Intro (intro-flock.mjs): die zwei Schwalben fliegen hier weiter ----
+ function takeOver(list){
+  intro=false;
+  mount(areaHeight());
+  birds=list.slice(0,2).map((p,i)=>({pet:true,mode:'follow',alpha:1,x:p.x,y:p.y,vx:p.vx||0,vy:p.vy||0,size:PET_SIZE,
+   flap:p.flap??Math.random()*6.28,rate:17+Math.random()*10,lag:60+i*90,r:.35,ang:Math.random()*6.28,spin:2}));
+  sparks=[];hist=[];att={x:birds[0]?.x||W/2,y:birds[0]?.y||0};
+  if(!birds.length||!flyTogether('button',false)){birds.forEach(leave);loop();}
+  watch();
+ }
  function leave(b){const a=-(.25+Math.random()*1.1)*(Math.random()<.8?1:2.4);b.mode='leave';b.dx=Math.cos(a);b.dy=Math.sin(a);}
- function begin(count){
-  intro=true;first=true;VH=innerHeight;mount(VH);
-  birds=[];sparks=[];hist=[];
-  for(let i=0;i<count;i++){
-   const a=Math.random()*Math.PI*2,R=Math.max(W,VH)*.75,mint=i===0;
-   birds.push({x:W/2+Math.cos(a)*R,y:VH/2+Math.sin(a)*R,vx:0,vy:0,mode:'follow',mint,alpha:1,
-    lag:mint?70:Math.random()*380,r:mint?.3:Math.sqrt(Math.random()),ang:Math.random()*6.28,spin:(Math.random()<.5?-1:1)*(1.2+Math.random()*2.6),
-    size:mint?10:3.4+Math.random()*3,flap:Math.random()*6.28,rate:17+Math.random()*10});
-  }
-  spread={x:Math.max(70,W*.12),y:Math.max(60,VH*.13)};tight={x:34,y:14,k:.42};absorb=false;mode='circle';
-  att={x:W/2,y:VH*.45};loop();
- }
- const newBird=(x,y,mint)=>({x,y,vx:0,vy:0,mode:'follow',mint,alpha:1,
-  lag:mint?70:Math.random()*380,r:mint?.3:Math.sqrt(Math.random()),ang:Math.random()*6.28,spin:(Math.random()<.5?-1:1)*(1.2+Math.random()*2.6),
-  size:mint?10:3.4+Math.random()*3,flap:Math.random()*6.28,rate:17+Math.random()*10});
- // Intro für Angemeldete: Es gibt zuerst nur den farbigen Vogel, er startet in `markEl` (dem Logo).
- // `loose`: wie weit sich der Schwarm ausbreitet – {x,y} in der Luft, {tx,ty,tk} beim Schreiben einer Zeile
- // (halbe Breite, Mindesthöhe, Anteil der Zeilenhöhe). Ohne Angabe eng wie im Gäste-Intro beim Schreiben.
- function beginFrom(markEl,loose){
-  intro=true;first=false;VH=innerHeight;mount(VH);
-  const m=rect(markEl);
-  birds=[newBird(m.cx,m.cy,true)];sparks=[];hist=[];
-  spread={x:loose?.x??34,y:loose?.y??16};tight={x:loose?.tx??34,y:loose?.ty??14,k:loose?.tk??.42};absorb=!!loose?.absorb;mode='';att={x:m.cx,y:m.cy};loop();
- }
- // Der farbige Vogel fliegt an den Anfang der Zeichen in `list` und zieht darüber hinweg. Jedes überflogene
- // Zeichen verschwindet (Klasse `on` fällt weg) und wird zu Vögeln – am Ende sind es `count`.
- async function dissolve(list,count,flyMs=520,speed=.8){
-  const pos=list.map(el=>({el,...rect(el)})).sort((a,b)=>a.cx-b.cx);
-  if(!pos.length)return true;
-  const x0=Math.max(14,pos[0].l-24),x1=Math.max(...pos.map(p=>p.r))+50,h=Math.max(...pos.map(p=>p.b-p.t));
-  const cy=pos.reduce((sum,p)=>sum+p.cy,0)/pos.length,from={...att};
-  if(!await tween(flyMs,p=>{const e=ease(p);att.x=lerp(from.x,x0,e);att.y=lerp(from.y,cy,e)-Math.sin(p*Math.PI)*h*.5;}))return false;
-  let made=0,gone=0;
-  const burst=c=>{
-   c.el.classList.remove('on');gone++;
-   for(const want=Math.round(count*gone/pos.length);made<want;made++){
-    const b=newBird(c.cx+(Math.random()-.5)*(c.r-c.l),c.cy+(Math.random()-.5)*(c.b-c.t)*.6,false);
-    b.vx=40+Math.random()*90;b.vy=-(20+Math.random()*90);birds.push(b);
-   }
-  };
-  const ok=await tween(Math.max(520,(x1-x0)/speed),p=>{
-   att.x=lerp(x0,x1,p);att.y=cy+Math.sin(p*Math.PI*2)*h*.14;
-   for(const c of pos)if(!c.done&&c.cx<att.x-12){c.done=true;burst(c);}
-  });
-  for(const c of pos)if(!c.done){c.done=true;if(ok)burst(c);else c.el.classList.remove('on');}
-  return ok;
- }
- // Schreibt die Zeichen in `list` (Elemente mit Klasse `intro-ch`), Zeile für Zeile. `speed`: px je ms.
- async function write(list,speed=.62){
-  mode='';
-  const pos=list.map(el=>({el,...rect(el)})),rows=[];
-  for(const p of pos){const row=rows.find(r=>Math.abs(r.cy-p.cy)<(p.b-p.t)*.5);if(row)row.items.push(p);else rows.push({cy:p.cy,h:p.b-p.t,items:[p]});}
-  // Im Intro für Angemeldete erschafft der Schwarm den Satz: Für jeden Buchstaben lösen sich die nächsten Vögel,
-  // fliegen hinein und gehen darin auf – der Buchstabe erscheint, wenn der erste ankommt. Der Schwarm wird dabei
-  // kleiner; übrig bleiben der farbige Vogel, die zwei Schwalben und ein paar, die am Ende davonfliegen.
-  const total=pos.length;let used=0,seen=0;
-  const pool=absorb?Math.max(0,birds.filter(b=>!b.mint&&b.mode==='follow').length-(birds.length>60?9:5)):0;
-  const give=c=>{
-   seen++;const want=Math.round(pool*seen/total)-used;if(want<=0)return false;
-   const free=birds.filter(b=>!b.mint&&b.mode==='follow').map(b=>({b,d:Math.hypot(b.x-c.cx,b.y-c.cy)})).sort((a,z)=>a.d-z.d).slice(0,want);
-   for(const {b} of free){b.mode='land';b.t0=clock;b.ch=c;b.tx=lerp(c.l,c.r,.25+Math.random()*.5);b.ty=lerp(c.t,c.b,.3+Math.random()*.45);}
-   used+=free.length;return free.length>0;
-  };
-  for(const row of rows){
-   const x0=Math.max(14,Math.min(...row.items.map(p=>p.l))-30),x1=Math.max(...row.items.map(p=>p.r))+70;
-   const from={...att},s0={...spread},s1={x:tight.x,y:Math.max(tight.y,row.h*tight.k)};
-   if(first){
-    if(!await tween(480,p=>{const e=ease(p);att.x=lerp(from.x,x0,e);att.y=lerp(from.y,row.cy,e)-Math.sin(p*Math.PI)*row.h*.9;spread.x=lerp(s0.x,s1.x,e);spread.y=lerp(s0.y,s1.y,e);}))return false;
-   }else{
-    // Von Zeile zu Zeile in einem Bogen, ohne anzuhalten: Der Schwarm fliegt in seiner Richtung weiter, zieht nach
-    // oben weg, kommt in einer Schleife zurück und geht von links oben in die neue Zeile über – am Anfang und am
-    // Ende so schnell, wie er schreibt, dazwischen etwas schneller. So kommen auch die Nachzügler rechtzeitig an.
-    const L=Math.hypot(x0-from.x,row.cy-from.y),ms=absorb?Math.max(900,L*2.3+400):Math.max(800,L*1.2+330),reach=speed*ms/3; // Gäste: zügiger und flacher
-    const room=(Math.min(from.y,row.cy)-scrollY-28)/.75,A=Math.max(row.h*.6,Math.min(reach*(absorb?.83:.6),room)),k=Math.min(260,Math.sqrt(Math.max(reach*reach-A*A,3600)));
-    const lower=row.cy-from.y>row.h*1.5; // neue Zeile liegt deutlich tiefer: am Anfang nur leicht ansteigen
-    const p1={x:from.x+k,y:from.y-A*(lower?.3:1)},p2={x:x0-k,y:row.cy-A};
-    if(!await tween(ms,p=>{
-     const q=1-p,a=q*q*q,b=3*q*q*p,c=3*q*p*p,d=p*p*p,e=ease(p);
-     att.x=a*from.x+b*p1.x+c*p2.x+d*x0;att.y=a*from.y+b*p1.y+c*p2.y+d*row.cy;
-     spread.x=lerp(s0.x,s1.x,e);spread.y=lerp(s0.y,s1.y,e);
-    }))return false;
-   }
-   first=false;
-   if(!await tween(Math.max(650,(x1-x0)/speed),p=>{
-    att.x=lerp(x0,x1,p);att.y=row.cy+Math.sin(p*Math.PI*3)*row.h*.14;
-    for(const c of row.items){
-     if(pool){if(!c.given&&c.cx<att.x+6){c.given=true;c.wait=give(c);}if(c.wait&&c.cx>att.x-170)continue;}
-     if(c.cx<att.x-28)c.el.classList.add('on');
-    }
-   }))return false;
-   row.items.forEach(c=>c.el.classList.add('on'));
-  }
-  return true;
- }
- // Der Schwarm fliegt davon, zwei bleiben in der Luft, der farbige Vogel fliegt zu `markEl`.
- // `onLand` läuft, wenn er dort ankommt. Liefert false, wenn vorher abgebrochen wurde.
- function release(markEl,onLand){
-  const m=markEl?.getClientRects().length?rect(markEl):null;let mint=null,kept=0;
-  mode='wander';spread={x:70,y:40};
-  for(const b of birds){
-   if(b.mint&&m){mint=b;b.mode='home';b.tx=m.cx;b.ty=m.cy;continue;}
-   if(!b.mint&&kept<2){b.pet=true;b.lag=60+kept*90;b.r=.35;b.size=PET_SIZE;kept++;continue;}
-   leave(b);
-  }
-  loop();
-  return (async()=>{
-   const end=clock+1700;
-   while(mint&&Math.hypot(mint.x-m.cx,mint.y-m.cy)>12&&clock<end)if(!await wait(30))return false;
-   if(!intro)return false;
-   birds=birds.filter(b=>!b.mint);
-   if(m)for(let i=0;i<12;i++){const a=i/12*6.28+Math.random()*.4,v=90+Math.random()*120;sparks.push({x:m.cx,y:m.cy,vx:Math.cos(a)*v,vy:Math.sin(a)*v-60,life:1,c:i%2?col.line:col.mint});}
-   onLand?.();loop();return true;
-  })();
- }
 
  // ---- Sitzplätze: Oberkanten von Elementen der Startseite ----
  const shown=el=>el&&!el.hidden&&el.getClientRects().length?el:null;
@@ -352,15 +234,14 @@ export function createBirds(){
 
  // Ende des Intros: Die zwei übrigen setzen sich auf den Hauptknopf (oder einen anderen freien Platz).
  function settle(){
-  intro=false;mode='';
+  intro=false;
   const want=areaHeight();if(Math.abs(want-H)>40)size(want);
   if(!flyTogether('button',false)){pets().forEach(leave);loop();}
   watch();
  }
  // Intro übersprungen: Schwarm weg, die zwei sitzen sofort.
  function skip(){
-  intro=false;mode='';
-  tweens.splice(0).forEach(t=>t.resolve(false));
+  intro=false;
   birds=[0,1].map(newPet);sparks=[];hist=[];
   if(cv.isConnected)size(areaHeight());else mount(areaHeight());
   if(seat('button'))birds.forEach(b=>{b.x=b.tx;b.y=b.ty;});else birds=[];
@@ -369,5 +250,214 @@ export function createBirds(){
  // Gäste ohne Intro: Die zwei kommen angeflogen, sobald es einen Sitzplatz gibt.
  function startPets(){mount(areaHeight());watch();check();}
 
- return {begin,beginFrom,dissolve,wait,write,release,settle,skip,startPets};
+ return {takeOver,settle,skip,startPets};
+}
+
+// ---- Intro: Schwarm und Buchstaben auf eigener Zeichenfläche ----
+
+const FLOCK='./intro-flock.mjs?v=1',WORKER='./intro-flock-worker.mjs?v=1';
+let early=null; // früh gestarteter Worker (warmIntroFlock), damit er bereitsteht, wenn das Intro beginnt
+const canWorker=()=>typeof Worker==='function'&&typeof HTMLCanvasElement==='function'&&'transferControlToOffscreen' in HTMLCanvasElement.prototype&&typeof createImageBitmap==='function';
+// Startet den Worker schon, während Schriften und Übersetzung geladen werden.
+export function warmIntroFlock(){
+ if(early||!canWorker())return;
+ try{
+  const w=new Worker(new URL(WORKER,import.meta.url),{type:'module'});
+  const loaded=new Promise(resolve=>{
+   const t=setTimeout(()=>resolve(false),2500);
+   w.onmessage=e=>{const t2=e.data?.t;if(t2==='loaded'||t2==='unsupported'){clearTimeout(t);resolve(t2==='loaded');}};
+   w.onerror=()=>{clearTimeout(t);resolve(false);};
+  });
+  early={w,loaded};
+ }catch{early=null;}
+}
+const cssColors=()=>{
+ const cs=getComputedStyle(document.documentElement),get=(name,old)=>cs.getPropertyValue(name).trim()||old;
+ return {ink:get('--ink','#172c38'),mint:get('--mint','#ace0d4'),line:get('--line','#172c38')};
+};
+// CSS-Zeitkurven (wie in intro-flock.mjs), für das Nachziehen beim Tausch Bild → Text
+function bezier(x1,y1,x2,y2){
+ const cx=3*x1,bx=3*(x2-x1)-cx,ax=1-cx-bx,cy=3*y1,by=3*(y2-y1)-cy,ay=1-cy-by;
+ const X=t=>((ax*t+bx)*t+cx)*t,Y=t=>((ay*t+by)*t+cy)*t,dX=t=>(3*ax*t+2*bx)*t+cx;
+ return p=>{
+  if(p<=0)return 0;if(p>=1)return 1;
+  let t=p;for(let i=0;i<6;i++){const d=dX(t);if(Math.abs(d)<1e-6)break;t-=(X(t)-p)/d;}
+  return Y(Math.max(0,Math.min(1,t)));
+ };
+}
+const cssEase=bezier(.25,.1,.25,1),riseEase=bezier(.2,.7,.2,1);
+
+export function createIntroFlock(){
+ const html=document.documentElement;
+ const cv=document.createElement('canvas');cv.className='intro-flock';cv.setAttribute('aria-hidden','true');
+ const swallows=createBirds();
+ let send=null,ready=null,worker=null,stopped=false,nextId=1,petsReply=null;
+ const pending=new Map(),idOf=new WeakMap(),byId=new Map(),litAt=new Map(),shownWait=new Map(),catchUps=[];
+ const DPR=()=>Math.min(devicePixelRatio||1,2);
+
+ function onMessage(m){
+  if(m.t==='done'){const f=pending.get(m.id);pending.delete(m.id);f?.(m.ok&&!stopped);}
+  else if(m.t==='lit'){for(const id of m.ids){if(!litAt.has(id))litAt.set(id,m.at);byId.get(id)?.classList.add('on');}}
+  else if(m.t==='unlit'){for(const id of m.ids)byId.get(id)?.classList.remove('on');}
+  else if(m.t==='shown'){for(const id of m.ids){const f=shownWait.get(id);if(f){shownWait.delete(id);f();}}}
+  else if(m.t==='pets'){petsReply?.(m.list);petsReply=null;}
+ }
+ function setup(){
+  if(ready)return ready;
+  return ready=(async()=>{
+   const W=html.clientWidth,H=innerHeight;
+   cv.style.width=W+'px';cv.style.height=H+'px';
+   document.body.append(cv);
+   const init={t:'init',w:W,h:H,dpr:DPR(),col:cssColors(),sy:scrollY};
+   if(!early)warmIntroFlock();
+   const e=early;early=null;
+   if(e&&await e.loaded&&!stopped){
+    try{
+     const off=cv.transferControlToOffscreen();
+     worker=e.w;worker.onmessage=ev=>onMessage(ev.data);worker.onerror=null;
+     send=(m,transfer)=>worker.postMessage(m,transfer||[]);
+     send({...init,canvas:off},[off]);
+     cv.dataset.thread='worker';
+     return;
+    }catch{}
+   }
+   e?.w.terminate();
+   // Ohne Worker: dasselbe Zeichenwerk im Hauptthread
+   const {createFlock}=await import(FLOCK);
+   const flock=createFlock(m=>queueMicrotask(()=>onMessage(m)));
+   send=m=>flock.handle(m);
+   send({...init,canvas:cv});
+   cv.dataset.thread='main';
+  })();
+ }
+ function run(op,...args){
+  if(stopped)return Promise.resolve(false);
+  return new Promise(resolve=>{const id=nextId++;pending.set(id,resolve);send({t:'run',id,op,args});});
+ }
+ const rect=el=>{const r=el.getBoundingClientRect();return {cx:(r.left+r.right)/2+scrollX,cy:(r.top+r.bottom)/2+scrollY};};
+
+ // ---- Buchstaben als Bildchen ----
+ // Jeder Buchstabe wird an seiner Endstelle vermessen (Grundlinie und Maßstab über ein unsichtbares Hilfselement)
+ // und einmal scharf und einmal unscharf gezeichnet – genau wie ihn die Seite zeigt. Die scharfen Bildchen liegen
+ // auf ganzen Gerätepixeln, mit dem Bruchteil der Position im Bild selbst, damit sie so scharf sind wie der Text.
+ const blurKeys=new Set();
+ function canvasFor(w,h){const c=document.createElement('canvas');c.width=Math.max(1,Math.ceil(w));c.height=Math.max(1,Math.ceil(h));return c;}
+ async function prepare(list,kind,on){
+  await setup();
+  const todo=list.filter(el=>!idOf.has(el));
+  if(!todo.length||stopped)return;
+  html.classList.add('intro-measure');
+  const probes=todo.map(el=>{const i=document.createElement('i');i.className='intro-probe';el.append(i);return i;});
+  const dpr=DPR(),items=todo.map((el,k)=>{
+   const r=el.getBoundingClientRect(),p=probes[k].getBoundingClientRect(),cs=getComputedStyle(el);
+   const size=parseFloat(cs.fontSize)||16,scale=p.height>0?p.height*2/size:1;
+   return {el,r,base:p.bottom,scale,size,cs:{style:cs.fontStyle,weight:cs.fontWeight,stretch:cs.fontStretch,family:cs.fontFamily,color:cs.color},text:el.firstChild?.data||el.textContent};
+  });
+  probes.forEach(p=>p.remove());
+  if(!on)todo.forEach(el=>el.classList.add('is-canvas'));
+  html.classList.remove('intro-measure');
+  const list2=[],blurs=[],bitmaps=[],transfer=[];
+  for(const it of items){
+   const id=nextId++;idOf.set(it.el,id);byId.set(id,it.el);
+   // Gezeichnet wird in der Schriftgröße der Seite und dann vergrößert – wie der Browser einen skalierten Text zeigt
+   // (bei variablen Schriften hängt die Form von der Schriftgröße ab, nicht vom Maßstab).
+   const px=it.size*it.scale,sc=it.scale,font=f=>`${f.style} ${f.weight} ${it.size}px ${f.family}`;
+   const m=canvasFor(1,1).getContext('2d');m.font=font(it.cs);const tm=m.measureText(it.text);
+   const pad=2,asc=tm.actualBoundingBoxAscent*sc,desc=tm.actualBoundingBoxDescent*sc,left=tm.actualBoundingBoxLeft*sc,right=tm.actualBoundingBoxRight*sc;
+   const gx=it.r.left+scrollX,gy=it.base+scrollY;
+   // scharf: Lage auf ganze Gerätepixel runden, den Rest ins Bild nehmen
+   const X=(gx-left-pad)*dpr,Y=(gy-asc-pad)*dpr,fx=X-Math.floor(X),fy=Y-Math.floor(Y);
+   const sw=(left+right+2*pad)*dpr+1,sh=(asc+desc+2*pad)*dpr+1;
+   const c=canvasFor(sw,sh),x=c.getContext('2d');
+   x.setTransform(sc*dpr,0,0,sc*dpr,(left+pad)*dpr+fx,(asc+pad)*dpr+fy);
+   x.font=font(it.cs);x.fillStyle=it.cs.color;x.textBaseline='alphabetic';x.fillText(it.text,0,0);
+   // unscharf (wie filter: blur(4px), mit dem Maßstab der Zeile), in halber Auflösung und geteilt
+   const sigma=4*sc,rb=Math.max(.75,dpr/2),bk=[it.text,font(it.cs),sc.toFixed(3),it.cs.color].join('|');
+   if(!blurKeys.has(bk)){
+    blurKeys.add(bk);
+    const bp=pad+3*sigma,bw=(left+right+2*bp)*rb,bh=(asc+desc+2*bp)*rb,b=canvasFor(bw,bh),y=b.getContext('2d');
+    y.font=font(it.cs);y.fillStyle=it.cs.color;y.textBaseline='alphabetic';
+    if('filter' in y)y.filter=`blur(${sigma*rb}px)`;
+    if(y.filter&&y.filter!=='none'){y.setTransform(sc*rb,0,0,sc*rb,(left+bp)*rb,(asc+bp)*rb);y.fillText(it.text,0,0);}
+    else{ // ohne Canvas-Filter (ältere Safari): Schatten eines Textes außerhalb des Bildes
+     y.shadowColor=it.cs.color;y.shadowBlur=2*sigma*rb;y.shadowOffsetX=b.width+50;
+     y.setTransform(sc*rb,0,0,sc*rb,(left+bp)*rb-b.width-50,(asc+bp)*rb);y.fillText(it.text,0,0);
+    }
+    blurs.push({key:bk,canvas:b,ox:-left-bp,oy:-asc-bp,w:left+right+2*bp,h:asc+desc+2*bp});
+   }
+   list2.push({id,k:kind,on:!!on,em:px,gx,gy,bk,l:it.r.left+scrollX,r:it.r.right+scrollX,t:it.r.top+scrollY,b:it.r.bottom+scrollY,
+    cx:(it.r.left+it.r.right)/2+scrollX,cy:(it.r.top+it.r.bottom)/2+scrollY,
+    canvas:c,sx:Math.floor(X)/dpr,sy:Math.floor(Y)/dpr,sw:c.width/dpr,sh:c.height/dpr});
+  }
+  // Im Worker brauchen die Bildchen das Format ImageBitmap (wird übertragen, nicht kopiert).
+  const toBitmap=async c=>worker?createImageBitmap(c):c;
+  await Promise.all([...list2.map(async g=>{g.sharp=await toBitmap(g.canvas);delete g.canvas;if(worker)transfer.push(g.sharp);}),
+   ...blurs.map(async b=>{b.bmp=await toBitmap(b.canvas);delete b.canvas;if(worker)transfer.push(b.bmp);})]);
+  if(stopped)return;
+  if(on){
+   // schon sichtbare Buchstaben (Begrüßung): erst ausblenden, wenn die Zeichenfläche sie zeigt
+   const seen=Promise.all(list2.map(g=>new Promise(resolve=>{shownWait.set(g.id,resolve);setTimeout(resolve,600);})));
+   send({t:'glyphs',list:list2,blurs},transfer);
+   await seen;
+   todo.forEach(el=>el.classList.add('is-canvas'));
+  }else send({t:'glyphs',list:list2,blurs},transfer);
+ }
+ const ids=list=>list.map(el=>idOf.get(el)).filter(Boolean);
+ const frames=n=>new Promise(resolve=>{const step=()=>--n<=0?resolve():requestAnimationFrame(step);requestAnimationFrame(step);});
+ // Zeile fertig: echter Text statt Bild. Buchstaben, die gerade noch erscheinen, ziehen auf der Seite nach.
+ async function reveal(list){
+  const at=performance.timeOrigin+performance.now(),els=list.filter(el=>el.classList.contains('is-canvas'));
+  if(!els.length)return;
+  els.forEach(el=>{el.style.transition='none';el.classList.add('on');el.classList.remove('is-canvas');});
+  void getComputedStyle(els[0]).opacity;
+  els.forEach(el=>{
+   el.style.transition='';
+   const e=at-(litAt.get(idOf.get(el))??-1e9);
+   if(e<500&&typeof el.animate==='function'){
+    const op=cssEase(Math.min(1,e/400)),bl=4*(1-cssEase(Math.min(1,e/400))),y=.18*(1-riseEase(Math.min(1,e/500)));
+    catchUps.push(el.animate([{opacity:op,transform:`translateY(${y}em)`,filter:`blur(${bl}px)`},{opacity:1,transform:'none',filter:'none'}],{duration:500-e,easing:'cubic-bezier(.2,.7,.2,1)'}));
+   }
+  });
+  await frames(2);
+  if(!stopped)send({t:'drop',ids:ids(els)});
+ }
+
+ // ---- Ablauf (wie bisher createBirds) ----
+ async function begin(count){await setup();if(!stopped)send({t:'begin',count,vh:innerHeight});}
+ async function beginFrom(markEl,loose){await setup();if(!stopped)send({t:'beginFrom',mark:rect(markEl),loose,vh:innerHeight});}
+ async function wait(ms){await setup();return run('wait',ms);}
+ async function dissolve(list,count,flyMs,speed){await prepare(list,'g',true);return run('dissolve',ids(list),count,flyMs,speed);}
+ async function write(list,speed){
+  await prepare(list,'w',false);
+  const ok=await run('write',ids(list),speed);
+  if(ok)await reveal(list);
+  return ok&&!stopped;
+ }
+ async function release(markEl,onLand){
+  const m=markEl?.getClientRects().length?rect(markEl):null;
+  const ok=await run('release',m);
+  if(!ok||stopped)return false;
+  onLand?.();return true;
+ }
+ function close(delay){
+  stopped=true;
+  pending.forEach(f=>f(false));pending.clear();
+  const end=()=>{try{send?.({t:'stop'});}catch{}worker?.terminate();cv.remove();};
+  delay?setTimeout(end,delay):end();
+ }
+ // Ende des Intros: Die zwei übrigen Vögel wechseln auf die Zeichenfläche der Seite und setzen sich.
+ async function settle(){
+  await setup();
+  const list=await new Promise(resolve=>{petsReply=resolve;send({t:'pets'});setTimeout(()=>resolve([]),400);});
+  swallows.takeOver(list);
+  close(1500); // davonfliegende Vögel und Funken noch zu Ende zeichnen lassen
+ }
+ // Übersprungen: Schwarm weg, die zwei sitzen sofort.
+ function skip(){
+  catchUps.forEach(a=>a.cancel());
+  html.querySelectorAll?.('.intro-ch.is-canvas').forEach(el=>el.classList.remove('is-canvas'));
+  close(0);
+  swallows.skip();
+ }
+ return {begin,beginFrom,prepare,wait,write,dissolve,release,settle,skip};
 }

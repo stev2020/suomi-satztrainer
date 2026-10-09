@@ -34,13 +34,14 @@ try{
  const written=(page,sel)=>page.locator(`${sel} .intro-ch.on`).count();
  page=await newPage();
  await page.goto(origin+'/?intro');
- await page.waitForFunction(()=>document.documentElement.classList.contains('intro-running')&&document.querySelector('canvas.intro-birds'));
+ await page.waitForFunction(()=>document.documentElement.classList.contains('intro-running')&&document.querySelector('canvas.intro-flock'));
+ assert.equal(await page.locator('canvas.intro-flock').getAttribute('data-thread'),'worker','the flock runs in its own thread');
  await page.waitForTimeout(600);
  assert.equal(await opacity(page,'header .header-nav'),0,'header navigation hidden during intro');
  assert.equal(await opacity(page,'header'),1,'name stays visible from the start');
  assert.equal(await opacity(page,'header .brand'),1);
  assert.equal(await opacity(page,'header .brand-mark svg'),0,'logo tile starts empty');
- assert.equal(await page.locator('canvas.intro-birds').evaluate(el=>getComputedStyle(el).pointerEvents),'none','birds never catch clicks');
+ assert.equal(await page.locator('canvas.intro-flock').evaluate(el=>getComputedStyle(el).pointerEvents),'none','birds never catch clicks');
  assert.equal(await written(page,'#home-view .intro h1'),0,'no letters while the flock circles');
  // Beide Zeilen stehen (noch unsichtbar) groß an derselben Stelle in der Bildschirmmitte.
  const lineState=sel=>page.locator(sel).evaluate(el=>{const r=el.getBoundingClientRect();return {scale:new DOMMatrix(getComputedStyle(el).transform).a,x:Math.round((r.left+r.right)/2),y:Math.round((r.top+r.bottom)/2)};});
@@ -78,18 +79,35 @@ try{
  await page.locator('#guest-card .guest-first').click();
  await page.context().close();
 
- // Handy mit Hänger: Blockiert der Browser, während der Schwarm schreibt (z. B. beim Verarbeiten der
- // Satzdaten), überspringt er nichts – die Buchstaben kommen danach weiter der Reihe nach.
+ // Handy mit Hänger: Blockiert die Seite den Hauptthread, während der Schwarm schreibt (z. B. beim Verarbeiten der
+ // Satzdaten), fliegt und schreibt er in seinem eigenen Thread einfach weiter – die zweite Zeile wartet trotzdem.
  page=await newPage({viewport:{width:390,height:780},isMobile:true,hasTouch:true});
  await page.goto(origin+'/?intro');
  await page.waitForFunction(()=>document.querySelectorAll('.intro-lead .intro-ch.on').length>=2,null,{timeout:10000});
  const stall=await page.evaluate(()=>new Promise(resolve=>{
+  const count=()=>document.querySelectorAll('.intro-lead .intro-ch.on').length,before=count(),end=performance.now()+700;
+  while(performance.now()<end){}
+  requestAnimationFrame(()=>requestAnimationFrame(()=>resolve({before,after:count(),all:document.querySelectorAll('.intro-lead .intro-ch').length})));
+ }));
+ assert.ok(stall.after>stall.before,`flock keeps writing while the page is busy (${stall.before} → ${stall.after} of ${stall.all})`);
+ assert.equal(await written(page,'.intro-tail'),0,'second line still waits after the stall');
+ await page.context().close();
+
+ // Ohne Worker-Zeichenfläche (ältere Browser): dasselbe Intro im Hauptthread, ohne Sprung nach einem Hänger.
+ page=await newPage({viewport:{width:390,height:780},isMobile:true,hasTouch:true});
+ await page.addInitScript(()=>{delete HTMLCanvasElement.prototype.transferControlToOffscreen;});
+ await page.goto(origin+'/?intro');
+ await page.waitForFunction(()=>document.querySelectorAll('.intro-lead .intro-ch.on').length>=2,null,{timeout:10000});
+ assert.equal(await page.locator('canvas.intro-flock').getAttribute('data-thread'),'main');
+ const stall2=await page.evaluate(()=>new Promise(resolve=>{
   const count=()=>document.querySelectorAll('.intro-lead .intro-ch.on').length,before=count(),end=performance.now()+1000;
   while(performance.now()<end){}
   requestAnimationFrame(()=>requestAnimationFrame(()=>resolve({before,after:count(),all:document.querySelectorAll('.intro-lead .intro-ch').length})));
  }));
- assert.ok(stall.after-stall.before<=4&&stall.after<stall.all,`flock does not jump ahead after a stall (${stall.before} → ${stall.after} of ${stall.all})`);
- assert.equal(await written(page,'.intro-tail'),0,'second line still waits after the stall');
+ assert.ok(stall2.after-stall2.before<=4&&stall2.after<stall2.all,`main-thread flock does not jump ahead after a stall (${stall2.before} → ${stall2.after} of ${stall2.all})`);
+ await page.waitForFunction(()=>!/intro-/.test(document.documentElement.className),null,{timeout:20000});
+ assert.equal(await page.locator('.intro-ch').count(),0,'headline is plain text again');
+ await page.waitForFunction(()=>/^sit:/.test(document.querySelector('canvas.intro-birds')?.dataset.pets),null,{timeout:10000});
  await page.context().close();
 
  // Klick überspringt sofort.
@@ -180,7 +198,7 @@ try{
  await page.context().close();
 
  assert.deepEqual(errors,[]);
- console.log('PASS: guest intro with flock writing the headline, bird becoming the logo, two swallows that perch and take off, no jump after a stall, card reveal, skip on click, cleanup, no intro for automation, signed-in intro (bird leaves the logo, greeting becomes the flock, flock writes the daily sentence, swallows stay and also perch on Wiederholen) and greeting flip.');
+ console.log('PASS: guest intro with flock writing the headline, bird becoming the logo, two swallows that perch and take off, flock in its own thread keeps going during a stall, main-thread fallback without a jump, card reveal, skip on click, cleanup, no intro for automation, signed-in intro (bird leaves the logo, greeting becomes the flock, flock writes the daily sentence, swallows stay and also perch on Wiederholen) and greeting flip.');
 }finally{
  await browser?.close();server.kill();
 }

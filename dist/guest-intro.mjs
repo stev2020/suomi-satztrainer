@@ -36,7 +36,7 @@ const T={
 const EASE_MOVE='cubic-bezier(.65,0,.25,1)',EASE_OUT='cubic-bezier(.2,.7,.2,1)';
 const SEEN='vanamo-intro-seen';
 
-import {createBirds} from './intro-birds.mjs?v=12';
+import {createBirds,createIntroFlock,warmIntroFlock} from './intro-birds.mjs?v=13';
 
 // Das Intro spielt ganz oben. Manche Browser (z. B. DuckDuckGo) stellen nach dem Wiederöffnen die alte Scroll-Position
 // erst her, wenn das Intro schon läuft – dann sähe man es gar nicht. Solange es läuft, bleibt die Seite deshalb oben;
@@ -100,7 +100,7 @@ export async function runGuestIntro(){
  html.classList.add('intro-running');
  try{sessionStorage.setItem(SEEN,'1');}catch{}
 
- const animations=[],controller=new AbortController(),flock=createBirds(),spans=[lead,tail];
+ const animations=[],controller=new AbortController(),flock=createIntroFlock(),spans=[lead,tail];
  let done=false,settled=false,texts=null;
  const play=(el,frames,options)=>{const a=el.animate(frames,options);animations.push(a);return a;};
 
@@ -146,11 +146,13 @@ export async function runGuestIntro(){
  const scale=Math.max(1,Math.min(Math.max(pair*1.25,1.6),vw*.86/Math.max(...all.map(r=>r.width)),vh*.5/Math.max(...all.map(r=>r.height))));
  const bigs=all.map(r=>`translate(${vw/2-(r.left+r.right)/2}px,${vh/2-(r.top+r.bottom)/2}px) scale(${scale})`);
  spans.forEach((span,i)=>{span.style.transform=bigs[i];});
+ // Buchstaben einmal als Bildchen vorbereiten: Der Schwarm schreibt sie auf seiner eigenen Zeichenfläche (intro-birds.mjs).
+ await flock.prepare([...chars[0],...chars[1]],'w');if(done)return;
  const glide=i=>finished(play(spans[i],[{transform:bigs[i]},{transform:'none'}],{duration:T.moveMs,easing:EASE_MOVE,fill:'forwards'})).then(()=>{if(!done)spans[i].style.transform='';});
 
  // Der Schwarm kreist, schreibt die erste Zeile; während sie an ihren Platz gleitet, sammelt er
  // sich für die zweite.
- flock.begin(vw<560?T.birdsSmall:T.birds);
+ await flock.begin(vw<560?T.birdsSmall:T.birds);if(done)return;
  if(!await flock.wait(T.circleMs)||done)return;
  if(!await flock.write(chars[0])||done)return;
  await hold(T.moveGap);if(done)return;
@@ -243,7 +245,7 @@ export async function runUserIntro(){
  html.classList.add('intro-running');
  try{sessionStorage.setItem(SEEN,'1');sessionStorage.setItem(DAY,new Date().toLocaleDateString('sv-SE'));localStorage.removeItem(DAY);}catch{}
 
- const animations=[],controller=new AbortController(),flock=createBirds();
+ const animations=[],controller=new AbortController(),flock=createIntroFlock();
  let done=false,settled=false,greet=null;
  const play=(el,frames,options)=>{const a=el.animate(frames,options);animations.push(a);return a;};
  // Sofort zum Endzustand – auch der normale Abschluss läuft hier durch.
@@ -324,10 +326,13 @@ export async function runUserIntro(){
   const lifted=lift||grow>1?`translateY(${lift}px) scale(${grow})`:'';
   card.style.transform=lifted;
   const sentence=[...card.querySelectorAll('.daily-words .guest-fi')].flatMap(word=>splitTextNodes(word,false));
+  // Begrüßung und Satz als Bildchen auf die Zeichenfläche des Schwarms (eigener Thread, intro-birds.mjs)
+  await flock.prepare(sentence,'w');if(done)return;
+  await flock.prepare(greeting,'g',true);if(done)return;
   mark.classList.add('is-filling','is-filled');
   void mark.offsetWidth;
   mark.classList.remove('is-filled');
-  flock.beginFrom(mark,innerWidth<560?USER.looseSmall:USER.loose);
+  await flock.beginFrom(mark,innerWidth<560?USER.looseSmall:USER.loose);if(done)return;
   if(!await flock.dissolve(greeting,innerWidth<560?USER.birdsSmall:USER.birds,USER.flyMs,USER.dissolveSpeed)||done)return;
   if(!await flock.write(sentence,USER.writeSpeed)||done)return;
   await hold(USER.sentenceGap);if(done)return;
@@ -352,4 +357,6 @@ export async function runUserIntro(){
  finish();
 }
 
+// Der eigene Thread für den Schwarm startet schon, während Schriften und Daten laden.
+if(html.classList.contains('intro-pending'))warmIntroFlock();
 runGuestIntro();
