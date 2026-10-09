@@ -344,14 +344,17 @@ function setAccountMenu(open){
 // Das Kontofenster zeigt immer genau einen Abschnitt. Nach der Registrierung kommen zwei Zwischenschritte:
 // „onboarding“ (Vogel und Spitzname wählen) und „code“ (der Wiederherstellungscode, der nur einmal erscheint).
 // „reset“ ist das neue Passwort nach einem Klick auf den Link aus der Mail.
-let accountStage=null,registering=false,onboardingPicker=null,profilePicker=null,resetToken='';
+let accountStage=null,registering=false,signingIn=false,onboardingPicker=null,profilePicker=null,resetToken='';
 function renderDialogSections(){
   if(!$('account-dialog'))return;
   $('account-dialog').append($('account-status'));
   const ok=configured(),logged=!!session?.user;
   $('account-unconfigured').hidden=ok;
-  $('account-logged-out').hidden=!ok||!!accountStage||(logged&&!registering);
-  $('account-logged-in').hidden=!logged||!!accountStage||registering;
+  // Während der Anmeldung (oder Registrierung) bleibt das Formular stehen – das Fenster zeigt nicht kurz „Dein Konto“,
+  // bevor es sich schließt; danach ist direkt die Startseite zu sehen.
+  const busy=registering||signingIn;
+  $('account-logged-out').hidden=!ok||!!accountStage||(logged&&!busy);
+  $('account-logged-in').hidden=!logged||!!accountStage||busy;
   $('account-onboarding').hidden=accountStage!=='onboarding';
   $('recovery-result').hidden=accountStage!=='code';
   $('reset-form').hidden=accountStage!=='reset';
@@ -560,7 +563,7 @@ function bind(){
   }catch(err){statusAt(form,err.message,true)}finally{save.disabled=false}};
   $('profile-form').onsubmit=async e=>{e.preventDefault();const save=$('profile-save');try{save.disabled=true;statusAt($('profile-form'),'Wird gespeichert …');await updateProfile($('profile-nickname').value,profilePicker.get());fillProfileForm();statusAt($('profile-form'),'Gespeichert.');}catch(err){statusAt($('profile-form'),err.message,true)}finally{save.disabled=false}};
   document.querySelectorAll('[data-account-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-account-tab]').forEach(x=>x.classList.toggle('selected',x===b));for(const n of ['login','register','recover'])$(n+'-form').hidden=b.dataset.accountTab!==n;$('recover-email').hidden=b.dataset.accountTab!=='recover';if(b.dataset.accountTab==='register')showTurnstile();status('')});
-  $('login-form').onsubmit=async e=>{e.preventDefault();try{status('Anmeldung …');await login($('login-name').value,$('login-password').value);status('');$('login-password').value='';$('account-dialog').close();window.dispatchEvent(new CustomEvent('vanamo:view',{detail:'home'}));window.scrollTo?.(0,0)}catch(err){status(err.message,true)}};
+  $('login-form').onsubmit=async e=>{e.preventDefault();if(signingIn)return;signingIn=true;try{status('Anmeldung …');await login($('login-name').value,$('login-password').value);$('login-password').value='';$('account-dialog').close();status('');window.dispatchEvent(new CustomEvent('vanamo:view',{detail:'home'}));window.scrollTo?.(0,0)}catch(err){status(err.message,true)}finally{signingIn=false;renderDialogSections();}};
   $('register-form').onsubmit=async e=>{e.preventDefault();if(registering)return;registering=true;try{status('Konto wird erstellt …');const code=await register($('register-name').value,$('register-password').value);$('recovery-code-result').textContent=code;$('register-password').value='';registering=false;startOnboarding();}catch(err){registering=false;renderDialogSections();status(err.message,true)}};
   $('recover-form').onsubmit=async e=>{e.preventDefault();try{status('Konto wird wiederhergestellt …');showRecovery(await recover($('recover-name').value,$('recover-code').value,$('recover-password').value));status('Passwort geändert. Der alte Wiederherstellungscode ist ungültig.')}catch(err){status(err.message,true)}};
   $('logout').onclick=async()=>{await logout()};
@@ -592,7 +595,7 @@ export const accountUser=()=>session?.user||null;
 export {request as accountRequest};
 window.suomiAccountUser=()=>session?.user||null;
 window.suomiAccountRequest=request;
-import('./classrooms.js?v=101').catch(()=>{});
+import('./classrooms.js?v=102').catch(()=>{});
 import('./quality-review.js?v=7').catch(()=>{});
 if(session?.user&&configured())refreshSession().then(async ok=>{if(!ok)return;try{await pullAndMerge();}catch(err){syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true);status(err.message,true);}}).catch(syncError).finally(()=>{syncReady=true;if(syncQueued)scheduleSync();scheduleEmailHint();});
 else syncReady=true;
