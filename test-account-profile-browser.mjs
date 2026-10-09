@@ -21,10 +21,11 @@ const browser=await chromium.launch({headless:true,...(process.env.PW_CHROMIUM?{
 const origin='http://localhost:4173',shots=process.env.SHOTS||'';
 const fakeTurnstile=`window.turnstile={render(el,o){el.dataset.rendered='1';window.__issue=()=>o.callback('token');setTimeout(window.__issue,30);return 'w';},reset(){setTimeout(window.__issue,30);}};`;
 
-async function scenario({viewport,failProfile=false,theme='',path='/',register=true}){
+async function scenario({viewport,failProfile=false,theme='',path='/',register=true,signedIn=null}){
  const userUpdates=[],emailCalls=[],passwordCalls=[];let meta={username:'neuer.nutzer'},mail={email:'',verified:false};
  const user=()=>({id:'00000000-0000-4000-8000-000000000009',user_metadata:meta});
  const context=await browser.newContext({serviceWorkers:'block',locale:'de-DE',viewport});
+ if(signedIn){mail=signedIn.mail||mail;await context.addInitScript(({user,daily})=>{if(localStorage.getItem('suomi-auth-session-v1'))return;localStorage.setItem('suomi-auth-session-v1',JSON.stringify({access_token:'a',refresh_token:'r',user}));localStorage.setItem('suomi-learning-v1',JSON.stringify({reviews:{},favorites:[],daily,reports:{},writingRatings:{},verbProgress:{},prefs:{level:1,direction:'fi-de',audioOnly:false,activity:'verbs',speed:1}}));},{user:{id:'00000000-0000-4000-8000-000000000009',user_metadata:meta},daily:signedIn.daily});}
  await context.addInitScript(theme=>{try{sessionStorage.setItem('vanamo-intro-seen','1');if(theme)localStorage.setItem('vanamo-theme',theme);}catch{}},theme);
  await context.route('**/*',async route=>{
   const request=route.request(),url=new URL(request.url());
@@ -251,7 +252,34 @@ try{
  assert.match(await page.locator('.account-notice').textContent(),/ungültig oder abgelaufen/);
  await s.context.close();
 
- // 8) Dunkles Farbschema (nur Bild)
+ // 8) „Sichere deinen Fortschritt“: drei Tage in Folge und keine E-Mail → einmal ein Hinweis mit Knopf
+ const days=n=>Object.fromEntries(Array.from({length:n},(_,i)=>{const d=new Date();d.setDate(d.getDate()-i);return [d.toLocaleDateString('sv-SE'),5];}));
+ s=await scenario({viewport:{width:1280,height:900},register:false,signedIn:{daily:days(3)}});page=s.page;
+ await page.mouse.click(5,5);
+ await page.waitForSelector('.account-notice.has-action',{timeout:30000});
+ assert.match(await page.locator('.account-notice').textContent(),/Schon 3 Tage in Folge! Sichere deinen Fortschritt/);
+ assert.deepEqual(s.emailCalls.map(c=>c.action),['status']);
+ await shot(page,'hinweis-fortschritt-sichern');
+ await page.click('.account-notice-action');
+ await page.waitForSelector('#email-form:visible');
+ assert.equal(await page.locator('.account-notice').count(),0);
+ await page.waitForFunction(()=>document.activeElement.id==='profile-email');
+ await page.click('#close-account');
+ await page.reload();await page.waitForTimeout(800);await page.mouse.click(5,5);await page.waitForTimeout(9000);
+ assert.equal(await page.locator('.account-notice').count(),0,'der Hinweis kommt nur einmal');
+ assert.deepEqual(s.errors,[]);
+ await s.context.close();
+ // Mit hinterlegter Adresse oder kürzerer Serie kommt kein Hinweis
+ s=await scenario({viewport:{width:1280,height:900},register:false,signedIn:{daily:days(3),mail:{email:'lumi@example.org',verified:true}}});page=s.page;
+ await page.mouse.click(5,5);await page.waitForFunction(()=>!!localStorage.getItem('vanamo-email-hint-00000000-0000-4000-8000-000000000009'),null,{timeout:30000});
+ await page.waitForTimeout(500);assert.equal(await page.locator('.account-notice').count(),0);
+ await s.context.close();
+ s=await scenario({viewport:{width:1280,height:900},register:false,signedIn:{daily:days(2)}});page=s.page;
+ await page.mouse.click(5,5);await page.waitForTimeout(9000);
+ assert.equal(await page.locator('.account-notice').count(),0);assert.equal(s.emailCalls.length,0,'unter drei Tagen wird gar nicht erst nachgefragt');
+ await s.context.close();
+
+ // 9) Dunkles Farbschema (nur Bild)
  if(shots){s=await scenario({viewport:{width:1280,height:900},theme:'kaamos'});page=s.page;await page.click('#register-form button[type="submit"]');await page.waitForSelector('#account-onboarding:not([hidden])');await shot(page,'reg-2-schritt2-dunkel');await s.context.close();}
- console.log('PASS: Registrierung in zwei Schritten, Vogel im Konto-Icon, Vogel und Spitzname ändern, E-Mail hinterlegen/entfernen, Passwort per Link zurücksetzen, Bestätigungslink');
+ console.log('PASS: Registrierung in zwei Schritten, Vogel im Konto-Icon, Vogel und Spitzname ändern, E-Mail hinterlegen/entfernen, Passwort per Link zurücksetzen, Bestätigungslink, Hinweis „Sichere deinen Fortschritt“');
 }finally{await browser.close();server.kill();}

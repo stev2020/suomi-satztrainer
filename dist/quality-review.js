@@ -1,4 +1,4 @@
-import './i18n.mjs?v=25';
+import './i18n.mjs?v=26';
 const $=id=>document.getElementById(id);
 const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 let reviewer=false,busy=false,candidates=null;
