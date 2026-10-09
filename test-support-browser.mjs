@@ -14,15 +14,22 @@ try{
   assert.match(await p.locator('#support-provider').textContent(),/Donorbox/);
   assert.equal(await p.locator('#support-facts').isVisible(),true,'Hinweis direkt unter dem Knopf');
   assert.match(await p.locator('#support-facts').textContent(),/keine Spende im steuerlichen Sinn/);
-  await p.locator('[data-support-amount="36"]').click();
-  await assertText(cta,'Mit 36 € im Jahr unterstützen');await assertText(p.locator('#support-hint'),'36 € im Jahr – das ist 3 € im Monat.');
+  assert.deepEqual(await p.locator('[data-support-mode]').allTextContents(),['Einmalig','Monatlich','Jährlich'],'Reihenfolge wie bei Donorbox');
+  assert.equal(await p.locator('[data-support-mode="jahr"]').getAttribute('aria-pressed'),'true');
+  assert.deepEqual(await p.locator('#support-amounts button').allTextContents(),['6 €','12 €','24 €']);
+  assert.equal(await p.locator('#support-amounts button').nth(1).getAttribute('aria-pressed'),'true','der mittlere ist vorausgewählt');
+  await p.locator('[data-support-amount="24"]').click();
+  await assertText(cta,'Mit 24 € im Jahr unterstützen');await assertText(p.locator('#support-hint'),'24 € im Jahr – das ist 2 € im Monat.');
   await p.locator('[data-support-mode="monat"]').click();
-  assert.deepEqual(await p.locator('#support-amounts button').allTextContents(),['3 €','5 €','10 €']);
+  assert.deepEqual(await p.locator('#support-amounts button').allTextContents(),['2 €','3 €','5 €']);
   await assertText(cta,'Mit 3 € im Monat unterstützen');
-  await p.locator('[data-support-mode="einmal"]').click();await p.locator('[data-support-amount="20"]').click();
-  await assertText(cta,'Einmalig 20 € geben');
+  await p.locator('[data-support-mode="einmal"]').click();
+  assert.deepEqual(await p.locator('#support-amounts button').allTextContents(),['3 €','5 €','10 €']);
+  await assertText(cta,'Einmalig 5 € geben');
+  await p.locator('[data-support-amount="10"]').click();
+  await assertText(cta,'Einmalig 10 € geben');
   const [request]=await Promise.all([c.waitForEvent('request',r=>r.url().startsWith('https://donorbox.org/')),cta.click()]);
-  assert.equal(request.url(),'https://donorbox.org/vanamo?amount=20&language=de','Klick öffnet Donorbox mit Betrag');
+  assert.equal(request.url(),'https://donorbox.org/vanamo?amount=10&language=de','Klick öffnet Donorbox mit Betrag');
   for(const page of c.pages())if(page!==p)await page.close();
   assert.equal(await p.locator('[data-support-mode="einmal"]').getAttribute('aria-pressed'),'true');
 
