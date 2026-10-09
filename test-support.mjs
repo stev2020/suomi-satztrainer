@@ -10,8 +10,7 @@ for(const mode of Object.keys(AMOUNTS)){assert.equal(AMOUNTS[mode].length,3,`${m
 assert.equal(ctaLabel('jahr',12),'Mit 12 € im Jahr unterstützen');
 assert.equal(ctaLabel('monat',3),'Mit 3 € im Monat unterstützen');
 assert.equal(ctaLabel('einmal',5),'Einmalig 5 € geben');
-assert.equal(hintText('jahr',12),'12 € im Jahr – das ist 1 € im Monat.');
-assert.equal(hintText('jahr',60),'60 € im Jahr – das ist 5 € im Monat.');
+assert.equal(hintText('jahr',12),'','keine Umrechnung in Monate');
 assert.equal(hintText('einmal',5),'');
 // Donorbox: Betrag und Rhythmus wandern in die Adresse, „Einmalig“ ist die Grundeinstellung des Formulars
 assert.equal(donateUrl('','jahr',12),'','ohne Adresse kein Link');
@@ -26,8 +25,8 @@ for(const f of ['unterstuetzen.html','impressum.html','datenschutz.html'])assert
 assert(!read('impressum.html').includes('openlingu'),'alte Adresse entfernt');
 for(const f of ['index.html','impressum.html','datenschutz.html'])assert(read(f).includes('href="unterstuetzen.html"'),`${f}: Link zur Seite`);
 const sw=read('sw.js');
-for(const f of ['./unterstuetzen.html','./support.css?v=2','./support.mjs?v=7'])assert(sw.includes(`'${f}'`),`sw.js: ${f}`);
-assert(page.includes('support.css?v=2')&&page.includes('support.mjs?v=7'));
+for(const f of ['./unterstuetzen.html','./support.css?v=2','./support.mjs?v=8'])assert(sw.includes(`'${f}'`),`sw.js: ${f}`);
+assert(page.includes('support.css?v=2')&&page.includes('support.mjs?v=8'));
 assert(!/ko-fi/i.test(page+read('support.mjs')),'Ko-fi ist raus');
 assert(page.includes('keine Spende im steuerlichen Sinn')&&page.includes('Zuwendungsbestätigung'),'Hinweis: keine Spende im steuerlichen Sinn');
 assert(/innerhalb von 14 Tagen/.test(page)&&/beenden/.test(page),'Beenden und Erstattung erklärt');

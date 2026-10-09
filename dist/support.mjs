@@ -40,7 +40,6 @@ export function donateUrl(base,mode,amount){
 }
 /** Hinweiszeile unter den Beträgen. */
 export function hintText(mode,amount){
- if(mode==='jahr')return `${euro(amount)} im Jahr – das ist ${euro(Math.round(amount/12*100)/100)} im Monat.`;
  if(mode==='monat')return 'Für 1 € im Monat: wähle „Jährlich“. So geht weniger an Gebühren verloren.';
  return '';
 }
