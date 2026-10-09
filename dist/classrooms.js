@@ -1,5 +1,5 @@
 import {uiLocale} from './i18n.mjs?v=26';
-import {accountUser,accountRequest} from './auth.js?v=128';
+import {accountUser,accountRequest} from './auth.js?v=129';
 import {avatarMarkup,cleanNickname} from './avatars.mjs?v=2';
 import {GRAMMAR_TOPICS,topicNotes} from './grammar-topics.mjs';
 import {translationFeedbackMarkup,compareTranslation} from './translation-feedback.mjs?v=1';

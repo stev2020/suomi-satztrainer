@@ -23,7 +23,7 @@ const browser=await chromium.launch({headless:true,...(process.env.PW_CHROMIUM?{
 const origin='http://localhost:4173',shots=process.env.SHOTS||'';
 const fakeTurnstile=`window.turnstile={render(el,o){el.dataset.rendered='1';window.__issue=()=>o.callback('token');setTimeout(window.__issue,30);return 'w';},reset(){setTimeout(window.__issue,30);}};`;
 
-async function scenario({viewport,failProfile=false,theme='',path='/',register=true,signedIn=null}){
+async function scenario({viewport,failProfile=false,theme='',path='/',register=true,signedIn=null,slowPull=0}){
  const userUpdates=[],emailCalls=[],passwordCalls=[];let meta={username:'neuer.nutzer'},mail={email:'',verified:false};
  const user=()=>({id:'00000000-0000-4000-8000-000000000009',user_metadata:meta});
  const context=await browser.newContext({serviceWorkers:'block',locale:'de-DE',viewport});
@@ -57,6 +57,7 @@ async function scenario({viewport,failProfile=false,theme='',path='/',register=t
     if(body.action==='reset-confirm')return body.token==='RESET'?json({username:'neuer.nutzer'}):json({error:'Der Link ist ungültig oder abgelaufen. Bitte fordere einen neuen an.'},400);
     return json({error:'Unbekannte Aktion.'},400);
    }
+   if(slowPull&&url.pathname.startsWith('/rest/v1/learning_state')&&request.method()==='GET')await new Promise(r=>setTimeout(r,slowPull));
    if(url.pathname.startsWith('/rest/v1/learning_state'))return route.fulfill({status:request.method()==='GET'?200:201,contentType:'application/json',body:request.method()==='GET'?'[]':''});
    if(url.pathname.startsWith('/rest/v1/rpc/'))return json({sentence_ids:[],translations:[]});
    return json({});
@@ -291,7 +292,24 @@ try{
  assert.equal(await page.locator('.account-notice').count(),0);assert.equal(s.emailCalls.length,0,'unter drei Tagen wird gar nicht erst nachgefragt');
  await s.context.close();
 
+ // 8b) Anmelden: Das Fenster zeigt bis zum Schließen das Anmeldeformular, nie kurz „Dein Konto“ – danach die Startseite.
+ s=await scenario({viewport:{width:393,height:852},register:false,slowPull:700});page=s.page;
+ await page.evaluate(()=>window.suomiOpenAccount('login'));
+ await page.fill('#login-name','neuer.nutzer');await page.fill('#login-password','ein-langes-passwort-123');
+ await page.evaluate(()=>{window.__seen=[];const d=document.getElementById('account-dialog');const tick=()=>{if(d.open)window.__seen.push(document.getElementById('account-logged-in').hidden?'form':'konto');if(window.__seen.length<400)requestAnimationFrame(tick);};requestAnimationFrame(tick);});
+ await page.click('#login-form button[type="submit"]');
+ await page.waitForFunction(()=>!document.getElementById('account-dialog').open,null,{timeout:8000});
+ const seen=await page.evaluate(()=>window.__seen);
+ assert.ok(seen.length>5,'dialog stayed open while signing in');
+ assert.ok(!seen.includes('konto'),'„Dein Konto“ never flashes while signing in');
+ assert.equal(await page.evaluate(()=>document.body.dataset.account),'authenticated');
+ assert.ok(await page.locator('#home-view').isVisible(),'home page right after signing in');
+ await page.evaluate(()=>window.suomiOpenAccount());
+ assert.ok(await page.locator('#account-logged-in').isVisible(),'„Konto verwalten“ still opens normally afterwards');
+ assert.deepEqual(s.errors,[]);
+ await s.context.close();
+
  // 9) Dunkles Farbschema (nur Bild)
  if(shots){s=await scenario({viewport:{width:1280,height:900},theme:'kaamos'});page=s.page;await page.click('#register-form button[type="submit"]');await page.waitForSelector('#account-onboarding:not([hidden])');await shot(page,'reg-2-schritt2-dunkel');await s.context.close();}
- console.log('PASS: Registrierung in zwei Schritten, Vogel im Konto-Icon, Vogel und Spitzname ändern, E-Mail hinterlegen/entfernen, Passwort per Link zurücksetzen, Bestätigungslink, Hinweis „Sichere deinen Fortschritt“');
+ console.log('PASS: Registrierung in zwei Schritten, Vogel im Konto-Icon, Vogel und Spitzname ändern, E-Mail hinterlegen/entfernen, Passwort per Link zurücksetzen, Bestätigungslink, Hinweis „Sichere deinen Fortschritt“, Anmelden ohne aufblitzendes Kontofenster');
 }finally{await browser.close();server.kill();}

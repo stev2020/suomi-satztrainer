@@ -297,8 +297,11 @@ export async function runUserIntro(){
  };
  const wide=lineWidth();if(wide>room)greet.style.fontSize=Math.max(base,base*USER.greetScale*room/wide)+'px';
  // groß im oberen Drittel, aber nie über der Stelle, an der sie später steht
- greet.style.top=Math.max((place.top+place.bottom)/2,innerHeight*USER.greetAt)+scrollY-greet.offsetHeight/2+'px';
  const greeting=splitTextNodes(greet,true);
+ // Einzeln gesetzte Buchstaben laufen etwas breiter (ohne Unterschneidung) – lange Begrüßungen wie „Hyvää iltapäivää“
+ // deshalb danach noch einmal einpassen.
+ const split=lineWidth();if(split>room)greet.style.fontSize=parseFloat(greet.style.fontSize)*room/split+'px';
+ greet.style.top=Math.max((place.top+place.bottom)/2,innerHeight*USER.greetAt)+scrollY-greet.offsetHeight/2+'px';
  play(greet,[{opacity:0,transform:'translateY(14px)'},{opacity:1,transform:'none'}],{duration:USER.greetIn,easing:EASE_OUT,fill:'backwards'});
  await hold(USER.greetIn+USER.greetHold);if(done)return;
 
