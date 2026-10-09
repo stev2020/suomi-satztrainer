@@ -26,8 +26,8 @@ for(const f of ['unterstuetzen.html','impressum.html','datenschutz.html'])assert
 assert(!read('impressum.html').includes('openlingu'),'alte Adresse entfernt');
 for(const f of ['index.html','impressum.html','datenschutz.html'])assert(read(f).includes('href="unterstuetzen.html"'),`${f}: Link zur Seite`);
 const sw=read('sw.js');
-for(const f of ['./unterstuetzen.html','./support.css?v=2','./support.mjs?v=6'])assert(sw.includes(`'${f}'`),`sw.js: ${f}`);
-assert(page.includes('support.css?v=2')&&page.includes('support.mjs?v=6'));
+for(const f of ['./unterstuetzen.html','./support.css?v=2','./support.mjs?v=7'])assert(sw.includes(`'${f}'`),`sw.js: ${f}`);
+assert(page.includes('support.css?v=2')&&page.includes('support.mjs?v=7'));
 assert(!/ko-fi/i.test(page+read('support.mjs')),'Ko-fi ist raus');
 assert(page.includes('keine Spende im steuerlichen Sinn')&&page.includes('Zuwendungsbestätigung'),'Hinweis: keine Spende im steuerlichen Sinn');
 assert(/innerhalb von 14 Tagen/.test(page)&&/beenden/.test(page),'Beenden und Erstattung erklärt');
