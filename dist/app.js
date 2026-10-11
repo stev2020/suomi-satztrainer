@@ -1,4 +1,4 @@
-import {tc,uiLanguage} from './i18n.mjs?v=26';
+import {tc,uiLanguage} from './i18n.mjs?v=27';
 import {canSearch,createSearch} from './wordsearch.mjs';
 import {mountSearch,searchInstructions} from './wordsearch-ui.mjs?v=64';
 import {createWordExercise,wordAnswerMatches,finnishSentenceMatches,sentenceWords} from './word-practice.mjs?v=61';
@@ -7,12 +7,12 @@ import {PRONOUNS,validateVerbProgress,mergeVerbProgress,markAsked,markAnswered,a
 import {verbUsage} from './verb-examples.mjs?v=1';
 import {GRAMMAR_TOPICS,topicNotes} from './grammar-topics.mjs';
 import {reviewPlan,dueSentences,unseenSentences,lastPracticed} from './review-plan.mjs?v=2';
-import {everydayPathState} from './learning-path.mjs?v=2';
+import {everydayPathState,pathNextStep,newAfterReviewOffer} from './learning-path.mjs?v=3';
 import {addPerformanceEvent,buildLearningInsights,mergePerformanceEvents,validatePerformanceEvents} from './learning-insights.mjs';
 import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './supabase-config.js';
 import {validateGames,mergeGames} from './games-progress.mjs';
 import {mountWordLookup,loadLexicon,lookupForSentence,splitSentence,getLexicon} from './word-lookup.mjs?v=2';
-import {planVerbs,planEndings,interleave,alternate,verbCard,endingCard} from './daily-mix.mjs?v=3';
+import {planVerbs,planEndings,interleave,alternate,verbCard,endingCard,NEW_ONLY_BELOW} from './daily-mix.mjs?v=3';
 import {validateEndingsProgress,mergeEndingsProgress,markEndingAnswered,missedEndings} from './endings-progress.mjs?v=1';
 import {createGuestCard,shortGloss,flipWordIndex} from './guest-card.mjs?v=13';
 import {renderGreeting,renderToday,createDailySentence,animateProgress,GOAL_CHOICES,DAILY_GOAL} from './home-extras.mjs?v=12';
@@ -200,7 +200,13 @@ function renderLearningPath(){
  $('start-new-sentences').disabled=!ready||(!active&&!state.lesson?.remaining.length);
  $('start-new-sentences').textContent=active?'Etappe fortsetzen':state.complete?'Levelpfad geschafft':state.seen?'Weiterlernen':'Lernpfad starten';
  $('path-current-title').textContent=topic?.title||`Lernpfad für Level ${level} geschafft!`;
- if($('welcome-new-note'))$('welcome-new-note').textContent=!ready?'':topic?.title||'Levelpfad geschafft';
+ if($('welcome-new-note')){
+  // Thema · noch N, darunter ein Punkt pro Satz bis zur nächsten Station (gefüllt = schon kennengelernt).
+  const note=$('welcome-new-note'),step=ready?pathNextStep(state):null;
+  if(!ready)note.textContent='';
+  else if(!step)note.textContent=topic?.title||'Levelpfad geschafft';
+  else note.innerHTML=`<span class="welcome-new-topic">${escape(step.title)}</span> · <span>noch ${step.remaining}</span><span class="welcome-new-dots" aria-hidden="true">${'<i class="on"></i>'.repeat(step.seen)}${'<i></i>'.repeat(step.remaining)}</span>`;
+ }
  $('new-sentences-note').hidden=!!lesson;
  $('new-sentences-note').textContent=lesson?'':'Alle verfügbaren Themen dieses Levels kennengelernt. Wiederhole deine Sätze oder wechsle zum nächsten Level.';
  $('path-goal').textContent=(topic?.goal||'Dein bisheriger Fortschritt bleibt beim Levelwechsel erhalten.')+(lesson?` (${lesson.index+1}/${topic.lessons.length})`:'');
@@ -317,7 +323,7 @@ function nextDailyCard(){
  // Falsches kommt nach zwei anderen Aufgaben einmal wieder (wie „Nochmal“ bei Sätzen).
  if(card&&!correct&&!card.retry)queue.splice(Math.min(2,queue.length),0,{...card,retry:true});
  verbSession=null;endingsDaily=null;revealed=false;draft='';persist();render();
- ($('reveal')||$('verb-input')||$('endings-input')||document.querySelector('[data-ending-choice]')||$('finish-daily-session'))?.focus({preventScroll:true});
+ ($('reveal')||$('verb-input')||$('endings-input')||document.querySelector('[data-ending-choice]')||$('daily-more-start')||$('finish-daily-session'))?.focus({preventScroll:true});
 }
 function startDailySession(){
  if(!ready)return;
@@ -331,6 +337,16 @@ function dailyFinishNote(mix){
  const fresh=[[mix.verbsNew,'Verbformen'],[mix.endingsNew,'Endungen']].filter(([n])=>n).map(([n,l])=>n+' '+l).join(' · ');
  if(!fresh)return 'Nur fällige Wiederholungen – ohne neue Inhalte.';
  return mix.verbsNew+mix.endingsNew===mix.total?`Heute neu kennengelernt: ${fresh}`:`Fällige Wiederholungen · neu dazu: ${fresh}`;
+}
+// Nach der Wiederholungsrunde: „Noch Lust?“ – die nächsten neuen Sätze aus dem Lernpfad, solange kaum etwas fällig ist.
+function dailyMoreOffer(){
+ if(!accountActive()||levelLocked(level))return null;
+ const stats=dailyPlanStats();
+ return newAfterReviewOffer({state:pathState(),dueLeft:stats.dueCount+stats.verbDue+stats.endingDue,limit:NEW_ONLY_BELOW});
+}
+function dailyMoreMarkup({title,count}){
+ const time=count<=1?'Dauert etwa eine Minute.':count<=3?'Dauert etwa zwei Minuten.':'Dauert etwa drei Minuten.';
+ return `<div class="daily-more"><span class="daily-more-line" aria-hidden="true"></span><p class="daily-more-eyebrow">Noch Lust?</p><p class="daily-more-title"><span>${count===1?'1 neuer Satz':`${count} neue Sätze`}</span> · <span>${escape(title)}</span></p><p class="daily-more-time">${time}</p><button type="button" class="daily-more-start" id="daily-more-start">Los geht’s →</button><button type="button" class="daily-more-home" id="finish-daily-session">Für heute reicht’s – zur Startseite</button></div>`;
 }
 function finishDailySession(){
  if(!dailySession)return;
@@ -926,7 +942,7 @@ function render(){applyDailyCard();$('practice-view').classList?.toggle('is-path
   const topicDialog=topic.complete&&level<=6;$('actions').innerHTML=`<div class="completion-actions"><button class="primary completion-home" id="completion-home">Zur Startseite</button>${topicDialog?'<button class="primary" id="topic-dialog">Dialog zum Thema lesen</button>':''}${state.lesson?.remaining.length?'<button class="primary" id="next-session">Weiter auf dem Lernpfad</button>':''}</div>`;if(topicDialog){const topicId=topic.id;$('topic-dialog').onclick=()=>openTopicDialog(level,topicId);}
   $('completion-home').onclick=()=>showView('home');if(state.lesson?.remaining.length)$('next-session').onclick=startNewSentences;celebrateStreak();return;
  }
- if(!s){$('card').className='card empty';if(dailySession?.active&&initialCount){const mix=dailySession.mix;$('card').innerHTML=`<span class="complete-mark">✓</span><h2>Heutige Runde geschafft.</h2><p>${completed} Aufgaben erledigt · ${[[mix.translate,'Übersetzen'],[mix.listen,'Hören'],[mix.dictation,'Diktat'],[mix.suchsel,'Wortsel'],[mix.verbs,'Verbformen'],[mix.endings,'Endungen']].filter(([n])=>n).map(([n,l])=>n+' '+l).join(' · ')}</p><p>${dailyFinishNote(mix)}</p>`;$('actions').innerHTML='<button class="primary" id="finish-daily-session">Zur Startseite</button>';$('finish-daily-session').onclick=finishDailySession;celebrateStreak();}else if(initialCount){$('card').innerHTML='<span class="complete-mark">✓</span><h2>Gut gemacht.</h2><p>Deine Lerneinheit ist geschafft. Dein nächster Satz wartet schon.</p>';$('actions').innerHTML='<div class="completion-actions"><button class="primary completion-home" id="completion-home">Zur Startseite</button><button class="primary" id="next-session">Nächste Lerneinheit</button></div>';$('completion-home').onclick=()=>showView('home');$('next-session').onclick=guidedNew?startNewSentences:start;celebrateStreak();}else{let title='Alles für heute wiederholt.',text='Hier erscheinen die Sätze, sobald deine nächste Wiederholung fällig ist.';if(mode==='new'){title='In diesem Level ist alles entdeckt.';text='Wiederhole deine Sätze oder wechsle zum nächsten Level.';}if(mode==='favorites'){title='Deine Lieblingssätze warten hier.';text='Markiere einen Satz mit dem Stern auf der Lernkarte.';}if((audioOnly||!isTranslation())&&!base(mode!=='new').length){title='Hier gibt es noch keine Aufnahme.';text=isTranslation()?'Schalte „Nur mit Audio“ aus oder wähle ein anderes Level.':'Wähle ein anderes Level oder die Übungsart Übersetzen.';}if(activity==='grammar'){title=grammarAvailable?'Keine passenden Sätze in dieser Auswahl.':'Grammatikhilfen nicht verfügbar.';text=grammarAvailable?'Wähle ein anderes Grammatikthema oder Level. Falls aktiv, schalte „Nur mit Audio“ aus.':'Lade die Seite bei bestehender Verbindung neu.';}$('card').innerHTML=`<h2>${title}</h2><p>${text}</p>`;}return;}
+ if(!s){$('card').className='card empty';if(dailySession?.active&&initialCount){const mix=dailySession.mix;const more=dailyMoreOffer();$('card').innerHTML=`<span class="complete-mark">✓</span><h2>Heutige Runde geschafft.</h2><p>${completed} Aufgaben erledigt · ${[[mix.translate,'Übersetzen'],[mix.listen,'Hören'],[mix.dictation,'Diktat'],[mix.suchsel,'Wortsel'],[mix.verbs,'Verbformen'],[mix.endings,'Endungen']].filter(([n])=>n).map(([n,l])=>n+' '+l).join(' · ')}</p>${more?dailyMoreMarkup(more):`<p>${dailyFinishNote(mix)}</p>`}`;$('actions').innerHTML=more?'':'<button class="primary" id="finish-daily-session">Zur Startseite</button>';$('finish-daily-session').onclick=finishDailySession;if(more)$('daily-more-start').onclick=()=>{finishDailySession();startNewSentences();};celebrateStreak();}else if(initialCount){$('card').innerHTML='<span class="complete-mark">✓</span><h2>Gut gemacht.</h2><p>Deine Lerneinheit ist geschafft. Dein nächster Satz wartet schon.</p>';$('actions').innerHTML='<div class="completion-actions"><button class="primary completion-home" id="completion-home">Zur Startseite</button><button class="primary" id="next-session">Nächste Lerneinheit</button></div>';$('completion-home').onclick=()=>showView('home');$('next-session').onclick=guidedNew?startNewSentences:start;celebrateStreak();}else{let title='Alles für heute wiederholt.',text='Hier erscheinen die Sätze, sobald deine nächste Wiederholung fällig ist.';if(mode==='new'){title='In diesem Level ist alles entdeckt.';text='Wiederhole deine Sätze oder wechsle zum nächsten Level.';}if(mode==='favorites'){title='Deine Lieblingssätze warten hier.';text='Markiere einen Satz mit dem Stern auf der Lernkarte.';}if((audioOnly||!isTranslation())&&!base(mode!=='new').length){title='Hier gibt es noch keine Aufnahme.';text=isTranslation()?'Schalte „Nur mit Audio“ aus oder wähle ein anderes Level.':'Wähle ein anderes Level oder die Übungsart Übersetzen.';}if(activity==='grammar'){title=grammarAvailable?'Keine passenden Sätze in dieser Auswahl.':'Grammatikhilfen nicht verfügbar.';text=grammarAvailable?'Wähle ein anderes Grammatikthema oder Level. Falls aktiv, schalte „Nur mit Audio“ aus.':'Lade die Seite bei bestehender Verbindung neu.';}$('card').innerHTML=`<h2>${title}</h2><p>${text}</p>`;}return;}
  if(activity==='suchsel'){renderSearchCard(s);return;}
  if(inCycle(s)&&cycleStep!==1&&renderCycle(s))return;
  $('card').className=`card${revealed?' revealed':''}`;const saved=memory.favorites.includes(s.id),front=!isTranslation()?(revealed?s.text:''):cardDirection(s)==='fi-de'?s.text:s.translations[0].text;
@@ -947,7 +963,7 @@ function render(){applyDailyCard();$('practice-view').classList?.toggle('is-path
 }
 function licenseURL(license){if(license==='CC0 1.0')return 'https://creativecommons.org/publicdomain/zero/1.0/';const m=license.match(/^CC (BY(?:-[A-Z]+)*) ([\d.]+)(?: (FR))?$/i);return m?`https://creativecommons.org/licenses/${m[1].toLowerCase()}/${m[2]}/${m[3]?'fr/':''}`:'https://tatoeba.org/en/terms_of_use';}
 function easyDays(s){return Math.min(180,Math.max(3,Math.round((Number(review(s)?.interval)||0)*2.5)));}
-function grade(g){if(activity==='writing')return;if(!revealed||!queue.length)return;if(inCycle(queue[0])&&!(cycleStep===2&&cycleFlipped))return;if(inCycle(queue[0])){cycleDone.add(queue[0].id);cycleStep=0;cycleFlipped=false;}const s=queue.shift(),interval=g==='again'?0:g==='hard'?1:easyDays(s),now=Date.now();memory.performanceEvents=addPerformanceEvent(memory.performanceEvents,{kind:'sentence',sentenceId:s.id,activity,direction:cardDirection(s),difficulty,grade:g,grammarTopic:activity==='grammar'?grammarTopic:'',at:now});memory.reviews[key(s)]={due:now+interval*86400000,interval,repetitions:(Number(review(s)?.repetitions)||0)+1,updatedAt:now};memory.daily[day()]=(Number(memory.daily[day()])||0)+1;if(dailySession?.active&&activity==='translate'&&!s.translationCounted){reviewTranslationCount++;s.translationCounted=true;}if(g==='again')queue.splice(Math.min(2,queue.length),0,s);completed++;wordExercise=null;searchPuzzle=null;revealed=false;playedAudioCard=null;draft='';persist();render();guestSaveHint();$('reveal')?.focus({preventScroll:true});}
+function grade(g){if(activity==='writing')return;if(!revealed||!queue.length)return;if(inCycle(queue[0])&&!(cycleStep===2&&cycleFlipped))return;if(inCycle(queue[0])){cycleDone.add(queue[0].id);cycleStep=0;cycleFlipped=false;}const s=queue.shift(),interval=g==='again'?0:g==='hard'?1:easyDays(s),now=Date.now();memory.performanceEvents=addPerformanceEvent(memory.performanceEvents,{kind:'sentence',sentenceId:s.id,activity,direction:cardDirection(s),difficulty,grade:g,grammarTopic:activity==='grammar'?grammarTopic:'',at:now});memory.reviews[key(s)]={due:now+interval*86400000,interval,repetitions:(Number(review(s)?.repetitions)||0)+1,updatedAt:now};memory.daily[day()]=(Number(memory.daily[day()])||0)+1;if(dailySession?.active&&activity==='translate'&&!s.translationCounted){reviewTranslationCount++;s.translationCounted=true;}if(g==='again')queue.splice(Math.min(2,queue.length),0,s);completed++;wordExercise=null;searchPuzzle=null;revealed=false;playedAudioCard=null;draft='';persist();render();guestSaveHint();($('reveal')||$('daily-more-start'))?.focus({preventScroll:true});}
 async function play(s){const a=s.audios[0],b=$('play-audio');if(player&&!player.paused){stopAudio();return;}stopAudio();const current=prepareAudio(audioURL(a));if(!current)return;player=current;current.currentTime=0;current.playbackRate=speed;current.preservesPitch=true;setAudioButtonLabel(b,current.readyState>=3?'Startet …':'Lädt …');const reset=()=>{if(player===current&&$('play-audio')===b)setAudioButtonLabel(b,restingAudioLabel(b));};current.onended=reset;current.onerror=()=>{if(player!==current)return;audioCache.delete(audioURL(a));reset();$('notice').textContent='Die Aufnahme ist gerade nicht erreichbar. Prüfe deine Internetverbindung.';};try{await current.play();if(player===current){playedAudioCard=s;b.dataset.played='true';setAudioButtonLabel(b,'Anhalten');}}catch{if(player!==current)return;audioCache.delete(audioURL(a));reset();$('notice').textContent='Die Aufnahme konnte nicht abgespielt werden. Versuche es gleich noch einmal.';}}
 // Portable backups accept only known, bounded fields. Imported text is always escaped.
 function objectRecord(value){if(!value||typeof value!=='object'||Array.isArray(value))throw new Error('Ungültige Datenstruktur.');return value;}

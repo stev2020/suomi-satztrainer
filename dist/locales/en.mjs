@@ -1376,4 +1376,12 @@ export default {
  "Passwort geändert. Bitte melde dich mit dem neuen Passwort neu an.": "Password changed. Please sign in again with the new password.",
  "Schon {0} Tage in Folge! Sichere deinen Fortschritt: Mit einer E-Mail-Adresse kannst du ein vergessenes Passwort zurücksetzen.": "{0} days in a row already! Secure your progress: with an email address you can reset a forgotten password.",
  "E-Mail hinterlegen": "Add email",
+ "Noch Lust?": "Fancy a few more?",
+ "1 neuer Satz": "1 new sentence",
+ "Dauert etwa eine Minute.": "Takes about a minute.",
+ "Dauert etwa zwei Minuten.": "Takes about two minutes.",
+ "Dauert etwa drei Minuten.": "Takes about three minutes.",
+ "Los geht’s →": "Let’s go →",
+ "Für heute reicht’s – zur Startseite": "That’s enough for today – back to start",
+ "noch {0}": "{0} to go"
 }

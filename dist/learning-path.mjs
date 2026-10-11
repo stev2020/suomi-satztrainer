@@ -31,3 +31,19 @@ export function everydayPathState(sentences,reviews={},level=1,skipped=new Set()
  return {level,topics,topic,lesson,seen:topics.reduce((n,t)=>n+t.seen,0),total,complete:total>0&&topics.every(t=>!t.available||t.complete)};
 }
 export function homeReviewPool(sentences,level){return sentences.filter(s=>s.level===level);}
+// Knopf „Neue Sätze“ auf „Willkommen“: das aktuelle Thema und wie viele Sätze bis zur nächsten Station fehlen.
+// Die Punkte stehen für das Thema; große Sammelthemen („Weitere Sätze“) zählen nach der aktuellen Etappe,
+// sonst wären es Hunderte Punkte.
+export const PATH_DOTS_MAX=12;
+export function pathNextStep(state){
+ const topic=state?.topic,lesson=state?.lesson;if(!topic||!lesson)return null;
+ const unit=topic.total<=PATH_DOTS_MAX?topic:lesson,seen=Math.min(unit.seen,unit.total);
+ return {title:topic.title,seen,total:unit.total,remaining:unit.total-seen,lessonRemaining:lesson.remaining.length};
+}
+// Nach der Wiederholungsrunde: ein paar neue Sätze anbieten – aber nur, wenn kaum noch etwas fällig ist
+// (dieselbe Grenze wie für neue Verbformen und Endungen), sonst wächst der Wiederholungsberg.
+export function newAfterReviewOffer({state,dueLeft=0,limit=12,allowed=true}={}){
+ if(!allowed||dueLeft>=limit)return null;
+ const step=pathNextStep(state);if(!step?.lessonRemaining)return null;
+ return {title:step.title,count:step.lessonRemaining};
+}

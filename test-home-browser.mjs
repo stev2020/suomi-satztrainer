@@ -311,7 +311,11 @@ try{
  assert.ok(await phone.locator('#home-view .intro h1').isVisible()&&await phone.locator('#welcome-review').isVisible());
  assert.ok(await phone.evaluate(()=>{const n=document.getElementById('home-tabs'),r=n.getBoundingClientRect();return getComputedStyle(n).position==='fixed'&&Math.abs(r.bottom-innerHeight)<1&&r.width===innerWidth;}),'Reiterleiste liegt am unteren Rand');
  assert.ok(await phone.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'kein Querscrollen');
- assert.equal(await phone.locator('#welcome-new-note').textContent(),await phone.locator('#path-current-title').textContent(),'der Knopf nennt das aktuelle Thema');
+ assert.equal(await phone.locator('#welcome-new-note .welcome-new-topic').textContent(),await phone.locator('#path-current-title').textContent(),'der Knopf nennt das aktuelle Thema');
+ // Darunter: „noch N“ bis zur nächsten Station und ein Punkt pro Satz (gefüllt = schon kennengelernt).
+ {const dots=await phone.locator('#welcome-new-note .welcome-new-dots i').count(),on=await phone.locator('#welcome-new-note .welcome-new-dots i.on').count();
+  assert.ok(dots>0&&dots<=12,'Punkte für das aktuelle Thema');
+  assert.match(await phone.locator('#welcome-new-note').textContent(),new RegExp(` · noch ${dots-on}$`));}
  await phone.locator('#welcome-new').click();
  assert.ok(await phone.locator('#practice-view').isVisible(),'„Neue Sätze“ startet die Etappe direkt');
  assert.ok(await phone.locator('#home-tabs').isHidden(),'in der Übung gibt es keine Reiterleiste');
