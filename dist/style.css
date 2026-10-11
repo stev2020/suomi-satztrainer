@@ -1341,6 +1341,8 @@ header>.today>.today-details,.today-goal-picker{border:1.5px solid var(--ink);bo
 .home-tabs{position:relative;display:flex;justify-content:center;gap:clamp(28px,6vw,64px);max-width:640px;margin:14px auto 0;border-bottom:1.5px solid color-mix(in srgb,var(--ink) 30%,transparent)}
 .home-tabs button{position:relative;display:flex;align-items:flex-end;gap:8px;min-height:54px;margin-bottom:-2.5px;padding:0 4px 12px;border:0;border-bottom:3.5px solid transparent;border-radius:0;background:none;box-shadow:none;font:600 22px/1.2 var(--heading);letter-spacing:-.2px;color:var(--muted);transition:color .2s ease,border-color .2s ease}
 .home-tabs button svg{display:none}
+/* Mit dem Reiter „Grammatik“ sind es vier: etwas enger, damit sie auf dem Draht Platz haben. */
+.home-tabs[data-tabs="4"]{gap:clamp(22px,4.4vw,52px);max-width:760px}
 .home-tabs button:hover{color:var(--ink)}
 .home-tabs button[aria-selected="true"]{border-bottom-color:var(--orange);color:var(--ink)}
 .home-tab-count{margin-bottom:3px;padding:0 7px;border-radius:999px;background:var(--mint);font:700 12px/20px 'DM Sans',sans-serif;letter-spacing:0;color:var(--ink)}
@@ -1414,6 +1416,8 @@ header>.today>.today-details,.today-goal-picker{border:1.5px solid var(--ink);bo
 .home-tabs button{flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:54px;margin:0;padding:4px 2px;border:0;border-radius:14px;font:500 12.5px/1.2 'DM Sans',sans-serif;letter-spacing:0}
 .home-tabs button svg{display:block;width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .home-tabs button[aria-selected="true"]{background:var(--mint);font-weight:700}
+.home-tabs[data-tabs="4"]{grid-template-columns:repeat(4,minmax(0,1fr));gap:2px;padding-inline:6px}
+.home-tabs[data-tabs="4"] button{font-size:12px}
 .home-tab-count{position:absolute;top:2px;left:calc(50% + 8px);margin:0;background:var(--orange);font-size:11px;line-height:18px;color:var(--on-orange)}
 html.has-home-tabs:has(#home-view[data-home-tab]:not([hidden])) body{padding-bottom:74px}
 #home-view[data-home-tab] .intro{margin:30px 0 24px}

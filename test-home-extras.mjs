@@ -29,7 +29,8 @@ assert.ok(week[1].today&&!week[0].today);assert.ok(week[2].future&&!week[1].futu
 assert.equal(weekActivity({},at(2026,10,4,22))[6].today,true,'Sonntag gehört zur laufenden Woche');
 
 // Reiter der Startseite: Womit geht sie auf?
-assert.deepEqual(HOME_TABS,['welcome','practice','new']);
+assert.deepEqual(HOME_TABS,['welcome','practice','new','grammar']);
+assert.equal(initialHomeTab({sessionTab:'grammar',lastDay:'2026-10-06',day:'2026-10-06'}),'grammar','auch der Reiter „Grammatik“ bleibt');
 assert.equal(initialHomeTab({lastDay:'',day:'2026-10-06'}),'welcome','erstes Öffnen überhaupt');
 assert.equal(initialHomeTab({lastDay:'2026-10-05',day:'2026-10-06'}),'welcome','erstes Öffnen am Tag');
 assert.equal(initialHomeTab({lastDay:'2026-10-06',day:'2026-10-06'}),'practice','später am selben Tag direkt „Üben“');

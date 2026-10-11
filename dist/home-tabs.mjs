@@ -1,12 +1,14 @@
-// Startseite für Angemeldete: drei Reiter statt einer langen Seite.
+// Startseite für Angemeldete: Reiter statt einer langen Seite.
 //   „Willkommen“  – Begrüßung, Satz des Tages, zwei Knöpfe (Wiederholen, Neue Sätze)
 //   „Üben“        – die Wiederholung und darunter alle Übungen als Kacheln
 //   „Neue Sätze“  – der Lernpfad mit der ganzen Route
-// Die Abschnitte der Startseite tragen data-home-panel="welcome|practice|new"; welcher zu sehen ist,
+//   „Grammatik“   – das Inhaltsverzeichnis des Grammatik-Buchs (grammar-book.mjs); nur wenn es für die
+//                   Oberflächensprache ein Buch gibt, sonst bleibt der Reiter ausgeblendet
+// Die Abschnitte der Startseite tragen data-home-panel="welcome|practice|new|grammar"; welcher zu sehen ist,
 // regelt style.css über #home-view[data-home-tab]. Gäste behalten die eine Seite ohne Reiter.
 // Auf dem Handy liegt die Reiterleiste fest am unteren Rand (style.css).
 
-export const HOME_TABS=['welcome','practice','new'];
+export const HOME_TABS=['welcome','practice','new','grammar'];
 const TAB_KEY='vanamo-home-tab',DAY_KEY='vanamo-home-tab-day';
 export const localDay=(date=new Date())=>date.toLocaleDateString('sv-SE');
 
@@ -22,26 +24,31 @@ export function initialHomeTab({intro=false,sessionTab='',lastDay='',day=localDa
 const read=(store,key)=>{try{return store.getItem(key)||'';}catch{return '';}};
 const write=(store,key,value)=>{try{store.setItem(key,value);}catch{}};
 
-export function createHomeTabs({home,nav,isAccount,startReview,startNew}){
+export function createHomeTabs({home,nav,isAccount,startReview,startNew,onChange}){
  const html=document.documentElement;
  const buttons=[...nav.querySelectorAll('[data-home-tab-button]')];
+ // Ausgeblendete Reiter (hidden am Knopf) zählen nicht mit – weder beim Start noch bei den Pfeiltasten.
+ const tabs=()=>HOME_TABS.filter(tab=>buttons.some(b=>b.dataset.homeTabButton===tab&&!b.hidden));
  const forcedOpen=[...home.querySelectorAll('#more-exercises,.path-details')];
  let current=initialHomeTab({intro:html.classList.contains('intro-pending')||html.classList.contains('intro-running'),sessionTab:read(sessionStorage,TAB_KEY),lastDay:read(localStorage,DAY_KEY)});
+ if(!tabs().includes(current))current='welcome';
  let active=null;
  const fixed=()=>getComputedStyle(nav).position==='fixed';
 
  function paint(){
   for(const b of buttons){const on=b.dataset.homeTabButton===current;b.setAttribute('aria-selected',String(on));b.tabIndex=on?0:-1;b.classList.toggle('selected',on);}
+  nav.dataset.tabs=String(tabs().length);
   if(active)home.dataset.homeTab=current;else delete home.dataset.homeTab;
  }
  function select(tab,{focus=false,scroll=true}={}){
-  if(!HOME_TABS.includes(tab))return;
+  if(!tabs().includes(tab))return;
   const changed=tab!==current;current=tab;
   write(sessionStorage,TAB_KEY,tab);
   paint();
   if(focus)buttons.find(b=>b.dataset.homeTabButton===tab)?.focus();
   // Am Handy liegt die Leiste unten: Der neue Reiter beginnt oben, nicht mitten in der alten Scrollposition.
   if(changed&&scroll&&active&&fixed()&&window.scrollY>0)window.scrollTo({top:0});
+  if(active)onChange?.(current);
  }
  // Reiter gibt es nur mit Konto. „Weitere Übungen“ und die Route stehen dort offen da (keine Aufklapper).
  function sync(){
@@ -54,13 +61,15 @@ export function createHomeTabs({home,nav,isAccount,startReview,startNew}){
    // In diesem Browser-Tab bleibt der Reiter auch beim Neuladen; „heute schon geöffnet“ gilt erst für den nächsten Tab.
    if(now){write(localStorage,DAY_KEY,localDay());write(sessionStorage,TAB_KEY,current);}
   }
+  if(!tabs().includes(current))current='welcome';
   paint();
+  if(active)onChange?.(current);
  }
  for(const d of forcedOpen)d.addEventListener('toggle',()=>{if(active&&!d.open)d.open=true;});
  for(const b of buttons)b.addEventListener('click',()=>select(b.dataset.homeTabButton));
  nav.addEventListener('keydown',e=>{
   const step=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(!step)return;
-  e.preventDefault();select(HOME_TABS[(HOME_TABS.indexOf(current)+step+HOME_TABS.length)%HOME_TABS.length],{focus:true});
+  const list=tabs();e.preventDefault();select(list[(list.indexOf(current)+step+list.length)%list.length],{focus:true});
  });
  // „Willkommen“: Die zwei Knöpfe starten direkt; gibt es gerade nichts zu starten, führen sie zum Reiter.
  home.querySelector('#welcome-review')?.addEventListener('click',()=>{if(!startReview())select('practice');});

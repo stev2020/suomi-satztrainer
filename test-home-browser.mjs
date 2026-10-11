@@ -248,7 +248,7 @@ try{
  assert.match(await focused.locator('#session-title').textContent(),/Zahlen und Zeit/);
  await focused.locator('#practice-view [data-view="home"]').click();
  await focused.locator('.path-details > summary').click();
- assert.equal(await focused.locator('.path-stop').count(),14);
+ assert.equal(await focused.locator('.path-stop:not(.path-grammar)').count(),14);assert.equal(await focused.locator('.path-stop.path-grammar').count(),4,'vier Grammatik-Stationen zwischen den Themen');
  assert.equal(await focused.locator('.path-stop[aria-current="step"]').count(),1);
  for(const width of [800,390,320]){await focused.setViewportSize({width,height:844});assert.ok(await focused.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`kein seitliches Scrollen bei ${width}px`);}
  // Imported progress advances the same path without a new persistence schema.
@@ -287,7 +287,7 @@ try{
  assert.equal(await focused.locator('#daily-due').textContent(),'2');
  assert.equal(await focused.locator('#start-daily-session').isDisabled(),false);
  await focused.locator('#path-level').selectOption('6');
- assert.equal(await focused.locator('.path-stop').count(),14);
+ assert.equal(await focused.locator('.path-stop:not(.path-grammar)').count(),14);assert.equal(await focused.locator('.path-stop.path-grammar').count(),4,'vier Grammatik-Stationen zwischen den Themen');
  // Level 6 was topped up (level fill 2026-09-25); Level 1 still has empty topics (slang, emergency).
  await focused.locator('#path-level').selectOption('1');
  assert.ok(await focused.locator('.path-stop').getByText('Noch keine passenden Sätze in diesem Level',{exact:true}).count()>0);

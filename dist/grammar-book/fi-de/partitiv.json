@@ -1,0 +1,80 @@
+{
+  "id": "partitiv",
+  "blocks": [
+    {
+      "type": "rule",
+      "text": "Der Partitiv steht, wenn etwas nicht als Ganzes gemeint ist: eine unbestimmte Menge, ein Teil von etwas oder eine Handlung, die noch nicht abgeschlossen ist."
+    },
+    {
+      "type": "text",
+      "title": "Warum",
+      "text": "Finnisch hat keine Artikel. Den Unterschied zwischen „Kaffee“ und „dem Kaffee“ macht deshalb die Endung: Der Partitiv sagt, dass nur ein Teil oder eine unbestimmte Menge gemeint ist. Im Deutschen kommt dem am nächsten, wenn man den Artikel weglässt oder „etwas“ davorsetzt."
+    },
+    {
+      "type": "uses",
+      "title": "Wann",
+      "items": [
+        { "label": "Unbestimmte Menge", "target": "Juon kahvia.", "source": "Ich trinke Kaffee." },
+        { "label": "Nach Zahlen ab zwei", "target": "Kaksi koiraa.", "source": "Zwei Hunde." },
+        { "label": "In der Verneinung", "target": "En osta autoa.", "source": "Ich kaufe kein Auto." },
+        { "label": "Nach bestimmten Verben", "target": "Rakastan sinua.", "source": "Ich liebe dich." }
+      ]
+    },
+    {
+      "type": "builder",
+      "title": "Bildung",
+      "note": "Ob a oder ä, entscheidet die Vokalharmonie aus Kapitel 1.",
+      "words": [
+        { "word": "talo", "result": "taloa", "resultMark": "a", "source": "Haus", "why": "Ein kurzer Vokal am Ende: -a oder -ä" },
+        { "word": "kahvi", "result": "kahvia", "resultMark": "a", "source": "Kaffee", "why": "Ein kurzer Vokal am Ende: -a oder -ä" },
+        { "word": "leipä", "result": "leipää", "resultMark": "ä", "source": "Brot", "why": "Ein kurzer Vokal am Ende: -a oder -ä" },
+        { "word": "maa", "result": "maata", "resultMark": "ta", "source": "Land", "why": "Langer Vokal oder Konsonant am Ende: -ta oder -tä" },
+        { "word": "tee", "result": "teetä", "resultMark": "tä", "source": "Tee", "why": "Langer Vokal oder Konsonant am Ende: -ta oder -tä" },
+        { "word": "puhelin", "result": "puhelinta", "resultMark": "ta", "source": "Telefon", "why": "Langer Vokal oder Konsonant am Ende: -ta oder -tä" },
+        { "word": "huone", "result": "huonetta", "resultMark": "tta", "source": "Zimmer", "why": "Wörter auf -e: -tta oder -ttä" },
+        { "word": "perhe", "result": "perhettä", "resultMark": "ttä", "source": "Familie", "why": "Wörter auf -e: -tta oder -ttä" },
+        { "word": "vesi", "result": "vettä", "resultMark": "tä", "source": "Wasser", "why": "Zum Merken: Hier ändert sich auch der Stamm" },
+        { "word": "pieni", "result": "pientä", "resultMark": "tä", "source": "klein", "why": "Zum Merken: Hier ändert sich auch der Stamm" },
+        { "word": "suomi", "result": "suomea", "resultMark": "a", "source": "Finnisch", "why": "Zum Merken: Hier ändert sich auch der Stamm" }
+      ]
+    },
+    {
+      "type": "sentence",
+      "title": "Am Satz",
+      "target": "Minulla ei ole autoa, mutta minulla on kaksi pyörää.",
+      "source": "Ich habe kein Auto, aber ich habe zwei Fahrräder.",
+      "tokens": [
+        { "text": "autoa", "form": "auto + a", "note": "Verneinung: Was man nicht hat, steht im Partitiv." },
+        { "text": "pyörää", "form": "pyörä + ä", "note": "Nach kaksi: Nach Zahlen ab zwei steht der Partitiv in der Einzahl." }
+      ]
+    },
+    {
+      "type": "contrast",
+      "title": "Im Vergleich",
+      "a": { "label": "Teil, noch dabei" },
+      "b": { "label": "Ganzes, fertig" },
+      "pairs": [
+        { "a": { "target": "Juon kahvia.", "source": "Ich trinke Kaffee." }, "b": { "target": "Juon kahvin.", "source": "Ich trinke den Kaffee aus." } },
+        { "a": { "target": "Luen kirjaa.", "source": "Ich lese gerade in einem Buch." }, "b": { "target": "Luen kirjan.", "source": "Ich lese das Buch durch." } },
+        { "a": { "target": "Ostan leipää.", "source": "Ich kaufe Brot." }, "b": { "target": "Ostan leivän.", "source": "Ich kaufe ein Brot." } }
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Gut zu wissen",
+      "text": "Nach Zahlen bleibt das Wort in der Einzahl: *kaksi koiraa* heißt wörtlich „zwei Hund“. Nach *yksi* (eins) steht kein Partitiv: *yksi koira*. Einige Verben verlangen immer den Partitiv, zum Beispiel *rakastaa* (lieben), *odottaa* (warten auf) und *auttaa* (helfen)."
+    },
+    {
+      "type": "quiz",
+      "title": "Kurz geprüft",
+      "items": [
+        { "prompt": "Juon ___.", "source": "Ich trinke Wasser.", "options": ["vesi", "vettä"], "answer": 1 },
+        { "prompt": "Kolme ___.", "source": "Drei Häuser.", "options": ["talo", "taloa"], "answer": 1 },
+        { "prompt": "Minulla ei ole ___.", "source": "Ich habe keine Zeit.", "options": ["aika", "aikaa"], "answer": 1 },
+        { "prompt": "Yksi ___.", "source": "Ein Hund.", "options": ["koira", "koiraa"], "answer": 0 },
+        { "prompt": "Odotan ___.", "source": "Ich warte auf den Bus.", "options": ["bussi", "bussia"], "answer": 1 }
+      ]
+    },
+    { "type": "practice", "label": "Sätze dazu üben", "activity": "grammar", "topic": "partitive" }
+  ]
+}

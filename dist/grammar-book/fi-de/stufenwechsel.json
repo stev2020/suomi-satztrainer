@@ -1,0 +1,87 @@
+{
+  "id": "stufenwechsel",
+  "blocks": [
+    {
+      "type": "rule",
+      "text": "Die Konsonanten k, p und t in der Wortmitte gibt es in zwei Stufen. Stark heißt: doppelt oder hart, wie kk in *kukka* oder t in *katu*. Schwach heißt: einfach oder weich, wie k in *kukan* oder d in *kadun*. Die Grundform hat meist die starke Stufe. Kommt eine Endung dazu, die die letzte Silbe schließt, wechselt das Wort in die schwache."
+    },
+    {
+      "type": "text",
+      "title": "Warum",
+      "text": "Eine Silbe ist offen, wenn sie auf einen Vokal endet, und geschlossen, wenn sie auf einen Konsonanten endet. *kaup-pa* endet offen. In *kau-pan* schließt das n die letzte Silbe. Sie wird dadurch schwerer, und zum Ausgleich wird der Konsonant davor leichter: aus pp wird p."
+    },
+    {
+      "type": "groups",
+      "title": "Die drei Muster",
+      "items": [
+        { "label": "Doppelt wird einfach", "letters": ["kk → k", "pp → p", "tt → t"], "note": "kukka → kukan" },
+        { "label": "Einfach wird weich", "letters": ["k → –", "p → v", "t → d"], "note": "leipä → leivän" },
+        { "label": "Nach n, m, l, r gleicht es sich an", "letters": ["nk → ng", "mp → mm", "nt → nn", "lt → ll", "rt → rr"], "note": "ranta → rannan" }
+      ]
+    },
+    {
+      "type": "uses",
+      "title": "Wann schwach, wann stark",
+      "items": [
+        { "label": "Schwach: Die Endung schließt die Silbe (-n, -ssa, -sta, -lla, -lta, -lle, -t)", "target": "kaupassa", "source": "im Laden" },
+        { "label": "Stark: Grundform", "target": "kauppa", "source": "der Laden" },
+        { "label": "Stark: Partitiv", "target": "kauppaa", "source": "Laden (Teil, Menge)" },
+        { "label": "Stark: wohin", "target": "kauppaan", "source": "in den Laden" }
+      ]
+    },
+    {
+      "type": "builder",
+      "title": "Probier es aus",
+      "note": "Jeweils mit der Endung -n (Genitiv: des, der).",
+      "words": [
+        { "word": "kukka", "result": "kukan", "wordMark": "kk", "resultMark": "k", "source": "die Blume", "resultSource": "der Blume", "why": "kk wird k" },
+        { "word": "kauppa", "result": "kaupan", "wordMark": "pp", "resultMark": "p", "source": "der Laden", "resultSource": "des Ladens", "why": "pp wird p" },
+        { "word": "tyttö", "result": "tytön", "wordMark": "tt", "resultMark": "t", "source": "das Mädchen", "resultSource": "des Mädchens", "why": "tt wird t" },
+        { "word": "leipä", "result": "leivän", "wordMark": "p", "resultMark": "v", "source": "das Brot", "resultSource": "des Brotes", "why": "p wird v" },
+        { "word": "katu", "result": "kadun", "wordMark": "t", "resultMark": "d", "source": "die Straße", "resultSource": "der Straße", "why": "t wird d" },
+        { "word": "jalka", "result": "jalan", "wordMark": "k", "resultMark": "", "source": "der Fuß", "resultSource": "des Fußes", "why": "k fällt weg" },
+        { "word": "kaupunki", "result": "kaupungin", "wordMark": "nk", "resultMark": "ng", "source": "die Stadt", "resultSource": "der Stadt", "why": "nk wird ng" },
+        { "word": "ranta", "result": "rannan", "wordMark": "nt", "resultMark": "nn", "source": "der Strand", "resultSource": "des Strandes", "why": "nt wird nn" }
+      ]
+    },
+    {
+      "type": "sentence",
+      "title": "Am Satz",
+      "target": "Tyttö ostaa kukan kaupasta.",
+      "source": "Das Mädchen kauft eine Blume im Laden.",
+      "tokens": [
+        { "text": "Tyttö", "form": "tyttö", "note": "Grundform, die Silbe ist offen: tt bleibt stark." },
+        { "text": "kukan", "form": "kukka + n", "note": "Das n schließt die Silbe: kk wird k." },
+        { "text": "kaupasta", "form": "kauppa + sta", "note": "Das s von -sta schließt die Silbe: pp wird p." }
+      ]
+    },
+    {
+      "type": "contrast",
+      "title": "Stark und schwach",
+      "a": { "label": "Stark" },
+      "b": { "label": "Schwach" },
+      "pairs": [
+        { "a": { "target": "kauppa", "source": "der Laden" }, "b": { "target": "kaupassa", "source": "im Laden" } },
+        { "a": { "target": "katu", "source": "die Straße" }, "b": { "target": "kadulla", "source": "auf der Straße" } },
+        { "a": { "target": "Helsinki", "source": "Helsinki" }, "b": { "target": "Helsingissä", "source": "in Helsinki" } }
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Gut zu wissen",
+      "text": "Verben wechseln genauso: *nukkua* (schlafen) wird zu *nukun* (ich schlafe). Auch Namen machen mit: *Pekka*, *Pekan*. Bei einigen Worttypen läuft der Wechsel andersherum, etwa *osoite* (Adresse) und *osoitteen*. Das kommt in einem eigenen Thema."
+    },
+    {
+      "type": "quiz",
+      "title": "Kurz geprüft",
+      "items": [
+        { "prompt": "kauppa + ssa", "source": "im Laden", "options": ["kauppassa", "kaupassa"], "answer": 1 },
+        { "prompt": "katu + lla", "source": "auf der Straße", "options": ["katulla", "kadulla"], "answer": 1 },
+        { "prompt": "kukka + a", "source": "Partitiv: bleibt stark", "options": ["kukkaa", "kukaa"], "answer": 0 },
+        { "prompt": "Turku + ssa", "source": "in Turku", "options": ["Turkussa", "Turussa"], "answer": 1 },
+        { "prompt": "pankki + n", "source": "der Bank", "options": ["pankkin", "pankin"], "answer": 1 }
+      ]
+    },
+    { "type": "practice", "label": "Endungen dazu üben", "activity": "endings" }
+  ]
+}

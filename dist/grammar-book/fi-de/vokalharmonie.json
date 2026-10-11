@@ -1,0 +1,83 @@
+{
+  "id": "vokalharmonie",
+  "blocks": [
+    {
+      "type": "rule",
+      "text": "Finnisch hängt Endungen an, wo Deutsch kleine Wörter davorsetzt: *talossa* heißt „im Haus“. Fast jede Endung gibt es in zwei Fassungen, eine mit a, o, u und eine mit ä, ö, y. Welche passt, entscheidet das Wort selbst."
+    },
+    {
+      "type": "text",
+      "title": "Warum",
+      "text": "Die Endung soll so klingen wie das Wort. a, o und u entstehen hinten im Mund, ä, ö und y vorne. Bleibt der Mund an einer Stelle, lässt sich das Wort leichter sprechen. Deshalb mischt ein finnisches Wort die beiden Gruppen nicht."
+    },
+    {
+      "type": "groups",
+      "title": "Die drei Gruppen",
+      "items": [
+        { "label": "Hinten", "letters": ["a", "o", "u"], "note": "Endung mit a", "tone": "a" },
+        { "label": "Vorne", "letters": ["ä", "ö", "y"], "note": "Endung mit ä", "tone": "b" },
+        { "label": "Neutral", "letters": ["e", "i"], "note": "passen zu beiden", "tone": "muted" }
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Die Regel",
+      "text": "Hat das Wort ein a, o oder u, nimmt es die Endung mit a. Sonst nimmt es die Endung mit ä. Wörter, die nur e und i haben, gehören also zu ä."
+    },
+    {
+      "type": "builder",
+      "title": "Probier es aus",
+      "marks": [
+        { "chars": "aou", "tone": "a" },
+        { "chars": "äöy", "tone": "b" },
+        { "chars": "ei", "tone": "muted" }
+      ],
+      "words": [
+        { "word": "talo", "result": "talossa", "resultMark": "ssa", "resultTone": "a", "source": "im Haus", "why": "Das Wort hat a und o." },
+        { "word": "koulu", "result": "koulussa", "resultMark": "ssa", "resultTone": "a", "source": "in der Schule", "why": "Das Wort hat o und u." },
+        { "word": "Pariisi", "result": "Pariisissa", "resultMark": "ssa", "resultTone": "a", "source": "in Paris", "why": "Ein einziges a reicht, i ist neutral." },
+        { "word": "metsä", "result": "metsässä", "resultMark": "ssä", "resultTone": "b", "source": "im Wald", "why": "Kein a, o oder u im Wort." },
+        { "word": "kylä", "result": "kylässä", "resultMark": "ssä", "resultTone": "b", "source": "im Dorf", "why": "Kein a, o oder u im Wort." },
+        { "word": "Berliini", "result": "Berliinissä", "resultMark": "ssä", "resultTone": "b", "source": "in Berlin", "why": "Nur e und i: also die Endung mit ä." },
+        { "word": "kotikylä", "result": "kotikylässä", "resultMark": "ssä", "resultTone": "b", "source": "im Heimatdorf", "why": "Zusammengesetzt aus koti und kylä: Der letzte Teil entscheidet." }
+      ]
+    },
+    {
+      "type": "sentence",
+      "title": "Am Satz",
+      "target": "Olen koulussa, ja äiti on metsässä.",
+      "source": "Ich bin in der Schule, und Mama ist im Wald.",
+      "tokens": [
+        { "text": "koulussa", "form": "koulu + ssa", "note": "o und u sind hintere Vokale, also -ssa." },
+        { "text": "metsässä", "form": "metsä + ssä", "note": "Kein a, o oder u, also -ssä." }
+      ]
+    },
+    {
+      "type": "contrast",
+      "title": "Dieselbe Endung, zwei Fassungen",
+      "a": { "label": "Hinten: a, o, u" },
+      "b": { "label": "Vorne: ä, ö, y" },
+      "pairs": [
+        { "a": { "target": "talossa", "source": "im Haus" }, "b": { "target": "metsässä", "source": "im Wald" } },
+        { "a": { "target": "junalla", "source": "mit dem Zug" }, "b": { "target": "pyörällä", "source": "mit dem Fahrrad" } },
+        { "a": { "target": "Asutko?", "source": "Wohnst du?" }, "b": { "target": "Syötkö?", "source": "Isst du?" } }
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Gut zu wissen",
+      "text": "Bei zusammengesetzten Wörtern entscheidet der letzte Teil: *kesäloma* (Sommerurlaub) endet auf *loma*, also *kesälomalla*. Ein paar Lehnwörter und alte Wörter halten sich nicht an die Regel. Die lernst du nebenbei."
+    },
+    {
+      "type": "quiz",
+      "title": "Kurz geprüft",
+      "items": [
+        { "prompt": "auto", "source": "im Auto", "options": ["autossa", "autossä"], "answer": 0 },
+        { "prompt": "Töölö", "source": "in Töölö", "options": ["Töölössa", "Töölössä"], "answer": 1 },
+        { "prompt": "hissi", "source": "im Aufzug", "options": ["hississa", "hississä"], "answer": 1 },
+        { "prompt": "kesäloma", "source": "im Sommerurlaub", "options": ["kesälomalla", "kesälomallä"], "answer": 0 }
+      ]
+    },
+    { "type": "practice", "label": "Endungen dazu üben", "activity": "endings" }
+  ]
+}
