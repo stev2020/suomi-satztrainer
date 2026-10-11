@@ -1,0 +1,88 @@
+{
+  "id": "ortsfaelle",
+  "blocks": [
+    {
+      "type": "rule",
+      "text": "Wo Deutsch „in“, „aus“, „auf“, „von“ und „zu“ sagt, hängt Finnisch eine Endung an. Es gibt sechs davon, in zwei Reihen: eine für innen und eine für außen. Jede Reihe beantwortet drei Fragen: wo, woher, wohin."
+    },
+    {
+      "type": "text",
+      "title": "Das System",
+      "text": "Die Reihe für innen erkennst du am s, die für außen am l. Wo endet auf -a oder -ä, woher auf -ta oder -tä. Wer das einmal gesehen hat, muss nur noch die beiden Wohin-Formen lernen."
+    },
+    {
+      "type": "table",
+      "title": "Die sechs Endungen",
+      "columns": ["Wo?", "Woher?", "Wohin?"],
+      "rows": [
+        { "label": "Innen", "cells": ["-ssa / -ssä", "-sta / -stä", "Vokal + n"], "sources": ["in", "aus", "in … hinein"] },
+        { "label": "Außen", "cells": ["-lla / -llä", "-lta / -ltä", "-lle"], "sources": ["auf, an, bei", "von", "auf, zu"] }
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Wohin, innen",
+      "text": "Hier wird der letzte Vokal verlängert, dann kommt ein n: *talo* wird *taloon*, *koulu* wird *kouluun*, *metsä* wird *metsään*. Diese Form behält die starke Stufe: *kauppaan*, *Helsinkiin*."
+    },
+    {
+      "type": "grid",
+      "title": "Probier es aus",
+      "columns": ["Wo?", "Woher?", "Wohin?"],
+      "rowLabels": ["Innen", "Außen"],
+      "words": [
+        { "word": "talo", "source": "Haus", "rows": [["talossa", "talosta", "taloon"], ["talolla", "talolta", "talolle"]] },
+        { "word": "kauppa", "source": "Laden", "rows": [["kaupassa", "kaupasta", "kauppaan"], ["kaupalla", "kaupalta", "kaupalle"]] },
+        { "word": "pöytä", "source": "Tisch", "rows": [["pöydässä", "pöydästä", "pöytään"], ["pöydällä", "pöydältä", "pöydälle"]] }
+      ]
+    },
+    {
+      "type": "uses",
+      "title": "Die äußere Reihe kann mehr",
+      "items": [
+        { "label": "Haben", "target": "Minulla on koira.", "source": "Ich habe einen Hund." },
+        { "label": "Verkehrsmittel", "target": "Menen bussilla.", "source": "Ich fahre mit dem Bus." },
+        { "label": "Jemandem etwas geben", "target": "Annan kirjan sinulle.", "source": "Ich gebe dir das Buch." },
+        { "label": "Offene Orte", "target": "Olen torilla.", "source": "Ich bin auf dem Markt." }
+      ]
+    },
+    {
+      "type": "sentence",
+      "title": "Am Satz",
+      "target": "Menen kaupasta kotiin ja istun sohvalle.",
+      "source": "Ich gehe vom Laden nach Hause und setze mich aufs Sofa.",
+      "tokens": [
+        { "text": "kaupasta", "form": "kauppa + sta", "note": "Woher, innen: aus dem Laden. Die Stufe ist schwach, pp wird p." },
+        { "text": "kotiin", "form": "koti + in", "note": "Wohin, innen: Vokal verlängern und n anhängen." },
+        { "text": "sohvalle", "form": "sohva + lle", "note": "Wohin, außen: auf das Sofa." }
+      ]
+    },
+    {
+      "type": "contrast",
+      "title": "Wo oder wohin",
+      "a": { "label": "Wo?" },
+      "b": { "label": "Wohin?" },
+      "pairs": [
+        { "a": { "target": "Olen kaupassa.", "source": "Ich bin im Laden." }, "b": { "target": "Menen kauppaan.", "source": "Ich gehe in den Laden." } },
+        { "a": { "target": "Kirja on pöydällä.", "source": "Das Buch liegt auf dem Tisch." }, "b": { "target": "Panen kirjan pöydälle.", "source": "Ich lege das Buch auf den Tisch." } },
+        { "a": { "target": "Asun Helsingissä.", "source": "Ich wohne in Helsinki." }, "b": { "target": "Muutan Helsinkiin.", "source": "Ich ziehe nach Helsinki." } }
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Gut zu wissen",
+      "text": "Manche Orte nehmen die äußere Reihe, obwohl man auf Deutsch „in“ sagt: *Tampereella* (in Tampere), *asemalla* (am Bahnhof). Und das Wohin der inneren Reihe hat noch zwei weitere Formen, etwa *maahan* (ins Land) und *huoneeseen* (ins Zimmer). Beides lernst du am besten mit den Wörtern selbst."
+    },
+    {
+      "type": "quiz",
+      "title": "Kurz geprüft",
+      "items": [
+        { "prompt": "Asun ___.", "source": "Ich wohne in Turku.", "options": ["Turussa", "Turkuun"], "answer": 0 },
+        { "prompt": "Menen ___.", "source": "Ich gehe in die Schule.", "options": ["koulussa", "kouluun"], "answer": 1 },
+        { "prompt": "Kirja on ___.", "source": "Das Buch liegt auf dem Tisch.", "options": ["pöydällä", "pöydässä"], "answer": 0 },
+        { "prompt": "Tulen ___.", "source": "Ich komme aus dem Laden.", "options": ["kaupasta", "kaupalta"], "answer": 0 },
+        { "prompt": "Annan kukan ___.", "source": "Ich gebe der Mutter eine Blume.", "options": ["äidille", "äidissä"], "answer": 0 }
+      ]
+    },
+    { "type": "practice", "label": "Sätze dazu üben", "activity": "grammar", "topic": "location" }
+  ]
+}

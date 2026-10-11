@@ -1,0 +1,23 @@
+{
+  "course": "fi",
+  "ui": "de",
+  "title": "Grammatik",
+  "lead": "Die Regeln hinter den Sätzen.",
+  "note": "Kurz erklärt, mit Beispielen zum Ausprobieren. Lies ein Kapitel, wenn du magst, und übe danach passende Sätze.",
+  "groups": [
+    { "id": "laute", "title": "Laute" },
+    { "id": "faelle", "title": "Fälle" }
+  ],
+  "chapters": [
+    { "id": "vokalharmonie", "number": "1", "group": "laute", "title": "Die Vokalharmonie", "summary": "Warum eine Endung mal mit a und mal mit ä kommt.", "minutes": 4 },
+    { "id": "partitiv", "number": "2", "group": "faelle", "title": "Der Partitiv", "summary": "Für alles, was nicht als Ganzes gemeint ist.", "minutes": 5 },
+    { "id": "stufenwechsel", "number": "3", "group": "laute", "title": "Der Stufenwechsel", "summary": "Warum aus kauppa plötzlich kaupassa wird.", "minutes": 5 },
+    { "id": "ortsfaelle", "number": "4", "group": "faelle", "title": "Die Ortsfälle", "summary": "Wo, woher, wohin: sechs Endungen statt vieler Präpositionen.", "minutes": 5 }
+  ],
+  "stations": [
+    { "before": "hello", "chapter": "vokalharmonie" },
+    { "before": "cafe", "chapter": "partitiv" },
+    { "before": "family", "chapter": "stufenwechsel" },
+    { "before": "travel", "chapter": "ortsfaelle" }
+  ]
+}

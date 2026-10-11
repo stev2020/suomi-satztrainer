@@ -42,6 +42,7 @@ jobs:
           node test-word-practice.mjs
           node test-suchsel.mjs
           node test-support.mjs
+          node test-grammar-book.mjs
           npm install --no-save --package-lock=false playwright@1.55.0
           npx playwright install --with-deps chromium
           node test-word-practice-browser.mjs
@@ -53,6 +54,7 @@ jobs:
           node test-classrooms.mjs
           node test-daily-sentence-browser.mjs
           node test-support-browser.mjs
+          node test-grammar-book-browser.mjs
 
   # A fresh checkout: only files from the repository are published.
   deploy:

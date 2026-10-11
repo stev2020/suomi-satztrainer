@@ -1,4 +1,4 @@
-import {tc} from './i18n.mjs?v=26';
+import {tc,uiLanguage} from './i18n.mjs?v=26';
 import {canSearch,createSearch} from './wordsearch.mjs';
 import {mountSearch,searchInstructions} from './wordsearch-ui.mjs?v=64';
 import {createWordExercise,wordAnswerMatches,finnishSentenceMatches,sentenceWords} from './word-practice.mjs?v=61';
@@ -16,7 +16,8 @@ import {planVerbs,planEndings,interleave,alternate,verbCard,endingCard} from './
 import {validateEndingsProgress,mergeEndingsProgress,markEndingAnswered,missedEndings} from './endings-progress.mjs?v=1';
 import {createGuestCard,shortGloss,flipWordIndex} from './guest-card.mjs?v=13';
 import {renderGreeting,renderToday,createDailySentence,animateProgress,GOAL_CHOICES,DAILY_GOAL} from './home-extras.mjs?v=12';
-import {createHomeTabs} from './home-tabs.mjs?v=2';
+import {createHomeTabs} from './home-tabs.mjs?v=3';
+import {hasBook,loadBook,loadChapter,stationsByTopic,readChapters,markRead,renderIndex,renderChapter,HASH as GRAMMAR_HASH} from './grammar-book.mjs?v=1';
 import {buildDifficultDeck} from './difficult-words.mjs?v=2';
 import {buildEndingItems,indexLexicon,renderEndings,hasEndingChoices} from './endings-practice.mjs?v=2';
 import {translationFeedbackMarkup} from './translation-feedback.mjs?v=1';
@@ -208,8 +209,28 @@ function renderLearningPath(){
  $('path-next-level').hidden=!state.complete||!levels.some(n=>n>level);
  $('path-overview').innerHTML=state.topics.map((topic,index)=>{
   const current=active?topic.id===pathSession.topic.id:topic.id===state.topic?.id;
-  return `<li class="path-stop ${current?'current':topic.complete?'complete':'upcoming'}" ${current?'aria-current="step"':''}><span class="path-number" aria-hidden="true">${topic.complete&&!current?'✓':index+1}</span><div><h4>${escape(topic.title)}</h4><p>${!topic.available?'Noch keine passenden Sätze in diesem Level':`${current?'Du bist hier':topic.complete?'Kennengelernt':'Danach'} · ${topic.seen}/${topic.total}`}</p></div></li>`;
+  return grammarStation(topic.id)+`<li class="path-stop ${current?'current':topic.complete?'complete':'upcoming'}" ${current?'aria-current="step"':''}><span class="path-number" aria-hidden="true">${topic.complete&&!current?'✓':index+1}</span><div><h4>${escape(topic.title)}</h4><p>${!topic.available?'Noch keine passenden Sätze in diesem Level':`${current?'Du bist hier':topic.complete?'Kennengelernt':'Danach'} · ${topic.seen}/${topic.total}`}</p></div></li>`;
  }).join('');
+ // Steht vor dem aktuellen Thema ein ungelesenes Kapitel, weist eine Zeile unter dem Startknopf darauf hin.
+ const hint=$('path-grammar-hint');
+ if(hint){
+  const chapter=topic&&grammarBook?stationsByTopic(grammarBook).get(topic.id):null,show=!!chapter&&!readChapters(GRAMMAR_COURSE).has(chapter.id);
+  hint.hidden=!show;
+  if(show&&hint.dataset.chapter!==chapter.id){
+   hint.dataset.chapter=chapter.id;
+   const link=document.createElement('a');link.href=`#${GRAMMAR_HASH}/${chapter.id}`;link.dataset.grammarChapter=chapter.id;link.textContent=`${chapter.title} →`;
+   hint.replaceChildren('Passt gut davor: ',link);
+  }
+ }
+}
+// Stationen im Lernpfad: ein Kapitel des Grammatik-Buchs als Lese-Halt vor seinem Thema (grammar-book.mjs).
+// Sie zählen nicht als Etappe und halten niemanden auf – man kann sie antippen oder daran vorbeigehen.
+const GRAMMAR_COURSE='fi';
+var grammarBook=null;
+function grammarStation(topicId){
+ const chapter=grammarBook?stationsByTopic(grammarBook).get(topicId):null;if(!chapter)return '';
+ const read=readChapters(GRAMMAR_COURSE).has(chapter.id);
+ return `<li class="path-stop path-grammar${read?' is-read':''}"><a href="#${GRAMMAR_HASH}/${escape(chapter.id)}" data-grammar-chapter="${escape(chapter.id)}"><span class="path-number" aria-hidden="true">${read?'✓':'<svg viewBox="0 0 24 24"><path d="M12 7C10 5.5 7 5 3.5 5.5v12.5C7 17.5 10 18 12 19.5c2-1.5 5-2 8.5-1.5V5.5C17 5 14 5.5 12 7Z"/><path d="M12 7v12.5"/></svg>'}</span><div><h4>${escape(chapter.title)}</h4><p>${read?'Grammatik · gelesen':`Grammatik · ${chapter.minutes?chapter.minutes+' Minuten lesen':'lesen'}`}</p></div></a></li>`;
 }
 function dailyPlanStats(){
  const {verbs,endings,sentencesDue}=extrasPlan();
@@ -1021,7 +1042,9 @@ function showView(name,openSettings=false){
  if(name==='progress'&&ready)renderStats();
  if(name==='home'&&favoritesRound){activity=favoritesRound.activity;mode=favoritesRound.mode;favoritesRound=null;syncControls();renderStats();}
  if(name==='home'&&dailySession?.active){const previous=dailySession.previous;activity=previous.activity;direction=previous.direction;difficulty=previous.difficulty;mode=previous.mode;syncControls();renderStats();}
- for(const view of ['home','practice','progress','classrooms','games']){const node=$(`${view}-view`);if(node)node.hidden=view!==name;}
+ for(const view of ['home','practice','progress','classrooms','games','grammar']){const node=$(`${view}-view`);if(node)node.hidden=view!==name;}
+ // Die Adresse #grammatik/… gehört zum Buch: Wer es verlässt, nimmt sie nicht mit (sonst ginge beim Neuladen wieder das Kapitel auf).
+ if(name!=='grammar'&&String(location.hash||'').startsWith('#'+GRAMMAR_HASH)){try{history.replaceState(null,'',location.pathname+location.search);}catch{}}
  document.querySelectorAll('.header-nav [data-view]').forEach(b=>{const selected=b.dataset.view===name;b.classList.toggle('selected',selected);if(selected)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
  if(name!=='practice')stopAudio();
  if(name==='practice'){applyDailyCard();$('practice-settings').open=openSettings;preloadQueueAudio();}
@@ -1145,11 +1168,69 @@ function revealGuestPath(animate){
 function pulseStart(){const b=$('start-new-sentences');if(!b)return;b.classList.remove('cta-pulse');void b.offsetWidth;b.classList.add('cta-pulse');setTimeout(()=>b.classList.remove('cta-pulse'),2600);}
 function pointToGuestPath(){const section=document.querySelector('.home-new');if(!section||section.hidden)return;section.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'});pulseStart();setTimeout(()=>$('start-new-sentences')?.focus({preventScroll:true}),500);}
 // Angemeldete: Startseite in drei Reitern (Willkommen · Üben · Neue Sätze), siehe home-tabs.mjs.
+// Grammatik-Buch (grammar-book.mjs): Inhaltsverzeichnis im Reiter „Grammatik“, Kapitel in einer eigenen Ansicht,
+// Stationen im Lernpfad. Gibt es für die Oberflächensprache kein Buch, bleibt alles davon weg.
+const grammarAvailable_=hasBook(GRAMMAR_COURSE,uiLanguage);
+if(grammarAvailable_&&typeof document!=='undefined'){const tab=document.querySelector?.('[data-home-tab-button="grammar"]');if(tab)tab.hidden=false;}
+let grammarBookRequest=null,grammarShown='';
+const loadGrammarBook=()=>grammarBookRequest??=(grammarAvailable_?loadBook(GRAMMAR_COURSE,uiLanguage):Promise.resolve(null)).then(book=>{grammarBook=book;if(book&&ready)renderLearningPath();return book;}).catch(()=>{grammarBookRequest=null;return null;});
+const grammarStatus=(box,text)=>{const p=document.createElement('p');p.className='gb-status';p.textContent=text;box.replaceChildren(p);};
+// Inhaltsverzeichnis: für Angemeldete im Reiter, für Gäste in der Buch-Ansicht.
+async function renderGrammarIndex(box,headingLevel){
+ if(!box)return;
+ if(!box.firstChild)grammarStatus(box,'Kapitel werden geladen …');
+ const book=await loadGrammarBook();
+ if(!book){grammarStatus(box,'Die Kapitel konnten nicht geladen werden. Prüfe deine Verbindung.');return;}
+ renderIndex(box,{book,read:readChapters(GRAMMAR_COURSE),onOpen:openGrammarChapter,headingLevel});
+}
+function grammarHome(){
+ if(accountActive()&&homeTabs?.active){showView('home');homeTabs.select('grammar');return;}
+ goGrammar('');
+}
+const goGrammar=id=>{const hash='#'+GRAMMAR_HASH+(id?'/'+id:'');if(location.hash===hash)grammarRoute();else location.hash=hash;};
+const openGrammarChapter=id=>goGrammar(id);
+function startGrammarPractice(block){
+ if(!ready)return;
+ const next=block.activity==='grammar'&&!GRAMMAR_TOPICS.some(t=>t.id===block.topic)?'translate':block.activity;
+ if(!ACTIVITY_LABELS[next])return;
+ if(activityLocked(next)){openRegister();return;}
+ if(next==='writing'&&!syncWritingAvailability())return;
+ activity=next;if(next==='grammar')grammarTopic=block.topic;mode='new';start();showView('practice');
+}
+// Die Adresse entscheidet, was das Buch zeigt: #grammatik = Inhalt, #grammatik/<kapitel> = Kapitel.
+async function grammarRoute(){
+ const match=new RegExp('^#'+GRAMMAR_HASH+'(?:/([\\w-]+))?$').exec(location.hash);
+ if(!match){if(!$('grammar-view').hidden)showView('home');return false;}
+ if(!grammarAvailable_){showView('home');return false;}
+ const id=match[1]||'',page=$('grammar-page'),back=$('grammar-back');
+ if(!id&&accountActive()&&homeTabs?.active){showView('home');homeTabs.select('grammar');return true;}
+ const wanted=id||'#index';grammarShown=wanted;
+ page.classList.toggle('is-index',!id);
+ back.textContent=id?'← Inhalt':'← Start';
+ showView('grammar');
+ if(!id){await renderGrammarIndex(page,2);return true;}
+ grammarStatus(page,'Kapitel wird geladen …');
+ const book=await loadGrammarBook(),chapter=book?await loadChapter(book,id).catch(()=>null):null;
+ if(grammarShown!==wanted)return true;
+ if(!chapter){grammarStatus(page,book?'Dieses Kapitel gibt es nicht.':'Das Kapitel konnte nicht geladen werden. Prüfe deine Verbindung.');return true;}
+ renderChapter(page,{book,chapter,onOpen:openGrammarChapter,onIndex:grammarHome,onPractice:startGrammarPractice,
+  practiceLabel:block=>activityLocked(block.activity)?`${block.label} · mit Konto`:block.label,
+  onRead:read=>{if(markRead(GRAMMAR_COURSE,read)&&ready)renderLearningPath();}});
+ window.scrollTo({top:0});
+ return true;
+}
+if(typeof document!=='undefined'&&$('grammar-view')){
+ $('grammar-back').onclick=()=>{if(location.hash==='#'+GRAMMAR_HASH)showView('home');else grammarHome();};
+ window.addEventListener('hashchange',()=>{grammarRoute();});
+ // Stationen im Lernpfad und der Hinweis unter dem Startknopf sind Links auf #grammatik/<kapitel>.
+}
 var homeTabs=typeof document!=='undefined'&&$('home-tabs')&&typeof $('home-tabs').querySelectorAll==='function'?createHomeTabs({home:$('home-view'),nav:$('home-tabs'),isAccount:accountActive,
+ onChange:tab=>{if(tab==='grammar')renderGrammarIndex($('grammar-index'),2);},
  startReview:()=>{if(!ready||$('start-daily-session').disabled)return false;startDailySession();return true;},
  startNew:()=>{if(!ready||$('start-new-sentences').disabled)return false;startNewSentences();return true;},}):null;
 function syncGuestHome(){document.documentElement.classList?.toggle('is-guest',!accountActive());homeTabs?.sync();if(typeof renderHomeExtras==='function')renderHomeExtras();syncActivityLocks();if(!guestCard)return;const guest=!accountActive()&&guestCard.available;syncPathCollapse(guest);syncGuestPathVisibility(guest);$('guest-card').hidden=!guest;if(!guest)guestCard.stop();else if(ready)guestCard.start();if(ready)renderDailyPlan();else document.querySelector('.home-daily').hidden=guest;}
 syncGuestHome();
+if(typeof document!=='undefined'&&$('grammar-view')&&String(location.hash||'').startsWith('#'+GRAMMAR_HASH))grammarRoute();
 // Solange das Intro läuft (index.html: intro-pending, guest-intro.mjs: intro-running), wird nichts Schweres
 // nebenher geladen oder berechnet – auf dem Handy ruckelt sonst der Vogelschwarm.
 function introActive(){const c=document.documentElement.classList;return c.contains('intro-pending')||c.contains('intro-running');}
@@ -1174,6 +1255,6 @@ try{const response=await sentencesRequest;if(!response.ok)throw new Error('load'
  const exclusionsInTime=await Promise.race([exclusionsRequest.then(()=>true),new Promise(r=>setTimeout(()=>r(false),qualityCached?0:1500))]);
  rawSentences=payload.sentences;rawArchived=Array.isArray(payload.archived_sentences)?payload.archived_sentences:[];
  if(!exclusionsInTime)exclusionsRequest.then(changed=>{if(!changed||!ready)return;data=qualityFilteredCards(rawSentences);archived=qualityFilteredCards(rawArchived);dailyEndings=null;renderStats();});
- loadedSentenceIds=new Set([...(payload.sentences||[]),...(Array.isArray(payload.archived_sentences)?payload.archived_sentences:[])].filter(s=>s?.translations?.length).map(s=>s.id));data=qualityFilteredCards(payload.sentences);if(Array.isArray(payload.levels))levels=payload.levels.map(l=>l.id).filter(Number.isInteger);if(!levels.includes(level)||levelLocked(level))level=levels[0]||1;archived=qualityFilteredCards(Array.isArray(payload.archived_sentences)?payload.archived_sentences:[]);if(!Array.isArray(data)||!data.length)throw new Error('empty');ready=true;start();homeLoaded();syncGuestHome();if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});}catch{$('card').className='card empty';$('card').innerHTML='<h2>Die Sätze konnten nicht geladen werden.</h2><p>Prüfe deine Verbindung und lade die Seite erneut.</p>';$('actions').innerHTML='<button class="primary" id="retry">Erneut versuchen</button>';$('retry').onclick=()=>location.reload();$('total').textContent='Sätze nicht verfügbar';homeLoaded();}
+ loadedSentenceIds=new Set([...(payload.sentences||[]),...(Array.isArray(payload.archived_sentences)?payload.archived_sentences:[])].filter(s=>s?.translations?.length).map(s=>s.id));data=qualityFilteredCards(payload.sentences);if(Array.isArray(payload.levels))levels=payload.levels.map(l=>l.id).filter(Number.isInteger);if(!levels.includes(level)||levelLocked(level))level=levels[0]||1;archived=qualityFilteredCards(Array.isArray(payload.archived_sentences)?payload.archived_sentences:[]);if(!Array.isArray(data)||!data.length)throw new Error('empty');ready=true;start();homeLoaded();syncGuestHome();if(grammarAvailable_)afterIntro().then(loadGrammarBook);if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});}catch{$('card').className='card empty';$('card').innerHTML='<h2>Die Sätze konnten nicht geladen werden.</h2><p>Prüfe deine Verbindung und lade die Seite erneut.</p>';$('actions').innerHTML='<button class="primary" id="retry">Erneut versuchen</button>';$('retry').onclick=()=>location.reload();$('total').textContent='Sätze nicht verfügbar';homeLoaded();}
 mountWordLookup([$('practice-view')]);
 window.suomiDifficultDeck=async()=>buildDifficultDeck({lexicon:await loadLexicon(),reviews:memory.reviews,events:memory.performanceEvents,missed:[...endingsState.missed]});
