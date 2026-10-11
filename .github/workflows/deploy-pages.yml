@@ -55,6 +55,7 @@ jobs:
           node test-daily-sentence-browser.mjs
           node test-support-browser.mjs
           node test-grammar-book-browser.mjs
+          node test-review-more-browser.mjs
 
   # A fresh checkout: only files from the repository are published.
   deploy:

@@ -1630,3 +1630,22 @@ canvas.intro-flock{position:absolute;top:0;left:0;z-index:40;pointer-events:none
  header .header-nav>button,header .header-nav .account-menu>#account-button:not(.is-avatar){padding:6px 7px;font-size:12px}
 }
 @media(max-width:700px){header{border-bottom:1px solid color-mix(in srgb,var(--ink) 14%,transparent)}}
+
+/* Abschluss der Wiederholungsrunde: „Noch Lust?“ – neue Sätze aus dem Lernpfad anbieten */
+#card .daily-more{display:flex;flex-direction:column;align-items:center;text-align:center;width:100%;margin-top:6px}
+#card .daily-more>*{margin-left:auto;margin-right:auto;text-align:center}
+.daily-more-line{display:block;width:56px;height:2px;background:var(--orange);margin:22px 0 22px}
+#card .daily-more-eyebrow{margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-soft)}
+#card .daily-more-title{max-width:none;margin:0 0 4px;font:600 20px/1.3 var(--heading);color:var(--ink-soft)}
+#card .daily-more-time{margin:0 0 22px;font-size:15px;color:var(--muted)}
+.daily-more-start{min-width:min(300px,100%);min-height:58px;padding:12px 28px;border:2px solid var(--ink);border-radius:14px;--fill:var(--orange);background:linear-gradient(var(--fill),var(--fill)) no-repeat left/0 100%,var(--paper);box-shadow:3.5px 3.5px 0 var(--fill);font:600 22px/1.2 var(--heading);color:var(--ink);transition:background-size .45s cubic-bezier(.65,0,.35,1),box-shadow .45s ease,color .3s ease}
+.daily-more-start:is(:active,:focus-visible){background-size:100% 100%;box-shadow:3.5px 3.5px 0 var(--ink);color:var(--on-orange)}
+@media(hover:hover){.daily-more-start:hover{background-size:100% 100%;box-shadow:3.5px 3.5px 0 var(--ink);color:var(--on-orange)}}
+.daily-more-home{margin-top:16px;padding:8px 4px;background:none;font-size:15px;color:var(--muted);text-decoration:underline;text-underline-offset:4px}
+.daily-more-home:hover{color:var(--ink)}
+@media(max-width:560px){.daily-more-start{width:100%}#card .daily-more-title{font-size:19px}}
+@media(prefers-reduced-motion:reduce){.daily-more-start{transition:none}}
+/* „Neue Sätze“ auf „Willkommen“: Thema · noch N und ein Punkt pro Satz bis zur nächsten Station */
+.welcome-new-dots{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px;color:var(--ink)}
+.welcome-new-dots i{display:block;width:7px;height:7px;border-radius:50%;border:1.5px solid currentColor}
+.welcome-new-dots i.on{background:currentColor}
