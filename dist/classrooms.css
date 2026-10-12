@@ -597,3 +597,50 @@ header{flex-wrap:wrap}
 #classrooms-view .cr-feed-replies[open]>summary{margin:0 calc(-1*var(--cr-pad-x)) 16px;padding:12px var(--cr-pad-x);border-top:1px solid color-mix(in srgb,var(--ink) 14%,transparent);border-bottom:1px solid var(--cr-edge);background:var(--cr-tint)}
 #classrooms-view .cr-feed-replies[open]>summary:focus-visible{outline-offset:-4px}
 @media(max-width:640px){#classrooms-view .cr-stream-layout .cr-feed-card{--cr-pad-x:18px;--cr-pad-y:20px}}
+/* Einladungslink und Beitrittsanfragen.
+   Anfragen: oben im Raum, zart orange getönt (wie Aufgaben), mit Rand wie die übrigen Boxen.
+   Einladung im leeren Raum: lavendel wie „Heute & demnächst“. Wartende Räume in der Liste: Papier mit gestricheltem Rand. */
+#classrooms-view .cr-stream-layout .cr-requests{background:color-mix(in srgb,var(--orange) 14%,var(--paper))}
+#classrooms-view .cr-stream-layout .cr-invite-card{background:var(--lavender)}
+#classrooms-view .cr-requests h3,#classrooms-view .cr-invite-card h3{margin:4px 0 10px}
+#classrooms-view .cr-request{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--cr-edge)}
+#classrooms-view .cr-request-name{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.35}
+#classrooms-view .cr-request-name strong{overflow-wrap:anywhere}
+#classrooms-view .cr-request-name time{font-size:13px;color:var(--muted)}
+#classrooms-view .cr-request-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+#classrooms-view .cr-request-actions button{margin:0;min-height:40px;padding:6px 14px}
+#classrooms-view .cr-request-actions .cr-approve{border-color:var(--ink);background:var(--mint);color:var(--ink);font-weight:700}
+#classrooms-view .cr-request-actions .cr-approve:hover{background:color-mix(in srgb,var(--mint) 70%,var(--ink) 8%)}
+@media(max-width:540px){#classrooms-view .cr-request{flex-wrap:wrap}#classrooms-view .cr-request-actions{width:100%;justify-content:stretch}#classrooms-view .cr-request-actions button{flex:1}}
+#classrooms-view .cr-invite-label{margin:14px 0 6px;font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--heading-accent)}
+#classrooms-view .cr-invite-link{width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--cr-edge);border-radius:10px;background:var(--paper);color:var(--ink);font:14px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;text-overflow:ellipsis}
+#classrooms-view .cr-invite-link:focus-visible{outline:2px solid var(--heading-accent);outline-offset:2px}
+#classrooms-view .cr-invite-card .cr-toolbar{margin-bottom:0}
+#classrooms-view .cr-check{display:flex;align-items:flex-start;gap:10px;margin:16px 0 4px;font-weight:600;cursor:pointer}
+#classrooms-view .cr-check input{width:20px;height:20px;margin:2px 0 0;flex:0 0 auto;accent-color:var(--heading-accent)}
+#classrooms-view .cr-room-card.cr-room-pending{background:var(--paper);border-style:dashed;border-color:var(--cr-pill)}
+#classrooms-view .cr-joined-pending{padding:12px 16px;border:1px solid var(--cr-edge);border-radius:12px;background:var(--mint)}
+/* Fenster „Einladung“ im Stil von „Fortschritt speichern?“. */
+#cr-invite-dialog{max-width:440px;padding:30px 36px 28px;border:1px solid color-mix(in srgb,var(--ink) 22%,transparent);border-radius:22px;box-shadow:none}
+#cr-invite-dialog .dialog-top h2{font-size:26px;font-weight:500;letter-spacing:-.01em}
+#cr-invite-dialog .cr-invite-close{display:grid;place-items:center;width:44px;height:44px;min-height:0;margin:-8px -12px -8px 0;padding:0;border:0;border-radius:50%;background:none;box-shadow:none;font-size:18px;color:var(--ink-soft)}
+#cr-invite-dialog .cr-invite-close:hover{background:color-mix(in srgb,var(--ink) 7%,transparent);color:var(--ink)}
+#cr-invite-dialog p{margin:12px 0 0}
+#cr-invite-dialog .cr-invite-room{display:flex;flex-direction:column;gap:2px;margin:18px 0 6px;padding:16px 18px;border:1px solid color-mix(in srgb,var(--ink) 22%,transparent);border-radius:14px;background:var(--lavender);color:var(--ink)}
+#cr-invite-dialog .cr-invite-room span{font-size:13px;color:var(--muted)}
+#cr-invite-dialog .cr-invite-room span:first-child{font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--heading-accent)}
+#cr-invite-dialog .cr-invite-room strong{font:500 24px/1.25 var(--heading);overflow-wrap:anywhere}
+#cr-invite-dialog label{display:block;margin-top:18px;font-size:14px;font-weight:600;color:var(--ink)}
+#cr-invite-dialog label input{display:block;width:100%;box-sizing:border-box;margin-top:6px}
+#cr-invite-dialog .cr-note{font-size:14px;line-height:1.5}
+#cr-invite-dialog .cr-invite-error{color:var(--bad);font-size:14px}
+#cr-invite-dialog .cr-invite-error:empty{display:none}
+#cr-invite-dialog .cr-invite-actions{display:grid;gap:10px;margin-top:24px}
+#cr-invite-dialog .cr-invite-actions .primary{width:100%;min-height:56px;margin:0 0 8px;padding:10px 24px;border:2px solid var(--ink);border-radius:14px;background:linear-gradient(var(--orange),var(--orange)) no-repeat left/0 100%,var(--paper);box-shadow:3.5px 3.5px 0 var(--orange);font:600 20px/1 var(--heading);letter-spacing:-.2px;color:var(--ink);transition:background-size .45s cubic-bezier(.65,0,.35,1),box-shadow .45s ease,color .3s ease}
+#cr-invite-dialog .cr-invite-actions .primary:is(:active,:focus-visible){transform:none;background-size:100% 100%;box-shadow:3.5px 3.5px 0 var(--ink);color:var(--on-orange)}
+@media(hover:hover){#cr-invite-dialog .cr-invite-actions .primary:hover{transform:none;background-size:100% 100%;box-shadow:3.5px 3.5px 0 var(--ink);color:var(--on-orange)}}
+#cr-invite-dialog .cr-invite-actions .primary:disabled{opacity:.6;cursor:wait}
+#cr-invite-dialog .cr-invite-actions button:not(.primary){min-height:46px;margin:0;padding:8px 12px;border:1px solid color-mix(in srgb,var(--ink) 30%,transparent);border-radius:999px;background:none;box-shadow:none;font-size:14px;font-weight:500;color:var(--ink)}
+#cr-invite-dialog .cr-invite-actions button:not(.primary):hover{border-color:var(--ink)}
+@media(max-width:640px){#cr-invite-dialog{padding:24px 20px 22px;border-radius:18px}}
+@media(prefers-reduced-motion:reduce){#cr-invite-dialog .cr-invite-actions .primary{transition:none}}

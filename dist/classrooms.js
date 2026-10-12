@@ -1,5 +1,5 @@
 import {uiLocale} from './i18n.mjs?v=27';
-import {accountUser,accountRequest} from './auth.js?v=130';
+import {accountUser,accountRequest} from './auth.js?v=131';
 import {avatarMarkup,cleanNickname} from './avatars.mjs?v=2';
 import {GRAMMAR_TOPICS,topicNotes} from './grammar-topics.mjs';
 import {translationFeedbackMarkup,compareTranslation} from './translation-feedback.mjs?v=1';
@@ -164,7 +164,7 @@ const localInput=v=>{if(!v)return '';const d=new Date(v);d.setMinutes(d.getMinut
 const bird=(id,name,own=false,size='')=>avatarMarkup(id,{name,live:!!own,size});
 // Der Spitzname aus dem Konto wird als Name für neue Klassenräume vorgeschlagen.
 const ownNickname=()=>cleanNickname(accountUser()?.user_metadata?.nickname);
-const css=document.createElement('link');css.rel='stylesheet';css.href='./classrooms.css?v=85';document.head.append(css);
+const css=document.createElement('link');css.rel='stylesheet';css.href='./classrooms.css?v=86';document.head.append(css);
 const button=document.createElement('button');button.id='classrooms-button';button.type='button';button.dataset.view='classrooms';button.textContent='Klassenraum';
 const headerNav=document.querySelector('.header-nav');
 if(headerNav)headerNav.insertBefore(button,headerNav.querySelector('[data-view="progress"]'));else $('account-button').before(button);
@@ -222,9 +222,9 @@ function updateHeading(){
 async function home(){
  loadDrafts();
  room=null;selected=null;dirty=false;streamFilter='all';updateHeading();
- if(!accountUser()){$('classrooms-content').innerHTML=`<p>Gemeinsam Finnisch lernen: Erstelle einen Raum oder tritt deiner Klasse per Code bei.</p><p>Zum Beitreten und Speichern brauchst du ein Konto.</p>${b('Anmelden / Registrieren','login')}`;return;}
+ if(!accountUser()){$('classrooms-content').innerHTML=`<p>Gemeinsam Finnisch lernen: Erstelle einen Raum oder tritt deiner Klasse per Link oder Code bei.</p><p>Zum Beitreten und Speichern brauchst du ein Konto.</p>${b('Anmelden / Registrieren','login')}`;return;}
  const rooms=await api('list');applyNews(rooms);lastNewsCheck=Date.now();
- $('classrooms-content').innerHTML=`<p>Ein Raum für eure Sätze, Fragen und gemeinsamen Fortschritte.</p><h3>Meine Klassenräume</h3><div class="cr-grid">${rooms.length?rooms.map(r=>`<article class="cr-card cr-room-card"><span class="cr-badge">${r.teacher?'Lehrkraft':'Teilnehmer'}${r.archived?' · Archiv':''}</span>${newPill(r.news)}<h3>${esc(r.name)}</h3>${r.open_tasks?`<p class="cr-note cr-open-tasks">${r.open_tasks===1?'1 offene Aufgabe':`${r.open_tasks} offene Aufgaben`}</p>`:''}${b('Raum öffnen','open',`data-id="${r.id}"`)}</article>`).join(''):'<p>Noch keine Klassenräume. Erstelle einen Raum oder gib einen Einladungscode ein.</p>'}</div><div class="cr-grid cr-room-actions"><details class="cr-card cr-room-action"><summary><span><strong>Klassenraum erstellen</strong><small class="cr-room-action-closed">Zum Öffnen anklicken</small><small class="cr-room-action-open">Einklappen</small></span></summary><form data-cr-form="create"><label>Raumname<input name="name" required minlength="3" maxlength="80" placeholder="Finnisch am Mittwoch"></label><label>Dein Name in diesem Klassenraum<input name="display_name" required maxlength="80" autocomplete="name" placeholder="Zum Beispiel Anna Müller" value="${esc(ownNickname())}"></label><p class="cr-note">So sieht dich diese Klasse. Dein Benutzername für den Login bleibt unverändert.</p><p class="cr-note">Du übernimmst die Lehrkraft-Rolle und verwaltest Aufgaben und Mitglieder.</p><button class="primary">Raum erstellen</button></form></details><details class="cr-card cr-room-action"><summary><span><strong>Mit Code beitreten</strong><small class="cr-room-action-closed">Zum Öffnen anklicken</small><small class="cr-room-action-open">Einklappen</small></span></summary><form data-cr-form="join"><label>Einladungscode<input name="code" required maxlength="40" autocomplete="off" placeholder="Code der Lehrkraft"></label><label>Dein Name in diesem Klassenraum<input name="display_name" required maxlength="80" autocomplete="name" placeholder="Zum Beispiel Anna Müller" value="${esc(ownNickname())}"></label><p class="cr-note">So sieht dich diese Klasse. Dein Benutzername für den Login bleibt unverändert.</p><p class="cr-note">Im Raum sind dein Klassenraumname und deine Beiträge sichtbar. Die Lehrkräfte sehen deine Abgaben. Dein privater Lernstand bleibt privat.</p><button class="primary">Klasse beitreten</button></form></details></div>`;
+ $('classrooms-content').innerHTML=`<p>Ein Raum für eure Sätze, Fragen und gemeinsamen Fortschritte.</p><h3>Meine Klassenräume</h3><div class="cr-grid">${rooms.length?rooms.map(r=>r.pending?`<article class="cr-card cr-room-card cr-room-pending"><span class="cr-badge">Wartet auf Freigabe</span><h3>${esc(r.name)}</h3><p class="cr-note">Die Lehrkraft muss dich noch freischalten. Danach kannst du den Raum hier öffnen.</p>${b('Anfrage zurückziehen','cancel_request',`data-id="${r.id}"`)}</article>`:`<article class="cr-card cr-room-card"><span class="cr-badge">${r.teacher?'Lehrkraft':'Teilnehmer'}${r.archived?' · Archiv':''}</span>${newPill(r.news)}<h3>${esc(r.name)}</h3>${r.requests?`<p class="cr-note cr-open-tasks">${r.requests===1?'1 Beitrittsanfrage':`${r.requests} Beitrittsanfragen`}</p>`:''}${r.open_tasks?`<p class="cr-note cr-open-tasks">${r.open_tasks===1?'1 offene Aufgabe':`${r.open_tasks} offene Aufgaben`}</p>`:''}${b('Raum öffnen','open',`data-id="${r.id}"`)}</article>`).join(''):'<p>Noch keine Klassenräume. Erstelle einen Raum oder gib einen Einladungscode ein.</p>'}</div><div class="cr-grid cr-room-actions"><details class="cr-card cr-room-action"><summary><span><strong>Klassenraum erstellen</strong><small class="cr-room-action-closed">Zum Öffnen anklicken</small><small class="cr-room-action-open">Einklappen</small></span></summary><form data-cr-form="create"><label>Raumname<input name="name" required minlength="3" maxlength="80" placeholder="Finnisch am Mittwoch"></label><label>Dein Name in diesem Klassenraum<input name="display_name" required maxlength="80" autocomplete="name" placeholder="Zum Beispiel Anna Müller" value="${esc(ownNickname())}"></label><p class="cr-note">So sieht dich diese Klasse. Dein Benutzername für den Login bleibt unverändert.</p><label class="cr-check"><input type="checkbox" name="approval" checked><span>Neue Mitglieder erst nach Freigabe aufnehmen</span></label><p class="cr-note">Du übernimmst die Lehrkraft-Rolle und verwaltest Aufgaben und Mitglieder. Einladen kannst du danach per Link oder Code.</p><button class="primary">Raum erstellen</button></form></details><details class="cr-card cr-room-action"><summary><span><strong>Mit Code beitreten</strong><small class="cr-room-action-closed">Zum Öffnen anklicken</small><small class="cr-room-action-open">Einklappen</small></span></summary><form data-cr-form="join"><label>Einladungscode<input name="code" required maxlength="40" autocomplete="off" placeholder="Code der Lehrkraft"></label><label>Dein Name in diesem Klassenraum<input name="display_name" required maxlength="80" autocomplete="name" placeholder="Zum Beispiel Anna Müller" value="${esc(ownNickname())}"></label><p class="cr-note">So sieht dich diese Klasse. Dein Benutzername für den Login bleibt unverändert.</p><p class="cr-note">Im Raum sind dein Klassenraumname und deine Beiträge sichtbar. Die Lehrkräfte sehen deine Abgaben. Dein privater Lernstand bleibt privat.</p><button class="primary">Klasse beitreten</button></form></details></div>`;
 }
 async function open(id){
  const next=await api('room',{room_id:id});
@@ -233,6 +233,103 @@ async function open(id){
  const seen=seenMap();newSince=room.id in seen?seen[room.id]:null;markRoomSeen();
  updateHeading();renderRoom();
 }
+// ---------- Einladungslink und Beitrittsanfragen ----------
+// Der Link trägt den Einladungscode: …/?klasse=CODE. Wer ihn öffnet, sieht in einem Fenster Raum und
+// Lehrkraft und tritt bei – oder stellt eine Anfrage, wenn der Raum Freigabe verlangt.
+const INVITE_KEY='vanamo-classroom-invite';
+const cleanInvite=v=>{const c=String(v??'').toUpperCase().replace(/[\s-]/g,'');return /^[0-9A-F]{16}$/.test(c)?c:'';};
+const inviteLink=code=>`${location.origin}${location.pathname.replace(/[^/]*$/,'')}?klasse=${encodeURIComponent(code)}`;
+const pendingInvite=()=>{try{return cleanInvite(sessionStorage.getItem(INVITE_KEY));}catch{return '';}};
+const clearInvite=()=>{try{sessionStorage.removeItem(INVITE_KEY);}catch{}};
+function invitePanel(){
+ const link=inviteLink(room.code);
+ return `<p class="cr-invite-label">Einladungslink</p><input class="cr-invite-link" readonly value="${esc(link)}" aria-label="Einladungslink" data-cr-select><div class="cr-toolbar">${b('Link kopieren','copy_link')}${navigator.share?b('Link teilen','share_link'):''}</div>`;
+}
+// Ganz oben im Raum: Anfragen für alle Lehrkräfte, sonst für einen leeren Raum die Einladung.
+function requestsCard(){
+ const list=room.teacher&&!room.archived?room.requests||[]:[];
+ if(!list.length)return '';
+ return `<section class="cr-card cr-requests" aria-labelledby="cr-requests-title"><div class="eyebrow">NEUE MITGLIEDER</div><h3 id="cr-requests-title">${list.length===1?'1 Beitrittsanfrage':`${list.length} Beitrittsanfragen`}</h3>${list.map(r=>`<div class="cr-request">${bird(r.avatar,r.name,false,'sm')}<span class="cr-request-name"><strong>${esc(r.name)}</strong><time>${esc(date(r.created_at))}</time></span><span class="cr-request-actions"><button type="button" class="quiet cr-approve" data-cr="approve" data-id="${r.id}">Aufnehmen</button>${b('Ablehnen','decline',`data-id="${r.id}"`)}</span></div>`).join('')}</section>`;
+}
+function inviteCard(){
+ if(!room.owner||room.archived||room.member_count>0||room.teacher_count>1||(room.requests||[]).length)return '';
+ return `<section class="cr-card cr-invite-card" aria-labelledby="cr-invite-card-title"><div class="eyebrow">LOS GEHT'S</div><h3 id="cr-invite-card-title">Lade deine Klasse ein</h3><p class="cr-note">Schick den Link an deine Klasse.${room.approval?' Du schaltest jede Person frei, bevor sie den Raum sieht.':''}</p>${invitePanel()}</section>`;
+}
+function inviteDialog(){
+ let d=$('cr-invite-dialog');
+ if(d)return d;
+ document.body.insertAdjacentHTML('beforeend','<dialog id="cr-invite-dialog" aria-labelledby="cr-invite-title"><div class="dialog-top"><h2 id="cr-invite-title">Einladung</h2><button type="button" class="quiet cr-invite-close" aria-label="Schließen">✕</button></div><div id="cr-invite-body"></div></dialog>');
+ d=$('cr-invite-dialog');
+ d.querySelector('.cr-invite-close').onclick=()=>d.close();
+ // Schließen heißt „nicht jetzt“ – außer man geht nur kurz zum Anmelden.
+ d.addEventListener('close',()=>{if(!d.dataset.keep)clearInvite();delete d.dataset.keep;});
+ d.addEventListener('click',e=>{
+  const el=e.target.closest('[data-invite]');if(!el)return;
+  const what=el.dataset.invite;
+  if(what==='register'||what==='login'){d.dataset.keep='1';d.close();if(window.suomiOpenAccount)window.suomiOpenAccount(what);else $('account-button')?.click();return;}
+  if(what==='rooms'){d.close();openClassrooms();return;}
+  d.close();
+ });
+ d.addEventListener('submit',async e=>{
+  e.preventDefault();const form=e.target,error=form.querySelector('.cr-invite-error'),send=form.querySelector('button[type=submit]');
+  const name=String(new FormData(form).get('display_name')||'').trim(),code=pendingInvite();
+  if(!name||[...name].length>80){error.textContent='Bitte deinen Namen für diesen Klassenraum eingeben (1–80 Zeichen).';return;}
+  if(!code){d.close();return;}
+  send.disabled=true;error.textContent='';
+  try{
+   const value=await api('join',{code,display_name:name});
+   clearInvite();
+   if(value.pending){renderInvite({pending:true,name:value.name});return;}
+   d.close();openClassrooms(value.id);
+  }catch(err){error.textContent=navigator.onLine?err.message:'Offline: Zum Beitreten brauchst du eine Internetverbindung.';send.disabled=false;}
+ });
+ return d;
+}
+function renderInvite(state){
+ const d=inviteDialog(),title=d.querySelector('#cr-invite-title'),body=$('cr-invite-body');
+ const actions=(...buttons)=>`<div class="cr-invite-actions">${buttons.join('')}</div>`;
+ const btn=(text,what,primary=false)=>`<button type="button" class="${primary?'primary':'quiet'}" data-invite="${what}">${text}</button>`;
+ if(state.guest){title.textContent='Einladung in einen Klassenraum';body.innerHTML=`<p>Du wurdest in einen Vanamo-Klassenraum eingeladen. Melde dich an oder erstelle ein kostenloses Konto, um beizutreten.</p>${actions(btn('Registrieren','register',true),btn('Anmelden','login'))}`;return;}
+ if(state.loading){title.textContent='Einladung';body.innerHTML='<p role="status">Einladung wird geladen …</p>';return;}
+ if(state.error){title.textContent='Einladung';body.innerHTML=`<p role="alert">${esc(state.error)}</p>${actions(btn('OK','close',true))}`;return;}
+ if(state.pending){title.textContent='Anfrage gesendet';body.innerHTML=`<p>Sobald die Lehrkraft dich freischaltet, findest du „${esc(state.name)}“ unter <strong>Klassenraum</strong>.</p>${actions(btn('Alles klar','close',true),btn('Zu den Klassenräumen','rooms'))}`;return;}
+ const info=state.info;
+ title.textContent='Einladung';
+ body.innerHTML=`<p class="cr-invite-room"><span>Klassenraum</span><strong>${esc(info.name)}</strong><span>Lehrkraft: ${esc(info.teacher)}</span></p><form class="cr-invite-form"><label>Dein Name in diesem Klassenraum<input name="display_name" required maxlength="80" autocomplete="name" placeholder="Zum Beispiel Anna Müller" value="${esc(ownNickname())}"></label><p class="cr-note">So sieht dich diese Klasse. Im Raum sind dein Name und deine Beiträge sichtbar, die Lehrkräfte sehen deine Abgaben. Dein privater Lernstand bleibt privat.</p>${info.approval?'<p class="cr-note">Die Lehrkraft schaltet dich frei, bevor du den Raum siehst.</p>':''}<p class="cr-invite-error" role="alert"></p><div class="cr-invite-actions"><button type="submit" class="primary">${info.approval?'Beitritt anfragen':'Klasse beitreten'}</button><button type="button" class="quiet" data-invite="close">Nicht jetzt</button></div></form>`;
+}
+let inviteRunning=false;
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function maybeShowInvite(){
+ if(inviteRunning||!pendingInvite())return;
+ inviteRunning=true;
+ try{
+  // Erst wenn kein anderes Fenster offen ist und kein Intro läuft (Anmelden, Wiederherstellungscode …).
+  const cls=document.documentElement.classList;
+  while(document.querySelector('dialog[open]:not(#cr-invite-dialog)')||cls.contains('intro-pending')||cls.contains('intro-running'))await sleep(300);
+  const code=pendingInvite();if(!code)return;
+  const d=inviteDialog();
+  if(!accountUser()){renderInvite({guest:true});if(!d.open)d.showModal();return;}
+  renderInvite({loading:true});if(!d.open)d.showModal();
+  let info;
+  try{info=await api('invite_info',{code});}
+  catch(e){clearInvite();renderInvite({error:navigator.onLine?e.message:'Offline: Die Einladung lässt sich gerade nicht laden. Öffne den Link später noch einmal.'});return;}
+  if(info.member){clearInvite();d.dataset.keep='1';d.close();openClassrooms(info.id);return;}
+  if(info.pending){clearInvite();renderInvite({pending:true,name:info.name});return;}
+  renderInvite({info});
+  d.querySelector('input[name=display_name]')?.focus();
+ }finally{inviteRunning=false;}
+}
+(function readInvite(){
+ const params=new URLSearchParams(location.search);
+ if(!params.has('klasse'))return;
+ const code=cleanInvite(params.get('klasse'));
+ params.delete('klasse');const rest=params.toString();
+ try{history.replaceState(history.state,'',location.pathname+(rest?'?'+rest:'')+location.hash);}catch{}
+ if(code){try{sessionStorage.setItem(INVITE_KEY,code);}catch{}}
+ else setTimeout(()=>{const d=inviteDialog();renderInvite({error:'Dieser Einladungslink ist unvollständig. Bitte die Lehrkraft um einen neuen Link.'});if(!d.open)d.showModal();},0);
+})();
+window.addEventListener('vanamo:session',()=>{if(accountUser())maybeShowInvite();});
+setTimeout(maybeShowInvite,0);
 function memberRow(m){
  const label=`${bird(m.avatar,m.name,m.own,'sm')}${esc(m.name)} · ${m.owner?'Lehrkraft · Ersteller':m.role==='teacher'?'Lehrkraft':'Teilnehmer'}${m.blocked?' · entfernt':''}`;
  if(m.own)return `<details class="cr-member cr-member-menu cr-own-member"><summary title="Deinen Namen ändern">${label} · Du <small>(Name ändern)</small></summary><form data-cr-form="rename"><label>Dein Name in diesem Klassenraum<input name="display_name" required maxlength="80" autocomplete="name" value="${esc(m.name)}"></label><p class="cr-note">Gilt nur hier. Dein Login-Benutzername bleibt unverändert.</p><div class="cr-member-actions"><button type="submit" class="primary">Namen speichern</button>${b('Abbrechen','cancel_name')}</div></form></details>`;
@@ -242,12 +339,12 @@ function memberRow(m){
 function renderRoom(){
  dirty=false;
  const assignments=room.assignments;
- $('classrooms-content').innerHTML=`<div class="cr-stream-layout"><div class="cr-stream-main"><div id="cr-composer"></div>
+ $('classrooms-content').innerHTML=`<div class="cr-stream-layout"><div class="cr-stream-main">${requestsCard()}${inviteCard()}<div id="cr-composer"></div>
  ${room.archived?'<p class="cr-note">Dieser Raum ist archiviert. Ihr könnt alle bisherigen Beiträge lesen.</p>':streamComposer()}
  <div class="cr-toolbar cr-feed-filters" role="group" aria-label="Klassenstream filtern">${Object.entries({all:'Alles',assignment:'Aufgaben',question:'Fragen',announcement:'Ankündigungen'}).map(([id,label])=>`<button type="button" class="quiet" data-cr="stream_filter" data-filter="${id}" aria-pressed="${streamFilter===id}">${label}</button>`).join('')}</div>
  <div id="cr-stream-feed"></div>${stream.has_more?b('Weitere Beiträge laden','stream_more'):''}</div>
  <aside class="cr-stream-sidebar" aria-label="Klassenübersicht"><section class="cr-card cr-today"><div class="eyebrow">IM BLICK</div><h3>Heute &amp; demnächst</h3>${room.teacher&&!room.archived?b('Aufgabe erstellen','new_assignment'):''}${upcomingAssignments()}<p class="cr-note">${stream.open_questions===1?'1 Frage wartet auf eine Antwort.':`${stream.open_questions||0} Fragen warten auf eine Antwort.`}</p></section>
- <details class="cr-card cr-sidebar-disclosure"><summary>Unsere Klasse</summary><div class="cr-sidebar-disclosure-content"><details class="cr-card cr-roster" open><summary>Mitglieder · ${room.members.filter(m=>!m.blocked).length}</summary>${room.members.map(memberRow).join('')}</details>${room.owner&&!room.archived?'<p class="cr-note">Lehrkräfte können Aufgaben erstellen, Abgaben einsehen und den Austausch betreuen. Nur du als Ersteller verwaltest Rollen und den Raum.</p>':''} ${room.owner?`<details class="cr-card"><summary>Einladung &amp; Mitglieder verwalten</summary><p>Einladungscode: <strong class="cr-code">${esc(room.code)}</strong></p><div class="cr-toolbar">${b('Code kopieren','copy')}${!room.archived?b('Code erneuern','rotate')+b('Raum archivieren','archive'):''}${b('Klassenraum löschen','delete_room','data-danger="true"')}</div><form id="cr-delete-confirm" data-cr-form="delete_room" class="cr-delete-warning" hidden><h3>Klassenraum endgültig löschen</h3><p>Alle Aufgaben, Abgaben, Fragen, Reaktionen und Mitgliedschaften dieses Raums werden unwiderruflich gelöscht. Nutzerkonten und persönliche Lernstände bleiben erhalten.</p><label>Zur Bestätigung den Raumnamen „${esc(room.name)}“ eingeben<input name="confirm_name" required maxlength="80" autocomplete="off"></label><div class="cr-toolbar"><button class="quiet cr-danger" type="submit">Endgültig löschen</button>${b('Abbrechen','cancel_delete')}</div></form><p class="cr-note">Entfernte Mitglieder können mit diesem Konto nicht erneut beitreten. Archivierte Räume bleiben lesbar.</p></details>`:`<p class="cr-note">Deine Abgaben sehen die Lehrkräfte. Nach der Freigabe sieht die Klasse Antworten ohne Nutzernamen; dies ist keine Garantie gegen Wiedererkennung. Fragen erscheinen mit deinem Klassenraumnamen.</p>${b('Raum verlassen','leave')}`}</div></details>
+ <details class="cr-card cr-sidebar-disclosure"><summary>Unsere Klasse</summary><div class="cr-sidebar-disclosure-content"><details class="cr-card cr-roster" open><summary>Mitglieder · ${room.members.filter(m=>!m.blocked).length}</summary>${room.members.map(memberRow).join('')}</details>${room.owner&&!room.archived?'<p class="cr-note">Lehrkräfte können Aufgaben erstellen, Abgaben einsehen und den Austausch betreuen. Nur du als Ersteller verwaltest Rollen und den Raum.</p>':''} ${room.owner?`<details class="cr-card"><summary>Einladung &amp; Mitglieder verwalten</summary>${room.archived?'':`${invitePanel()}<label class="cr-check"><input type="checkbox" data-cr-approval${room.approval?' checked':''}><span>Neue Mitglieder erst nach Freigabe aufnehmen</span></label><p class="cr-note">${room.approval?'Wer den Link öffnet, stellt eine Beitrittsanfrage. Du und die Lehrkräfte nehmen sie an oder lehnt sie ab.':'Wer den Link öffnet, ist sofort Mitglied.'}</p>`}<p>${room.archived?'Einladungscode':'Oder per Code'}: <strong class="cr-code">${esc(room.code)}</strong></p><div class="cr-toolbar">${b('Code kopieren','copy')}${!room.archived?b('Link und Code erneuern','rotate')+b('Raum archivieren','archive'):''}${b('Klassenraum löschen','delete_room','data-danger="true"')}</div><form id="cr-delete-confirm" data-cr-form="delete_room" class="cr-delete-warning" hidden><h3>Klassenraum endgültig löschen</h3><p>Alle Aufgaben, Abgaben, Fragen, Reaktionen und Mitgliedschaften dieses Raums werden unwiderruflich gelöscht. Nutzerkonten und persönliche Lernstände bleiben erhalten.</p><label>Zur Bestätigung den Raumnamen „${esc(room.name)}“ eingeben<input name="confirm_name" required maxlength="80" autocomplete="off"></label><div class="cr-toolbar"><button class="quiet cr-danger" type="submit">Endgültig löschen</button>${b('Abbrechen','cancel_delete')}</div></form><p class="cr-note">Entfernte Mitglieder können mit diesem Konto nicht erneut beitreten. Archivierte Räume bleiben lesbar.</p></details>`:`<p class="cr-note">Deine Abgaben sehen die Lehrkräfte. Nach der Freigabe sieht die Klasse Antworten ohne Nutzernamen; dies ist keine Garantie gegen Wiedererkennung. Fragen erscheinen mit deinem Klassenraumnamen.</p>${b('Raum verlassen','leave')}`}</div></details>
  <details class="cr-card cr-sidebar-disclosure"><summary>Klassenfortschritt</summary><div class="cr-sidebar-disclosure-content"><p class="cr-note">Gemeinsamer Abgabestand der Aufgaben. Persönliche Lernstände bleiben privat.</p>${assignments.slice(0,5).map(a=>`<div class="cr-progress-item"><strong>${esc(a.title)}</strong><label>${a.submitted_count} / ${room.member_count} Abgaben<progress max="${Math.max(room.member_count,1)}" value="${a.submitted_count}"></progress></label></div>`).join('')||'<p>Noch keine Aufgaben.</p>'}</div></details></aside></div>`;
  renderFeed();restoreStreamDraft();
 }
@@ -380,14 +477,14 @@ function editAssignment(id){
 }
 async function refreshAssignment(){const id=selected;room=await api('room',{room_id:room.id});lastRefresh=Date.now();assignment(id);}
 function canNavigate(){return !dirty||confirm('Ungespeicherte Eingaben verlassen? Antwortentwürfe bleiben auf diesem Gerät gespeichert.');}
-function openClassrooms(){
+function openClassrooms(id){
  document.querySelectorAll('.app-view').forEach(view=>{view.hidden=true;});
  $('classrooms-view').hidden=false;
  document.querySelectorAll('.header-nav [data-view]').forEach(item=>{const active=item===button;item.classList.toggle('selected',active);if(active)item.setAttribute('aria-current','page');else item.removeAttribute('aria-current');});
  window.scrollTo?.({top:0,behavior:'smooth'});
- run(home);
+ run(async()=>{await home();if(typeof id==='string')await open(id);});
 }
-button.onclick=openClassrooms;
+button.onclick=()=>openClassrooms();
 $('classrooms-refresh').onclick=()=>{if(room&&canNavigate())run(()=>open(room.id));};
 $('classrooms-content').addEventListener('input',e=>{
  if(!e.target.matches('[data-answer]'))dirty=true;
@@ -399,7 +496,9 @@ $('classrooms-content').addEventListener('input',e=>{
  if(e.target.matches('[data-reply-id]'))replyDrafts.set(e.target.dataset.replyId,e.target.value);
  if(e.target.matches('[data-custom-field]'))customItems[Number(e.target.dataset.customIndex)][e.target.dataset.customField]=e.target.value;
 });
+$('classrooms-content').addEventListener('focusin',e=>{if(e.target.matches('[data-cr-select]'))e.target.select();});
 $('classrooms-content').addEventListener('change',e=>{
+ if(e.target.matches('[data-cr-approval]')){const on=e.target.checked;run(async()=>{await api('set_approval',{room_id:room.id,approval:on});await open(room.id);});return;}
  if(e.target.closest('[data-cr-form=stream_post]'))saveStreamDraft();
  if(e.target.id==='cr-level'){renderTopicOptions();picker();}
  if(e.target.id==='cr-topic')picker();
@@ -416,6 +515,7 @@ $('classrooms-content').addEventListener('click',e=>{
    if(action.startsWith('stream_'))return streamAction(action,el);
    if(action==='login'){$('account-button').click();return;}
    if(action==='home')return home();if(action==='open')return open(el.dataset.id);
+   if(action==='cancel_request'){if(!confirm('Beitrittsanfrage zurückziehen?'))return;await api('cancel_request',{room_id:el.dataset.id});return home();}
    if(action==='back'||action==='refresh')return open(room.id);
    if(action==='assignment')return assignment(el.dataset.id);
    if(action==='refresh_assignment')return refreshAssignment();
@@ -499,7 +599,9 @@ $('classrooms-content').addEventListener('click',e=>{
    }
    if(action==='cancel_name'){el.closest('form').reset();el.closest('details').open=false;dirty=false;return;}
    if(action==='copy'){await navigator.clipboard.writeText(room.code);el.textContent='Kopiert ✓';return;}
-   if(['rotate','archive','remove','leave','release','delete_message'].includes(action)&&!confirm({rotate:'Bisherigen Einladungscode ungültig machen?',archive:'Raum archivieren? Er bleibt lesbar, neue Beiträge und Beitritte werden geschlossen.',remove:'Dieses Mitglied entfernen und erneuten Beitritt sperren?',leave:'Raum verlassen? Deine bisherigen Beiträge und Abgaben bleiben im Raum.',release:'Alle Abgaben schließen und Antworten für die Klasse freigeben?',delete_message:'Den Inhalt dieses Beitrags entfernen? Antworten darauf bleiben erhalten.'}[action]))return;
+   if(action==='copy_link'){await navigator.clipboard.writeText(inviteLink(room.code));el.textContent='Link kopiert ✓';return;}
+   if(action==='share_link'){try{await navigator.share({title:`Klassenraum „${room.name}“`,text:`Komm in unseren Vanamo-Klassenraum „${room.name}“:`,url:inviteLink(room.code)});}catch(e){if(e?.name!=='AbortError')throw new Error('Teilen hat nicht geklappt. Kopiere den Link stattdessen.');}return;}
+   if(['rotate','archive','remove','leave','release','delete_message','decline'].includes(action)&&!confirm({rotate:'Bisherigen Einladungslink und Code ungültig machen?',decline:'Anfrage ablehnen? Die Person kann später erneut anfragen.',archive:'Raum archivieren? Er bleibt lesbar, neue Beiträge und Beitritte werden geschlossen.',remove:'Dieses Mitglied entfernen und erneuten Beitritt sperren?',leave:'Raum verlassen? Deine bisherigen Beiträge und Abgaben bleiben im Raum.',release:'Alle Abgaben schließen und Antworten für die Klasse freigeben?',delete_message:'Den Inhalt dieses Beitrags entfernen? Antworten darauf bleiben erhalten.'}[action]))return;
    await api(action,{room_id:room.id,assignment_id:typeof selected==='string'?selected:null,user_id:el.dataset.id,submission_id:el.dataset.id,message_id:el.dataset.id,kind:el.dataset.kind});
    if(action==='leave'){streamDrafts.delete(room.id);return home();}
    if(['release','react','delete_message'].includes(action))return refreshAssignment();
@@ -515,6 +617,7 @@ $('classrooms-content').addEventListener('submit',e=>{
      payload.display_name=String(data.get('display_name')||'').trim();
      if(!payload.display_name||[...payload.display_name].length>80)throw new Error('Bitte deinen Namen für diesen Klassenraum eingeben (1–80 Zeichen).');
    }
+   if(action==='create')payload.approval=data.has('approval');
    if(action==='assign'){
      const type=data.get('direction')||'de-fi',cloze=type==='cloze';
      if(type!=='verbs'&&!selectionSize())throw new Error('Bitte mindestens einen Satz auswählen oder erstellen.');
@@ -557,6 +660,7 @@ $('classrooms-content').addEventListener('submit',e=>{
    const value=await api(action,payload);dirty=false;
    if(action==='delete_room'){accountRequest('/functions/v1/storage-sweep',{method:'POST',body:'{}'}).catch(()=>{});streamDrafts.delete(room.id);for(const a of room.assignments)dropDraft(a.id);await home();$('classrooms-content').insertAdjacentHTML('afterbegin','<p role="status">Klassenraum und zugehörige Inhalte wurden endgültig gelöscht.</p>');return;}
    if(action==='rename'){await open(room.id);$('classrooms-content').insertAdjacentHTML('afterbegin','<p role="status">Dein Name wurde für diesen Klassenraum geändert.</p>');return;}
+   if(action==='join'&&value.pending){await home();$('classrooms-content').insertAdjacentHTML('afterbegin',`<p role="status" class="cr-joined-pending">Anfrage für „${esc(value.name)}“ gesendet. Sobald die Lehrkraft dich freischaltet, kannst du den Raum hier öffnen.</p>`);return;}
    if(action==='create'||action==='join')return open(value.id);
    if(action==='submit'){dropDraft(selected);return refreshAssignment();}
    if(action==='update_assignment'||action==='feedback')return refreshAssignment();
