@@ -1383,5 +1383,18 @@ export default {
  "Dauert etwa drei Minuten.": "Takes about three minutes.",
  "Los geht’s →": "Let’s go →",
  "Für heute reicht’s – zur Startseite": "That’s enough for today – back to start",
- "noch {0}": "{0} to go"
+ "noch {0}": "{0} to go",
+ "Rückmeldung": "Feedback",
+ "Rückmeldung an Vanamo": "Feedback for Vanamo",
+ "Was möchtest du uns sagen?": "What would you like to tell us?",
+ "Ein Wunsch, eine Idee, etwas, das nicht klappt …": "A wish, an idea, something that doesn’t work …",
+ "Anonym: ohne Namen und ohne E-Mail-Adresse – wir können dir deshalb nicht antworten. Bitte schreib keine persönlichen Daten hinein. Für eine Antwort schreib an ": "Anonymous: no name and no email address – so we can’t reply to you. Please don’t include personal data. If you’d like a reply, write to ",
+ "Senden": "Send",
+ "Bitte schreib ein paar Worte mehr.": "Please write a few more words.",
+ "Wird gesendet …": "Sending …",
+ "Danke! Deine Rückmeldung ist angekommen.": "Thank you! Your feedback has arrived.",
+ "Gerade kommen sehr viele Rückmeldungen an. Bitte versuch es später noch einmal.": "We’re receiving a lot of feedback right now. Please try again later.",
+ "Das hat nicht geklappt. Bitte versuch es später noch einmal.": "That didn’t work. Please try again later.",
+ "Hinweis schließen": "Close notice",
+ "Verwaltung": "Admin"
 }

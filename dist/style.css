@@ -1649,3 +1649,17 @@ canvas.intro-flock{position:absolute;top:0;left:0;z-index:40;pointer-events:none
 .welcome-new-dots{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px;color:var(--ink)}
 .welcome-new-dots i{display:block;width:7px;height:7px;border-radius:50%;border:1.5px solid currentColor}
 .welcome-new-dots i.on{background:currentColor}
+
+/* Hinweisband aus der Verwaltung und Rückmeldung an Vanamo (site-extras.mjs). */
+.site-notice{display:flex;align-items:center;justify-content:center;gap:12px;padding:9px 48px 9px 16px;position:relative;background:var(--lavender-tint);border-bottom:1.5px solid color-mix(in srgb,var(--ink) 18%,transparent);color:var(--ink);font-size:14px;text-align:center}
+.site-notice.warn{background:var(--warm-soft);color:var(--warm-ink)}
+.site-notice button{position:absolute;right:10px;top:50%;transform:translateY(-50%);min-width:32px;min-height:32px;border-radius:999px;background:transparent;color:inherit;font-size:18px;line-height:1}
+.site-notice button:hover{background:color-mix(in srgb,var(--ink) 8%,transparent)}
+.feedback-dialog{max-width:480px}
+.feedback-dialog form{display:grid;gap:10px}
+.feedback-dialog label{font-size:14px;font-weight:700}
+.feedback-dialog textarea{width:100%;resize:vertical;min-height:120px;padding:12px;border:2px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);font-size:16px}
+.feedback-dialog .feedback-hint{font-size:13px;line-height:1.6;margin:0;color:var(--muted)}
+.feedback-dialog form[hidden]{display:none}
+/* Seit „Rückmeldung“ im Fuß steht, braucht er etwas früher eine zweite Zeile. */
+@media(max-width:1180px){footer{flex-wrap:wrap;align-items:center;gap:8px 16px}}
