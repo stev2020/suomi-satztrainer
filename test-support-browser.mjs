@@ -7,6 +7,7 @@ try{
   const c=await b.newContext({viewport,locale:'de-DE',serviceWorkers:'block'});
   const calls=[];let swarmData={names:[{name:'Mikko',contributor:true},{name:'Anna',contributor:false},{name:'Jöns',contributor:false}],former:2};
   await c.route('**/*',r=>{const u=new URL(r.request().url());
+   if(u.pathname==='/rest/v1/rpc/app_settings')return r.fulfill({status:200,contentType:'application/json',body:JSON.stringify({notice:null,registration:true,goal_percent:0})});
    if(u.pathname.startsWith('/rest/v1/rpc/support_')){const fn=u.pathname.split('/').pop(),body=JSON.parse(r.request().postData()||'{}');calls.push({fn,body});
     const json=fn==='support_swarm'?swarmData:fn==='support_name_activate'?{ok:true,name:'Anna'}:{ok:true,name:body.p_name};
     return r.fulfill({status:200,contentType:'application/json',body:JSON.stringify(json)});}

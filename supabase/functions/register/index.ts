@@ -31,6 +31,11 @@ Deno.serve(async req=>{
     const body=await req.json(),username=String(body.username||'').trim().toLowerCase(),password=String(body.password||'');
     if(!/^[a-z0-9][a-z0-9._-]{2,31}$/.test(username))return json({error:'Ungültiger Benutzername.'},400);
     if(password.length<8||passwordBytes(password)>72)return json({error:'Das Passwort muss 8–72 Zeichen lang sein (Umlaute und Sonderzeichen zählen mehrfach).'},400);
+    const serviceKey=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const admin=createClient(Deno.env.get('SUPABASE_URL')!,serviceKey,{auth:{autoRefreshToken:false,persistSession:false}});
+    // In der Verwaltung lassen sich neue Registrierungen pausieren (bestehende Konten funktionieren weiter).
+    const settings=await admin.rpc('app_settings');
+    if(!settings.error&&settings.data?.registration===false)return json({error:'Neue Registrierungen sind gerade pausiert. Bitte versuche es später noch einmal.'},403);
     const turnstileSecret=Deno.env.get('TURNSTILE_SECRET_KEY');
     if(turnstileSecret){
       const token=String(body.turnstileToken||'');
@@ -40,8 +45,6 @@ Deno.serve(async req=>{
       catch{return json({error:'Die Sicherheitsprüfung ist gerade nicht erreichbar. Bitte versuche es gleich noch einmal.'},503);}
       if(!human)return json({error:'Die Sicherheitsprüfung ist fehlgeschlagen. Bitte versuche es erneut.'},400);
     }
-    const serviceKey=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const admin=createClient(Deno.env.get('SUPABASE_URL')!,serviceKey,{auth:{autoRefreshToken:false,persistSession:false}});
     if(!await consume(admin,serviceKey,'register-ip',clientAddress(req),10,3600))return json({error:'Zu viele Registrierungen. Bitte versuche es später erneut.'},429);
     if(!await consume(admin,serviceKey,'register-user',username,3,3600))return json({error:'Zu viele Registrierungsversuche für diesen Benutzernamen. Bitte versuche es später erneut.'},429);
     const existing=await admin.from('profiles').select('user_id').eq('username',username).maybeSingle();

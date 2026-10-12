@@ -6,8 +6,10 @@
 //                  Betrag und Rhythmus werden in der Adresse mitgegeben (amount, default_interval a/m);
 //                  „Einmalig“ ist die Grundeinstellung des Formulars bei Donorbox.
 //                  Die Seite lädt nichts von Donorbox – erst der Klick öffnet das Formular in einem neuen Tab.
-//  MONTH_GOAL      Monatsziel in Euro (Balken ist dann voll).
-//  MONTH_RECEIVED  In diesem Monat eingegangener Betrag in Euro.
+//  MONTH_GOAL      Monatsziel in Euro (Balken ist dann voll) – nur noch Ersatzwert.
+//  MONTH_RECEIVED  In diesem Monat eingegangener Betrag in Euro – nur noch Ersatzwert.
+// Den Füllstand liefert inzwischen die Datenbank (app_settings → goal_percent): Monatsziel aus der Verwaltung,
+// Eingang aus der stündlichen PayPal-Abfrage. Beträge selbst kommen dabei nie auf die Seite.
 import {createSwarm,cleanName} from './support-swarm.mjs?v=2';
 import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './supabase-config.js?v=2';
 
@@ -141,9 +143,12 @@ if(typeof document!=='undefined'){
   $('support-provider').textContent='Sicher bezahlen über Donorbox mit PayPal.';
  }
 
- const percent=goalPercent(),bar=$('support-goal-bar');
- bar.setAttribute('aria-valuenow',String(percent));
- bar.firstElementChild.style.width=percent+'%';
+ const bar=$('support-goal-bar');
+ const showGoal=percent=>{bar.setAttribute('aria-valuenow',String(percent));bar.firstElementChild.style.width=percent+'%';};
+ showGoal(goalPercent());
+ const fromServer=s=>{const p=Number(s?.goal_percent);if(Number.isFinite(p))showGoal(Math.max(0,Math.min(100,Math.round(p))));};
+ if(window.vanamoSettings)fromServer(window.vanamoSettings);
+ addEventListener('vanamo:settings',e=>fromServer(e.detail));
 
  const star=$('support-star'),note=$('support-note');
  const showNote=open=>{note.hidden=!open;star.setAttribute('aria-expanded',String(open));};
