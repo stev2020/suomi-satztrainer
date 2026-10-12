@@ -15,7 +15,7 @@ import {mountWordLookup,loadLexicon,lookupForSentence,splitSentence,getLexicon} 
 import {planVerbs,planEndings,interleave,alternate,verbCard,endingCard,NEW_ONLY_BELOW} from './daily-mix.mjs?v=3';
 import {validateEndingsProgress,mergeEndingsProgress,markEndingAnswered,missedEndings} from './endings-progress.mjs?v=1';
 import {createGuestCard,shortGloss,flipWordIndex} from './guest-card.mjs?v=13';
-import {renderGreeting,renderToday,createDailySentence,animateProgress,GOAL_CHOICES,DAILY_GOAL} from './home-extras.mjs?v=13';
+import {renderGreeting,renderToday,createDailySentence,animateProgress,GOAL_CHOICES,DAILY_GOAL} from './home-extras.mjs?v=14';
 import {createHomeTabs} from './home-tabs.mjs?v=3';
 import {hasBook,loadBook,loadChapter,stationsByTopic,readChapters,markRead,renderIndex,renderChapter,HASH as GRAMMAR_HASH} from './grammar-book.mjs?v=1';
 import {buildDifficultDeck} from './difficult-words.mjs?v=2';
@@ -1155,7 +1155,7 @@ window.addEventListener('vanamo:session',()=>{try{renderHomeExtras();}catch{}});
 function accountId(){try{return JSON.parse(localStorage.getItem('suomi-auth-session-v1')||'null')?.user?.id||'';}catch{return '';}}
 var dailySentence=null;
 // Tagesserie: einmal am Tag, beim ersten abgeschlossenen Block, kommt die Animation mit dem goldenen Vogel (streak.mjs).
-function celebrateStreak(){if(!accountActive())return;import('./streak.mjs?v=5').then(m=>m.celebrateStreak(memory.daily)).catch(()=>{});}
+function celebrateStreak(){if(!accountActive())return;import('./streak.mjs?v=6').then(m=>m.celebrateStreak(memory.daily)).catch(()=>{});}
 function renderHomeExtras(){
  if(typeof memory==='undefined'||!memory)return;
  const account=accountActive();

@@ -177,7 +177,7 @@ const recentIds=(saved,today)=>{
 function fits(s){
  if(!s?.translations?.length||s.hidden)return false;
  const infos=lookupForSentence(s.text),words=splitSentence(s.text).filter(p=>p.index!==undefined);
- if(words.length<3||words.length>9||!infos||infos.length!==words.length)return false;
+ if(words.length<2||words.length>9||!infos||infos.length!==words.length)return false;
  return infos.every(i=>i&&shortGloss(i)&&shortGloss(i).length<=24);
 }
 
@@ -235,20 +235,20 @@ export function createDailySentence(root,{sentences,learnedIds,fallbackLevel=()=
   let next=null;
   const s=chooseDaily(pool,user,tomorrow,[sentence.id,...recent]);
   if(s)next={day:tomorrow,id:s.id,own,card:{sentence:s,cols:columns(s)}};
-  try{localStorage.setItem(storeKey(),JSON.stringify({v:2,day:today,id:sentence.id,own,recent,card:{sentence,cols},next}));}catch{}
+  try{localStorage.setItem(storeKey(),JSON.stringify({v:3,day:today,id:sentence.id,own,recent,card:{sentence,cols},next}));}catch{}
  }
  function keptCard(){
   const saved=readStore(),today=dayKey(new Date());
   if(saved?.day===today&&validCard(saved))return saved;
-  // Die Karte von morgen gilt nur, wenn sie schon nach der Reihenfolge-Regel (v:2) gewählt wurde.
-  if(saved?.v===2&&saved.next?.day===today&&validCard(saved.next))return saved.next;
+  // Die Karte von morgen gilt nur, wenn sie schon nach der Regel von jetzt (v:3: Reihenfolge, auch Sätze mit zwei Wörtern) gewählt wurde.
+  if(saved?.v===3&&saved.next?.day===today&&validCard(saved.next))return saved.next;
   return null;
  }
  // Wurde die Karte aus dem Vorrat gezeigt, fehlt die für morgen noch: in Ruhe nachholen.
  let preparing=false;
  function prepareTomorrow(){
   const saved=readStore(),tomorrow=dayKey(new Date(Date.now()+864e5));
-  if(preparing||(saved?.v===2&&saved.day===dayKey(new Date())&&saved.next?.day===tomorrow))return;
+  if(preparing||(saved?.v===3&&saved.day===dayKey(new Date())&&saved.next?.day===tomorrow))return;
   preparing=true;
   setTimeout(async()=>{
    // nicht während des Intros: das Durchsuchen aller Sätze kostet auf dem Handy spürbar Rechenzeit
