@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {finnishGreeting,displayName,weekActivity,practiceStreak,dayKey} from './dist/home-extras.mjs';
+import {finnishGreeting,displayName,weekActivity,practiceStreak,dayKey,chooseDaily,DAILY_RECENT} from './dist/home-extras.mjs';
 import {initialHomeTab,HOME_TABS} from './dist/home-tabs.mjs';
 
 const at=(y,m,d,h)=>new Date(y,m-1,d,h,15);
@@ -37,4 +37,20 @@ assert.equal(initialHomeTab({lastDay:'2026-10-06',day:'2026-10-06'}),'practice',
 assert.equal(initialHomeTab({sessionTab:'new',lastDay:'2026-10-05',day:'2026-10-06'}),'new','in diesem Browser-Tab gewählter Reiter bleibt');
 assert.equal(initialHomeTab({sessionTab:'quatsch',lastDay:'2026-10-06',day:'2026-10-06'}),'practice','unbekannter Wert zählt nicht');
 assert.equal(initialHomeTab({intro:true,sessionTab:'practice',lastDay:'2026-10-06',day:'2026-10-06'}),'welcome','mit Intro immer „Willkommen“');
+// Satz des Tages: läuft der Reihe nach durch, ohne baldige Wiederholung.
+{
+ const pool=Array.from({length:23},(_,i)=>({id:1000+i*7})),user='0c3952f6-c4a3-4705-a049-3d40c72c6da3';
+ const days=Array.from({length:23},(_,i)=>new Date(Date.UTC(2026,9,1+i)).toISOString().slice(0,10));
+ const shown=[];
+ for(const day of days)shown.push(chooseDaily(pool,user,day,[...shown].reverse()).id);
+ assert.equal(new Set(shown).size,23,'23 Tage, 23 verschiedene Sätze');
+ assert.equal(chooseDaily(pool,user,days[3]).id,chooseDaily([...pool].reverse(),user,days[3]).id,'Reihenfolge im Vorrat egal (gleich auf allen Geräten)');
+ // Neuer Satz kommt dazu: die zuletzt gezeigten bleiben trotzdem außen vor.
+ const grown=[...pool,{id:5}],recent=[...shown].reverse().slice(0,DAILY_RECENT);
+ assert.ok(!recent.includes(chooseDaily(grown,user,'2026-10-24',recent).id));
+ assert.equal(chooseDaily([{id:1}],user,'2026-10-24',[1]).id,1,'nur ein Satz: der kommt eben wieder');
+ assert.equal(chooseDaily([],user,'2026-10-24'),null);
+ // Ohne Verlauf (anderes Gerät) kommen an aufeinanderfolgenden Tagen trotzdem verschiedene Sätze.
+ for(let i=1;i<days.length;i++)assert.notEqual(chooseDaily(pool,user,days[i]).id,chooseDaily(pool,user,days[i-1]).id);
+}
 console.log('Startseite: Begrüßung nach Tageszeit, Name, Serie, Wochenreihe und Start-Reiter geprüft.');
