@@ -4,9 +4,27 @@ Oben in der App **Klassenräume** öffnen. Mit bestehendem Konto anmelden,
 einen Raum erstellen oder mit dem 16-stelligen Einladungscode beitreten.
 Ersteller sind Lehrkräfte ihres eigenen Raums, Beitretende sind Teilnehmer.
 
+## Einladungslink und Freigabe
+
+- Der Ersteller findet im Raum unter **Unsere Klasse → Einladung & Mitglieder verwalten**
+  den Einladungslink (`…/?klasse=CODE`) zum Kopieren oder Teilen. Solange der Raum noch
+  leer ist, steht der Link zusätzlich oben im Raum („Lade deine Klasse ein“).
+- Wer den Link öffnet, sieht ein Fenster mit Raumname und Lehrkraft, gibt seinen Namen für
+  den Raum ein und tritt bei. Ohne Konto bittet das Fenster zuerst um Anmeldung oder
+  Registrierung; die Einladung bleibt dabei im Tab liegen und erscheint danach wieder.
+- **Neue Mitglieder erst nach Freigabe aufnehmen** (beim Erstellen vorausgewählt, im Raum
+  jederzeit umschaltbar, nur durch den Ersteller): Beitritt per Link oder Code wird dann zur
+  Beitrittsanfrage. Der Raum erscheint bei der Person als „Wartet auf Freigabe“ (zurückziehbar);
+  Inhalte sieht sie erst nach der Aufnahme.
+- Ersteller **und** Lehrkräfte sehen offene Anfragen oben im Raum und nehmen sie auf oder
+  lehnen sie ab. Abgelehnte können später erneut anfragen; entfernte Mitglieder können weder
+  anfragen noch aufgenommen werden. Grenzen: 50 offene Anfragen je Raum, 10 je Konto.
+- **Link und Code erneuern** macht beide ungültig. Räume von vor dieser Funktion bleiben
+  ohne Freigabe, bis der Ersteller sie einschaltet.
+
 ## Ablauf
 
-1. Lehrkraft erstellt einen Raum und teilt den Code.
+1. Lehrkraft erstellt einen Raum und teilt den Einladungslink (oder den Code).
 2. Teilnehmer treten bei; Nutzername und Beiträge sind im Raum sichtbar.
 3. Lehrkraft stellt eine Aufgabe mit insgesamt 1–20 Sätzen zusammen. Vorhandene
    Sätze lassen sich nach Level und Grammatikthema filtern. Zusätzlich kann die
