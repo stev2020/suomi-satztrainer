@@ -122,12 +122,13 @@ header{flex-wrap:wrap}
 .cr-view-title>div{min-width:0}
 .cr-view-title h1{overflow-wrap:anywhere}
 #classrooms-refresh{flex-shrink:0}
+.cr-view-actions{display:flex;gap:10px;flex-shrink:0;align-items:center}.cr-view-actions [hidden]{display:none}
 .cr-today>[data-cr=new_assignment]{margin:2px 0 8px}
 .cr-sidebar-disclosure>summary{cursor:pointer;display:list-item;list-style:disclosure-closed;min-height:34px;font:700 23px/1.25 var(--heading)}
 .cr-sidebar-disclosure[open]>summary{list-style-type:disclosure-open}
 .cr-sidebar-disclosure>summary:focus-visible{outline:3px solid var(--purple);outline-offset:5px;border-radius:3px}
 .cr-sidebar-disclosure-content{border-top:1px solid color-mix(in srgb,var(--line) 19%,transparent);margin-top:12px;padding-top:2px}
-@media(max-width:540px){.cr-view-title{align-items:flex-start}.cr-view-title h1{font-size:28px}.cr-view-title #classrooms-refresh{padding-inline:10px}}
+@media(max-width:540px){.cr-view-title{align-items:flex-start}.cr-view-title h1{font-size:28px}.cr-view-title #classrooms-refresh,.cr-view-title #classrooms-invite{padding-inline:10px}.cr-view-actions{flex-direction:column;align-items:stretch;gap:8px}}
 
 /* Confirmed sentences are static cards; orange marks the next required action. */
 #classrooms-view [data-cr=confirm_custom]{background:var(--orange);color:var(--on-orange);border:2px solid var(--line);font-weight:800}
@@ -434,7 +435,8 @@ header{flex-wrap:wrap}
 #classrooms-view .cr-room-action>form .primary{margin-top:10px}
 
 /* Im Raum: Stream */
-#classrooms-view #classrooms-refresh{min-height:38px}
+#classrooms-view :is(#classrooms-refresh,#classrooms-invite){min-height:38px}
+#classrooms-view #classrooms-invite{border-color:var(--ink);background:var(--mint);font-weight:700}
 #classrooms-view .cr-stream-layout h3{font:500 24px/1.25 var(--heading)}
 #classrooms-view .cr-stream-compose{padding:18px 24px}
 #classrooms-view .cr-stream-compose>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px}
@@ -621,26 +623,31 @@ header{flex-wrap:wrap}
 #classrooms-view .cr-room-card.cr-room-pending{background:var(--paper);border-style:dashed;border-color:var(--cr-pill)}
 #classrooms-view .cr-joined-pending{padding:12px 16px;border:1px solid var(--cr-edge);border-radius:12px;background:var(--mint)}
 /* Fenster „Einladung“ im Stil von „Fortschritt speichern?“. */
-#cr-invite-dialog{max-width:440px;padding:30px 36px 28px;border:1px solid color-mix(in srgb,var(--ink) 22%,transparent);border-radius:22px;box-shadow:none}
-#cr-invite-dialog .dialog-top h2{font-size:26px;font-weight:500;letter-spacing:-.01em}
-#cr-invite-dialog .cr-invite-close{display:grid;place-items:center;width:44px;height:44px;min-height:0;margin:-8px -12px -8px 0;padding:0;border:0;border-radius:50%;background:none;box-shadow:none;font-size:18px;color:var(--ink-soft)}
-#cr-invite-dialog .cr-invite-close:hover{background:color-mix(in srgb,var(--ink) 7%,transparent);color:var(--ink)}
-#cr-invite-dialog p{margin:12px 0 0}
-#cr-invite-dialog .cr-invite-room{display:flex;flex-direction:column;gap:2px;margin:18px 0 6px;padding:16px 18px;border:1px solid color-mix(in srgb,var(--ink) 22%,transparent);border-radius:14px;background:var(--lavender);color:var(--ink)}
-#cr-invite-dialog .cr-invite-room span{font-size:13px;color:var(--muted)}
-#cr-invite-dialog .cr-invite-room span:first-child{font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--heading-accent)}
-#cr-invite-dialog .cr-invite-room strong{font:500 24px/1.25 var(--heading);overflow-wrap:anywhere}
-#cr-invite-dialog label{display:block;margin-top:18px;font-size:14px;font-weight:600;color:var(--ink)}
-#cr-invite-dialog label input{display:block;width:100%;box-sizing:border-box;margin-top:6px}
-#cr-invite-dialog .cr-note{font-size:14px;line-height:1.5}
-#cr-invite-dialog .cr-invite-error{color:var(--bad);font-size:14px}
-#cr-invite-dialog .cr-invite-error:empty{display:none}
-#cr-invite-dialog .cr-invite-actions{display:grid;gap:10px;margin-top:24px}
-#cr-invite-dialog .cr-invite-actions .primary{width:100%;min-height:56px;margin:0 0 8px;padding:10px 24px;border:2px solid var(--ink);border-radius:14px;background:linear-gradient(var(--orange),var(--orange)) no-repeat left/0 100%,var(--paper);box-shadow:3.5px 3.5px 0 var(--orange);font:600 20px/1 var(--heading);letter-spacing:-.2px;color:var(--ink);transition:background-size .45s cubic-bezier(.65,0,.35,1),box-shadow .45s ease,color .3s ease}
-#cr-invite-dialog .cr-invite-actions .primary:is(:active,:focus-visible){transform:none;background-size:100% 100%;box-shadow:3.5px 3.5px 0 var(--ink);color:var(--on-orange)}
-@media(hover:hover){#cr-invite-dialog .cr-invite-actions .primary:hover{transform:none;background-size:100% 100%;box-shadow:3.5px 3.5px 0 var(--ink);color:var(--on-orange)}}
-#cr-invite-dialog .cr-invite-actions .primary:disabled{opacity:.6;cursor:wait}
-#cr-invite-dialog .cr-invite-actions button:not(.primary){min-height:46px;margin:0;padding:8px 12px;border:1px solid color-mix(in srgb,var(--ink) 30%,transparent);border-radius:999px;background:none;box-shadow:none;font-size:14px;font-weight:500;color:var(--ink)}
-#cr-invite-dialog .cr-invite-actions button:not(.primary):hover{border-color:var(--ink)}
-@media(max-width:640px){#cr-invite-dialog{padding:24px 20px 22px;border-radius:18px}}
-@media(prefers-reduced-motion:reduce){#cr-invite-dialog .cr-invite-actions .primary{transition:none}}
+:is(#cr-invite-dialog,#cr-share-dialog){max-width:440px;padding:30px 36px 28px;border:1px solid color-mix(in srgb,var(--ink) 22%,transparent);border-radius:22px;box-shadow:none}
+:is(#cr-invite-dialog,#cr-share-dialog) .dialog-top h2{font-size:26px;font-weight:500;letter-spacing:-.01em}
+:is(#cr-invite-dialog,#cr-share-dialog) .cr-invite-close{display:grid;place-items:center;width:44px;height:44px;min-height:0;margin:-8px -12px -8px 0;padding:0;border:0;border-radius:50%;background:none;box-shadow:none;font-size:18px;color:var(--ink-soft)}
+:is(#cr-invite-dialog,#cr-share-dialog) .cr-invite-close:hover{background:color-mix(in srgb,var(--ink) 7%,transparent);color:var(--ink)}
+:is(#cr-invite-dialog,#cr-share-dialog) p{margin:12px 0 0}
+:is(#cr-invite-dialog,#cr-share-dialog) .cr-invite-room{display:flex;flex-direction:column;gap:2px;margin:18px 0 6px;padding:16px 18px;border:1px solid color-mix(in srgb,var(--ink) 22%,transparent);border-radius:14px;background:var(--lavender);color:var(--ink)}
+:is(#cr-invite-dialog,#cr-share-dialog) .cr-invite-room span{font-size:13px;color:var(--muted)}
+:is(#cr-invite-dialog,#cr-share-dialog) .cr-invite-room span:first-child{font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--heading-accent)}
+:is(#cr-invite-dialog,#cr-share-dialog) .cr-invite-room strong{font:500 24px/1.25 var(--heading);overflow-wrap:anywhere}
+:is(#cr-invite-dialog,#cr-share-dialog) label{display:block;margin-top:18px;font-size:14px;font-weight:600;color:var(--ink)}
+:is(#cr-invite-dialog,#cr-share-dialog) label input{display:block;width:100%;box-sizing:border-box;margin-top:6px}
+:is(#cr-invite-dialog,#cr-share-dialog) .cr-note{font-size:14px;line-height:1.5}
+:is(#cr-invite-dialog,#cr-share-dialog) .cr-invite-error{color:var(--bad);font-size:14px}
+:is(#cr-invite-dialog,#cr-share-dialog) .cr-invite-error:empty{display:none}
+:is(#cr-invite-dialog,#cr-share-dialog) .cr-invite-actions{display:grid;gap:10px;margin-top:24px}
+:is(#cr-invite-dialog,#cr-share-dialog) .cr-invite-actions .primary{width:100%;min-height:56px;margin:0 0 8px;padding:10px 24px;border:2px solid var(--ink);border-radius:14px;background:linear-gradient(var(--orange),var(--orange)) no-repeat left/0 100%,var(--paper);box-shadow:3.5px 3.5px 0 var(--orange);font:600 20px/1 var(--heading);letter-spacing:-.2px;color:var(--ink);transition:background-size .45s cubic-bezier(.65,0,.35,1),box-shadow .45s ease,color .3s ease}
+:is(#cr-invite-dialog,#cr-share-dialog) .cr-invite-actions .primary:is(:active,:focus-visible){transform:none;background-size:100% 100%;box-shadow:3.5px 3.5px 0 var(--ink);color:var(--on-orange)}
+@media(hover:hover){:is(#cr-invite-dialog,#cr-share-dialog) .cr-invite-actions .primary:hover{transform:none;background-size:100% 100%;box-shadow:3.5px 3.5px 0 var(--ink);color:var(--on-orange)}}
+:is(#cr-invite-dialog,#cr-share-dialog) .cr-invite-actions .primary:disabled{opacity:.6;cursor:wait}
+:is(#cr-invite-dialog,#cr-share-dialog) .cr-invite-actions button:not(.primary){min-height:46px;margin:0;padding:8px 12px;border:1px solid color-mix(in srgb,var(--ink) 30%,transparent);border-radius:999px;background:none;box-shadow:none;font-size:14px;font-weight:500;color:var(--ink)}
+:is(#cr-invite-dialog,#cr-share-dialog) .cr-invite-actions button:not(.primary):hover{border-color:var(--ink)}
+@media(max-width:640px){:is(#cr-invite-dialog,#cr-share-dialog){padding:24px 20px 22px;border-radius:18px}}
+@media(prefers-reduced-motion:reduce){:is(#cr-invite-dialog,#cr-share-dialog) .cr-invite-actions .primary{transition:none}}
+#cr-share-dialog .cr-invite-link{width:100%;box-sizing:border-box;margin-top:14px;padding:10px 12px;border:1px solid color-mix(in srgb,var(--ink) 22%,transparent);border-radius:10px;background:var(--paper);color:var(--ink);font:14px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;text-overflow:ellipsis}
+#cr-share-dialog .cr-check{display:flex;align-items:flex-start;gap:10px;margin:6px 0 0;font-size:15px;font-weight:600;color:var(--ink);cursor:pointer}
+#cr-share-dialog .cr-check input{width:20px;height:20px;margin:3px 0 0;flex:0 0 auto;accent-color:var(--heading-accent)}
+#cr-share-dialog .cr-code{font:700 16px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink)}
+#cr-share-dialog .cr-invite-actions{margin-top:16px}

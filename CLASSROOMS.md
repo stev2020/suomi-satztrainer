@@ -6,8 +6,9 @@ Ersteller sind Lehrkräfte ihres eigenen Raums, Beitretende sind Teilnehmer.
 
 ## Einladungslink und Freigabe
 
-- Der Ersteller findet im Raum unter **Unsere Klasse → Einladung & Mitglieder verwalten**
-  den Einladungslink (`…/?klasse=CODE`) zum Kopieren oder Teilen. Solange der Raum noch
+- Der Ersteller öffnet im Raum oben mit **Einladen** ein Fenster mit Einladungslink, Teilen,
+  Freigabe-Schalter und Code. Dasselbe steht auch unter **Unsere Klasse → Einladung & Mitglieder
+  verwalten**. Der Einladungslink (`…/?klasse=CODE`) zum Kopieren oder Teilen. Solange der Raum noch
   leer ist, steht der Link zusätzlich oben im Raum („Lade deine Klasse ein“).
 - Wer den Link öffnet, sieht ein Fenster mit Raumname und Lehrkraft, gibt seinen Namen für
   den Raum ein und tritt bei. Ohne Konto bittet das Fenster zuerst um Anmeldung oder
