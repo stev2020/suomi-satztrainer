@@ -1,5 +1,5 @@
 import {uiLocale} from './i18n.mjs?v=27';
-import {accountUser,accountRequest} from './auth.js?v=131';
+import {accountUser,accountRequest} from './auth.js?v=132';
 import {avatarMarkup,cleanNickname} from './avatars.mjs?v=2';
 import {GRAMMAR_TOPICS,topicNotes} from './grammar-topics.mjs';
 import {translationFeedbackMarkup,compareTranslation} from './translation-feedback.mjs?v=1';
@@ -164,13 +164,13 @@ const localInput=v=>{if(!v)return '';const d=new Date(v);d.setMinutes(d.getMinut
 const bird=(id,name,own=false,size='')=>avatarMarkup(id,{name,live:!!own,size});
 // Der Spitzname aus dem Konto wird als Name für neue Klassenräume vorgeschlagen.
 const ownNickname=()=>cleanNickname(accountUser()?.user_metadata?.nickname);
-const css=document.createElement('link');css.rel='stylesheet';css.href='./classrooms.css?v=86';document.head.append(css);
+const css=document.createElement('link');css.rel='stylesheet';css.href='./classrooms.css?v=87';document.head.append(css);
 const button=document.createElement('button');button.id='classrooms-button';button.type='button';button.dataset.view='classrooms';button.textContent='Klassenraum';
 const headerNav=document.querySelector('.header-nav');
 if(headerNav)headerNav.insertBefore(button,headerNav.querySelector('[data-view="progress"]'));else $('account-button').before(button);
 const main=document.querySelector('main')||document.body.appendChild(document.createElement('main'));
 const classroomAnchor=main.querySelector('.page-tools')||main.querySelector('.bottom-nav')||main.querySelector('footer');
-const classroomMarkup=`<section id="classrooms-view" class="app-view classrooms-view" aria-labelledby="classrooms-title" hidden><div class="view-heading"><div class="cr-view-title"><div><div class="eyebrow">GEMEINSAM LERNEN</div><h1 id="classrooms-title">Klassenräume</h1></div><button type="button" id="classrooms-refresh" class="quiet" hidden>Aktualisieren</button></div></div><p id="classrooms-status" role="status" aria-live="polite"></p><div id="classrooms-content"></div></section>`;
+const classroomMarkup=`<section id="classrooms-view" class="app-view classrooms-view" aria-labelledby="classrooms-title" hidden><div class="view-heading"><div class="cr-view-title"><div><div class="eyebrow">GEMEINSAM LERNEN</div><h1 id="classrooms-title">Klassenräume</h1></div><div class="cr-view-actions"><button type="button" id="classrooms-invite" class="quiet" hidden>Einladen</button><button type="button" id="classrooms-refresh" class="quiet" hidden>Aktualisieren</button></div></div></div><p id="classrooms-status" role="status" aria-live="polite"></p><div id="classrooms-content"></div></section>`;
 if(classroomAnchor)classroomAnchor.insertAdjacentHTML('beforebegin',classroomMarkup);else main.insertAdjacentHTML('beforeend',classroomMarkup);
 const status=(s,error=false)=>{$('classrooms-status').textContent=s;$('classrooms-status').classList.toggle('error',error);};
 async function api(action,payload={}){
@@ -218,6 +218,7 @@ const sources=s=>s.origin==='teacher_created'?'<details class="cr-sources"><summ
 function updateHeading(){
  $('classrooms-title').textContent=room?.name||'Klassenräume';
  $('classrooms-refresh').hidden=!room;
+ $('classrooms-invite').hidden=!(room?.owner&&!room.archived);
 }
 async function home(){
  loadDrafts();
@@ -253,7 +254,7 @@ function requestsCard(){
 }
 function inviteCard(){
  if(!room.owner||room.archived||room.member_count>0||room.teacher_count>1||(room.requests||[]).length)return '';
- return `<section class="cr-card cr-invite-card" aria-labelledby="cr-invite-card-title"><div class="eyebrow">LOS GEHT'S</div><h3 id="cr-invite-card-title">Lade deine Klasse ein</h3><p class="cr-note">Schick den Link an deine Klasse.${room.approval?' Du schaltest jede Person frei, bevor sie den Raum sieht.':''}</p>${invitePanel()}</section>`;
+ return `<section class="cr-card cr-invite-card" aria-labelledby="cr-invite-card-title"><div class="eyebrow">LOS GEHT'S</div><h3 id="cr-invite-card-title">Lade deine Klasse ein</h3><p class="cr-note">Schick den Link an deine Klasse.${room.approval?' Du schaltest jede Person frei, bevor sie den Raum sieht.':''} Link, Code und Freigabe findest du jederzeit oben über „Einladen“.</p>${invitePanel()}</section>`;
 }
 function inviteDialog(){
  let d=$('cr-invite-dialog');
@@ -296,6 +297,32 @@ function renderInvite(state){
  const info=state.info;
  title.textContent='Einladung';
  body.innerHTML=`<p class="cr-invite-room"><span>Klassenraum</span><strong>${esc(info.name)}</strong><span>Lehrkraft: ${esc(info.teacher)}</span></p><form class="cr-invite-form"><label>Dein Name in diesem Klassenraum<input name="display_name" required maxlength="80" autocomplete="name" placeholder="Zum Beispiel Anna Müller" value="${esc(ownNickname())}"></label><p class="cr-note">So sieht dich diese Klasse. Im Raum sind dein Name und deine Beiträge sichtbar, die Lehrkräfte sehen deine Abgaben. Dein privater Lernstand bleibt privat.</p>${info.approval?'<p class="cr-note">Die Lehrkraft schaltet dich frei, bevor du den Raum siehst.</p>':''}<p class="cr-invite-error" role="alert"></p><div class="cr-invite-actions"><button type="submit" class="primary">${info.approval?'Beitritt anfragen':'Klasse beitreten'}</button><button type="button" class="quiet" data-invite="close">Nicht jetzt</button></div></form>`;
+}
+// Knopf „Einladen“ oben im Raum (nur Ersteller): Link, Teilen, Freigabe-Schalter und Code in einem Fenster.
+function shareMarkup(){
+ return `<p>Schick diesen Link an deine Klasse. Wer ihn öffnet, sieht Raumname und Lehrkraft.</p><input class="cr-invite-link" readonly value="${esc(inviteLink(room.code))}" aria-label="Einladungslink" data-cr-select><div class="cr-invite-actions"><button type="button" class="primary" data-share="copy">Link kopieren</button>${navigator.share?'<button type="button" class="quiet" data-share="share">Link teilen</button>':''}</div><label class="cr-check"><input type="checkbox" data-share-approval${room.approval?' checked':''}><span>Neue Mitglieder erst nach Freigabe aufnehmen</span></label><p class="cr-note">${room.approval?'Wer den Link öffnet, stellt eine Beitrittsanfrage. Du und die Lehrkräfte nehmen sie oben im Raum an oder lehnt sie ab.':'Wer den Link öffnet, ist sofort Mitglied.'}</p><p class="cr-note">Oder per Code: <strong class="cr-code">${esc(room.code)}</strong></p><p class="cr-invite-error" role="alert"></p>`;
+}
+function showShare(){
+ let d=$('cr-share-dialog');
+ if(!d){
+  document.body.insertAdjacentHTML('beforeend','<dialog id="cr-share-dialog" class="cr-dialog" aria-labelledby="cr-share-title"><div class="dialog-top"><h2 id="cr-share-title">Klasse einladen</h2><button type="button" class="quiet cr-invite-close" aria-label="Schließen">✕</button></div><div id="cr-share-body"></div></dialog>');
+  d=$('cr-share-dialog');d.querySelector('.cr-invite-close').onclick=()=>d.close();
+  d.addEventListener('focusin',e=>{if(e.target.matches('[data-cr-select]'))e.target.select();});
+  d.addEventListener('click',async e=>{
+   const el=e.target.closest('[data-share]');if(!el||!room)return;
+   const error=d.querySelector('.cr-invite-error');error.textContent='';
+   if(el.dataset.share==='copy'){try{await navigator.clipboard.writeText(inviteLink(room.code));el.textContent='Link kopiert ✓';}catch{d.querySelector('.cr-invite-link').select();error.textContent='Kopieren ging nicht – der Link ist markiert, kopiere ihn mit Strg+C.';}}
+   if(el.dataset.share==='share'){try{await navigator.share({title:`Klassenraum „${room.name}“`,text:`Komm in unseren Vanamo-Klassenraum „${room.name}“:`,url:inviteLink(room.code)});}catch(err){if(err?.name!=='AbortError')error.textContent='Teilen hat nicht geklappt. Kopiere den Link stattdessen.';}}
+  });
+  d.addEventListener('change',async e=>{
+   if(!e.target.matches('[data-share-approval]')||!room)return;
+   const box=e.target,on=box.checked;box.disabled=true;
+   try{await api('set_approval',{room_id:room.id,approval:on});room.approval=on;$('cr-share-body').innerHTML=shareMarkup();run(()=>open(room.id));}
+   catch(err){box.checked=!on;box.disabled=false;d.querySelector('.cr-invite-error').textContent=err.message;}
+  });
+ }
+ $('cr-share-body').innerHTML=shareMarkup();
+ if(!d.open)d.showModal();
 }
 let inviteRunning=false;
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -485,6 +512,7 @@ function openClassrooms(id){
  run(async()=>{await home();if(typeof id==='string')await open(id);});
 }
 button.onclick=()=>openClassrooms();
+$('classrooms-invite').onclick=()=>{if(room?.owner)showShare();};
 $('classrooms-refresh').onclick=()=>{if(room&&canNavigate())run(()=>open(room.id));};
 $('classrooms-content').addEventListener('input',e=>{
  if(!e.target.matches('[data-answer]'))dirty=true;

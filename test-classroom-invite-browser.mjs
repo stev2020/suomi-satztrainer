@@ -73,6 +73,13 @@ try{
  await page.locator('#classrooms-view:not([hidden])').waitFor();
  await page.locator('.cr-invite-card').waitFor();
 
+ // Knopf „Einladen“ oben im Raum: Fenster mit Link, Schalter und Code.
+ await page.locator('#classrooms-invite').click();
+ const share=page.locator('#cr-share-dialog');
+ assert.equal(await share.locator('.cr-invite-link').inputValue(),origin+'/?klasse='+code);
+ assert.match(await share.textContent(),/ABCDEF0123456789/);
+ assert.equal(await share.locator('[data-share-approval]').isChecked(),false);
+ await share.locator('.cr-invite-close').click();
  // Ersteller im Raum: Link und Schalter; mit Freigabe und Anfrage steht oben die Anfrage.
  const link=await page.locator('.cr-invite-card .cr-invite-link').inputValue();
  assert.equal(link,origin+'/?klasse='+code);
