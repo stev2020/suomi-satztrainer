@@ -41,7 +41,7 @@ function home(sx,sy){const r=Math.pow(Math.random(),.7),a=Math.random()*6.2832;r
 export function createSwarm(canvas,{reducedMotion=false}={}){
  const ctx=canvas.getContext('2d');
  let W=0,H=0,t=0,raf=0,visible=true,cx=0,cy=0;
- let dots=[],names=[],former=0,col={ink:[23,44,56],accent:[101,71,139],orange:[255,147,92],bg:[250,247,240]};
+ let dots=[],names=[],former=0,light=true,col={ink:[23,44,56],accent:[101,71,139],orange:[255,147,92],bg:[250,247,240]};
  const mouse={x:-999,y:-999,px:-999,py:-999};let tapped=null,tapUntil=0;
  const FONT=()=>`500 ${W<NARROW?12:13}px Fraunces, Georgia, serif`;
  const FONT_BIG=()=>`700 ${W<NARROW?12:13}px Fraunces, Georgia, serif`;
@@ -55,6 +55,8 @@ export function createSwarm(canvas,{reducedMotion=false}={}){
  }
  function readColors(){
   const cs=getComputedStyle(canvas);
+  // Helle Paletten: Punkte kräftiger, sonst verschwinden sie fast im hellen Grund.
+  light=document.documentElement.dataset.themeMode!=='dark';
   col={ink:rgb(cs.getPropertyValue('--ink').trim(),col.ink),accent:rgb(cs.getPropertyValue('--heading-accent').trim(),col.accent),
    orange:rgb(cs.getPropertyValue('--orange').trim(),col.orange),bg:rgb(cs.getPropertyValue('--bg').trim(),col.bg)};
  }
@@ -131,7 +133,7 @@ export function createSwarm(canvas,{reducedMotion=false}={}){
   const big=new Path2D(),small=new Path2D(),dark=new Path2D();
   for(const p of dots){const z=1+p.z*.7;(p.former?dark:p.z>.45?big:small).rect(p.x-z/2,p.y-z/2,z,z);}
   for(let i=0;i<older;i++){const n=names[i];dark.rect(n.x-1.1,n.y-1.1,2.2,2.2);}
-  ctx.fillStyle=rgba(col.ink,.32);ctx.fill(big);ctx.fillStyle=rgba(col.ink,.24);ctx.fill(small);ctx.fillStyle=rgba(col.ink,.6);ctx.fill(dark);
+  ctx.fillStyle=rgba(col.ink,light?.52:.32);ctx.fill(big);ctx.fillStyle=rgba(col.ink,light?.4:.24);ctx.fill(small);ctx.fillStyle=rgba(col.ink,light?.75:.6);ctx.fill(dark);
   ctx.textAlign='center';ctx.textBaseline='middle';ctx.font=FONT();
   for(const n of shown){
    if(n===hov&&n.hold>.05)continue;
@@ -160,7 +162,7 @@ export function createSwarm(canvas,{reducedMotion=false}={}){
  const ro=typeof ResizeObserver!=='undefined'?new ResizeObserver(()=>{size();if(reducedMotion)settle();}):null;ro?.observe(canvas);
  const io=typeof IntersectionObserver!=='undefined'?new IntersectionObserver(es=>{visible=es.some(e=>e.isIntersecting);run();}):null;io?.observe(canvas);
  document.addEventListener('visibilitychange',run);
- new MutationObserver(()=>{readColors();if(reducedMotion)settle();}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+ new MutationObserver(()=>{readColors();if(reducedMotion)settle();}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme','data-theme-mode']});
  document.fonts?.ready.then(()=>{measure();if(reducedMotion)settle();});
  run();
  return {setData,get names(){return names.map(n=>n.text);},get dots(){return dots.length;}};

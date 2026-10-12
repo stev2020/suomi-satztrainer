@@ -8,7 +8,7 @@
 //                  Die Seite lädt nichts von Donorbox – erst der Klick öffnet das Formular in einem neuen Tab.
 //  MONTH_GOAL      Monatsziel in Euro (Balken ist dann voll).
 //  MONTH_RECEIVED  In diesem Monat eingegangener Betrag in Euro.
-import {createSwarm,cleanName} from './support-swarm.mjs?v=1';
+import {createSwarm,cleanName} from './support-swarm.mjs?v=2';
 import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './supabase-config.js?v=2';
 
 export const DONORBOX_URL='https://donorbox.org/vanamo';
