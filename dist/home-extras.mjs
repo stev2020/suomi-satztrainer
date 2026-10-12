@@ -152,6 +152,28 @@ export function animateProgress(el,value){
 // ---------- Satz des Tages ----------
 const DAILY_KEY='vanamo-daily-sentence';
 const hash=text=>{let h=2166136261;for(const c of text){h^=c.codePointAt(0);h=Math.imul(h,16777619);}return h>>>0;};
+// So viele der zuletzt gezeigten Sätze werden übersprungen, solange der Vorrat es zulässt.
+export const DAILY_RECENT=14;
+// Die Sätze laufen der Reihe nach durch: jedes Konto hat eine eigene, feste Reihenfolge
+// (nach Konto und Satz gemischt), und jeder Tag rückt einen Platz weiter. So kommt jeder Satz
+// einmal dran, bevor sich einer wiederholt – vorher wurde jeden Tag neu gelost, und bei gut
+// 20 eigenen Sätzen kam derselbe Satz oft schon nach ein, zwei Tagen wieder.
+// Kommen neue Sätze dazu, verschiebt sich die Reihe; die zuletzt gezeigten bleiben trotzdem außen vor.
+export function chooseDaily(pool,user,day,recent=[]){
+ if(!pool?.length)return null;
+ const order=[...pool].sort((a,b)=>hash(user+'|'+a.id)-hash(user+'|'+b.id)||a.id-b.id);
+ const n=order.length,skip=new Set(recent.slice(0,Math.min(DAILY_RECENT,n-1)));
+ const start=Math.floor(Date.parse(day+'T00:00:00Z')/864e5)%n;
+ for(let i=0;i<n;i++){const s=order[(start+i)%n];if(!skip.has(s.id))return s;}
+ return order[start];
+}
+// Zuletzt gezeigte Sätze (neueste zuerst), aus dem gespeicherten Eintrag: Stammt er von einem
+// früheren Tag, zählt sein Satz mit dazu.
+const recentIds=(saved,today)=>{
+ if(!saved)return [];
+ const list=saved.day===today?(saved.recent||[]):[saved.id,...(saved.recent||[])];
+ return [...new Set(list.filter(id=>id!=null))].slice(0,DAILY_RECENT);
+};
 function fits(s){
  if(!s?.translations?.length||s.hidden)return false;
  const infos=lookupForSentence(s.text),words=splitSentence(s.text).filter(p=>p.index!==undefined);
@@ -182,9 +204,9 @@ export function createDailySentence(root,{sentences,learnedIds,fallbackLevel=()=
    const kept=(sentences()||[]).find(s=>s.id===saved.id);
    if(kept&&fits(kept)){own=!!saved.own;return kept;}
   }
-  if(!pool.length)return null;
-  const chosen=pool[hash(user+'|'+today+(own?'m':'f'))%pool.length];
-  try{localStorage.setItem(storeKey(),JSON.stringify({day:today,id:chosen.id,own}));}catch{}
+  const recent=recentIds(saved,today),chosen=chooseDaily(pool,user,today,recent);
+  if(!chosen)return null;
+  try{localStorage.setItem(storeKey(),JSON.stringify({day:today,id:chosen.id,own,recent}));}catch{}
   return chosen;
  }
  // Wörter und ihre Kurzbedeutungen; braucht die Wortanalyse.
@@ -209,21 +231,24 @@ export function createDailySentence(root,{sentences,learnedIds,fallbackLevel=()=
  // damit auch der erste Besuch des nächsten Tages nicht warten muss.
  function keepCard(){
   const today=dayKey(new Date()),tomorrow=dayKey(new Date(Date.now()+864e5)),user=String(userKey()||'');
+  const recent=recentIds(readStore(),today).filter(id=>id!==sentence.id);
   let next=null;
-  if(pool.length){const s=pool[hash(user+'|'+tomorrow+(own?'m':'f'))%pool.length];next={day:tomorrow,id:s.id,own,card:{sentence:s,cols:columns(s)}};}
-  try{localStorage.setItem(storeKey(),JSON.stringify({day:today,id:sentence.id,own,card:{sentence,cols},next}));}catch{}
+  const s=chooseDaily(pool,user,tomorrow,[sentence.id,...recent]);
+  if(s)next={day:tomorrow,id:s.id,own,card:{sentence:s,cols:columns(s)}};
+  try{localStorage.setItem(storeKey(),JSON.stringify({v:2,day:today,id:sentence.id,own,recent,card:{sentence,cols},next}));}catch{}
  }
  function keptCard(){
   const saved=readStore(),today=dayKey(new Date());
   if(saved?.day===today&&validCard(saved))return saved;
-  if(saved?.next?.day===today&&validCard(saved.next))return saved.next;
+  // Die Karte von morgen gilt nur, wenn sie schon nach der Reihenfolge-Regel (v:2) gewählt wurde.
+  if(saved?.v===2&&saved.next?.day===today&&validCard(saved.next))return saved.next;
   return null;
  }
  // Wurde die Karte aus dem Vorrat gezeigt, fehlt die für morgen noch: in Ruhe nachholen.
  let preparing=false;
  function prepareTomorrow(){
   const saved=readStore(),tomorrow=dayKey(new Date(Date.now()+864e5));
-  if(preparing||(saved?.day===dayKey(new Date())&&saved.next?.day===tomorrow))return;
+  if(preparing||(saved?.v===2&&saved.day===dayKey(new Date())&&saved.next?.day===tomorrow))return;
   preparing=true;
   setTimeout(async()=>{
    // nicht während des Intros: das Durchsuchen aller Sätze kostet auf dem Handy spürbar Rechenzeit
