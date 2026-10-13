@@ -3,7 +3,6 @@
 //  * Rückmeldung an Vanamo (anonym, ohne Absender)
 //  * Seitenfehler melden (anonym: nur bereinigter Fehlertext, Datei und Zeile, Seitenpfad, Browser- und Systemfamilie –
 //    kein Konto, keine Eingaben, keine vollständige Adresse; höchstens 5 je Seitenaufruf, nur auf vanamo.app)
-//  * Punkt „Verwaltung“ im Kontomenü – nur für Admins (die Datenbank entscheidet das)
 import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './supabase-config.js?v=2';
 
 const REPORT_HOSTS=['vanamo.app','www.vanamo.app','stev2020.github.io'];
@@ -117,35 +116,4 @@ if(typeof document!=='undefined'){
   d.showModal();$('feedback-text').focus();
  }
  document.addEventListener('click',e=>{const a=e.target.closest('[data-feedback-open]');if(!a)return;e.preventDefault();openFeedback();});
-
- // ---- „Verwaltung“ im Kontomenü (nur für Admins) ----
- const ADMIN_KEY='vanamo-admin-check';
- async function adminEntry(){
-  const items=$('account-menu-items');if(!items)return;
-  let session=null;try{session=JSON.parse(localStorage.getItem('suomi-auth-session-v1'));}catch{}
-  const old=$('account-admin');
-  const drop=()=>{if(!old)return;const logout=$('logout');if(logout)logout.style.setProperty('--i',old.style.getPropertyValue('--i'));old.remove();};
-  if(!session?.access_token||!session?.user?.id){drop();return;}
-  let admin=null;
-  try{const c=JSON.parse(sessionStorage.getItem(ADMIN_KEY)||'null');if(c?.user===session.user.id)admin=c.admin;}catch{}
-  if(admin===null){
-   try{
-    const r=await fetch(`${SUPABASE_URL}/rest/v1/rpc/admin_api`,{method:'POST',headers:{apikey:SUPABASE_PUBLISHABLE_KEY,'Content-Type':'application/json',Authorization:`Bearer ${session.access_token}`},body:JSON.stringify({action:'status',payload:{}})});
-    if(!r.ok)return;
-    admin=(await r.json())?.admin===true;
-    try{sessionStorage.setItem(ADMIN_KEY,JSON.stringify({user:session.user.id,admin}));}catch{}
-   }catch{return;}
-  }
-  if(!admin){drop();return;}
-  if(old)return;
-  const logout=$('logout');
-  const b=document.createElement('button');b.id='account-admin';b.type='button';b.setAttribute('role','menuitem');
-  b.innerHTML='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Verwaltung</span>';
-  b.style.setProperty('--i',logout?.style.getPropertyValue('--i')||'3');
-  if(logout){logout.style.setProperty('--i',String(Number(b.style.getPropertyValue('--i'))+1));logout.before(b);}else items.append(b);
-  b.addEventListener('click',()=>{location.href='admin.html';});
- }
- const later=()=>setTimeout(adminEntry,0);
- addEventListener('vanamo:session',()=>{try{sessionStorage.removeItem(ADMIN_KEY);}catch{}later();});
- if(document.readyState==='complete')later();else addEventListener('load',later);
 }

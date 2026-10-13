@@ -179,14 +179,61 @@ export function settingsMarkup(s,{now=Date.now()}={}){
 }
 
 if(typeof document!=='undefined'){
- const {adminApi,reviewApi,syncPaypal,currentSession}=await import('./admin-session.mjs?v=1');
+ const auth=await import('./admin-session.mjs?v=2');
+ const {adminApi,reviewApi,syncPaypal}=auth;
  const $=id=>document.getElementById(id);
  const root=$('admin');
- let state={overview:null,reports:[],errors:[],feedback:[],settings:null,showAll:false};
+ let state={overview:null,reports:[],errors:[],feedback:[],settings:null,showAll:false},ready=false,factorId='';
 
- const gate=(title,text)=>{root.innerHTML=`<div class="admin-gate admin-card"><h1>${esc(title)}</h1><p>${text}</p><p><a class="admin-btn" href="./">Zur App</a></p></div>`;};
+ const gate=(title,text)=>{root.innerHTML=`<div class="admin-gate admin-card"><h1>${esc(title)}</h1><p>${text}</p><p><button type="button" class="admin-btn" data-action="logout">Abmelden</button></p></div>`;};
  const view=()=>location.hash==='#einstellungen'?'settings':'overview';
  function nav(){document.querySelectorAll('[data-view]').forEach(a=>{if(a.dataset.view===view())a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});}
+ const setChrome=on=>{document.querySelector('.admin-nav').hidden=!on;$('admin-logout').hidden=!auth.currentSession();};
+
+ // ---- Anmeldung: Passwort, dann Code aus der Authenticator-App ----
+ function loginForm(message=''){
+  ready=false;setChrome(false);
+  root.innerHTML=`<form class="admin-gate admin-card admin-login" id="admin-login-form" novalidate><div class="admin-eyebrow">Verwaltung</div><h1>Anmelden</h1>
+   <p>Mit dem eigenen Verwaltungskonto – nicht mit deinem Lernkonto.</p>
+   <label>Benutzername<input id="admin-user" class="admin-field" autocomplete="username" autocapitalize="none" spellcheck="false" required></label>
+   <label>Passwort<input id="admin-pass" class="admin-field" type="password" autocomplete="current-password" required></label>
+   <button type="submit" class="admin-btn">Weiter</button><p class="admin-status bad" id="admin-login-status" role="status">${esc(message)}</p></form>`;
+  $('admin-user').focus();
+ }
+ function codeForm(){
+  setChrome(false);
+  root.innerHTML=`<form class="admin-gate admin-card admin-login" id="admin-code-form" novalidate><div class="admin-eyebrow">Zweiter Schritt</div><h1>Code eingeben</h1>
+   <p>Den 6-stelligen Code aus deiner Authenticator-App.</p>
+   <label>Code<input id="admin-code" class="admin-field admin-code" inputmode="numeric" autocomplete="one-time-code" maxlength="7" required></label>
+   <button type="submit" class="admin-btn">Anmelden</button><p class="admin-status bad" id="admin-login-status" role="status"></p>
+   <p><button type="button" class="admin-more" data-action="logout">Abbrechen</button></p></form>`;
+  $('admin-code').focus();
+ }
+ function enrollForm(qr,secret){
+  setChrome(false);
+  root.innerHTML=`<form class="admin-gate admin-card admin-login" id="admin-code-form" novalidate><div class="admin-eyebrow">Einmalig einrichten</div><h1>Authenticator verbinden</h1>
+   <p>Scanne den QR-Code mit deiner Authenticator-App (z. B. Aegis, 2FAS, Google Authenticator) und gib danach den angezeigten Code ein. Ab dann fragt die Verwaltung bei jeder Anmeldung nach diesem Code.</p>
+   ${qr?`<img class="admin-qr" src="${esc(qr)}" alt="QR-Code für die Authenticator-App" width="200" height="200">`:''}
+   <p class="admin-muted">Kein Scannen möglich? Schlüssel abtippen:<br><code class="admin-secret">${esc(secret)}</code></p>
+   <label>Code aus der App<input id="admin-code" class="admin-field admin-code" inputmode="numeric" autocomplete="one-time-code" maxlength="7" required></label>
+   <button type="submit" class="admin-btn">Bestätigen</button><p class="admin-status bad" id="admin-login-status" role="status"></p>
+   <p><button type="button" class="admin-more" data-action="logout">Abbrechen</button></p></form>`;
+  $('admin-code').focus();
+ }
+ /** Nach dem Passwort: Code abfragen bzw. einrichten, dann Rechte prüfen. */
+ async function proceed(){
+  if(!auth.currentSession()){loginForm();return;}
+  if(auth.level()!=='aal2'){
+   const list=await auth.factors();
+   const done=list.find(f=>f.status==='verified');
+   if(done){factorId=done.id;codeForm();}
+   else{const e=await auth.enroll();factorId=e.id;enrollForm(e.qr,e.secret);}
+   return;
+  }
+  const s=await adminApi('status');
+  if(s?.ok!==true){setChrome(false);gate('Kein Zugang','Dieses Konto ist nicht für die Verwaltung freigeschaltet.');return;}
+  ready=true;setChrome(true);show();
+ }
 
  async function loadOverview(){
   const [overview,reports,errors,feedback]=await Promise.all([adminApi('overview'),reviewApi('list_reports').catch(()=>[]),adminApi('errors'),adminApi('feedback')]);
@@ -198,6 +245,7 @@ if(typeof document!=='undefined'){
   else{root.innerHTML=overviewMarkup(state.overview,state);document.title='Verwaltung · Vanamo';}
  }
  async function show(){
+  if(!ready)return;
   try{
    if(view()==='settings')state.settings=await adminApi('settings');else await loadOverview();
    render();
@@ -207,6 +255,7 @@ if(typeof document!=='undefined'){
 
  root.addEventListener('click',async e=>{
   const b=e.target.closest('button');if(!b||b.disabled)return;
+  if(b.dataset.action==='logout'){await auth.logout();loginForm();return;}
   if(b.dataset.action==='reload'){show();return;}
   if(b.dataset.action==='more'){state.showAll=true;render();return;}
   if(b.dataset.action==='paypal'){
@@ -232,6 +281,15 @@ if(typeof document!=='undefined'){
  });
  root.addEventListener('submit',async e=>{
   e.preventDefault();
+  if(e.target.id==='admin-login-form'||e.target.id==='admin-code-form'){
+   const btn=e.target.querySelector('button[type=submit]');btn.disabled=true;status('admin-login-status','');
+   try{
+    if(e.target.id==='admin-login-form')await auth.login($('admin-user').value,$('admin-pass').value);
+    else await auth.verify(factorId,$('admin-code').value);
+    await proceed();
+   }catch(err){status('admin-login-status',err.message,'bad');btn.disabled=false;}
+   return;
+  }
   if(e.target.id==='admin-contrib-form'){
    const input=$('set-contrib');
    try{await adminApi('contributor_add',{name:input.value});state.settings=await adminApi('settings');render();status('admin-swarm-status','Hinzugefügt.','ok');}
@@ -249,12 +307,7 @@ if(typeof document!=='undefined'){
  });
  window.addEventListener('hashchange',show);
 
- (async()=>{
-  if(!currentSession()){gate('Bitte zuerst anmelden','Die Verwaltung nutzt deine Anmeldung aus der App. Melde dich dort an und öffne diese Seite danach wieder.');return;}
-  try{
-   const s=await adminApi('status');
-   if(s?.admin!==true){gate('Kein Zugang','Diese Seite ist nur für die Verwaltung von Vanamo.');return;}
-  }catch(e){gate('Kein Zugang',esc(e.message));return;}
-  show();
- })();
+ $('admin-logout').addEventListener('click',async()=>{await auth.logout();loginForm();});
+ auth.watchIdle(()=>loginForm('Aus Sicherheitsgründen nach 30 Minuten ohne Bedienung abgemeldet.'));
+ proceed().catch(e=>loginForm(e.message));
 }
