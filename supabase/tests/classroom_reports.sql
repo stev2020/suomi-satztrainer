@@ -68,7 +68,7 @@ begin
 
  -- Raumliste: nur Kennzahlen.
  j:=public.admin_api('class_rooms','{}');
- assert exists(select 1 from jsonb_array_elements(j) x where x->>'name'='Meldetest' and (x->>'members')::int=2 and (x->>'files')::int=1 and (x->>'file_bytes')::int=12345 and (x->>'open_reports')::int=4),'room figures';
+ assert exists(select 1 from jsonb_array_elements(j) x where x->>'name'='Meldetest' and (x->>'members')::int=3 and (x->>'teachers')::int=1 and (x->>'files')::int=1 and (x->>'file_bytes')::int=12345 and (x->>'open_reports')::int=4),'room figures';
  assert not (j::text ~ 'Etwas Schlimmes'),'no content in room list';
 
  -- Entscheiden: Beitrag entfernen (mit Dateien), Nachricht behalten, Raum archivieren.
