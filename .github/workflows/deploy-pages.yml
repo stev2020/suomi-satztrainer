@@ -59,6 +59,7 @@ jobs:
           node test-review-more-browser.mjs
           node test-admin-browser.mjs
           node test-site-extras-browser.mjs
+          node test-classroom-report-browser.mjs
 
   # A fresh checkout: only files from the repository are published.
   deploy:

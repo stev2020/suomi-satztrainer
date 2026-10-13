@@ -651,3 +651,21 @@ header{flex-wrap:wrap}
 #cr-share-dialog .cr-check input{width:20px;height:20px;margin:3px 0 0;flex:0 0 auto;accent-color:var(--heading-accent)}
 #cr-share-dialog .cr-code{font:700 16px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink)}
 #cr-share-dialog .cr-invite-actions{margin-top:16px}
+
+/* Melden (classroom-report.mjs) */
+.cr-toolbar [data-cr=report]{color:var(--muted);margin-left:auto}
+.cr-toolbar [data-cr=report]:disabled{opacity:.7}
+.cr-report-room{margin:10px 0 0}
+.cr-report-room [data-cr=report]{color:var(--muted);font-size:13px}
+.cr-report-dialog{max-width:480px}
+.cr-report-dialog form{display:grid;gap:10px}
+.cr-report-dialog form[hidden]{display:none}
+.cr-report-dialog fieldset{border:0;padding:0;margin:0;display:grid;gap:6px}
+.cr-report-dialog legend{font-size:14px;font-weight:700;margin-bottom:6px}
+.cr-report-reason{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;border:1.5px solid color-mix(in srgb,var(--ink) 20%,transparent);border-radius:10px;cursor:pointer;font-size:15px;line-height:1.35}
+.cr-report-reason:has(input:checked){border-color:var(--line);background:var(--lavender-tint)}
+.cr-report-reason input{margin-top:3px;accent-color:var(--purple)}
+.cr-report-reason small{display:block;color:var(--muted);font-size:12.5px;font-weight:400}
+.cr-report-dialog label[for=cr-report-note]{font-size:14px;font-weight:700}
+.cr-report-dialog textarea{width:100%;resize:vertical;min-height:80px;padding:10px 12px;border:2px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);font-size:16px}
+.cr-report-dialog .cr-report-hint{font-size:13px;line-height:1.55;margin:0;color:var(--muted)}

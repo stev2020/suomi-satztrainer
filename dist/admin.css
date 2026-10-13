@@ -134,3 +134,32 @@ p.admin-status:empty{display:none}
 .admin-code{font:600 22px/1 ui-monospace,Consolas,monospace;letter-spacing:6px;max-width:220px}
 .admin-qr{width:200px;height:200px;padding:10px;background:#fff;border:1.5px solid var(--hair);border-radius:12px;justify-self:center}
 .admin-secret{display:inline-block;margin-top:4px;overflow-wrap:anywhere;font:13px/1.5 ui-monospace,Consolas,monospace;background:var(--sunken);padding:4px 8px;border-radius:6px;color:var(--ink)}
+/* Klassenräume */
+.admin-item.urgent{border-left:3px solid var(--bad);padding-left:12px;margin-left:-15px}
+.admin-quote{margin:8px 0;padding:10px 14px;border-left:3px solid var(--hair);background:var(--sunken);border-radius:0 10px 10px 0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px}
+.admin-table-wrap{padding:6px 0;overflow-x:auto}
+.admin-table{width:100%;border-collapse:collapse;font-size:14px}
+.admin-table th,.admin-table td{text-align:left;padding:11px 14px;border-top:1px solid var(--hair);vertical-align:top}
+.admin-table thead th{border-top:0;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.3px}
+.admin-table small{display:block;color:var(--muted);font-size:12px;font-weight:400}
+.admin-table tbody th strong{font:600 16px var(--heading)}
+.admin-table tr.flag{background:var(--bad-tint)}
+.admin-room-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.admin-room-delete{display:flex;gap:8px;flex-wrap:wrap}
+.admin-room-delete .admin-field{min-width:180px;font-weight:400;font-size:14px}
+@media(max-width:700px){
+ .admin-table thead{display:none}
+ .admin-table,.admin-table tbody,.admin-table tr,.admin-table th,.admin-table td{display:block}
+ .admin-table tr{padding:10px 14px;border-top:1px solid var(--hair)}
+ .admin-table th,.admin-table td{border:0;padding:3px 0}
+ .admin-table td:nth-child(2)::before{content:"Mitglieder: "}
+ .admin-table td:nth-child(3)::before{content:"Beiträge/Nachrichten (30 T.): "}
+ .admin-table td:nth-child(4)::before{content:"Dateien: "}
+ .admin-table td:nth-child(5)::before{content:"Zuletzt aktiv: "}
+ .admin-table td:nth-child(6)::before{content:"Meldungen: "}
+ .admin-table td::before{color:var(--muted);font-size:12px}
+ .admin-table td small{display:inline;margin-left:6px}
+ .admin-room-actions{justify-content:flex-start;padding-top:8px!important}
+ .admin-nav{gap:16px}
+ .admin-nav a{font-size:15px}
+}
