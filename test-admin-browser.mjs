@@ -19,6 +19,12 @@ const errors=[{fingerprint:'a'.repeat(64),message:'NotAllowedError: play() faile
  {fingerprint:'b'.repeat(64),message:'Alter Fehler',source:'x.js:1:1',page:'/',platforms:{},hits:1,status:'done',last_seen:iso(5*86400000)}];
 const reports=[{id:'11111111-1111-1111-1111-111111111111',sentence_id:5,translation_id:7,category:'translation',note:'juoksee heißt läuft',snapshot:{sentence_text:'Koira juoksee rannalla.',translation_text:'Der Hund schwimmt am Strand.'},created_at:iso(3600000),updated_at:iso(3600000)}];
 const feedback=[{id:'22222222-2222-2222-2222-222222222222',message:'Wäre toll, wenn man die Vögel ausschalten könnte.',page:'/',created_at:iso(86400000)}];
+const classReports=[{target_kind:'post',target_id:'77777777-7777-4777-a777-777777777777',room_id:'r1',count:2,reasons:{illegal:1,harassment:1},first_at:iso(7200000),last_at:iso(600000),
+  notes:['Das geht <b>gar nicht</b>'],room:{name:'Finnisch 5b',archived:false,members:14},
+  content:{body:'Verbotener Inhalt <script>x</script>',kind:'post',deleted:false,created_at:iso(9000000),role:'Mitglied',parent:null,files:[{name:'bild.png',mime:'image/png',size:204800}]}},
+ {target_kind:'room',target_id:'88888888-8888-4888-a888-888888888888',room_id:'88888888-8888-4888-a888-888888888888',count:1,reasons:{other:1},first_at:iso(86400000),last_at:iso(86400000),notes:[],room:{name:'Seltsamer Raum',archived:false,members:3},content:null}];
+const rooms=[{id:'88888888-8888-4888-a888-888888888888',name:'Seltsamer Raum',archived:false,created:'2026-10',members:3,teachers:1,posts_30d:2,messages_30d:0,assignments:0,files:9,file_bytes:52428800,last_activity:iso(3600000),open_reports:1},
+ {id:'99999999-9999-4999-a999-999999999999',name:'Finnisch 5b',archived:false,created:'2026-09',members:14,teachers:1,posts_30d:40,messages_30d:12,assignments:6,files:2,file_bytes:300000,last_activity:iso(600000),open_reports:0}];
 const settings={month_goal:10,notice_on:false,notice_text:'',notice_kind:'info',registration_open:true,collect_errors:true,updated_at:iso(86400000),
  swarm:[{id:'33333333-3333-3333-3333-333333333333',name:'Aino',contributor:true,until:null},{id:'44444444-4444-4444-4444-444444444444',name:'Liisa',contributor:false,until:iso(-90*86400000)}],
  money:{last_ok:iso(3600000),last_error:null,last_try:iso(3600000)}};
@@ -70,19 +76,25 @@ try{
   // Angemeldet mit zweitem Faktor.
   const c=await b.newContext({viewport,serviceWorkers:'block',locale:'de-DE',timezoneId:'Europe/Berlin'});
   await c.addInitScript(s=>sessionStorage.setItem('vanamo-admin-session-v1',s),JSON.stringify(session));
-  const calls=[];let synced=0,saved=null,live=JSON.parse(JSON.stringify(settings));
+  const calls=[];let synced=0,swept=0,saved=null,live=JSON.parse(JSON.stringify(settings)),openClass=JSON.parse(JSON.stringify(classReports)),roomList=JSON.parse(JSON.stringify(rooms));
   await c.route('**/*',r=>{const u=new URL(r.request().url());if(u.origin===origin)return r.continue();
    const body=JSON.parse(r.request().postData()||'{}'),ok=v=>r.fulfill({status:200,contentType:'application/json',body:JSON.stringify(v)});
    assert.equal(r.request().headers().authorization,'Bearer '+session.access_token,'session token sent');
    if(u.pathname.endsWith('/rpc/admin_api')){calls.push(body.action);const a=body.action,pl=body.payload||{};
     if(a==='status')return ok({admin:true,aal2:true,ok:true});if(a==='overview')return ok(overview);if(a==='errors')return ok(errors);if(a==='feedback')return ok(feedback);
     if(a==='settings')return ok(live);
+    if(a==='class_reports')return ok(openClass);
+    if(a==='class_rooms')return ok(roomList);
+    if(a==='class_resolve'){openClass=openClass.filter(c=>c.target_id!==pl.target_id);return ok({ok:true,files_removed:pl.decision==='remove'&&pl.target_kind==='post'});}
+    if(a==='class_room_archive'){roomList.find(r=>r.id===pl.room_id).archived=true;return ok({ok:true});}
+    if(a==='class_room_delete'){if(pl.confirm_name!=='Seltsamer Raum')return r.fulfill({status:400,contentType:'application/json',body:JSON.stringify({message:'Bitte den Raumnamen genau eingeben.'})});roomList=roomList.filter(x=>x.id!==pl.room_id);return ok({ok:true});}
     if(a==='settings_save'){saved=pl;if(pl.notice_on&&!pl.notice_text)return r.fulfill({status:400,contentType:'application/json',body:JSON.stringify({message:'Bitte einen Text für den Hinweis eingeben – oder den Hinweis ausschalten.'})});Object.assign(live,pl,{month_goal:Number(String(pl.month_goal).replace(',','.'))});return ok({ok:true});}
     if(a==='contributor_add'){live.swarm.push({id:'55555555-5555-5555-5555-555555555555',name:pl.name,contributor:true});return ok({ok:true,name:pl.name});}
     if(a==='swarm_remove'){live.swarm=live.swarm.filter(n=>n.id!==pl.id);return ok({ok:true});}
     return ok({ok:true});}
    if(u.pathname.endsWith('/rpc/sentence_quality_review_api')){calls.push('review:'+body.action);return ok(body.action==='list_reports'?reports:{decision:body.payload.decision});}
    if(u.pathname.endsWith('/functions/v1/paypal-sync')){synced++;return ok({ok:true,months:2});}
+   if(u.pathname.endsWith('/functions/v1/storage-sweep')){swept++;return ok({removed:1});}
    return r.abort();});
   const p=await c.newPage();const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>{if(m.type()==='error'&&!/status of 400/.test(m.text()))errs.push(m.text());});
   p.on('dialog',d=>{errs.push('dialog: '+d.message());d.dismiss();});
@@ -91,12 +103,18 @@ try{
   for(const t of ['214','Konten','31','1.940','62 %','133 von 214','Klassenräume','74 Mitglieder','+8 % zur Vorwoche','7,40 €','nach Gebühren 6,62 €','74 % von 10,00 €','Zahlungen diesen Monat','Neue Konten pro Woche','4,2','Koira juoksee rannalla.','Seitenfehler · 7×','Chrome 129 · Android (5×)','Wäre toll','Datenschutz'])
    assert(text.includes(t),`overview shows ${t}`);
   assert(!text.includes('Alter Fehler'),'done errors are not in the todo list');
+  for(const t of ['Beitrag gemeldet · 1× rechtswidrig, 1× Belästigung','Verbotener Inhalt <script>x</script>','bild.png (image/png, 200 KB)','werden hier nicht geöffnet','Raum „Finnisch 5b“','„Das geht <b>gar nicht</b>“','Raum gemeldet','Seltsamer Raum'])
+   assert(text.includes(t),`class report shows ${t}`);
+  assert.equal(await p.locator('#admin script').count(),0,'reported content is text, not HTML');
+  assert(await p.locator('.admin-item.urgent').first().textContent().then(t=>t.includes('Verbotener Inhalt')),'illegal report first and marked');
   assert.equal(await p.locator('#admin img').count(),0,'error text is not rendered as HTML');
   assert.equal(await p.locator('.admin-bars').first().locator('.admin-bar').count(),6,'six months');
   assert.equal(await p.locator('.admin-bars').nth(1).locator('.admin-bar').count(),12,'twelve weeks');
   const sw=await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth);assert(sw,'no horizontal scroll');
   if(shots)await p.screenshot({path:`${shots}/admin-${viewport.width}.png`,fullPage:true});
   // Aktionen: Satz freigeben, Fehler erledigt, Rückmeldung archivieren, PayPal abfragen.
+  await p.click('[data-class-resolve="remove"][data-id="77777777-7777-4777-a777-777777777777"]');await p.waitForTimeout(150);
+  assert(calls.includes('class_resolve'),'class report resolved');assert.equal(swept,1,'files swept after removal');
   await p.click('[data-report][data-decision="restore"]');await p.waitForFunction(()=>true);
   await p.waitForTimeout(100);assert(calls.includes('review:resolve_report'),'report resolved');
   await p.click('[data-error]');await p.waitForTimeout(100);assert(calls.includes('error_done'),'error done');
@@ -107,6 +125,20 @@ try{
   await p.click('[data-action="reload"]');await p.waitForTimeout(150);
   assert((await p.textContent('#admin')).includes('ab 5 Lernenden'),'small groups hidden');
   overview.activity={...overview.activity,practiced_today:1940,streak_avg:4.2};
+  // Klassenräume: nur Kennzahlen, archivieren, löschen mit Namen
+  await p.click('a[data-view="rooms"]');await p.waitForSelector('.admin-table');
+  const roomText=(await p.textContent('#admin')).replace(/[\u00a0\u202f]/g,' ');
+  for(const t of ['Seltsamer Raum','Finnisch 5b','50,0 MB','Ohne Inhalte'])assert(roomText.includes(t),`rooms show ${t}`);
+  assert(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'rooms: no horizontal scroll');
+  if(shots)await p.screenshot({path:`${shots}/admin-rooms-${viewport.width}.png`,fullPage:true});
+  await p.click('[data-room-archive="99999999-9999-4999-a999-999999999999"]');await p.waitForTimeout(150);
+  assert(calls.includes('class_room_archive'));
+  await p.click('[data-room-delete-ask="88888888-8888-4888-a888-888888888888"]');
+  await p.fill('.admin-room-delete input','seltsamer raum');await p.click('.admin-room-delete button');
+  await p.waitForFunction(()=>/genau eingeben/.test(document.getElementById('admin-rooms-status').textContent));
+  await p.fill('.admin-room-delete input','Seltsamer Raum');await p.click('.admin-room-delete button');
+  await p.waitForFunction(()=>!document.querySelector('.admin-table').textContent.includes('Seltsamer Raum'));
+  assert.equal(swept,2,'files swept after room deletion');
   // Einstellungen
   await p.click('a[data-view="settings"]');await p.waitForSelector('#admin-settings-form');
   assert.equal(await p.getAttribute('a[data-view="settings"]','aria-current'),'page');
@@ -132,5 +164,5 @@ try{
   assert.deepEqual(errs,[],'no errors: '+errs.join(' | '));
   await c.close();
  }
- console.log('Verwaltung im Browser: eigene Anmeldung mit Authenticator-Code (einrichten, abfragen, falscher Code), Sitzung nur im Tab, Abmelden, Zugang nur für Admins, Übersicht mit Zahlen, Unterstützungen und Zu erledigen, Aktionen, PayPal-Abruf, kleine Gruppen verborgen, Einstellungen speichern, Schwarm bearbeiten, sechs Paletten, Handybreite.');
+ console.log('Verwaltung im Browser: eigene Anmeldung mit Authenticator-Code (einrichten, abfragen, falscher Code), Sitzung nur im Tab, Abmelden, Zugang nur für Admins, Übersicht mit Zahlen, Unterstützungen und Zu erledigen, Aktionen, Klassenraum-Meldungen (Entfernen, Dateien aufräumen), Raumliste ohne Inhalte (archivieren, löschen mit Namen), PayPal-Abruf, kleine Gruppen verborgen, Einstellungen speichern, Schwarm bearbeiten, sechs Paletten, Handybreite.');
 }finally{await b.close();server.kill();}

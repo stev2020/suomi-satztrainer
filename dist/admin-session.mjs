@@ -112,6 +112,13 @@ export async function syncPaypal(){
  return v;
 }
 
+/** Dateien entfernter Beiträge und gelöschter Räume aus dem Speicher räumen (nur Dateien ohne Eintrag). */
+export async function sweepFiles(){
+ const r=await request('/functions/v1/storage-sweep',{method:'POST',body:'{}'});
+ if(!r.ok)throw new Error(await errorText(r,'Dateien konnten nicht aufgeräumt werden.'));
+ return r.json();
+}
+
 /** Nach IDLE_MINUTES ohne Bedienung abmelden. */
 export function watchIdle(onTimeout){
  let timer=null;
