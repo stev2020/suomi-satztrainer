@@ -15,6 +15,11 @@
 //   ready{}, done{id,ok}, lit{ids,at}, unlit{ids}, shown{ids}, pets{list}
 
 const PET_SIZE=7.5;
+// Tempo der Vögel: 1 = ursprünglich; Gäste (Schwarm schreibt „vanamo“) und Angemeldete getrennt. Gilt für Flug, Kreisen, Schreiben und Davonfliegen – nicht für das
+// Ein- und Ausblenden der Buchstaben (das bleibt synchron zu den CSS-Übergängen der Seite).
+const TEMPO_GUEST=1.5,TEMPO_USER=1.25;
+// Angemeldete: der Flug von der aufgelösten Begrüßung zum Satz des Tages, so viel schneller als ursprünglich
+const USER_ARC=1.25;
 const lerp=(a,b,p)=>a+(b-a)*p,ease=p=>p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;
 const now=()=>performance.timeOrigin+performance.now(); // gemeinsame Zeitbasis mit dem Hauptthread
 
@@ -39,7 +44,7 @@ export function createFlock(post){
  let cv=null,ctx=null,W=0,H=0,VH=0,dpr=1,sy=0;
  let birds=[],sparks=[],hist=[],tweens=[],att={x:0,y:0},spread={x:60,y:60},tight={x:34,y:14,k:.42},absorb=false;
  let col={ink:'#172c38',mint:'#ace0d4',line:'#172c38'};
- let raf=0,last=0,clock=0,mode='',first=true,stopped=false;
+ let coast=null,wblend=null,lastV=.4,raf=0,last=0,clock=0,fly=0,tempo=TEMPO_USER,mode='',first=true,stopped=false;
  const glyphs=new Map(),blurs=new Map();let litQ=[],unlitQ=[],shownQ=[];
  const raff=typeof requestAnimationFrame==='function'?requestAnimationFrame:(fn=>setTimeout(()=>fn(performance.now()),16));
 
@@ -47,7 +52,7 @@ export function createFlock(post){
   W=w;H=Math.round(h);
   cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);
  }
- function tween(ms,fn){return new Promise(resolve=>{tweens.push({start:clock,ms,fn,resolve});loop();});}
+ function tween(ms,fn){return new Promise(resolve=>{tweens.push({start:fly,ms,fn,resolve});loop();});}
  const wait=ms=>tween(ms,()=>{});
  function loop(){if(!raf&&!stopped&&ctx){last=performance.now();raf=raff(frame);}}
 
@@ -87,6 +92,11 @@ export function createFlock(post){
   return moving;
  }
 
+ // Schleife nach einer Zeile: Kreis mit Radius r, Start in Richtung (dx,dy), dreht nach oben; Tempo v (px je ms Flugzeit)
+ function coastAt(t){
+  const c=coast,a=(t-c.t0)*c.v/c.r,nx=c.dy,ny=-c.dx,s=Math.sin(a),k=1-Math.cos(a);
+  return {x:c.x+c.r*(s*c.dx+k*nx),y:c.y+c.r*(s*c.dy+k*ny),vx:c.v*(Math.cos(a)*c.dx+s*nx),vy:c.v*(Math.cos(a)*c.dy+s*ny)};
+ }
  // ---- Ein Bild ----
  const histAt=t=>{for(let i=hist.length-1;i>=0;i--)if(hist[i].t<=t)return hist[i];return hist[0]||att;};
  function lit(c){const g=glyphs.get(c.id);if(g&&!g.on){g.on=true;g.t0=clock;}litQ.push(c.id);}
@@ -94,14 +104,22 @@ export function createFlock(post){
  function frame(t){
   raf=0;if(stopped)return;
   const dt=Math.min((t-last)/1000,.05);last=t;clock+=dt*1000;
+  // Flugzeit (fly) läuft tempo-mal so schnell wie die Uhr der Buchstaben (clock).
+  const h=Math.min(dt*tempo,.05);fly+=dt*1000*tempo;
   for(const tw of [...tweens]){
-   const p=tw.ms<=0?1:Math.min(1,(clock-tw.start)/tw.ms);tw.fn(p);
+   const p=tw.ms<=0?1:Math.min(1,(fly-tw.start)/tw.ms);tw.fn(p);
    if(p>=1){const i=tweens.indexOf(tw);if(i>=0)tweens.splice(i,1);tw.resolve(true);}
   }
-  const s=clock/1000;
+  const s=fly/1000;
   if(mode==='circle'){att.x=W/2+Math.cos(s*1.7)*W*.2;att.y=VH*.45+Math.sin(s*2.6)*VH*.15;}
-  else if(mode==='wander'){att.x=W/2+Math.cos(s*1.3)*W*.18;att.y=VH*.3+Math.sin(s*2.1)*VH*.09;}
-  hist.push({t:clock,x:att.x,y:att.y});while(hist.length>2&&clock-hist[0].t>700)hist.shift();
+  else if(mode==='coast'&&coast){const c=coastAt(fly);att.x=c.x;att.y=c.y;}
+  else if(mode==='wander'){
+   const wx=W/2+Math.cos(s*1.3)*W*.18,wy=VH*.3+Math.sin(s*2.1)*VH*.09;
+   // Gäste: aus der Schleife heraus weich auf die Bahn einschwenken (sonst springt der Punkt und die Vögel schießen los)
+   if(wblend&&coast){const q=Math.min(1,(fly-wblend)/1600),e=q*q*(3-2*q),c=coastAt(fly);att.x=lerp(c.x,wx,e);att.y=lerp(c.y,wy,e);if(q>=1)wblend=coast=null;}
+   else{att.x=wx;att.y=wy;}
+  }
+  hist.push({t:fly,x:att.x,y:att.y});while(hist.length>2&&fly-hist[0].t>700)hist.shift();
   ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);ctx.globalAlpha=1;
   // Buchstaben liegen unter den Vögeln (wie vorher die Seite unter der Zeichenfläche)
   let busy=false;
@@ -109,22 +127,22 @@ export function createFlock(post){
   ctx.lineCap='round';ctx.lineJoin='round';
   for(const b of birds){
    let ax,ay;
-   if(b.mode==='leave'){ax=b.dx*1100;ay=b.dy*1100;b.alpha-=dt/1.2;}
+   if(b.mode==='leave'){ax=b.dx*1100;ay=b.dy*1100;b.alpha-=h/1.2;}
    else{
     let tx,ty,k,c;
     if(b.mode==='home'){tx=b.tx;ty=b.ty;k=11;c=4.6;}
     // in den Buchstaben fliegen: zügig, ohne Überschwingen; kurz vor dem Ziel verblasst der Vogel
     else if(b.mode==='land'){tx=b.tx;ty=b.ty;k=150;c=23;}
-    else{const p=histAt(clock-b.lag);b.ang+=b.spin*dt;tx=p.x+Math.cos(b.ang)*b.r*spread.x;ty=p.y+Math.sin(b.ang)*b.r*spread.y;k=38;c=8.5;}
+    else{const p=histAt(fly-b.lag);b.ang+=b.spin*h;tx=p.x+Math.cos(b.ang)*b.r*spread.x;ty=p.y+Math.sin(b.ang)*b.r*spread.y;k=38;c=8.5;}
     ax=(tx-b.x)*k-b.vx*c;ay=(ty-b.y)*k-b.vy*c;
    }
    ax+=(Math.random()-.5)*300;ay+=(Math.random()-.5)*300;
-   b.vx+=ax*dt;b.vy+=ay*dt;
+   b.vx+=ax*h;b.vy+=ay*h;
    const sp=Math.hypot(b.vx,b.vy);if(sp>1200){b.vx*=1200/sp;b.vy*=1200/sp;}
-   b.x+=b.vx*dt;b.y+=b.vy*dt;b.flap+=b.rate*dt;
+   b.x+=b.vx*h;b.y+=b.vy*h;b.flap+=b.rate*h;
    if(b.mode==='land'){
     const d=Math.hypot(b.tx-b.x,b.ty-b.y);b.alpha=Math.min(1,d/16);
-    if(d<5||clock-b.t0>520){b.dead=true;lit(b.ch);continue;}
+    if(d<5||fly-b.t0>520){b.dead=true;lit(b.ch);continue;}
    }
    drawBird(b);
   }
@@ -148,7 +166,7 @@ export function createFlock(post){
  function leave(b){const a=-(.25+Math.random()*1.1)*(Math.random()<.8?1:2.4);b.mode='leave';b.dx=Math.cos(a);b.dy=Math.sin(a);}
  // Gäste: der Schwarm kreist in der Bildmitte
  function begin(count,vh){
-  first=true;VH=vh;birds=[];sparks=[];hist=[];
+  first=true;tempo=TEMPO_GUEST;VH=vh;birds=[];sparks=[];hist=[];
   for(let i=0;i<count;i++){
    const a=Math.random()*Math.PI*2,R=Math.max(W,VH)*.75,b=newBird(W/2+Math.cos(a)*R,VH/2+Math.sin(a)*R,i===0);
    birds.push(b);
@@ -158,7 +176,7 @@ export function createFlock(post){
  }
  // Angemeldete: zuerst nur der farbige Vogel, er startet im Logo (`m`: Mittelpunkt)
  function beginFrom(m,loose,vh){
-  first=false;VH=vh;
+  first=false;tempo=TEMPO_USER;VH=vh;
   birds=[newBird(m.cx,m.cy,true)];sparks=[];hist=[];
   spread={x:loose?.x??34,y:loose?.y??16};tight={x:loose?.tx??34,y:loose?.ty??14,k:loose?.tk??.42};absorb=!!loose?.absorb;mode='';att={x:m.cx,y:m.cy};loop();
  }
@@ -184,11 +202,12 @@ export function createFlock(post){
    for(const c of pos)if(!c.done&&c.cx<att.x-12){c.done=true;burst(c);}
   });
   for(const c of pos)if(!c.done){c.done=true;if(ok)burst(c);else unlit(c);}
+  lastV=speed;
   return ok;
  }
  // Schreibt die Zeichen, Zeile für Zeile. `speed`: px je ms.
  async function write(ids,speed=.62){
-  mode='';
+  const was=mode==='coast'&&coast?coastAt(fly):null;mode='';coast=null;
   const pos=boxes(ids),rows=[];
   for(const p of pos){const row=rows.find(r=>Math.abs(r.cy-p.cy)<(p.b-p.t)*.5);if(row)row.items.push(p);else rows.push({cy:p.cy,h:p.b-p.t,items:[p]});}
   // Im Intro für Angemeldete erschafft der Schwarm den Satz: Für jeden Buchstaben lösen sich die nächsten Vögel,
@@ -199,10 +218,10 @@ export function createFlock(post){
   const give=c=>{
    seen++;const want=Math.round(pool*seen/total)-used;if(want<=0)return false;
    const free=birds.filter(b=>!b.mint&&b.mode==='follow').map(b=>({b,d:Math.hypot(b.x-c.cx,b.y-c.cy)})).sort((a,z)=>a.d-z.d).slice(0,want);
-   for(const {b} of free){b.mode='land';b.t0=clock;b.ch=c;b.tx=lerp(c.l,c.r,.25+Math.random()*.5);b.ty=lerp(c.t,c.b,.3+Math.random()*.45);}
+   for(const {b} of free){b.mode='land';b.t0=fly;b.ch=c;b.tx=lerp(c.l,c.r,.25+Math.random()*.5);b.ty=lerp(c.t,c.b,.3+Math.random()*.45);}
    used+=free.length;return free.length>0;
   };
-  for(const row of rows){
+  for(const [ri,row] of rows.entries()){
    const x0=Math.max(14,Math.min(...row.items.map(p=>p.l))-30),x1=Math.max(...row.items.map(p=>p.r))+70;
    const from={...att},s0={...spread},s1={x:tight.x,y:Math.max(tight.y,row.h*tight.k)};
    if(first){
@@ -214,9 +233,29 @@ export function createFlock(post){
     const L=Math.hypot(x0-from.x,row.cy-from.y),ms=absorb?Math.max(900,L*2.3+400):Math.max(800,L*1.2+330),reach=speed*ms/3; // Gäste: zügiger und flacher
     const room=(Math.min(from.y,row.cy)-sy-28)/.75,A=Math.max(row.h*.6,Math.min(reach*(absorb?.83:.6),room)),k=Math.min(260,Math.sqrt(Math.max(reach*reach-A*A,3600)));
     const lower=row.cy-from.y>row.h*1.5; // neue Zeile liegt deutlich tiefer: am Anfang nur leicht ansteigen
-    const p1={x:from.x+k,y:from.y-A*(lower?.3:1)},p2={x:x0-k,y:row.cy-A};
-    if(!await tween(ms,p=>{
-     const q=1-p,a=q*q*q,b=3*q*q*p,c=3*q*p*p,d=p*p*p,e=ease(p);
+    let p1={x:from.x+k,y:from.y-A*(lower?.3:1)},warp=p=>p,dur=ms;const p2={x:x0-k,y:row.cy-A};
+    if(was){
+     // Gäste: Der Bogen beginnt in der Richtung, in der der Schwarm gerade fliegt, und wird in gleichmäßigem Tempo
+     // abgeflogen (nach Weglänge, nicht nach Kurvenparameter) – so schnell wie beim Schreiben: kein Abbremsen in der
+     // Kehre, kein Ruck am Anfang oder Ende.
+     const v=Math.hypot(was.vx,was.vy)||1,R0=Math.hypot(k,A);
+     p1={x:from.x+was.vx/v*R0,y:from.y+was.vy/v*R0};
+     const N=200,len=[0],at=u=>{const q=1-u,a=q*q*q,b=3*q*q*u,c=3*q*u*u,d=u*u*u;return [a*from.x+b*p1.x+c*p2.x+d*x0,a*from.y+b*p1.y+c*p2.y+d*row.cy];};
+     let prev=at(0);for(let i=1;i<=N;i++){const pt=at(i/N);len.push(len[i-1]+Math.hypot(pt[0]-prev[0],pt[1]-prev[1]));prev=pt;}
+     const total=len[N],rowV=(x1-x0)/Math.max(650,(x1-x0)/speed);dur=Math.max(300,2*total/(v+rowV));
+     // zurückgelegter Weg bei gleichmäßigem Übergang vom Tempo v zum Tempo in der neuen Zeile, dann Kurvenparameter dazu
+     warp=t=>{const tt=t*dur,sDist=Math.min(total,v*tt+(rowV-v)*tt*tt/(2*dur));let i=1;while(i<N&&len[i]<sDist)i++;const f=(sDist-len[i-1])/((len[i]-len[i-1])||1);return Math.min(1,(i-1+f)/N);};
+    }else if(absorb&&ri===0){
+     // Angemeldete, Flug von der Begrüßung zum Satz: gleicher Bogen, aber USER_ARC-mal so schnell. Abgeflogen nach
+     // Weglänge: am Anfang so schnell wie beim Auflösen, am Ende wie beim Schreiben, dazwischen zügiger.
+     const N=200,len=[0],at=u=>{const q=1-u,a=q*q*q,b=3*q*q*u,c=3*q*u*u,d=u*u*u;return [a*from.x+b*p1.x+c*p2.x+d*x0,a*from.y+b*p1.y+c*p2.y+d*row.cy];};
+     let prev=at(0);for(let i=1;i<=N;i++){const pt=at(i/N);len.push(len[i-1]+Math.hypot(pt[0]-prev[0],pt[1]-prev[1]));prev=pt;}
+     const total=len[N],v0=lastV,v1=(x1-x0)/Math.max(650,(x1-x0)/speed);
+     dur=Math.max(400,ms/USER_ARC);const bump=Math.max(0,(total/dur-(v0+v1)/2)*Math.PI/2);dur=total/((v0+v1)/2+2*bump/Math.PI);
+     warp=t=>{const tt=t*dur,sDist=Math.min(total,v0*tt+(v1-v0)*tt*tt/(2*dur)+bump*dur/Math.PI*(1-Math.cos(Math.PI*t)));let i=1;while(i<N&&len[i]<sDist)i++;const f=(sDist-len[i-1])/((len[i]-len[i-1])||1);return Math.min(1,(i-1+f)/N);};
+    }
+    if(!await tween(dur,p0=>{
+     const p=warp(p0),q=1-p,a=q*q*q,b=3*q*q*p,c=3*q*p*p,d=p*p*p,e=ease(p);
      att.x=a*from.x+b*p1.x+c*p2.x+d*x0;att.y=a*from.y+b*p1.y+c*p2.y+d*row.cy;
      spread.x=lerp(s0.x,s1.x,e);spread.y=lerp(s0.y,s1.y,e);
     }))return false;
@@ -229,23 +268,38 @@ export function createFlock(post){
      if(c.cx<att.x-28&&!c.on){c.on=true;lit(c);}
     }
    }))return false;
-   row.items.forEach(c=>{if(!c.on){c.on=true;lit(c);}});
+   if(!absorb)row.items.forEach(c=>{if(!c.on){c.on=true;lit(c);}});
   }
+  if(absorb){
+   // Angemeldete: warten, bis die letzten Vögel in ihren Buchstaben angekommen sind (sonst würden die übrigen
+   // Buchstaben auf einmal erscheinen), höchstens kurz; dann den Rest einschalten.
+   const off=()=>pos.some(p=>{const g=glyphs.get(p.id);return g&&!g.on;}),end=clock+900;
+   while(off()&&clock<end)if(!await wait(30))return false;
+   for(const c of pos){const g=glyphs.get(c.id);if(g&&!g.on)lit(c);}
+  }
+  // Gäste: Nach der Zeile bleibt der Schwarm nicht stehen (die Seite tauscht jetzt die Buchstaben, dann kommt die
+  // nächste Zeile oder das Davonfliegen), sondern zieht im selben Tempo eine kleine Schleife nach oben.
+  if(!absorb&&rows.length){coast={x:att.x,y:att.y,dx:1,dy:0,v:speed,r:Math.max(50,Math.min(110,W-att.x-20)),t0:fly};mode='coast';
+  }
+  // Erst fertig melden, wenn alle Buchstaben ganz erschienen sind: Die Seite tauscht danach das Bild gegen echten
+  // Text – mitten im Einblenden würden die letzten Buchstaben dabei sichtbar springen.
+  const settled=()=>pos.every(p=>{const g=glyphs.get(p.id);return !g||(g.t0!=null&&clock-g.t0>=LOOK[g.k].move+20);});
+  while(!settled())if(!await wait(30))return false;
   return true;
  }
  // Der Schwarm fliegt davon, zwei bleiben in der Luft, der farbige Vogel fliegt zu `m` (Mittelpunkt des Logos).
  // Fertig, wenn er dort ankommt (dann sprühen ein paar Funken).
  async function release(m){
   let mint=null,kept=0;
-  mode='wander';spread={x:70,y:40};
+  wblend=mode==='coast'&&coast?fly:null;mode='wander';spread={x:70,y:40};
   for(const b of birds){
    if(b.mint&&m){mint=b;b.mode='home';b.tx=m.cx;b.ty=m.cy;continue;}
    if(!b.mint&&kept<2&&b.mode==='follow'){b.pet=true;b.lag=60+kept*90;b.r=.35;b.size=PET_SIZE;kept++;continue;}
    leave(b);
   }
   loop();
-  const end=clock+1700;
-  while(mint&&Math.hypot(mint.x-m.cx,mint.y-m.cy)>12&&clock<end)if(!await wait(30))return false;
+  const end=fly+1700;
+  while(mint&&Math.hypot(mint.x-m.cx,mint.y-m.cy)>12&&fly<end)if(!await wait(30))return false;
   birds=birds.filter(b=>!b.mint);
   if(m)for(let i=0;i<12;i++){const a=i/12*6.28+Math.random()*.4,v=90+Math.random()*120;sparks.push({x:m.cx,y:m.cy,vx:Math.cos(a)*v,vy:Math.sin(a)*v-60,life:1,c:i%2?col.line:col.mint});}
   loop();return true;
