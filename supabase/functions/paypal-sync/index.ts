@@ -38,14 +38,14 @@ Deno.serve(async req=>{
   if(req.method!=='POST')return json({error:'Methode nicht erlaubt.'},405);
   const url=Deno.env.get('SUPABASE_URL')!,service=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
   const db=createClient(url,service,{auth:{autoRefreshToken:false,persistSession:false}});
-  // Wer darf? Ein angemeldeter Admin (alle 2 Minuten) – sonst gilt der Aufruf als stündlicher Auftrag (alle 55 Minuten).
+  // Wer darf? Ein angemeldeter Admin mit zweitem Faktor (alle 2 Minuten) – sonst gilt der Aufruf als stündlicher Auftrag (alle 55 Minuten).
   const auth=req.headers.get('Authorization')||'';
   let gap=55*60000;
   if(/^Bearer .+/.test(auth)){
     const user=createClient(url,Deno.env.get('SUPABASE_ANON_KEY')!,{global:{headers:{Authorization:auth}},auth:{autoRefreshToken:false,persistSession:false}});
     const {data,error}=await user.rpc('admin_api',{action:'status',payload:{}});
     if(error)return json({error:'Bitte neu anmelden.'},401);
-    if(data?.admin!==true)return json({error:'Keine Berechtigung.'},403);
+    if(data?.ok!==true)return json({error:'Keine Berechtigung (Verwaltungskonto mit Authenticator-Code nötig).'},403);
     gap=120000;
   }
   const {data:state}=await db.rpc('admin_money_state');

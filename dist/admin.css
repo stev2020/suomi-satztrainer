@@ -123,3 +123,14 @@ p.admin-status:empty{display:none}
 .admin-card-head{flex-wrap:wrap}
 @media(max-width:1000px){.admin-grid>.admin-col:last-child{order:-1}}
 @media(max-width:700px){.admin-kpis .admin-card:nth-child(5){grid-column:span 2}.admin-card{padding:16px 16px}}
+/* Anmeldung der Verwaltung */
+.admin-nav[hidden]{display:none}
+.admin-logout{margin-left:10px;background:transparent;color:var(--ink)}
+.admin-login{text-align:left;display:grid;gap:12px}
+.admin-login h1{margin:0}
+.admin-login p{margin:0}
+.admin-login label{display:grid;gap:6px;font-size:14px;font-weight:700}
+.admin-login .admin-btn{justify-self:start;min-height:44px;padding:8px 22px;font:700 16px var(--heading)}
+.admin-code{font:600 22px/1 ui-monospace,Consolas,monospace;letter-spacing:6px;max-width:220px}
+.admin-qr{width:200px;height:200px;padding:10px;background:#fff;border:1.5px solid var(--hair);border-radius:12px;justify-self:center}
+.admin-secret{display:inline-block;margin-top:4px;overflow-wrap:anywhere;font:13px/1.5 ui-monospace,Consolas,monospace;background:var(--sunken);padding:4px 8px;border-radius:6px;color:var(--ink)}

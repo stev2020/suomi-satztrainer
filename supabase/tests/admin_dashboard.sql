@@ -72,6 +72,16 @@ begin
  set local role authenticated;
  perform set_config('request.jwt.claim.sub',a::text,true);
  assert (public.admin_api('status')->>'admin')::boolean,'admin recognised';
+ assert (public.admin_api('status')->>'ok')::boolean,'admin with second factor is ok';
+ -- Nur Passwort (aal1): Status sagt es, alles andere wird verweigert – auch die Satzprüfung.
+ perform set_config('test.aal','aal1',true);
+ r:=public.admin_api('status');
+ assert (r->>'admin')::boolean and not (r->>'aal2')::boolean and not (r->>'ok')::boolean,'status shows missing second factor';
+ failed:=false; begin perform public.admin_api('overview'); exception when insufficient_privilege then failed:=true; end; assert failed,'overview needs second factor';
+ failed:=false; begin perform public.admin_api('settings_save','{"month_goal":"5"}'); exception when insufficient_privilege then failed:=true; end; assert failed,'settings need second factor';
+ failed:=false; begin perform public.sentence_quality_review_api('list_reports','{}'); exception when insufficient_privilege then failed:=true; end; assert failed,'review needs second factor';
+ failed:=false; begin perform admin_private.api('overview','{}'); exception when insufficient_privilege then failed:=true; end; assert failed,'inner api not callable directly';
+ perform set_config('test.aal','aal2',true);
  r:=public.admin_api('overview');
  assert (r#>>'{accounts,total}')::int>=2,'accounts counted';
  assert jsonb_array_length(r#>'{accounts,weekly}')=12,'twelve weeks';

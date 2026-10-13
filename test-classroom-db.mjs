@@ -10,6 +10,8 @@ create schema auth; create schema storage;
 create table auth.users(id uuid primary key,aud text,role text,raw_user_meta_data jsonb,created_at timestamptz not null default now());
 create table auth.sessions(id uuid primary key default gen_random_uuid(),user_id uuid);
 create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;
+-- Wie Supabase: Anmeldestufe im Token (aal1 = Passwort, aal2 = mit zweitem Faktor). Tests laufen mit aal2, außer test.aal sagt anderes.
+create function auth.jwt() returns jsonb language sql stable as $$ select jsonb_build_object('sub',current_setting('request.jwt.claim.sub',true),'aal',coalesce(nullif(current_setting('test.aal',true),''),'aal2')) $$;
 grant usage on schema auth,storage to authenticated,anon;
 create table storage.buckets(id text primary key,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]);
 create table storage.objects(id uuid primary key default gen_random_uuid(),bucket_id text,name text,metadata jsonb,owner uuid,owner_id text,created_at timestamptz not null default now());

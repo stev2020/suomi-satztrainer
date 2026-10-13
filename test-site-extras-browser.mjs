@@ -92,21 +92,15 @@ try{
   assert(calls.filter(c=>c.fn==='report_client_error').every(c=>c.auth===''),'error reports carry no account');
   assert(!JSON.stringify(reports).includes('GEHEIM'),'no query strings');
   await context.close();}
- // Kontomenü: „Verwaltung“ nur für Admins.
- for(const admin of [false,true]){
-  const {context,page,errors}=await open({signedIn:true,admin});
+ // Die Verwaltung hängt nicht mehr am Lernkonto: kein Menüpunkt, keine Admin-Abfrage aus der App.
+ {const {context,page,calls,errors}=await open({signedIn:true,admin:true});
   await page.waitForTimeout(300);
-  assert.equal(await page.locator('#account-admin').count(),admin?1:0,admin?'admin sees the entry':'normal users do not');
-  if(admin){
-   assert.equal(await page.evaluate(()=>document.getElementById('logout').style.getPropertyValue('--i')),'4','logout moves one down');
-   await page.click('#account-button');await page.waitForTimeout(400);
-   await Promise.all([page.waitForURL('**/admin.html'),page.click('#account-admin')]);
-  }
-  assert.deepEqual(errors,[]);await context.close();
- }
+  assert.equal(await page.locator('#account-admin').count(),0,'no admin entry in the app');
+  assert(!calls.some(c=>c.fn==='admin_api'),'the app never asks for admin rights');
+  assert.deepEqual(errors,[]);await context.close();}
  // Unterstützen-Seite: Füllstand des Monatsziels kommt aus der Datenbank (nur Prozent).
  {const {context,page}=await open({path:'/unterstuetzen.html',settings:{notice:null,registration:true,goal_percent:74}});
   await page.waitForFunction(()=>document.getElementById('support-goal-bar').getAttribute('aria-valuenow')==='74');
   await context.close();}
- console.log('Hinweisband, Rückmeldung (anonym), Seitenfehler (bereinigt, höchstens 5, nur auf vanamo.app), „Verwaltung“ nur für Admins, Monatsziel aus der Datenbank.');
+ console.log('Hinweisband, Rückmeldung (anonym), Seitenfehler (bereinigt, höchstens 5, nur auf vanamo.app), keine Verwaltung in der App, Monatsziel aus der Datenbank.');
 }finally{await browser.close();server.kill();}
