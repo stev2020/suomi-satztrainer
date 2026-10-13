@@ -28,7 +28,8 @@ const T={
  circleMs:2000,     // so lange kreist der Schwarm, bevor er schreibt (deckt das Laden der Satzdaten ab)
  birds:140,         // Größe des Schwarms; auf schmalen Bildschirmen:
  birdsSmall:50,
- moveGap:300,       // eine Zeile steht fertig groß in der Mitte, dann gleitet sie an ihren Platz
+ writeSpeed:.95,    // so zügig schreibt der Schwarm „vanamo“ (px je ms; Standard im Zeichenwerk: .62)
+ moveGap:100,       // eine Zeile steht fertig groß in der Mitte (der Schwarm wartet schon, bis alle Buchstaben ganz da sind), dann gleitet sie an ihren Platz
  moveMs:1000,
  sentenceGap:300,   // Satz steht allein, dann wächst die Karte
  cardWait:4000      // so lange höchstens auf die Satzkarte warten
@@ -36,7 +37,7 @@ const T={
 const EASE_MOVE='cubic-bezier(.65,0,.25,1)',EASE_OUT='cubic-bezier(.2,.7,.2,1)';
 const SEEN='vanamo-intro-seen';
 
-import {createBirds,createIntroFlock,warmIntroFlock} from './intro-birds.mjs?v=13';
+import {createBirds,createIntroFlock,warmIntroFlock} from './intro-birds.mjs?v=19';
 
 // Das Intro spielt ganz oben. Manche Browser (z. B. DuckDuckGo) stellen nach dem Wiederöffnen die alte Scroll-Position
 // erst her, wenn das Intro schon läuft – dann sähe man es gar nicht. Solange es läuft, bleibt die Seite deshalb oben;
@@ -154,10 +155,10 @@ export async function runGuestIntro(){
  // sich für die zweite.
  await flock.begin(vw<560?T.birdsSmall:T.birds);if(done)return;
  if(!await flock.wait(T.circleMs)||done)return;
- if(!await flock.write(chars[0])||done)return;
+ if(!await flock.write(chars[0],T.writeSpeed)||done)return;
  await hold(T.moveGap);if(done)return;
  const leadMoved=glide(0);
- if(!await flock.write(chars[1])||done)return;
+ if(!await flock.write(chars[1],T.writeSpeed)||done)return;
  await hold(T.moveGap);if(done)return;
  // Die Vögel fliegen davon; der farbige landet im Logo und wird zum „V“ (style.css: .brand-mark.is-filled).
  const landing=flock.release(mark,()=>{if(!done)mark?.classList.add('is-filled','pop');});
@@ -213,7 +214,7 @@ const USER={
  flyMs:900,         // der Vogel fliegt in Ruhe vom Logo zur Begrüßung
  dissolveSpeed:.4,  // … und zieht langsam darüber (px je ms)
  writeSpeed:.5,     // der Schwarm schreibt ruhig, langsamer als bei den Gästen (px je ms)
- sentenceGap:700,   // Satz steht fertig da, dann fliegt der Schwarm davon
+ sentenceGap:300,   // Satz steht fertig da (der Schwarm wartet schon, bis alle Buchstaben ganz da sind), dann fliegt der Schwarm davon
  moveMs:1100        // … und der Satz gleitet an seinen Platz unter „Wiederholen“ und wird dabei kleiner
 };
 const DAY='vanamo-user-intro-day'; // das Intro für Angemeldete läuft in jedem neuen Tab, beim Neuladen im selben Tab erst am nächsten Tag wieder (index.html)

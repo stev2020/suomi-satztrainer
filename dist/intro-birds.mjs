@@ -255,7 +255,7 @@ export function createBirds(){
 
 // ---- Intro: Schwarm und Buchstaben auf eigener Zeichenfläche ----
 
-const FLOCK='./intro-flock.mjs?v=1',WORKER='./intro-flock-worker.mjs?v=1';
+const FLOCK='./intro-flock.mjs?v=7',WORKER='./intro-flock-worker.mjs?v=7';
 let early=null; // früh gestarteter Worker (warmIntroFlock), damit er bereitsteht, wenn das Intro beginnt
 const canWorker=()=>typeof Worker==='function'&&typeof HTMLCanvasElement==='function'&&'transferControlToOffscreen' in HTMLCanvasElement.prototype&&typeof createImageBitmap==='function';
 // Startet den Worker schon, während Schriften und Übersetzung geladen werden.
