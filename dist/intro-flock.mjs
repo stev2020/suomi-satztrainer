@@ -287,14 +287,14 @@ export function createFlock(post){
   while(!settled())if(!await wait(30))return false;
   return true;
  }
- // Der Schwarm fliegt davon, zwei bleiben in der Luft, der farbige Vogel fliegt zu `m` (Mittelpunkt des Logos).
+ // Der Schwarm fliegt davon, `keep` bleiben in der Luft (sonst zwei; Gäste: so viele wie Probesätze übrig), der farbige Vogel fliegt zu `m` (Mittelpunkt des Logos).
  // Fertig, wenn er dort ankommt (dann sprühen ein paar Funken).
- async function release(m){
+ async function release(m,keep=2){
   let mint=null,kept=0;
   wblend=mode==='coast'&&coast?fly:null;mode='wander';spread={x:70,y:40};
   for(const b of birds){
    if(b.mint&&m){mint=b;b.mode='home';b.tx=m.cx;b.ty=m.cy;continue;}
-   if(!b.mint&&kept<2&&b.mode==='follow'){b.pet=true;b.lag=60+kept*90;b.r=.35;b.size=PET_SIZE;kept++;continue;}
+   if(!b.mint&&kept<keep&&b.mode==='follow'){b.pet=true;b.lag=60+kept*70;b.r=.35;b.size=PET_SIZE;kept++;continue;}
    leave(b);
   }
   loop();

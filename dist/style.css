@@ -749,7 +749,9 @@ header .header-nav{gap:16px}
 .is-guest #home-view.is-loading #guest-card[hidden]{display:block!important;min-height:427px}
 /* Gäste: kurzer oranger Strich zwischen Überschrift und Satz; während des Intros bleibt er unsichtbar. */
 #home-view .intro{margin-bottom:36px}
-#home-view .intro::after{content:"";width:56px;height:2px;margin-top:22px;border-radius:2px;background:var(--orange);transition:opacity .6s ease}
+#home-view .intro::after{content:"";width:56px;height:2px;margin-top:22px;border-radius:2px;background:var(--orange);transition:opacity .6s ease,width .8s ease}
+/* Gäste mit Probesätzen: ein Vogel pro übrigem Satz sitzt auf dem Strich (intro-birds.mjs) – dafür ist er etwas länger. */
+.perch-line #home-view .intro::after{width:84px}
 .intro-pending #home-view .intro::after{opacity:0}
 @media(max-width:640px){#home-view .intro{margin-bottom:28px}#home-view .intro::after{margin-top:14px}}
 /* Gäste, ohne Hüpfer: Die Satzkarte hält beim Laden die Höhe der fertigen Karte frei (kein grauer

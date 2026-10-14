@@ -37,7 +37,7 @@ const T={
 const EASE_MOVE='cubic-bezier(.65,0,.25,1)',EASE_OUT='cubic-bezier(.2,.7,.2,1)';
 const SEEN='vanamo-intro-seen';
 
-import {createBirds,createIntroFlock,warmIntroFlock} from './intro-birds.mjs?v=19';
+import {createBirds,createIntroFlock,warmIntroFlock,guestLeft} from './intro-birds.mjs?v=20';
 
 // Das Intro spielt ganz oben. Manche Browser (z. B. DuckDuckGo) stellen nach dem Wiederöffnen die alte Scroll-Position
 // erst her, wenn das Intro schon läuft – dann sähe man es gar nicht. Solange es läuft, bleibt die Seite deshalb oben;
@@ -161,7 +161,7 @@ export async function runGuestIntro(){
  if(!await flock.write(chars[1],T.writeSpeed)||done)return;
  await hold(T.moveGap);if(done)return;
  // Die Vögel fliegen davon; der farbige landet im Logo und wird zum „V“ (style.css: .brand-mark.is-filled).
- const landing=flock.release(mark,()=>{if(!done)mark?.classList.add('is-filled','pop');});
+ const landing=flock.release(mark,()=>{if(!done)mark?.classList.add('is-filled','pop');},guestLeft()||2);
  await Promise.all([leadMoved,glide(1)]);if(done)return;
 
  // Satzkarte: erst nur der finnische Satz, dann wächst die Karte drumherum.
