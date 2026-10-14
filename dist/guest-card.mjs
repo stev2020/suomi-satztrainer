@@ -62,12 +62,19 @@ export function createGuestCard(root,{sentences,level,onUnavailable,onFinished,o
  let failed=false,pool=[],recent=[],sentence=null,infos=[],step=0,exercise=null,result=null,flipped=false,busy=false,audio=null,started=false;
  let seen=readSeen(),finished=seen.length>=GUEST_LIMIT;
  const isLast=()=>seen.length>=GUEST_LIMIT;
+ // Für die Vögel auf dem orangen Strich (intro-birds.mjs): so viele Probesätze sind noch übrig, der jetzige mitgezählt.
+ function markLeft(){
+  const left=String(finished?0:Math.max(0,GUEST_LIMIT-seen.length+(sentence?1:0)));
+  if(root.dataset.left===left)return;
+  root.dataset.left=left;document.dispatchEvent(new CustomEvent('vanamo:guest-left',{detail:{left:Number(left)}}));
+ }
  root.innerHTML=`<h2 id="guest-card-title" class="sr-only">Ein Satz zum Ausprobieren</h2>
 <div class="guest-top"><span class="guest-lang"><span lang="fi">Suomi</span> · Finnisch</span><ol class="guest-steps" aria-label="Schritte"></ol><span class="guest-count"></span><button type="button" class="guest-audio" hidden>${ICON_AUDIO}<span>Anhören</span></button></div>
 <div class="guest-stage" aria-live="polite"></div>
 <div class="guest-actions"></div>`;
  const $=sel=>root.querySelector(sel);
  const stage=$('.guest-stage'),actions=$('.guest-actions'),steps=$('.guest-steps'),audioButton=$('.guest-audio'),count=$('.guest-count');
+ markLeft();
 
  function pick(){
   if(!pool.length)return null;
@@ -94,7 +101,7 @@ export function createGuestCard(root,{sentences,level,onUnavailable,onFinished,o
  }
 
  function renderStage(){
-  root.classList.toggle('is-finished',finished);
+  root.classList.toggle('is-finished',finished);markLeft();
   if(finished){renderFinale();return;}
   renderSteps();
   count.textContent=`${seen.length}/${GUEST_LIMIT}`;count.setAttribute('aria-label',`Satz ${seen.length} von ${GUEST_LIMIT}`);

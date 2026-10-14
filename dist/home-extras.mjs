@@ -7,7 +7,7 @@
 // - kleine Animationen (Hochzählen, Ring füllen); bei „reduzierter Bewegung“ entfallen sie
 // Gäste sehen weiterhin die ursprüngliche Startseite mit Intro und Satzkarte.
 import {loadLexicon,lookupForSentence,splitSentence} from './word-lookup.mjs?v=2';
-import {shortGloss} from './guest-card.mjs?v=13';
+import {shortGloss} from './guest-card.mjs?v=14';
 const audioURL=a=>a?.download_url||(a?.id?`https://api.tatoeba.org/v1/audios/${encodeURIComponent(a.id)}/file`:'');
 
 export const DAILY_GOAL=20;

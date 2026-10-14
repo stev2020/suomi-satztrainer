@@ -67,16 +67,48 @@ try{
  assert.equal(await opacity(page,'header .brand-mark svg'),1,'logo drawn at the end');
  assert.equal(await opacity(page,'header'),1);
  assert.equal(await page.evaluate(()=>sessionStorage.getItem('vanamo-intro-seen')),'1');
- // Zwei Schwalben setzen sich auf den Hauptknopf. Kommt die Maus in ihre Nähe, fliegen sie zusammen
- // auf und setzen sich woanders wieder hin.
- await page.waitForFunction(()=>document.querySelector('canvas.intro-birds')?.dataset.pets==='sit:button',null,{timeout:10000});
- const edge=await page.locator('#guest-card .guest-first').evaluate(el=>{const r=el.getBoundingClientRect();return {l:r.left,r:r.right,t:r.top};});
- await page.mouse.move(edge.l-80,edge.t-80);
- for(let x=edge.l;x<=edge.r&&await pets(page)==='sit:button';x+=10)await page.mouse.move(x,edge.t-4);
+ // Für jeden der fünf Probesätze sitzt ein Vogel auf dem orangen Strich über dem Satz. Kommt die Maus in ihre Nähe,
+ // fliegen sie auf und setzen sich wieder auf den Strich; nach jedem Satz fliegt einer weg.
+ const count=page=>page.evaluate(()=>Number(document.querySelector('canvas.intro-birds')?.dataset.count||0));
+ await page.waitForFunction(()=>{const c=document.querySelector('canvas.intro-birds');return c?.dataset.pets==='sit:line'&&c.dataset.count==='5';},null,{timeout:10000});
+ assert.equal(await page.evaluate(()=>document.documentElement.classList.contains('perch-line')),true,'line is longer while birds sit on it');
+ const line=await page.locator('#home-view .intro').evaluate(el=>{const r=el.getBoundingClientRect();return {cx:(r.left+r.right)/2,t:r.bottom-2};});
+ await page.mouse.move(line.cx-200,line.t-120);
+ for(let x=line.cx-60;x<=line.cx+60&&await pets(page)==='sit:line';x+=8)await page.mouse.move(x,line.t-4);
  assert.equal(await pets(page),'fly','birds take off when the pointer comes close');
- await page.waitForFunction(()=>/^sit:(?!button)/.test(document.querySelector('canvas.intro-birds')?.dataset.pets),null,{timeout:10000});
+ await page.mouse.move(20,line.t+300);
+ await page.waitForFunction(()=>document.querySelector('canvas.intro-birds')?.dataset.pets==='sit:line',null,{timeout:10000});
+ assert.equal(await count(page),5,'all five come back to the line');
+ // Anderer Satz: ein Probesatz weniger, ein Vogel fliegt weg.
+ await page.locator('#guest-card [data-guest="other"]').click();
+ await page.waitForFunction(()=>document.querySelector('canvas.intro-birds')?.dataset.count==='4',null,{timeout:5000});
  // Der Knopf darunter bleibt bedienbar.
  await page.locator('#guest-card .guest-first').click();
+ await page.context().close();
+
+ // Letzter Probesatz: ein Vogel auf dem Strich; nach „Geschafft“ fliegt er hoch, ein zweiter kommt dazu und beide
+ // sitzen wieder wie früher (Hauptknopf, aufgescheucht auch woanders).
+ page=await newPage();
+ await page.addInitScript(()=>{if(!sessionStorage.getItem('vanamo-guest-sentences'))sessionStorage.setItem('vanamo-guest-sentences','[-1,-2,-3,-4]');});
+ await page.goto(origin+'/?birds');
+ await page.waitForFunction(()=>{const c=document.querySelector('canvas.intro-birds');return c?.dataset.pets==='sit:line'&&c.dataset.count==='1';},null,{timeout:12000});
+ const tap=async sel=>{await page.locator(sel).first().waitFor();await page.waitForTimeout(1600);await page.locator(sel).first().click();};
+ await tap('#guest-card [data-guest="step"]');
+ await tap('#guest-card .guest-bank button:not([disabled])');
+ await page.locator('#guest-card [data-guest="check"]').click();
+ await tap('#guest-card [data-guest="step"]');
+ await tap('#guest-card [data-guest="flip"]');
+ await tap('#guest-card [data-guest="finish"]');
+ await page.waitForFunction(()=>document.querySelector('canvas.intro-birds')?.dataset.count==='2',null,{timeout:5000});
+ await page.waitForFunction(()=>/^sit:(?!line)/.test(document.querySelector('canvas.intro-birds')?.dataset.pets),null,{timeout:12000});
+ assert.equal(await page.evaluate(()=>document.documentElement.classList.contains('perch-line')),false,'line short again');
+ const edge=await page.locator('#guest-card .guest-first').evaluate(el=>{const r=el.getBoundingClientRect();return {l:r.left,r:r.right,t:r.top};});
+ assert.equal(await pets(page),'sit:button','the two sit on the main button again');
+ await page.mouse.move(edge.l-80,edge.t-80);
+ for(let x=edge.l;x<=edge.r&&await pets(page)==='sit:button';x+=10)await page.mouse.move(x,edge.t-4);
+ assert.equal(await pets(page),'fly');
+ await page.waitForFunction(()=>/^sit:(?!button)/.test(document.querySelector('canvas.intro-birds')?.dataset.pets),null,{timeout:10000});
+ assert.equal(await count(page),2);
  await page.context().close();
 
  // Handy mit Hänger: Blockiert die Seite den Hauptthread, während der Schwarm schreibt (z. B. beim Verarbeiten der
@@ -129,7 +161,7 @@ try{
  await page.waitForFunction(()=>/^sit:/.test(document.querySelector('canvas.intro-birds')?.dataset.pets),null,{timeout:4000});
  await page.context().close();
 
- // Schon gesehen (kein Intro): Mit ?birds kommen die zwei Schwalben angeflogen und setzen sich.
+ // Schon gesehen (kein Intro): Mit ?birds kommen die Schwalben angeflogen und setzen sich (Gäste: auf den Strich).
  page=await newPage();
  await page.goto(origin+'/?birds');
  assert.doesNotMatch(await classes(page),/intro-/);
@@ -198,7 +230,7 @@ try{
  await page.context().close();
 
  assert.deepEqual(errors,[]);
- console.log('PASS: guest intro with flock writing the headline, bird becoming the logo, two swallows that perch and take off, flock in its own thread keeps going during a stall, main-thread fallback without a jump, card reveal, skip on click, cleanup, no intro for automation, signed-in intro (bird leaves the logo, greeting becomes the flock, flock writes the daily sentence, swallows stay and also perch on Wiederholen) and greeting flip.');
+ console.log('PASS: guest intro with flock writing the headline, bird becoming the logo, one bird per remaining trial sentence on the orange line (scare and return, one leaves per sentence, last one fetches a mate and the two perch as before), flock in its own thread keeps going during a stall, main-thread fallback without a jump, card reveal, skip on click, cleanup, no intro for automation, signed-in intro (bird leaves the logo, greeting becomes the flock, flock writes the daily sentence, swallows stay and also perch on Wiederholen) and greeting flip.');
 }finally{
  await browser?.close();server.kill();
 }

@@ -23,6 +23,18 @@
 
 const SIT=.55;      // Größe der sitzenden Schwalbe im Verhältnis zu ihrer Zeichnung
 const PET_SIZE=7.5; // halbe Spannweite der zwei Schwalben im Flug (px)
+const LINE_GAP=11;  // Abstand der Schwalben auf dem orangen Strich (px)
+
+// Gäste: Solange noch Probesätze übrig sind, sitzt für jeden ein Vogel auf dem orangen Strich über dem Satz
+// (guest-card.mjs schreibt die Zahl nach `data-left`). 0 = keine Probesätze mehr (oder angemeldet): dann zwei.
+export function guestLeft(){
+ const html=document.documentElement,card=document.getElementById('guest-card');
+ if(!card||!html.classList.contains('is-guest')||html.classList.contains('intro-user'))return 0;
+ if(card.hidden&&!document.querySelector('#home-view.is-loading'))return 0;
+ if(card.dataset.left!=null)return Math.max(0,Math.min(5,Number(card.dataset.left)||0));
+ let n=0;try{n=JSON.parse(sessionStorage.getItem('vanamo-guest-sentences')||'[]').length||0;}catch{}
+ return n>=5?0:5-n;
+}
 
 export function createBirds(){
  const html=document.documentElement;
@@ -30,7 +42,7 @@ export function createBirds(){
  const ctx=cv.getContext('2d');
  let W=0,H=0,birds=[],sparks=[],hist=[],att={x:0,y:0},spread={x:70,y:40};
  let col={ink:'#172c38',mint:'#ace0d4',line:'#172c38'};
- let raf=0,last=0,clock=0,intro=false,seatAt=null,watching=false,state='';
+ let raf=0,last=0,clock=0,intro=false,seatAt=null,watching=false,state='',lineMode=false,hopTimer=0,glide=null;
  const pets=()=>birds.filter(b=>b.pet);
 
  function colors(){
@@ -87,12 +99,13 @@ export function createBirds(){
  const histAt=t=>{for(let i=hist.length-1;i>=0;i--)if(hist[i].t<=t)return hist[i];return hist[0]||att;};
  function frame(now){
   const dt=Math.min((now-last)/1000,.05);last=now;clock+=dt*1000;
+  if(glide){const p=Math.min(1,(clock-glide.t0)/glide.ms),e=p*p*(3-2*p);att.x=glide.x0+(glide.x1-glide.x0)*e;att.y=glide.y0+(glide.y1-glide.y0)*e;if(p>=1)glide=null;}
   hist.push({t:clock,x:att.x,y:att.y});while(hist.length>2&&clock-hist[0].t>700)hist.shift();
   ctx.clearRect(0,0,W,H);ctx.lineCap='round';ctx.lineJoin='round';
   for(const b of birds){
    if(b.mode==='sit'){drawSit(b);continue;}
    let ax,ay;
-   if(b.mode==='leave'){ax=b.dx*1100;ay=b.dy*1100;b.alpha-=dt/1.2;}
+   if(b.mode==='leave'){const f=b.soft?380:1100;ax=b.dx*f;ay=b.dy*f;b.alpha-=dt/(b.soft?2.4:1.2);}
    else{
     let tx,ty,k,c;
     if(b.mode==='home'){tx=b.tx;ty=b.ty;k=11;c=4.6;}
@@ -103,7 +116,7 @@ export function createBirds(){
    }
    ax+=(Math.random()-.5)*300;ay+=(Math.random()-.5)*300;
    b.vx+=ax*dt;b.vy+=ay*dt;
-   const sp=Math.hypot(b.vx,b.vy),vmax=b.mode==='petfly'?360:1200;if(sp>vmax){b.vx*=vmax/sp;b.vy*=vmax/sp;}
+   const sp=Math.hypot(b.vx,b.vy),vmax=b.mode==='petfly'?360:b.pet&&b.mode==='follow'||b.soft?440:1200;if(sp>vmax){b.vx*=vmax/sp;b.vy*=vmax/sp;}
    b.x+=b.vx*dt;b.y+=b.vy*dt;b.flap+=b.rate*dt;
    if(b.mode==='petfly'&&((Math.hypot(b.tx-b.x,b.ty-b.y)<5&&Math.hypot(b.vx,b.vy)<120)||clock-b.t0>4500)){
     b.mode='sit';b.x=b.tx;b.y=b.ty;b.vx=b.vy=0;b.land=clock;b.from=null;drawSit(b);continue;
@@ -122,20 +135,22 @@ export function createBirds(){
   report();
   raf=sparks.length||birds.some(b=>b.mode!=='sit'||clock-Math.max(b.tw??-1e9,b.land??-1e9)<470)?requestAnimationFrame(frame):0;
  }
- // Zustand der zwei Schwalben, für Tests ablesbar: none | fly | sit:<Platz>
+ // Zustand der Schwalben, für Tests ablesbar: none | fly | sit:<Platz> (Gäste mit Probesätzen: sit:line), Anzahl in data-count
  function report(){
   const ps=pets(),next=!ps.length?'none':ps.every(b=>b.mode==='sit')?'sit:'+(seatAt?.name||''):'fly';
   if(next!==state){state=next;cv.dataset.pets=next;}
+  if(cv.dataset.count!==String(ps.length))cv.dataset.count=String(ps.length);
  }
 
  // ---- Übernahme vom Intro (intro-flock.mjs): die zwei Schwalben fliegen hier weiter ----
  function takeOver(list){
   intro=false;
   mount(areaHeight());
-  birds=list.slice(0,2).map((p,i)=>({pet:true,mode:'follow',alpha:1,x:p.x,y:p.y,vx:p.vx||0,vy:p.vy||0,size:PET_SIZE,
-   flap:p.flap??Math.random()*6.28,rate:17+Math.random()*10,lag:60+i*90,r:.35,ang:Math.random()*6.28,spin:2}));
+  syncLine();
+  birds=list.slice(0,Math.max(2,guestLeft())).map((p,i)=>({pet:true,mode:'follow',alpha:1,x:p.x,y:p.y,vx:p.vx||0,vy:p.vy||0,size:PET_SIZE,
+   flap:p.flap??Math.random()*6.28,rate:17+Math.random()*10,lag:60+i*70,r:.35,ang:Math.random()*6.28,spin:2}));
   sparks=[];hist=[];att={x:birds[0]?.x||W/2,y:birds[0]?.y||0};
-  if(!birds.length||!flyTogether('button',false)){birds.forEach(leave);loop();}
+  if(!birds.length||!home(false)){birds.forEach(leave);loop();}
   watch();
  }
  function leave(b){const a=-(.25+Math.random()*1.1)*(Math.random()<.8?1:2.4);b.mode='leave';b.dx=Math.cos(a);b.dy=Math.sin(a);}
@@ -191,17 +206,79 @@ export function createBirds(){
  }
  function flyTogether(prefer,kick,allowSame){
   if(!seat(prefer,allowSame))return false;
+  launch(kick);return true;
+ }
+ function launch(kick){
   pets().forEach((b,i)=>{
-   const go=()=>{if(!birds.includes(b))return;b.mode='petfly';b.t0=clock;b.alpha=1;if(kick){b.from={x:b.x,y:b.y,t:clock};b.vy=-70;b.vx=(Math.random()-.5)*60;}loop();};
-   kick&&i?setTimeout(go,180):go();
+   const go=()=>{if(!birds.includes(b)||!b.pet)return;b.mode='petfly';b.t0=clock;b.alpha=1;if(kick){b.from={x:b.x,y:b.y,t:clock};b.vy=-70;b.vx=(Math.random()-.5)*60;}loop();};
+   // bei mehreren Vögeln kurz nacheinander, nicht alle im selben Augenblick
+   const delay=kick?i*(130+Math.random()*80):i*60;
+   delay?setTimeout(go,delay):go();
   });
-  return true;
  }
  const newPet=i=>({pet:true,mode:'sit',alpha:1,x:W+30+i*24,y:scrollY+70+i*16,vx:0,vy:0,size:PET_SIZE,flap:Math.random()*6.28,rate:24});
+
+ // ---- Gäste: Vögel auf dem orangen Strich, einer pro übrigem Probesatz ----
+ function linePerch(){
+  if(!shown(document.getElementById('home-view')))return null;
+  const el=shown(document.querySelector('#home-view .intro'));
+  if(!el||getComputedStyle(el,'::after').content==='none')return null;
+  const r=rect(el);return r.b-2>24&&r.b-2<H-4?{cx:r.cx,t:r.b-2}:null;
+ }
+ // Nebeneinander, mittig auf dem Strich; die Reihenfolge von links nach rechts bleibt (keiner kreuzt den anderen).
+ function seatLine(){
+  const p=linePerch(),ps=pets();if(!p||!ps.length)return false;
+  const c=p.cx+(Math.random()-.5)*6,n=ps.length;
+  ps.slice().sort((a,b)=>a.x-b.x).forEach((b,i)=>{b.tx=c+(i-(n-1)/2)*LINE_GAP;b.ty=p.t;});
+  seatAt={name:'line',l:p.cx,t:p.t};return true;
+ }
+ function flyLine(kick){if(!seatLine())return false;launch(kick);return true;}
+ // Stammplatz: Gäste mit Probesätzen auf dem Strich, sonst der Hauptknopf.
+ const home=kick=>lineMode?flyLine(kick):flyTogether('button',kick);
+ function syncLine(){
+  const want=guestLeft()>0;
+  if(want!==lineMode){lineMode=want;html.classList.toggle('perch-line',want);}
+ }
+ // Alle fliegen zusammen ein Stück nach oben, drehen dort eine kleine Runde und machen dann weiter (`then`).
+ function hopUp(then,ms){
+  const ps=pets();if(!ps.length)return;
+  const cx=ps.reduce((a,b)=>a+b.x,0)/ps.length,cy=ps.reduce((a,b)=>a+b.y,0)/ps.length;
+  const to={x:Math.max(40,Math.min(W-40,cx+(Math.random()-.5)*140)),y:Math.max(scrollY+30,cy-95-Math.random()*45)};
+  att={x:cx,y:cy-8};hist=[];glide={x0:att.x,y0:att.y,x1:to.x,y1:to.y,t0:clock,ms:950};
+  ps.forEach((b,i)=>{
+   if(b.mode==='sit'){b.from={x:b.x,y:b.y,t:clock};b.vy=-55-Math.random()*45;b.vx=(Math.random()-.5)*70;}
+   b.mode='follow';b.alpha=1;b.lag=30+i*60+Math.random()*40;b.r=.25+Math.random()*.3;b.ang=Math.random()*6.28;b.spin=(Math.random()<.5?-1:1)*(1.5+Math.random());
+  });
+  loop();
+  clearTimeout(hopTimer);hopTimer=setTimeout(()=>{hopTimer=0;then();},ms);
+ }
+ // Ein Vogel weniger: der, der am weitesten außen sitzt (abwechselnd links/rechts bleibt die Gruppe mittig).
+ function dropOne(){
+  const ps=pets();if(!ps.length)return;
+  const c=seatAt?.name==='line'?seatAt.l:ps.reduce((a,b)=>a+b.x,0)/ps.length;
+  const b=ps.reduce((m,x)=>Math.abs(x.x-c)>Math.abs(m.x-c)?x:m,ps[0]),side=b.x<c?-1:1;
+  b.pet=false;if(b.mode==='sit'){b.from={x:b.x,y:b.y,t:clock};b.vx=side*40;b.vy=-60;}
+  leave(b);b.soft=true;b.dx=side*Math.abs(b.dx);loop();
+ }
+ // Letzter Probesatz geschafft: Der letzte Vogel fliegt hoch, ein zweiter kommt dazu, und beide sind wieder die
+ // zwei Schwalben mit ihren alten Sitzplätzen.
+ function endLine(){
+  const ps=pets();
+  ps.slice(1).forEach(b=>{b.pet=false;leave(b);});
+  const one=ps[0];
+  if(!one){loop();return;}
+  const right=one.x<W/2;
+  const mate=newPet(1);mate.mode='follow';mate.x=right?W+30:-30;mate.y=Math.max(scrollY+20,one.y-170);mate.vx=right?-260:260;
+  birds.push(mate);
+  hopUp(()=>{if(!flyTogether('button',false)){pets().forEach(leave);loop();}},2300);
+ }
  function scare(e){
   const ps=pets();
-  if(intro||!ps.length||ps.some(b=>b.mode!=='sit'))return;
-  if(ps.some(b=>Math.hypot(b.x-e.pageX,b.y-5-e.pageY)<46))flyTogether(null,true);
+  if(intro||hopTimer||!ps.length||ps.some(b=>b.mode!=='sit'))return;
+  if(!ps.some(b=>Math.hypot(b.x-e.pageX,b.y-5-e.pageY)<46))return;
+  // Auf dem Strich: kurz auffliegen und wieder auf den Strich.
+  if(lineMode)hopUp(()=>{if(lineMode&&!flyLine(false)){pets().forEach(leave);loop();}},1200+Math.random()*700);
+  else flyTogether(null,true);
  }
  function areaHeight(){
   const card=shown(document.getElementById('guest-card'))||shown(document.querySelector('#home-view .home-daily'))||shown(document.getElementById('home-welcome-actions'));
@@ -210,14 +287,29 @@ export function createBirds(){
  // Regelmäßiger Blick: Stimmt der Sitzplatz noch? Gibt es wieder einen? Ab und zu zuckt ein Flügel.
  function check(){
   if(document.hidden||intro)return;
-  const ps=pets(),free=available();
-  cv.style.display=ps.length||free.length?'':'none';
+  const was=lineMode;syncLine();
+  if(was&&!lineMode){endLine();return;}
+  let ps=pets();const free=lineMode?(linePerch()?['line']:[]):available();
+  cv.style.display=ps.length||free.length||birds.length?'':'none';
   if(cv.style.display==='none')return;
   const want=areaHeight();
   if(html.clientWidth!==W||Math.abs(want-H)>40){size(want);loop();}
   if(colors())loop();
+  if(lineMode){
+   const n=guestLeft();
+   if(!ps.length){if(free.length){birds=birds.concat(Array.from({length:n},(_,i)=>newPet(i)));flyLine(false);}return;}
+   // Satz geschafft: einer fliegt weg (auch mitten im Flug)
+   while(ps.length>n){dropOne();ps=pets();}
+   if(hopTimer||ps.some(b=>b.mode!=='sit'))return;
+   if(ps.length<n){birds=birds.concat(Array.from({length:n-ps.length},(_,i)=>newPet(i)));flyLine(false);return;}
+   const p=linePerch();
+   if(!p){ps.forEach(leave);loop();return;}
+   if(seatAt?.name!=='line'||Math.abs(p.cx-seatAt.l)>2||Math.abs(p.t-seatAt.t)>2){flyLine(true);return;}
+   if(!raf&&Math.random()<.35){ps[Math.floor(Math.random()*ps.length)].tw=clock;loop();}
+   return;
+  }
   if(!ps.length){if(free.length){birds=birds.concat([0,1].map(newPet));flyTogether('button',false);}return;}
-  if(ps.some(b=>b.mode!=='sit'))return;
+  if(hopTimer||ps.some(b=>b.mode!=='sit'))return;
   const here=available().find(p=>p.name===seatAt?.name);
   if(!here||Math.abs(here.l-seatAt.l)>2||Math.abs(here.t-seatAt.t)>2){
    // Reiter gewechselt oder Platz verschwunden: zurück auf den Draht, wenn es ihn gibt.
@@ -229,6 +321,8 @@ export function createBirds(){
  function watch(){
   if(watching)return;watching=true;
   addEventListener('pointermove',scare,{passive:true});addEventListener('pointerdown',scare,{passive:true});
+  // guest-card.mjs meldet, wenn ein Probesatz geschafft ist – dann gleich reagieren, nicht erst beim nächsten Blick
+  document.addEventListener('vanamo:guest-left',()=>setTimeout(check,0));
   setInterval(check,700);
  }
 
@@ -236,15 +330,17 @@ export function createBirds(){
  function settle(){
   intro=false;
   const want=areaHeight();if(Math.abs(want-H)>40)size(want);
-  if(!flyTogether('button',false)){pets().forEach(leave);loop();}
+  syncLine();
+  if(!home(false)){pets().forEach(leave);loop();}
   watch();
  }
  // Intro übersprungen: Schwarm weg, die zwei sitzen sofort.
  function skip(){
   intro=false;
-  birds=[0,1].map(newPet);sparks=[];hist=[];
+  syncLine();
+  birds=Array.from({length:lineMode?guestLeft():2},(_,i)=>newPet(i));sparks=[];hist=[];
   if(cv.isConnected)size(areaHeight());else mount(areaHeight());
-  if(seat('button'))birds.forEach(b=>{b.x=b.tx;b.y=b.ty;});else birds=[];
+  if(lineMode?seatLine():seat('button'))birds.forEach(b=>{b.x=b.tx;b.y=b.ty;});else birds=[];
   loop();watch();
  }
  // Gäste ohne Intro: Die zwei kommen angeflogen, sobald es einen Sitzplatz gibt.
@@ -255,7 +351,7 @@ export function createBirds(){
 
 // ---- Intro: Schwarm und Buchstaben auf eigener Zeichenfläche ----
 
-const FLOCK='./intro-flock.mjs?v=7',WORKER='./intro-flock-worker.mjs?v=7';
+const FLOCK='./intro-flock.mjs?v=8',WORKER='./intro-flock-worker.mjs?v=8';
 let early=null; // früh gestarteter Worker (warmIntroFlock), damit er bereitsteht, wenn das Intro beginnt
 const canWorker=()=>typeof Worker==='function'&&typeof HTMLCanvasElement==='function'&&'transferControlToOffscreen' in HTMLCanvasElement.prototype&&typeof createImageBitmap==='function';
 // Startet den Worker schon, während Schriften und Übersetzung geladen werden.
@@ -433,9 +529,9 @@ export function createIntroFlock(){
   if(ok)await reveal(list);
   return ok&&!stopped;
  }
- async function release(markEl,onLand){
+ async function release(markEl,onLand,keep=2){
   const m=markEl?.getClientRects().length?rect(markEl):null;
-  const ok=await run('release',m);
+  const ok=await run('release',m,keep);
   if(!ok||stopped)return false;
   onLand?.();return true;
  }
