@@ -2,7 +2,7 @@
 //
 // Tag: ein zarter Himmel in der Farbe der Palette, durch den sehr langsam zwei weiche Wolken ziehen.
 // Nacht (Palette Kaamos): dunkler Himmel mit funkelnden Sternen, ab und zu einer Sternschnuppe und in
-// unbestimmten Abständen einem wogenden Nordlicht (grün, nach oben violett, an den Spitzen leicht rötlich).
+// unbestimmten Abständen einem wogenden Nordlicht (grün, nach oben violett).
 // Der Knopf im Kopf der Seite lässt die Sonne im Knopf untergehen und den Mond aufgehen (und umgekehrt);
 // dabei zieht ein Abendrot über den Himmel und die Seite wechselt weich die Farben.
 // Die Farben selbst und die Wahl der Palette stehen in themes.mjs.
@@ -96,16 +96,18 @@ export function createSky(){
   e.animate([{opacity:0,transform:`rotate(${ang}deg) scaleX(.2)`},{opacity:1,offset:.2},{opacity:0,transform:`translate(${Math.cos(rad)*dist}px,${Math.sin(rad)*dist}px) rotate(${ang}deg) scaleX(1)`}],{duration:900+Math.random()*500,easing:'cubic-bezier(.3,.6,.4,1)'}).onfinish=()=>e.remove();
  }
  function scheduleShoot(){clearTimeout(shootTimer);shootTimer=setTimeout(()=>{shoot();scheduleShoot();},5000+Math.random()*12000);}
- function startAurora(){if(p<.99||document.hidden)return;auroraUntil=performance.now()+9000+Math.random()*7000;if(!auroraRaf)auroraRaf=requestAnimationFrame(drawAurora);}
+ function startAurora(){if(p<.99||document.hidden)return;auroraUntil=performance.now()+16000+Math.random()*10000;if(!auroraRaf){drawAurora.last=0;auroraRaf=requestAnimationFrame(drawAurora);}}
  function scheduleAurora(first){clearTimeout(auroraTimer);auroraTimer=setTimeout(()=>{startAurora();scheduleAurora(false);},first?4000:20000+Math.random()*40000+16000);}
  // Nordlicht als wogender Vorhang: viele senkrechte Strahlen entlang einer welligen Linie
  function drawAurora(now){
   auroraRaf=0;
   const r=aurora.getBoundingClientRect(),AW=Math.max(1,Math.round(r.width/2)),AH=Math.max(1,Math.round(r.height/2));
   if(aurora.width!==AW||aurora.height!==AH){aurora.width=AW;aurora.height=AH;}
-  const want=now<auroraUntil&&p>.99?1:0;auroraA+=(want-auroraA)*(want?.012:.008);
+  // langsam einblenden (etwa 8 s), etwas schneller ausblenden (etwa 6 s)
+  const dt=Math.min(.1,(now-(drawAurora.last||now))/1000);drawAurora.last=now;
+  const want=now<auroraUntil&&p>.99?1:0;auroraA=cl(auroraA+(want?dt/8:-dt/6));
   ax.clearRect(0,0,AW,AH);
-  if(auroraA<.003&&!want){aurora.style.opacity=0;return;}
+  if(auroraA<=0&&!want){aurora.style.opacity=0;return;}
   const t=now/1000,c=AW*(.5+.18*Math.sin(t*.05)),step=2;
   for(let x=0;x<AW;x+=step){
    const u=x/AW;
@@ -115,16 +117,14 @@ export function createSky(){
    const I=Math.max(0,env*rays*(.65+.35*Math.sin(u*8-t*1.4)));if(I<.02)continue;
    const h=AH*(.38+.22*Math.sin(u*9+t*.45)+.08*Math.sin(u*41-t*2.3));
    const g=ax.createLinearGradient(0,base-h,0,base+AH*.05);
-   g.addColorStop(0,'rgba(235,75,100,0)');
-   g.addColorStop(.1,`rgba(235,85,110,${.2*I})`);
-   g.addColorStop(.22,`rgba(140,100,255,${.12*I})`);
-   g.addColorStop(.38,`rgba(130,110,255,${.22*I})`);
+   g.addColorStop(0,'rgba(140,100,255,0)');
+   g.addColorStop(.35,`rgba(130,110,255,${.22*I})`);
    g.addColorStop(.75,`rgba(70,230,170,${.55*I})`);
    g.addColorStop(.93,`rgba(120,255,200,${.9*I})`);
    g.addColorStop(1,'rgba(80,240,180,0)');
    ax.fillStyle=g;ax.fillRect(x,base-h,step+.6,h+AH*.05);
   }
-  aurora.style.opacity=(auroraA*.8).toFixed(3);
+  aurora.style.opacity=(sm(auroraA)*.8).toFixed(3);
   auroraRaf=requestAnimationFrame(drawAurora);
  }
  function night(){
