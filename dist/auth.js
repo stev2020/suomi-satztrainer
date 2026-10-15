@@ -1,4 +1,4 @@
-import {uiLocale,uiLanguage} from './i18n.mjs?v=27';
+import {uiLocale,uiLanguage} from './i18n.mjs?v=28';
 import {mergeVerbProgress} from './verb-practice.mjs';
 import {mergeEndingsProgress} from './endings-progress.mjs?v=1';
 import {mergePerformanceEvents} from './learning-insights.mjs';
@@ -597,8 +597,8 @@ export const accountUser=()=>session?.user||null;
 export {request as accountRequest};
 window.suomiAccountUser=()=>session?.user||null;
 window.suomiAccountRequest=request;
-import('./classrooms.js?v=105').catch(()=>{});
-import('./quality-review.js?v=7').catch(()=>{});
+import('./classrooms.js?v=106').catch(()=>{});
+import('./quality-review.js?v=8').catch(()=>{});
 if(session?.user&&configured())refreshSession().then(async ok=>{if(!ok)return;try{await pullAndMerge();}catch(err){syncState('Synchronisierung fehlgeschlagen. Bitte erneut versuchen.',true);status(err.message,true);}}).catch(syncError).finally(()=>{syncReady=true;if(syncQueued)scheduleSync();scheduleEmailHint();});
 else syncReady=true;
 // Auch nach einer Übungsrunde prüfen – die Serie kann gerade erst drei Tage erreicht haben.

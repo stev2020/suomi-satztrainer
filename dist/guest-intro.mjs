@@ -37,7 +37,7 @@ const T={
 const EASE_MOVE='cubic-bezier(.65,0,.25,1)',EASE_OUT='cubic-bezier(.2,.7,.2,1)';
 const SEEN='vanamo-intro-seen';
 
-import {createBirds,createIntroFlock,warmIntroFlock,guestLeft} from './intro-birds.mjs?v=20';
+import {createBirds,createIntroFlock,warmIntroFlock,guestLeft} from './intro-birds.mjs?v=21';
 
 // Das Intro spielt ganz oben. Manche Browser (z. B. DuckDuckGo) stellen nach dem Wiederöffnen die alte Scroll-Position
 // erst her, wenn das Intro schon läuft – dann sähe man es gar nicht. Solange es läuft, bleibt die Seite deshalb oben;
@@ -181,7 +181,7 @@ export async function runGuestIntro(){
  await landing;if(done)return;
 
  // Restliche Seite gestaffelt einblenden (Reihenfolge = Lesereihenfolge).
- const rest=[...document.querySelectorAll('header .header-nav, .today, #home-view>:not(.intro), .page-tools, footer')].filter(el=>!el.hidden&&!el.classList.contains('intro-shown'));
+ const rest=[...document.querySelectorAll('header .sky-toggle, header .header-nav, .today, #home-view>:not(.intro), .page-tools, footer')].filter(el=>!el.hidden&&!el.classList.contains('intro-shown'));
  rest.forEach((el,i)=>play(el,[{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'none'}],{duration:650,delay:120+i*90,easing:EASE_OUT,fill:'backwards'}));
  html.classList.remove('intro-pending');
  await sleep(120+rest.length*90+700);
@@ -348,7 +348,7 @@ export async function runUserIntro(){
   card.classList.add('intro-growing');
   card.classList.remove('intro-bare');
   // 4. Der Rest der Seite erscheint, auch die Begrüßung – finnisch, wie eben im Intro.
-  await revealRest('header .header-nav, #home-view .intro h1, .today, #home-view>:not(.intro), .page-tools, footer',play);
+  await revealRest('header .sky-toggle, header .header-nav, #home-view .intro h1, .today, #home-view>:not(.intro), .page-tools, footer',play);
   if(done)return;
   settled=true;flock.settle();
   finish();
@@ -357,7 +357,7 @@ export async function runUserIntro(){
  if(done)return;
  // Kein Satz des Tages in Sicht: ohne Schwarm weiter.
  play(greet,[{opacity:1},{opacity:0}],{duration:250,fill:'forwards'});
- await revealRest('header .header-nav, #home-view .intro h1, .today, #home-view>:not(.intro), .page-tools, footer',play);
+ await revealRest('header .sky-toggle, header .header-nav, #home-view .intro h1, .today, #home-view>:not(.intro), .page-tools, footer',play);
  finish();
 }
 
