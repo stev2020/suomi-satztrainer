@@ -1,9 +1,9 @@
 // Verwaltung im Browser: eigene Anmeldung mit Authenticator-Code (einrichten, abfragen, falscher Code), Sitzung nur im Tab, Abmelden, Zugang nur für Admins, Übersicht, Zu erledigen, PayPal-Abruf, Einstellungen, Schwarm,
-// sechs Paletten, Handybreite. Alle Antworten der Datenbank sind hier nachgestellt.
+// vier Paletten, Handybreite. Alle Antworten der Datenbank sind hier nachgestellt.
 import {spawn} from 'node:child_process';import {chromium} from 'playwright';import assert from 'node:assert/strict';
 const server=spawn(process.execPath,['server.mjs'],{stdio:['ignore','pipe','inherit']});await new Promise(r=>server.stdout.once('data',r));
 const b=await chromium.launch({headless:true,...(process.env.PW_CHROMIUM?{executablePath:process.env.PW_CHROMIUM}:{})});
-const origin='http://localhost:4173',themes=['vanamo','mustikka','ruska','tunturi','kaamos','revontulet'];
+const origin='http://localhost:4173',themes=['vanamo','ruska','tunturi','kaamos'];
 const shots=process.env.ADMIN_SHOTS||'';
 const now=new Date(),iso=ms=>new Date(Date.now()-ms).toISOString();
 const month=k=>{const d=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth()-k,1));return `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}`;};
@@ -164,5 +164,5 @@ try{
   assert.deepEqual(errs,[],'no errors: '+errs.join(' | '));
   await c.close();
  }
- console.log('Verwaltung im Browser: eigene Anmeldung mit Authenticator-Code (einrichten, abfragen, falscher Code), Sitzung nur im Tab, Abmelden, Zugang nur für Admins, Übersicht mit Zahlen, Unterstützungen und Zu erledigen, Aktionen, Klassenraum-Meldungen (Entfernen, Dateien aufräumen), Raumliste ohne Inhalte (archivieren, löschen mit Namen), PayPal-Abruf, kleine Gruppen verborgen, Einstellungen speichern, Schwarm bearbeiten, sechs Paletten, Handybreite.');
+ console.log('Verwaltung im Browser: eigene Anmeldung mit Authenticator-Code (einrichten, abfragen, falscher Code), Sitzung nur im Tab, Abmelden, Zugang nur für Admins, Übersicht mit Zahlen, Unterstützungen und Zu erledigen, Aktionen, Klassenraum-Meldungen (Entfernen, Dateien aufräumen), Raumliste ohne Inhalte (archivieren, löschen mit Namen), PayPal-Abruf, kleine Gruppen verborgen, Einstellungen speichern, Schwarm bearbeiten, vier Paletten, Handybreite.');
 }finally{await b.close();server.kill();}

@@ -1,9 +1,9 @@
 // Grammatik-Buch im Browser: Reiter, Inhaltsverzeichnis, Kapitel mit allen Bausteinen, Stationen im Lernpfad,
-// Adresse #grammatik/<kapitel>, Gäste, englische Oberfläche, sechs Paletten, Handybreite.
+// Adresse #grammatik/<kapitel>, Gäste, englische Oberfläche, vier Paletten, Handybreite.
 import {spawn} from 'node:child_process';import {chromium} from 'playwright';import assert from 'node:assert/strict';
 const server=spawn(process.execPath,['server.mjs'],{stdio:['ignore','pipe','inherit']});await new Promise(r=>server.stdout.once('data',r));
 const b=await chromium.launch({headless:true,...(process.env.PW_CHROMIUM?{executablePath:process.env.PW_CHROMIUM}:{})});
-const origin='http://localhost:4173',themes=['vanamo','mustikka','ruska','tunturi','kaamos','revontulet'];
+const origin='http://localhost:4173',themes=['vanamo','ruska','tunturi','kaamos'];
 const session=()=>{if(!localStorage.getItem('suomi-auth-session-v1'))localStorage.setItem('suomi-auth-session-v1',JSON.stringify({access_token:'a',refresh_token:'r',user:{id:'u',user_metadata:{username:'testi'}}}));};
 async function open({viewport,locale='de-DE',account=true,path='/'}){
  const c=await b.newContext({viewport,locale,serviceWorkers:'block'});
@@ -185,5 +185,5 @@ try{
   await p.locator('[data-home-tab-button="new"]').click();
   assert.equal(await p.locator('#path-overview .path-grammar').count(),0);
   assert.deepEqual(errors,[]);await c.close();}
- console.log('Grammatik-Buch im Browser: Reiter, Inhaltsverzeichnis, vier Kapitel mit Bausteinen, Stationen, Adressen, Gäste, englische Oberfläche, sechs Paletten, Handybreite.');
+ console.log('Grammatik-Buch im Browser: Reiter, Inhaltsverzeichnis, vier Kapitel mit Bausteinen, Stationen, Adressen, Gäste, englische Oberfläche, vier Paletten, Handybreite.');
 }finally{await b.close();server.kill();}

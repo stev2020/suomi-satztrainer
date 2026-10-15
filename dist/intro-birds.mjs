@@ -82,6 +82,14 @@ export function createBirds(){
   ctx.lineTo(1.3,5);ctx.lineTo(2.9,11);ctx.lineTo(2.2,3.5);ctx.bezierCurveTo(5.4,-3,5.6,-11.5,2.4,-13.8);ctx.closePath();ctx.fill();
   ctx.restore();
  }
+ // Nachts (Palette Kaamos) schlafen die Schwalben: Kopf eingezogen, rundlicher Körper.
+ function drawSleeping(x,y,k,alpha,sy){
+  ctx.save();ctx.translate(x,y);ctx.scale(k,k*sy);ctx.globalAlpha=alpha;ctx.fillStyle=col.ink;
+  ctx.beginPath();ctx.moveTo(-5,-9);ctx.bezierCurveTo(-6.5,-5,-5.5,0,-2.2,3.5);ctx.lineTo(-2.9,11);ctx.lineTo(-1.3,5);ctx.lineTo(0,3.8);
+  ctx.lineTo(1.3,5);ctx.lineTo(2.9,11);ctx.lineTo(2.2,3.5);ctx.bezierCurveTo(5.5,0,6.5,-5,5,-9);ctx.bezierCurveTo(3,-12.5,-3,-12.5,-5,-9);ctx.closePath();ctx.fill();
+  ctx.restore();
+ }
+ const asleep=()=>html.dataset.themeMode==='dark';
  // Nach der Landung klappt das Flug-V an den Körper und blendet aus, während die Schwalbe einblendet.
  function drawSit(b){
   const tl=Math.min(1,(clock-(b.land??-1e9))/460),tt=Math.min(1,(clock-(b.tw??-1e9))/460);
@@ -92,7 +100,7 @@ export function createBirds(){
    ctx.beginPath();ctx.moveTo(-tx,ty);ctx.quadraticCurveTo(-cx,cy,0,my);ctx.quadraticCurveTo(cx,cy,tx,ty);
    ctx.lineWidth=1.7;ctx.strokeStyle=col.ink;ctx.stroke();ctx.restore();
   }
-  drawSwallow(b.x,b.y,k,e,(.7+.3*e)*(1-.07*Math.sin(Math.PI*tt)));
+  (asleep()?drawSleeping:drawSwallow)(b.x,b.y,k,e,(.7+.3*e)*(1-.07*Math.sin(Math.PI*tt)));
  }
 
  // ---- Ein Bild ----
@@ -323,6 +331,7 @@ export function createBirds(){
   addEventListener('pointermove',scare,{passive:true});addEventListener('pointerdown',scare,{passive:true});
   // guest-card.mjs meldet, wenn ein Probesatz geschafft ist – dann gleich reagieren, nicht erst beim nächsten Blick
   document.addEventListener('vanamo:guest-left',()=>setTimeout(check,0));
+  document.addEventListener('vanamo-theme',()=>{colors();loop();});
   setInterval(check,700);
  }
 

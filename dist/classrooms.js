@@ -1,5 +1,5 @@
-import {uiLocale} from './i18n.mjs?v=27';
-import {accountUser,accountRequest} from './auth.js?v=132';
+import {uiLocale} from './i18n.mjs?v=28';
+import {accountUser,accountRequest} from './auth.js?v=133';
 import {avatarMarkup,cleanNickname} from './avatars.mjs?v=2';
 import {openReport} from './classroom-report.mjs?v=1';
 import {GRAMMAR_TOPICS,topicNotes} from './grammar-topics.mjs';
@@ -165,7 +165,7 @@ const localInput=v=>{if(!v)return '';const d=new Date(v);d.setMinutes(d.getMinut
 const bird=(id,name,own=false,size='')=>avatarMarkup(id,{name,live:!!own,size});
 // Der Spitzname aus dem Konto wird als Name für neue Klassenräume vorgeschlagen.
 const ownNickname=()=>cleanNickname(accountUser()?.user_metadata?.nickname);
-const css=document.createElement('link');css.rel='stylesheet';css.href='./classrooms.css?v=88';document.head.append(css);
+const css=document.createElement('link');css.rel='stylesheet';css.href='./classrooms.css?v=89';document.head.append(css);
 const button=document.createElement('button');button.id='classrooms-button';button.type='button';button.dataset.view='classrooms';button.textContent='Klassenraum';
 const headerNav=document.querySelector('.header-nav');
 if(headerNav)headerNav.insertBefore(button,headerNav.querySelector('[data-view="progress"]'));else $('account-button').before(button);

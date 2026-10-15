@@ -1,7 +1,7 @@
 import {spawn} from 'node:child_process';import {chromium} from 'playwright';import assert from 'node:assert/strict';
 const server=spawn(process.execPath,['server.mjs'],{stdio:['ignore','pipe','inherit']});await new Promise(r=>server.stdout.once('data',r));
 const b=await chromium.launch({headless:true,...(process.env.PW_CHROMIUM?{executablePath:process.env.PW_CHROMIUM}:{})});
-const origin='http://localhost:4173',themes=['vanamo','mustikka','ruska','tunturi','kaamos','revontulet'];
+const origin='http://localhost:4173',themes=['vanamo','ruska','tunturi','kaamos'];
 try{
  for(const viewport of [{width:1280,height:900},{width:390,height:844}]){
   const c=await b.newContext({viewport,locale:'de-DE',serviceWorkers:'block'});
@@ -96,6 +96,6 @@ try{
   }
   await c.close();
  }
- console.log('Unterstützen im Browser: Schwarm, Vorname mit Freischaltung nach Donorbox, Donorbox-Hinweis, Beträge, Sternchen-Fenster, Monatsziel, sechs Paletten, Handybreite, Links.');
+ console.log('Unterstützen im Browser: Schwarm, Vorname mit Freischaltung nach Donorbox, Donorbox-Hinweis, Beträge, Sternchen-Fenster, Monatsziel, vier Paletten, Handybreite, Links.');
 }finally{await b.close();server.kill();}
 async function assertText(locator,expected){assert.equal((await locator.textContent()).trim(),expected);}
