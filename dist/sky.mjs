@@ -1,6 +1,6 @@
 // Vanamo – Himmel hinter dem Kopf der Seite und der Sonnen-Knopf für Tag und Nacht.
 //
-// Tag: ein zarter Himmel in der Farbe der Palette, durch den sehr langsam zwei weiche Wolken ziehen.
+// Tag: nichts – die Seite zeigt ihre Palette unverändert.
 // Nacht (Palette Kaamos): dunkler Himmel mit funkelnden Sternen, ab und zu einer Sternschnuppe und in
 // unbestimmten Abständen einem wogenden Nordlicht (grün, nach oben violett).
 // Der Knopf im Kopf der Seite lässt die Sonne im Knopf untergehen und den Mond aufgehen (und umgekehrt);
@@ -20,7 +20,7 @@ const moonSVG=y=>`<g class="sky-moon" transform="translate(0,${y.toFixed(2)}) ro
 export function createSky(){
  if(document.querySelector('.sky'))return null;
  const sky=document.createElement('div');sky.className='sky';sky.setAttribute('aria-hidden','true');
- sky.innerHTML='<div class="sky-day"></div><div class="sky-clouds"><b></b><b></b></div><div class="sky-dusk"></div><div class="sky-night"></div><canvas class="sky-aurora"></canvas><div class="sky-stars"></div>';
+ sky.innerHTML='<div class="sky-dusk"></div><div class="sky-night"></div><canvas class="sky-aurora"></canvas><div class="sky-stars"></div>';
  document.body.prepend(sky);
  const $=s=>sky.querySelector(s);
  const stars=$('.sky-stars'),aurora=$('.sky-aurora'),ax=aurora.getContext('2d');
@@ -52,7 +52,6 @@ export function createSky(){
   sky.style.setProperty('--sky-sunset',p.toFixed(3));
   sky.style.setProperty('--sky-stars',seg(p,.55,1).toFixed(3));
   sky.classList.toggle('is-night',p>.5);
-  sky.classList.toggle('is-day',p<.99);
  }
  function frame(now){
   raf=0;
