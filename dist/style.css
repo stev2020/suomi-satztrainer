@@ -1663,22 +1663,15 @@ canvas.intro-flock{position:absolute;top:0;left:0;z-index:40;pointer-events:none
 .feedback-dialog form[hidden]{display:none}
 /* Seit „Rückmeldung“ im Fuß steht, braucht er etwas früher eine zweite Zeile. */
 @media(max-width:1180px){footer{flex-wrap:wrap;align-items:center;gap:8px 16px}}
-/* Himmel hinter dem Kopf der Seite (sky.mjs): Tag in der Farbe der Palette, Nacht mit Sternen und Nordlicht. */
-:root{--sky-day:color-mix(in srgb,var(--mint) 30%,var(--bg))}
+/* Himmel hinter dem Kopf der Seite (sky.mjs): tagsüber unsichtbar, beim Wechsel Abendrot, nachts Sterne und Nordlicht. */
 .sky{position:absolute;top:0;left:0;width:100%;height:min(720px,100vh);z-index:-1;overflow:hidden;pointer-events:none;--sky-dark:0;--sky-dusk:0;--sky-sunset:0;--sky-stars:0}
 .sky>*{position:absolute;inset:0}
-.sky-day{opacity:calc(1 - var(--sky-dark));background:linear-gradient(180deg,var(--sky-day) 0%,var(--sky-day) 12%,transparent 68%)}
-.sky-clouds{opacity:calc(.6 * (1 - var(--sky-dark)))}
-.sky-clouds b{position:absolute;left:0;border-radius:50%;background:radial-gradient(ellipse at center,rgba(255,255,255,.95) 0%,rgba(255,255,255,0) 70%);will-change:transform;animation:sky-drift linear infinite}
-.sky-clouds b:nth-child(1){top:5%;width:220px;height:46px;animation-duration:170s;animation-delay:-40s}
-.sky-clouds b:nth-child(2){top:15%;width:300px;height:60px;animation-duration:230s;animation-delay:-150s}
-@keyframes sky-drift{from{transform:translateX(-320px)}to{transform:translateX(calc(100vw + 40px))}}
 .sky-dusk{opacity:var(--sky-dusk);background:radial-gradient(ellipse 60% 40% at calc(70% + var(--sky-sunset) * 15%) calc(30% + var(--sky-sunset) * 35%),#ffbf95 0%,transparent 70%),linear-gradient(180deg,#fde0c8 0%,transparent 68%)}
 .sky-night{opacity:var(--sky-dark);background:linear-gradient(180deg,#0b1224 0%,#0e1630 20%,transparent 85%)}
 .sky-aurora{inset:0 auto auto 0;width:100%;height:48%;opacity:0;mix-blend-mode:screen;filter:blur(5px)}
 .sky-stars{opacity:var(--sky-stars)}
 .sky-stars i{position:absolute;border-radius:50%;background:#e4eaff;animation:sky-twinkle 4s ease-in-out infinite}
-.sky:not(.is-night) .sky-stars i,.sky:not(.is-day) .sky-clouds b{animation-play-state:paused}
+.sky:not(.is-night) .sky-stars i{animation-play-state:paused}
 .sky:not(.is-night) .sky-stars{visibility:hidden}
 @keyframes sky-twinkle{0%,100%{opacity:.3}50%{opacity:1}}
 .sky-shoot{position:absolute;height:1.6px;border-radius:2px;background:linear-gradient(90deg,transparent,#e9efffcc 70%,#fff);transform-origin:100% 50%;opacity:0}
